@@ -1,0 +1,411 @@
+package com.ucf.customer.test;
+
+import org.junit.Assert;
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.bo.BaseResultBO;
+import com.ucf.customer.api.bo.RealNameParamBO;
+import com.ucf.customer.api.bo.UserRealNamedStatusRsBO;
+import com.ucf.customer.api.enums.EnumCertStatus;
+import com.ucf.customer.api.enums.EnumStatus;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.ws.bo.AccountInfoBO;
+import com.ucf.customer.ws.bo.AccountInfoParamBO;
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.bo.CardInfoParamBO;
+import com.ucf.customer.ws.bo.P2PQueryUserinfoParamBo;
+import com.ucf.customer.ws.bo.QueryAuthrealParamBo;
+import com.ucf.customer.ws.bo.RegistParamBo;
+import com.ucf.customer.ws.bo.RegistReturnValueBo;
+import com.ucf.customer.ws.bo.SmsBO;
+import com.ucf.customer.ws.bo.UserBankInfoBO;
+import com.ucf.customer.ws.bo.UserCheckResultBO;
+import com.ucf.customer.ws.bo.UserInfoBO;
+import com.ucf.customer.ws.bo.VerifyBO;
+import com.ucf.customer.ws.enums.EnumBindCardType;
+import com.ucf.customer.ws.enums.EnumIdCardType;
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.EnumUserType;
+import com.ucf.customer.ws.service.CardInfoWS;
+import com.ucf.customer.ws.service.UserServiceWS;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+
+public class UserServiceWSTest extends BaseTest {
+
+	@Autowired
+	private UserServiceWS userService;
+	
+	@Autowired
+	private LoginService loginService;
+	
+	@Autowired
+	private CardService cardService;
+	
+	@Autowired
+	CardInfoWS cardInfoWS;
+
+	@Autowired
+	MemberService memberService;
+
+	/**
+	 * 身份证和用户名存在，返回登录URL
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午3:30:47
+	 */
+	@Test
+	public void checkUserByIdNumExist() {
+		// 身份证
+		String certNo = "3706282197912137056";
+		// 用户名 未使用
+		String userName = "牟少杰";
+		UserCheckResultBO result = userService.checkUserByIdNum(certNo,
+				userName);
+		System.out.println("dubbo调用状态:" + result.getEnumMemberCode().getMsgS());
+		System.out.println("会员是否注册："
+				+ result.getEnumUserRegisterStatus().getMsgS());
+		System.out.println("登录URL:" + result.getReturnUrl());
+	}
+
+	/**
+	 * 身份证未注册，返回注册URL
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午3:47:13
+	 */
+	@Test
+	public void checkUserByIdNumNotExist() {
+		// 身份证
+		String certNo = "3706282111912137056";
+		// 用户名
+		String userName = "牟少杰";
+		UserCheckResultBO result = userService.checkUserByIdNum(certNo,
+				userName);
+		System.out.println("dubbo调用状态:" + result.getEnumMemberCode().getMsgS());
+		System.out.println("会员是否注册："
+				+ result.getEnumUserRegisterStatus().getMsgS());
+		System.out.println("登录URL:" + result.getReturnUrl());
+	}
+
+	/**
+	 * 通过会员id获取会员信息,会员存在
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午3:52:24
+	 */
+	@Test
+	public void getUsreInfoByUserId() {
+		String userid = "10000003027";
+		UserInfoBO userInfo = userService.getUsreInfoByUserId(userid);
+		System.out.println("会员是否存在:"
+				+ (userInfo.getUserId() == null ? false : true));
+		System.out.println("身份证号:" + userInfo.getUserCertNo());
+		System.out.println("会员真实姓名：" + userInfo.getUserRealName());
+	}
+
+	/**
+	 * 会员id 会员不存在
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午3:59:21
+	 */
+	@Test
+	public void getUsreInfoByUserIdNotExist() {
+		String userid = "10000003017";
+		UserInfoBO userInfo = userService.getUsreInfoByUserId(userid);
+		System.out.println("会员是否存在:"
+				+ (userInfo.getUserId() == null ? false : true));
+		System.out.println("身份证号:" + userInfo.getUserCertNo());
+		System.out.println("会员真实姓名：" + userInfo.getUserRealName());
+	}
+
+	/**
+	 * userid为Null
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午4:00:17
+	 */
+	@Test
+	public void getUsreInfoByUserIdNull() {
+		String userid = "001";
+		UserInfoBO userInfo = userService.getUsreInfoByUserId(userid);
+		System.out.println("会员是否存在:"
+				+ (userInfo.getUserId() == null ? false : true));
+		System.out.println("身份证号:" + userInfo.getUserCertNo());
+		System.out.println("会员真实姓名：" + userInfo.getUserRealName());
+	}
+
+	/**
+	 * 通过会员id查询会员的主卡的账户id
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午4:06:22
+	 */
+	@Test
+	public void queryAccountNo() {
+		AccountInfoParamBO accountInfoParamBD = new AccountInfoParamBO();
+		accountInfoParamBD.setUserId("10000003027");
+		AccountInfoBO result = userService.queryAccountNo(accountInfoParamBD);
+		System.out.println("dubbo调用状态：" + result.getEnumMemberCode());
+		System.out.println("主卡帐户ID:" + result.getMainCardAccountId());
+		System.out.println("子帐户ID:" + result.getSubCardAccountId());
+	}
+
+	/**
+	 * 通过会员id查询会员的主卡的账户id 会员id为空
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午4:06:22
+	 */
+	@Test
+	public void queryAccountNoWithNullUserid() {
+		AccountInfoParamBO accountInfoParamBD = new AccountInfoParamBO();
+		AccountInfoBO result = userService.queryAccountNo(accountInfoParamBD);
+		System.out.println(result.getErrorMsg());
+	}
+
+	/**
+	 * 通过会员id查询会员的主卡的账户id 主卡帐户不存在
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午4:06:22
+	 */
+	@Test
+	public void queryAccountNoWithAccountNotExist() {
+		AccountInfoParamBO accountInfoParamBD = new AccountInfoParamBO();
+		accountInfoParamBD.setUserId("10000013027");
+		AccountInfoBO result = userService.queryAccountNo(accountInfoParamBD);
+		System.out.println(result.getErrorMsg());
+	}
+
+	/**
+	 * 用户登录
+	 * 
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午4:23:24
+	 */
+	// public void login(){
+	// String userId = "";
+	// String cookieVal = "";
+	// UserLoginReturnBO result = userService.login(userId, cookieVal);
+	//
+	// }
+	/**
+	 * 传入会员id ，会员系统进行销户
+	 * 
+	 * @author yuzengjia 
+	 * @date 2014-5-14 下午4:24:28
+	 */
+	// public void cancel(){
+	// String userId = "";
+	// userService.cancelAccount(userId);
+	// } 
+
+	@Test
+	public void queryUserBankInfosTest() {
+		UserBankInfoBO userBankInfoBO = userService.queryUserBankInfos("11",
+				"10000003814");
+		System.out.println(userBankInfoBO.getBankCards());
+	}
+
+	/**
+	 * 测试绑卡 <br>
+	 * merchantId 平台商id <br>
+	 * userId 用户ID<br>
+	 * cardNo 卡号<br>
+	 * bankCode 银行编号<br>
+	 * bankName 银行名称<br>
+	 * cardType 类型<br>
+	 * province 省<br>
+	 * city 市<br>
+	 * branchBankId 联行号<br>
+	 * branchBankName 联行号名称<br>
+	 */
+	
+
+	@Test
+	public void testSendSms() {
+		SmsBO smsBO = userService.sendSms("1111", "13757162413");
+		System.err.println(smsBO);
+
+		smsBO = userService.checkSms("1111", "13757162413", smsBO.getCode());
+
+		Assert.assertEquals(true, smsBO.isCheckResult());
+
+	}
+	
+	
+	/**
+	 * P2P注册开户
+	 * @param bo
+	 * @return
+	 */
+	@Test
+	@Rollback(false)
+	public void openAccount(){
+		RegistParamBo bo = new RegistParamBo();
+		bo.setMerchantId("001");
+		bo.setIdNo("330318009");
+		bo.setIdType(EnumIdCardType.CERT_NO.getCode());
+		bo.setPhoneNo("123333767");
+		bo.setRealName("ces");
+		bo.setUserType(EnumUserType.PERSON_TYPE.getCode());
+		System.err.println(userService.openAccount(bo).getRespMsg());
+		
+		
+		
+		RegistParamBo bo2 = new RegistParamBo();
+		//再次开户
+		bo2.setIdNo("3303");
+//		bo2.setIdType(EnumIdCardType.CERT_NO.getCode());
+//		bo2.setPhoneNo("123333");
+//		bo2.setRealName("ces");
+//		bo2.setUserType(EnumUserType.PERSON_TYPE.getCode());
+		System.err.println(userService.openAccount(bo2).getRespMsg());
+	}
+	
+	/**
+	 * P2P实名认证状态查询
+	 * @param bo
+	 * @return
+	 */
+	@Test
+	public void queryAuthreal(){
+		QueryAuthrealParamBo bo = new QueryAuthrealParamBo();
+		bo.setUserId("10000003476");
+		bo.setMerchantId("11");
+		System.err.println(userService.queryAuthreal(bo).getRespMsg());
+		
+	}
+	
+	/**
+	 * p2p用户信息查询
+	 * @param bo
+	 * @return
+	 */
+	@Test
+	public void queryUserinfo(){
+		P2PQueryUserinfoParamBo bo = new P2PQueryUserinfoParamBo();
+		bo.setUserId("10000003808");
+		bo.setMerchantId("11");
+		System.out.println(userService.queryUserinfo(bo).getRespMsg());
+	}
+	
+	
+	@Test
+	public void testCard(){
+		CardInfoParamBO cardInfoParamBO= new CardInfoParamBO();
+		cardInfoParamBO.setCardNo("10000004004");
+		cardInfoWS.queryCardInfo(cardInfoParamBO);
+	}
+
+	
+	
+	
+	@Test
+	public void queryUserBank(){
+	UserBankInfoBO userBankInfoBO =	userService.queryUserBankInfos("1000001", "10000004702");
+	
+	
+	System.err.println(userBankInfoBO);
+	}
+	@Test
+	@Rollback(false)
+	public void bindBankCardTest() {
+		UserInfoBO userInfoBO = new UserInfoBO();
+		userInfoBO.setUserRealName("ddsdf");
+		userInfoBO.setUserCertNo("0001");
+		userInfoBO.setMerchantId("1000001");
+		userInfoBO.setUserId("10000004702");
+		userInfoBO.setBankCode("ABC");
+		userInfoBO.setCardNo("62071243922600221");
+		userInfoBO.setBankName("中国工商银行");
+		userInfoBO.setCardType("1");
+		userInfoBO.setProvince("浙江省");
+		userInfoBO.setCity("杭州");
+		userInfoBO.setBranchBankId("305458241044");
+		userInfoBO.setBranchBankName("中国民生银行股份有限公司潍坊寿光支行");
+		userInfoBO.setCell("138881818182");
+		userInfoBO.setType(EnumBindCardType.P.getCode());
+		BaseBO baseBO = userService.bindBankCard(userInfoBO);
+		System.err.println(JSON.toJSON(baseBO));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void queryUserBankInfosTest2(){		
+		UserBankInfoBO bo = userService.queryUserBankInfos("1000001","10000004702");
+		System.out.println(JSON.toJSON(bo));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void updateBankCardStatusTest(){		
+		BaseBO bo = userService.updateBankCardStatus("1000001","10000004702", "62071243922600221", "S");
+		System.out.println(JSON.toJSON(bo));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testregister(){	
+		RegistParamBo bo =new RegistParamBo();
+		bo.setIdNo("88888888");
+		bo.setMerchantId("88888888");
+		bo.setPhoneNo("88888888");
+		bo.setRealName("88888888");
+		RegistReturnValueBo returnBo = userService.register(bo);
+		System.out.println(JSON.toJSON(returnBo));
+	}
+	
+	@Test
+	public void testsearchUserId(){	
+		//10000008977
+		String  returnBo = userService.searchUserId("88888888");
+		System.out.println(JSON.toJSON(returnBo));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testfindUserRealnameStatus(){	
+		//10000003813 
+		UserRealNamedStatusRsBO  returnBo = memberService.findUserRealnameStatus("10000004008");
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testRealNameFaile(){	
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000008719");//10000003813
+		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
+		paramBo.setStatus(EnumStatus.FAI.getCode());
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testRealNameSuc(){	
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000004280");//10000008719  10000004008
+		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
+		paramBo.setStatus(EnumStatus.SUCCESS.getCode());
+		paramBo.setBankCardNo("6254874556423D3");// 银行卡号
+		paramBo.setCardType("1");
+		paramBo.setBankCode("ICBC");
+		paramBo.setBankName("工商e银行");
+		paramBo.setProvince("北e京");
+		paramBo.setPhone("15010658483");
+		paramBo.setCity("北京");
+		paramBo.setBranchBankId("110454543");
+		paramBo.setBranchBankName("工商xx银行3");
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+}

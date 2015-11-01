@@ -1,0 +1,310 @@
+﻿<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>先锋支付--用户注册</title>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
+<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
+  </head>
+<body>
+<c:import url="/common/head.htm"></c:import>
+<section class="bgc-gray">
+  <div class="box">
+    <div class="main">
+        <div class="h_steps w914">
+        	<div class="h_steps_base">
+            	<div class="h_steps_green w475"></div>
+            </div>
+            <div class="h_steps1 h_steps_cur">
+            	<span>1</span>
+                <p>验证账户名</p>
+            </div>
+            <div class="h_steps2 h_steps_cur">
+            	<span>2</span>
+                <p>设置身份信息</p>
+            </div>
+            <div class="h_steps3 h_steps_cur">
+            	<span>3</span>
+                <p>设置提现方式</p>
+            </div>
+            <div class="h_steps4 w84">
+            	<span>4</span>
+                <p>成功</p>
+            </div>
+        </div>
+        <div class="w902 mauto">
+            <div class="pt10 pb100">
+            <div class="u_txtiptx mauto">
+           	 为了给您提供更完善便捷的提现和金融服务，<span class="color-yellow1 mr20">需要您设置提现银行卡（包含实名认证）。</span>
+            <p><span class="color-yellow1 mr20">成功后就能立刻开始付款，同时享受各种先锋支付提供的提现和充值服务。</span><a href="${staticMemberPath}/reg/regFinish.do" class="ml10">跳过完成支付</a></p>
+        </div> 
+              <form action="${basePath}/reg/realNameAuth.htm" id="realNameAuthForm" name="realNameAuthForm" method="post">
+              <input type="hidden" name="token" value="${requestScope.token}" />
+                 <p class="f16 pt10"><strong class="color-yellow1">设置提现银行卡</strong> </p>
+                 <table width="100%">
+                   	<colgroup>
+                       	<col width="155">
+                        <col width="745">
+                    </colgroup>
+                    <tbody class="h_open_tab f14">
+                       <tr>
+                            <th>姓名：</th>
+                             <td>${realName}</td>
+                            </tr>
+                            <tr>
+                            	<th>身份证： </th>
+                                <td>${showCertNo }   
+                                <c:if test="${union=='0'}">
+                           			<span class="color-red pl20">存在客户信息，已经关联</span> 
+                           		 </c:if>	
+                           		</td>
+                            </tr>
+                            
+                           
+                        	<tr>
+                            	<th>银行卡号：</th>
+                                <td>
+                                    <input type="text" name="bankCardNo" id="bankCardNo" class="h_open_ipt" maxlength="23" placeholder="8888 0000 8783 879">
+                                    <span class="msg-box" for="bankCardNo"></span>
+                                     <input type="hidden" id="bankCode" name="bankCode">
+                                    <input type="hidden" id="bankName" name="bankName" >
+                                    <input type="hidden" id="prov" name="prov" >
+                                    <input type="hidden" id="cityna" name="cityna" >
+                                    <input type="hidden" id="branchName" name="branchName" >
+                                     <input type="hidden" id="issure" name="issure" >
+                                </td>
+                            </tr>
+                           
+                            <tr id="playPara">
+                            	<th>开户行地址：</th>
+                                <td>
+                                	<select name="province" id="province" class="h_open_sel">
+                                    	<option value="No">--选择--</option>
+                                    </select>
+                                    <label class="h_open_lab">省</label>
+                                    <select name="city" id="city"  class="h_open_sel">
+                                    	<option value="No">--选择--</option>
+                                    </select>
+                                    <label class="h_open_lab">地区</label>
+                                    <select  id="branchBank" name="branchBank"  class="h_open_sel">
+                                    	<option value="No">--支行--</option>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr><td></td><td><p class="color-gray1">为了验证您的取现银行卡有效性，我们要扣除您银行卡中一分钱并充到您的账户。提示： 招行，民生不显示，其他支持银行显示</p></td></tr>
+                            <tr>
+                            	<th></th>
+                                <td>
+                                	<input id="realauthsubmit" type="submit" value="提交" class="but-gray but-yellow w130 mr15">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<c:import url="/common/footer.htm"></c:import>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#realNameAuthForm').validator({
+		stopOnError: false,
+		 timely: true,
+		 rules: {
+			 card: [/^[\d\s]{15,23}$/, '卡号格式错误'],
+			 checkCard: function(element, params){
+				 var card = element.value.replace(/\D/g,'');
+				 if(card.length < 12  || card.length > 19 ){
+					 return "卡号必须在12到19位之间";
+				 }
+				 $('#cardNo').val(card);
+				 return true;
+			},branchBankRequired: function(element, params){
+				var bankcode =  $('#bankCode').val();
+				if(bankcode == 'CCB'){
+					return true;
+				}
+				 var b = $("#branchBank ").val();
+				 if(b==null || b=='' || b=='No'){
+					 return '请选择开户支行';
+				 }
+				 return true;
+			 }, checkCardBIN: function(element){
+					return $.ajax({
+						url: '${basePath}/bank/checkCardBIN.do',
+						type: 'post',
+						data: element.name +'='+ element.value+"&cardType=1",
+						dataType: 'json',
+						success: function(d){
+							$('#bankCode').val(d.bankCode);
+							$('#bankName').val(d.bankName);
+							
+							if(d.bankCode=='CCB'){
+								$('#playPara').hide();
+							}else{
+								$('#playPara').show();
+							}
+							
+						}
+					});
+			},bankVali: function(element, params){
+				var bankcode =  $('#bankCode').val();
+				if(bankcode == 'CMBC'||bankcode == 'CMB'){
+					return '不支持该行！';
+				}
+				 return true;
+			 },bankIdnotSam: function(element, params){
+					
+					if('8888 0000 8783 879'==element.value){
+						return '不能使用示例卡号！';
+					}
+					 return true;
+				 }
+		},
+		fields: {
+		   'bankCardNo':'required;card;checkCard;checkCardBIN;bankVali;bankIdnotSam;',
+		   'branchBank':'required;branchBankRequired;' 
+		}
+	});
+	
+	var bankcardNo = '';
+	$('#bankCardNo').on('valid.field', function(e, result, me){
+		var cardNo = $('#bankCardNo').val();
+		if(bankcardNo == cardNo){
+			return;
+		}else{
+			bankcardNo = cardNo;
+		}
+		$.ajax({ //一个Ajax过程 
+			 type: "post", //以post方式与后台沟通 
+			 url : "${basePath}/bank/queryBranchInfo.do", //与此后台沟通 
+			 dataType:'json',
+			 data: 'type=P&bankCardNo=' + cardNo,
+			 async:false,
+			 success: function(result){
+				 if(result.status == 'S'){
+					 if(result.data!=null){
+						 $("#province").empty();
+						 $('#province').append('<option value="No" selected="selected">--选择--</option>');
+						 for(var i=0;i<result.data.length;i++)
+						 {
+						 	$("#province").append("<option value=\""+ result.data[i].provinceCode +"\" >"+ result.data[i].provinceName +"</option>");
+						 }
+						 changeProvince();
+					 }
+					 //console.log(result);
+				 }else{
+					alert('联行号查询错误！'); 
+				 }
+			},
+			error: function(result){
+				alert('联行号查询错误！'); 
+			}
+		});
+	});
+	$('#province').change(function(){
+		var prov = $("#province").find("option:selected").text();
+		$('#prov').val(prov);
+		changeProvince();
+	});	
+	
+	function changeProvince(){
+		var provinceCode = $('#province').val();
+		if(provinceCode == null || provinceCode=='' || provinceCode=='No'){
+			$("#city").empty();
+			$('#city').append('<option value="No" selected="selected">--选择--</option>');	
+			changeCity();
+			return;
+		}
+		$.ajax({ //一个Ajax过程 
+			 type: "post", //以post方式与后台沟通 
+			 url : "${basePath}/bank/queryBranchInfo.do", //与此后台沟通 
+			 dataType:'json',
+			 data: 'type=C&bankCardNo=' + $('#bankCardNo').val() + "&provinceCode=" + provinceCode,
+			 async:false,
+			 success: function(result){
+				 if(result.status == 'S'){
+					 if(result.data!=null){
+						 $("#city").empty();
+						 $('#city').append('<option value="No" selected="selected">--选择--</option>');
+						 for(var i=0;i<result.data.length;i++)
+						 {
+						 	$("#city").append("<option value=\""+ result.data[i].cityCode +"\" >"+ result.data[i].cityName +"</option>");
+						 }
+						 changeCity();
+					 }
+					 //console.log(result);
+				 }else{
+					alert('联行号查询错误！'); 
+				 }
+			},
+			error: function(result){
+				alert('联行号查询错误！'); 
+			}
+		});
+	}
+	
+	$('#city').change(function(){
+		var cy = $("#city").find("option:selected").text();
+		$('#cityna').val(cy);
+		changeCity();
+	});	
+	$("#branchBank").change(function(){
+		var bk = $("#branchBank").find("option:selected").text();
+		var issure=$("#branchBank").find("option:selected").val();
+		$('#branchName').val(bk);
+		$('#issure').val(issure);
+	});
+	
+	function changeCity(){
+		var provinceCode = $('#province').val();
+		var cityCode = $('#city').val();
+		if(provinceCode == null || provinceCode=='' || provinceCode=='No' 
+				|| cityCode == null || cityCode=='' || cityCode=='No'){
+			$("#branchBank").empty();
+			$('#branchBank').append('<option value="No" selected="selected">--支行--</option>');	
+			return;
+		}
+		$.ajax({ //一个Ajax过程 
+			 type: "post", //以post方式与后台沟通 
+			 url : "${basePath}/bank/queryBranchInfo.do", //与此后台沟通 
+			 dataType:'json',
+			 data: 'type=B&bankCardNo=' + $('#bankCardNo').val()+ "&provinceCode=" + provinceCode + "&cityCode=" + cityCode,
+			 async:false,
+			 success: function(result){
+				 
+				 if(result.status == 'S'){
+					 if(result.data!=null){
+						 $("#branchBank").empty();
+						 $('#branchBank').append('<option value="No" value="No" selected="selected">--选择--</option>');
+						 for(var i=0;i<result.data.length;i++)
+						 {
+						 	$("#branchBank").append("<option value=\""+ result.data[i].subBankIdentity +"\" >"+ result.data[i].subBankName +"</option>");
+						 }
+					 }
+					// console.log(result);
+				 }else{
+					alert('联行号查询错误！'); 
+				 }
+			},
+			error: function(result){
+				alert('联行号查询错误！'); 
+			}
+		});
+	}
+	
+	$('#bankCardNo').keyup(function(){
+		 this.value =this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+	});	
+	
+	$('#bankCardNo').change(function(){
+		 this.value =this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+	});	
+	
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,54 @@
+<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/commons/local/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.blockUI.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/customer/com.ucf.customer.base.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/customer/com.ucf.customer.sms.js"></script>
+
+
+<!--[if lte IE 9]>
+<script src="js/common/html5shiv.js"></script>
+<![endif]-->
+<script type="text/javascript" src="${staticMemberPath}/js/commons/lang.js"></script>
+
+
+<!--private js&css start-->
+<script type="text/javascript" src="${staticMemberPath}/new/js/common/common.js"></script>
+
+<!--private js&css end-->
+
+<!--[if lte IE 9]>
+<script type="text/javascript" src="${staticMemberPath}/js/commons/html5shiv.js"></script>
+<![endif]-->
+   
+    <script type="text/javascript">
+        var APP_ROOT = '';
+        var ERROR_IMG = '/static/v1/images/common/image_err.gif';
+        var send_span = 60000;
+        
+        function sendSMSNew(cellNo,smsType) {
+        	var param = {
+        			cellNo: cellNo,
+        			smsType : smsType
+        		};
+        	$.ajax({
+        		type:'POST',
+        		async:true,
+        		timeout:30000,
+        		url:'${basePath}/sms/send.htm',
+        		data:param,
+        		beforeSend:function() {
+        			$('#validPhoneCode').attr("disabled","disabled");
+        		},
+        		error:function(){
+        			$('#validPhoneCode').removeAttr("disabled");
+        		},
+        		success:function(result) {
+        			freezeTime();
+        		},
+        		dataType:"json"
+        	});
+        }
+    </script>
+    <script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.validator.js"></script>
+    <script type="text/javascript" src="${staticMemberPath}/js/commons/local/zh_CN.js"></script>

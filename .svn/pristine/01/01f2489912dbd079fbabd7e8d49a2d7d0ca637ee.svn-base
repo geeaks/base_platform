@@ -1,0 +1,231 @@
+package com.ucf.customer.bo;
+
+import java.util.Date;
+
+
+public class RegisterParamBO  implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 5760301159867445428L;
+	
+	public static final String SPECIAL_ACCOUNT = "S";
+	
+	public static final String COMMON_ACCOUNT = "C";
+	
+	/**
+	 * 账户类型（专户 S、普通户）
+	 */
+	private String type;
+	
+	/**
+	 * 手机号
+	 */
+	private String phoneNo;
+	
+	private String email;
+	
+	/**
+	 * 用户类型 ：  参考枚举 EnumUserType
+	 */
+	private int userType;
+	
+	/**
+	 * 真实名称
+	 */
+	private String realName;
+	
+	
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	/**
+	 * 证件类型号（IDC身份证，其他支持类型等待确定） 参考 EnumIdCardType
+	 */
+	private String certType;
+	
+	/**
+	 * 证件号
+	 */
+	private String certNo;
+	
+	/**
+	 * 证件有效期开始时间
+	 */
+	private Date certValidBeginDate;
+	
+	/**
+	 * 证件有效期结束时间
+	 */
+	private Date certValidEndDate;
+	
+	/**
+	 * 1 web端  2 移动端
+	 */
+	private String source;
+	
+	/**
+	 * 注册来源
+	 */
+	private String regFrom;
+	
+	/**
+	 * 外部用户ID
+	 */
+	private String refUser;
+	/**
+	 * 外部关联商户
+	 */
+	private String refMerchant;
+	
+	/**
+	 * 登录密码
+	 */
+	private byte [] loginPwd;
+	/**
+	 * 支付密码
+	 */
+	private byte [] payPwd;
+	
+	/**
+	 * 安全问题
+	 */
+	private String  ques;
+	
+	/**
+	 * 问题答案
+	 */
+	private String answ;
+
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getPhoneNo() {
+		return phoneNo;
+	}
+
+	public void setPhoneNo(String phoneNo) {
+		this.phoneNo = phoneNo;
+	}
+
+	public int getUserType() {
+		return userType;
+	}
+
+	public void setUserType(int userType) {
+		this.userType = userType;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getCertType() {
+		return certType;
+	}
+
+	public void setCertType(String certType) {
+		this.certType = certType;
+	}
+
+	public Date getCertValidBeginDate() {
+		return certValidBeginDate;
+	}
+
+	public void setCertValidBeginDate(Date certValidBeginDate) {
+		this.certValidBeginDate = certValidBeginDate;
+	}
+
+	public Date getCertValidEndDate() {
+		return certValidEndDate;
+	}
+
+	public void setCertValidEndDate(Date certValidEndDate) {
+		this.certValidEndDate = certValidEndDate;
+	}
+
+	public String getCertNo() {
+		return certNo;
+	}
+
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
+	}
+
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
+	}
+
+	public String getRegFrom() {
+		return regFrom;
+	}
+
+	public void setRegFrom(String regFrom) {
+		this.regFrom = regFrom;
+	}
+
+	public String getRefUser() {
+		return refUser;
+	}
+
+	public void setRefUser(String refUser) {
+		this.refUser = refUser;
+	}
+
+	public String getRefMerchant() {
+		return refMerchant;
+	}
+
+	public void setRefMerchant(String refMerchant) {
+		this.refMerchant = refMerchant;
+	}
+
+	public byte[] getLoginPwd() {
+		return loginPwd;
+	}
+
+	public void setLoginPwd(byte[] loginPwd) {
+		this.loginPwd = loginPwd;
+	}
+
+	public byte[] getPayPwd() {
+		return payPwd;
+	}
+
+	public void setPayPwd(byte[] payPwd) {
+		this.payPwd = payPwd;
+	}
+
+	public String getQues() {
+		return ques;
+	}
+
+	public void setQues(String ques) {
+		this.ques = ques;
+	}
+
+	public String getAnsw() {
+		return answ;
+	}
+
+	public void setAnsw(String answ) {
+		this.answ = answ;
+	}
+}

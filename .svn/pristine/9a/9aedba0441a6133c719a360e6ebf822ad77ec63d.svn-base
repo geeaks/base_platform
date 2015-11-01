@@ -1,0 +1,43 @@
+package com.ucf.customer.dao.interceptor;
+/**
+ * 分页方言，主要是用于把分页的SQL拼接出来
+ * 
+ * 在XML中使用select * from XXX 的时候可能 会出现问题，尽量统一使用如下 方法来
+ * select x.* from XXX x
+ * 
+ * 
+ * @author 于增佳
+ *
+ */
+public class MysqlDialect extends Dialect{
+
+	public boolean supportsLimit() {
+		return true;
+	}
+	
+	public boolean supportsLimitOffset(){
+		return true;
+	}
+
+	public String getLimitString(String sql, int offset,String offsetPlaceholder, int limit, String limitPlaceholder) {
+        String pagingSelects="";
+		StringBuffer pagingSelect = new StringBuffer( sql.length()+100 );
+
+		if (limit > 0) {
+			String selectSql = "";
+
+			selectSql = sql;
+		
+			pagingSelect.append("select rows_.* from (select row_.*,rownum as rnum from (").append(selectSql);
+
+			pagingSelect.append(") row_ where rownum <=").append(offset+limit-1).append(") rows_ where rows_.rnum>=").append(offset);
+		}else{
+			pagingSelect.append(sql);
+		}
+
+		pagingSelects=pagingSelect.toString();
+
+		return pagingSelects;
+	}
+	
+}

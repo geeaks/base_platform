@@ -1,0 +1,214 @@
+package com.ucf.customer.test.api;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.bo.BaseResultBO;
+import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.MemberRegisterBO;
+import com.ucf.customer.api.bo.RealNameParamBO;
+import com.ucf.customer.api.enums.EnumCertStatus;
+import com.ucf.customer.api.enums.EnumStatus;
+import com.ucf.customer.test.BaseTest;
+import com.ucf.customer.ws.bo.RegistParamBo;
+import com.ucf.customer.ws.bo.RegistReturnValueBo;
+import com.ucf.customer.ws.service.ServiceInterfaceWS;
+import com.ucf.customer.ws.service.UserServiceWS;
+import com.ucf.platform.framework.mq.UcfReceiveMessage;
+
+/**
+ * @Description: 1.会员安全等级 2.白名单认证 3.快捷认证
+ * @ClassName: MemberSecurityLevelTest
+ * @author gaoxiang
+ * @date 2015-3-13 上午11:34:58
+ */ 
+public class MemberSecurityLevelTest extends BaseTest {
+	
+	@Autowired
+	private MemberService memberService;
+	@Autowired
+	private ServiceInterfaceWS serviceInterfaceWSImpl;
+	@Autowired
+	private UserServiceWS userServiceWS;
+	
+//	@Resource(name = "whiteListMQConsumerService")
+//	private ConsumeService whiteListMQConsumerService;
+	
+	/*************************  注册认证  *************************/
+	//1.会员PC端 注册开户：注册实名认证 0
+	
+	//2.基金支付 注册开户：注册实名认证 0
+	
+	//3.碧天联创P2P个人用户 注册开户: 注册实名认证 0
+	
+	//4.工资宝用户 注册开户：注册实名认证 0
+	@Test
+	@Rollback(false)
+	public void 工资宝用户(){
+		MemberRegisterBO userBo = new MemberRegisterBO();
+		userBo.setMerchantId("M26011112121");
+		userBo.setRefUserId("T260235687");
+		userBo.setBankCardNo("6212260200024937523");
+		userBo.setBankCardType("1");
+		userBo.setBankCode("ICBC");
+		userBo.setBankName("工商银行");
+		userBo.setBranchId("102100021650");
+		userBo.setProvince("北京市");
+		userBo.setCity("北京市");
+		userBo.setBranchName("中国工商银行股份有限公司北京国防大学支行");
+		userBo.setCertNo("130406198812130916");
+		userBo.setCertStatus("TRANSFER_CERT");
+		userBo.setCertType("IDC");
+		userBo.setEmail("vsgaoxiang@126.com");
+		userBo.setName("毕云涛");
+		userBo.setPhone("18811511066");
+		MemberCommonResult<String> rs = memberService.registerGZBUser(userBo);
+		System.err.println(JSON.toJSONString(rs));
+	}
+	
+	//5.H5托管用户 注册开户：注册实名认证 0
+	@Test
+	@Rollback(false)
+	public void H5托管用户(){
+		MemberRegisterBO memberBo = new MemberRegisterBO();
+		memberBo.setRefUserId("10000000000");
+		memberBo.setMerchantId("testmerchantId");
+		memberBo.setCertType("IDC");
+		memberBo.setCertNo("130406199105200915");
+		memberBo.setPhone("10000000000");
+		memberBo.setEmail("vsflyhigh@qq.com");
+		MemberCommonResult<String> registerManagedUser = 
+				memberService.registerManagedUser(memberBo);
+		System.err.println(JSON.toJSON(registerManagedUser));
+	}
+	
+	//6.P2p pc端 注册开户：注册实名认证 0
+	@Test
+	@Rollback(false)
+	public void P2p注册开户(){
+		RegistParamBo registParamBo = new RegistParamBo();
+		registParamBo.setIdNo("130406199105200915");
+		registParamBo.setIdType("IDC");
+		registParamBo.setMerchantId("M123456789");
+		registParamBo.setPhoneNo("18811511061");
+		registParamBo.setRealName("路人甲");
+		RegistReturnValueBo registReturnValueBo = userServiceWS.register(registParamBo);
+		System.err.println(JSON.toJSON(registReturnValueBo));
+	}
+	
+	//7.P2P 移动端 注册开户：注册实名认证 0
+	@Test
+	@Rollback(false)
+	public void P2p移动端注册开户(){
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode","UMPS0004");
+		map.put("merchantId","M123456");
+		map.put("phoneNo","13811811157");
+		map.put("realName","杨洋");
+		map.put("certType","IDC");
+		map.put("certNo", "232722198305150219");
+		map.put("reqReserved","");
+		map.put("signature", "Y");
+		Map<String,String> resultMap = serviceInterfaceWSImpl.service(map);
+		System.err.println(resultMap);
+	}
+	
+	/*************************  普通认证、绑卡  *************************/
+	//1． 小额打款认证：普通实名认证 1
+	@Test
+	@Rollback(false)
+	public void 小额打款(){
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000004008");
+		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
+		paramBo.setStatus(EnumStatus.SUCCESS.getCode());
+		paramBo.setBankCardNo("6254874556423D3");// 银行卡号
+		paramBo.setCardType("1");
+		paramBo.setBankCode("ICBC");
+		paramBo.setBankName("工商e银行");
+		paramBo.setProvince("北e京");
+		paramBo.setPhone("15010658483");
+		paramBo.setCity("北京");
+		paramBo.setBranchBankId("110454543");
+		paramBo.setBranchBankName("工商xx银行3");
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	//2． 快捷认证：普通实名认证 1
+	@Test
+	@Rollback(false)
+	public void 快捷认证(){
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000004008");
+		paramBo.setCertType(EnumCertStatus.FASTPAY_CERT.getCode());
+		paramBo.setStatus(EnumStatus.SUCCESS.getCode());
+		paramBo.setBankCardNo("6254874556423D56");// 银行卡号
+		paramBo.setCardType("1");
+		paramBo.setBankCode("ICBC");
+		paramBo.setBankName("工商e银行");
+		paramBo.setProvince("北e京");
+		paramBo.setPhone("15010658483");
+		paramBo.setCity("北京");
+		paramBo.setBranchBankId("110454543");
+		paramBo.setBranchBankName("工商xx银行3");
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	/*************************  高级认证、绑卡  *************************/
+	//1. 小额转账认证: 高级实名认证 2
+	@Test
+	@Rollback(false)
+	public void 小额转账(){
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000004008");
+		paramBo.setCertType(EnumCertStatus.TRANSFER_CERT.getCode());
+		paramBo.setStatus(EnumStatus.SUCCESS.getCode());
+		paramBo.setBankCardNo("6254874556423D3");// 银行卡号
+		paramBo.setCardType("1");
+		paramBo.setBankCode("ICBC");
+		paramBo.setBankName("工商e银行");
+		paramBo.setProvince("北e京");
+		paramBo.setPhone("15010658483");
+		paramBo.setCity("北京");
+		paramBo.setBranchBankId("110454543");
+		paramBo.setBranchBankName("工商xx银行3");
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	//2. 照片审核认证：高级实名认证 2
+	@Test
+	@Rollback(false)
+	public void 照片审核(){
+		MemberCommonResult<String> rs = memberService.auditPhotoAuth("201411111000000000","S","xxxx","geeaks");
+		System.err.println(JSON.toJSON(rs));
+	}
+	
+	//3. 风控白名单认证：高级实名认证 2
+	@Test
+	@Rollback(false)
+	public void 白名单认证(){
+		UcfReceiveMessage msg = new UcfReceiveMessage();
+		Map<String,Object> map = new HashMap<String,Object>();
+		//身份证号
+		map.put("certNo", "130406199105200915");
+		//关联商户号
+		map.put("refMerchant", "M123456789");
+		//通过与否 true 通过 false取消
+		map.put("status", true);
+		msg.setBizValue(map);
+//		UcfMQConsumeStatus doConsume = whiteListMQConsumerService.doConsume(msg);
+//		System.err.println(JSON.toJSONString(doConsume));
+	}
+	
+}

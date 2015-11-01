@@ -1,0 +1,50 @@
+package com.ucf.customer.utils;
+
+import java.lang.reflect.InvocationTargetException;
+import java.math.BigDecimal;
+import java.util.List;
+
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.beanutils.ConvertUtils;
+import org.apache.commons.beanutils.converters.BigDecimalConverter;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+public final class BeanUtilEx extends BeanUtils {
+	private static final UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(BeanUtilEx.class);
+	private static final BigDecimal BIGDECIMAL_ZERO = new BigDecimal("0");
+	static {
+		BigDecimalConverter bd = new BigDecimalConverter(BIGDECIMAL_ZERO);
+		ConvertUtils.register(bd, java.math.BigDecimal.class);
+		ConvertUtils.register(new DateConvert(), java.util.Date.class);
+		ConvertUtils.register(new DateConvert(), java.sql.Date.class);
+		ConvertUtils.register(new DateConvert(), java.sql.Timestamp.class);
+	}
+
+	public static void copyProperties(Object dest, Object orig) {
+		try {
+			BeanUtils.copyProperties(dest, orig);
+		} catch (IllegalAccessException ex) {
+			LOGGER.error(ex.getMessage(),ex);
+		} catch (InvocationTargetException ex) {
+			LOGGER.error(ex.getMessage(),ex);
+		}
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	public static void copyPropertiesList(Object dest, Object orig,@SuppressWarnings("rawtypes") Class destClass) {
+		try {
+			List<Object> destlList = (List<Object>) dest;
+			List<Object> origlList = (List<Object>) orig;
+			for (Object object : origlList) {
+				Object destObject = destClass.newInstance();
+				BeanUtils.copyProperties(destObject, object);
+				destlList.add(destObject);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage());
+		} 
+
+	}
+}

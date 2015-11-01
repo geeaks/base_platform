@@ -1,0 +1,93 @@
+package com.ucf.customer.service.out;
+
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ucf.account.ws.bo.AccountReturnValueBO;
+import com.ucf.account.ws.bo.OpenAccountParamBO;
+import com.ucf.account.ws.bo.OpenAccountReturnValueBo;
+import com.ucf.account.ws.bo.SearchAccountParamBo;
+import com.ucf.account.ws.service.OpenAccountWS;
+import com.ucf.account.ws.service.SearchAccountWS;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.TransCode;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.log.LoggerLevel;
+import com.ucf.platform.framework.log.annotation.DigestLogAnnotated;
+
+@Service("accountApiService")
+public class AccountService {
+
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(AccountService.class);
+	
+	@Autowired
+	private OpenAccountWS openAccountWSClient;
+	
+	@Autowired
+	private SearchAccountWS wsSearchAccountServiceClient;
+	
+	public ResultBo createAcccount(String cardNo,String accountType) {
+		OpenAccountParamBO openAccountParamBO = new OpenAccountParamBO();
+		openAccountParamBO.setCardId(cardNo);
+		openAccountParamBO.setAccountType(accountType);
+		openAccountParamBO.setCreateOperator(Constants.OPERATE);
+		openAccountParamBO.setCurrency(Constants.TRANS_CUR);
+		openAccountParamBO.setBalanceDirection(Constants.BANLANCE_DIR);
+		openAccountParamBO.setTransCode(TransCode.OPENACCOUNT.getTransCode());
+		openAccountParamBO.setSubTransCode(TransCode.OPENACCOUNT.getSubTransCode());
+		openAccountParamBO.setOutOrderNo(UUID.randomUUID().toString());
+		openAccountParamBO.setTransRule(Constants.TRANS_RULE_YES);
+		ResultBo bo  = new ResultBo();
+		try{
+			final OpenAccountReturnValueBo ret = openAccountWSClient.openAccount(openAccountParamBO);
+			LOGGER.info("调用账务开户返回信息:"+SensitiveInfoUtils.getJson(ret));//账务系统修改
+			if(null != ret && ret.getCode().compareTo("0000") == 0){
+				bo.setResult(EnumResultCode.SUCCESS.getCode());
+				bo.setResultObject(ret.getAccountNo());
+			}else{
+				LOGGER.info("调用开户接口传入参数：" + SensitiveInfoUtils.getJson(openAccountParamBO));//交易系统修改
+				LOGGER.info("调用开户接口输出参数：" + SensitiveInfoUtils.getJson(ret));//交易系统修改
+				bo.setResult(EnumResultCode.ERROR.getCode());
+				bo.setMsg("调用账务开户失败");
+			}
+		}catch(Exception e){
+			bo.setResult(EnumResultCode.ERROR.getCode());
+			bo.setMsg("调用账务开户异常");
+			LOGGER.error("调用账务开户异常", e);
+		}
+		return bo;
+	}
+	
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public ResultBo searchAccount(String accountId){
+		SearchAccountParamBo accBalanceParamBO = new SearchAccountParamBo();
+		accBalanceParamBO.setAccountNo(accountId);
+		accBalanceParamBO.setTransCode(Constants.TRANS_CODE);
+		accBalanceParamBO.setSubTransCode(Constants.SUB_TRANS_CODE);
+		ResultBo bo = new ResultBo();
+		try{
+			AccountReturnValueBO rtBO = wsSearchAccountServiceClient.searchAccount(accBalanceParamBO);		
+			if(null != rtBO && rtBO.getCode().compareTo("0000") == 0){
+				bo.setResult(EnumResultCode.SUCCESS.getCode());
+				bo.setResultObject(rtBO);
+			}else{
+				LOGGER.info("调用账务查询接口传入参数：" + SensitiveInfoUtils.getJson(accBalanceParamBO));//交易系统修改
+				LOGGER.info("调用账务查询接口输出参数：" + SensitiveInfoUtils.getJson(rtBO));//交易系统修改
+				bo.setResult(EnumResultCode.ERROR.getCode());
+				bo.setMsg("调用账务查询余额失败");
+			}
+		}catch(Exception e){
+			bo.setResult(EnumResultCode.ERROR.getCode());
+			bo.setMsg("调用账务查询余额异常");
+			LOGGER.error("调用账务查询余额异常", e);
+		}
+		return bo;
+	}
+	
+}

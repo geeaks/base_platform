@@ -1,0 +1,111 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html>
+<head>
+<title>先锋支付--用户login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!-- Bootstrap -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+<style>
+	.bs-header .container {
+position: relative;
+}
+
+.bs-header {
+padding: 30px 15px 40px;
+font-size: 16px;
+text-align: center;
+text-shadow: 0 1px 0 rgba(0,0,0,.15);
+}
+</style>
+
+</head>
+<body>
+	 <!-- Docs master nav -->
+    <header class="navbar navbar-inverse navbar-fixed-top bs-docs-nav" role="banner">
+  <div class="container">
+    <div class="navbar-header">
+      <button class="navbar-toggle" type="button" data-toggle="collapse" data-target=".bs-navbar-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a href="../" class="navbar-brand">Bootstrap</a>
+    </div>
+    <nav class="collapse navbar-collapse bs-navbar-collapse" role="navigation">
+      <ul class="nav navbar-nav">
+        <li class="active">
+          <a href="../getting-started">起步</a>
+        </li>
+        <li>
+          <a href="../css">CSS</a>
+        </li>
+        <li>
+          <a href="../components">组件</a>
+        </li>
+        <li>
+          <a href="../javascript">JavaScript插件</a>
+        </li>
+        <li>
+          <a href="../customize">定制</a>
+        </li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a href="../about">关于</a>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+	<!-- Docs page layout -->
+    <div class="bs-header" id="content">
+      <div class="container">
+        <h1>起步</h1>
+        <p>简要介绍Bootstrap，以及如何下载、使用，基本模版和案例，等等。</p>
+        
+      </div>
+    </div>
+	
+	<div class = "container bs-docs-container">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="bs-sidebar hidden-print affix-top" role="complementary">
+				<ul class="nav bs-sidenav">
+					<li class="active">
+						<a href="#download">下载Bootstrap</a>
+						<ul class="nav">
+							<li><a href="#download-compiled">编译后的CSS、JS和字体文件</a></li>
+							<li class=""><a href="#download-additional">额外的下载渠道</a></li>
+							<li class=""><a href="#download-cdn">Bootstrap CDN</a></li>
+						</ul>
+					</li>
+					<li class="">
+					  <a href="#whats-included">包含了哪些文件</a>
+					  <ul class="nav">
+						<li class=""><a href="#whats-included-precompiled">编译版</a></li>
+						<li class=""><a href="#whats-included-source">源码</a></li>
+					  </ul>
+					</li>             
+				</ul>
+          </div>
+			</div>
+			<div class="col-md-9" role="main">
+			aaa
+			</div>
+		</div>
+	</div>
+	<!-- /.container -->
+
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script
+		src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+</body>
+</html>

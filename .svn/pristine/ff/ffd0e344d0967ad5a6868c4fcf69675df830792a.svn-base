@@ -1,0 +1,52 @@
+package com.ucf.customer.test;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.ws.bo.CardInfoParamBO;
+import com.ucf.customer.ws.bo.CardInfoReturnValueBO;
+import com.ucf.customer.ws.bo.VerifyBO;
+import com.ucf.customer.ws.bo.WebServiceParamBO;
+import com.ucf.customer.ws.bo.WebServiceReturnValueBO;
+import com.ucf.customer.ws.service.CardInfoWS;
+import com.ucf.customer.ws.service.QueryBankCards;
+
+public class CardInfoWSTest extends BaseTest{
+	
+	@Autowired
+	private CardInfoWS cardInfoWS;
+	
+	@Autowired
+	private QueryBankCards queryBankCards;
+	
+	@Test
+	public void queryCardInfo(){
+		CardInfoParamBO cardInfoParamBO = new CardInfoParamBO();
+		cardInfoParamBO.setCardNo("10000003264");
+		
+		CardInfoReturnValueBO  cardInfoReturnValueBO = cardInfoWS.queryCardInfo(cardInfoParamBO);
+		
+		System.err.println(cardInfoReturnValueBO);
+		
+	}
+	
+	@Test
+	public void queryBankCards(){
+		WebServiceParamBO webServiceParamBO = new WebServiceParamBO();
+		webServiceParamBO.setUserId("10000003264");
+		WebServiceReturnValueBO webServiceReturnValueBO =  queryBankCards.queryBankCards(webServiceParamBO);
+		
+		System.err.println(webServiceReturnValueBO);
+	}
+	
+	@Test
+	public void vifyPwd(){
+		
+		VerifyBO bo = cardInfoWS.verifyPayPassword("12323342324", "10000005037", "12345".getBytes());
+		System.out.println(JSON.toJSONString(bo));
+	}
+	
+	
+
+}

@@ -1,0 +1,22 @@
+package com.ucf.customer.ws.bo.enterprise;
+
+import java.io.Serializable;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class VerifyEmailRequestBO implements Serializable{
+
+	private static final long serialVersionUID = 7745819626156821453L;
+	//商户邮箱
+	@SensitiveInfo(type=SensitiveType.EMAIL)
+	private String email;
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+}

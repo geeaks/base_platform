@@ -1,0 +1,117 @@
+package com.ucf.customer.ws.bo;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * 身份证信息
+ * IDCardBo
+ * @author yuzengjia
+ * @date 2014-5-21 上午10:53:21
+ *
+ */
+public class IDCardBo{
+
+	/**
+	 * 平台商id
+	 */
+	private String merchantId;
+	/**
+	 * 身份证号
+	 */
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String cardNo;
+	/**
+	 * 姓名
+	 */
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String realName;
+	/**
+	 * 来源  移动端：mobile
+	 */
+	private String source;
+	/**
+	 * 照片字节串
+	 */
+	private String photoStrbuf;
+	/**
+	 * 原始发证地1
+	 */
+	private String policeAdd;
+	/**
+	 * 原始发证地2
+	 */
+	private String idcOriCt2;
+	
+	private String status; //“00” 执行成功 “01” 执行失败 
+	
+	private String respCode;//‘00’ 成功，其他失败 '01认证失败' ‘02’ 调用 失败
+	
+	private String respMsg;
+	public IDCardBo(){};
+	public IDCardBo(String cardNo,String realName){
+		this.cardNo = cardNo;
+		this.realName = realName;
+	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	public String getPhotoStrbuf() {
+		return photoStrbuf;
+	}
+	public void setPhotoStrbuf(String photoStrbuf) {
+		this.photoStrbuf = photoStrbuf;
+	}
+	public String getPoliceAdd() {
+		return policeAdd;
+	}
+	public void setPoliceAdd(String policeAdd) {
+		this.policeAdd = policeAdd;
+	}
+	public String getIdcOriCt2() {
+		return idcOriCt2;
+	}
+	public void setIdcOriCt2(String idcOriCt2) {
+		this.idcOriCt2 = idcOriCt2;
+	}
+	public String getRespMsg() {
+		return respMsg;
+	}
+	public void setRespMsg(String respMsg) {
+		this.respMsg = respMsg;
+	}
+	public String getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+	public String getCardNo() {
+		return cardNo;
+	}
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public String getStatus() {
+		return status;
+	}
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	public String getRespCode() {
+		return respCode;
+	}
+	public void setRespCode(String respCode) {
+		this.respCode = respCode;
+	}
+	
+}

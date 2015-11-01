@@ -1,0 +1,47 @@
+package com.ucf.customer.utils.enums;
+
+/**
+ * 
+*    
+* 项目名称：member   
+* 类名称：EnumAuthority   
+* 类描述：会员系统登录权限   
+* 创建人：李文静 
+* 创建时间：2014-4-26 上午10:59:52   
+* 修改人：李文静 
+* 修改时间：2014-4-26 上午10:59:52   
+* 修改备注：   
+* @version    
+*
+ */
+public enum EnumAuthority {
+	
+	MEMBER_LOGIN("登录权限",1);
+	
+	private String name;
+	private int code;
+	
+	EnumAuthority(String name,int code){
+		this.name = name;
+		this.code = code;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public int getCode() {
+		return code;
+	}
+
+	public void setCode(int code) {
+		this.code = code;
+	}
+	
+	
+
+}

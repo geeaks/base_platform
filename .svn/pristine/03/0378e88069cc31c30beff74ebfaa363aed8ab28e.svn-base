@@ -1,0 +1,213 @@
+package com.ucf.customer.api.bo;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class MemberRegisterBO  implements java.io.Serializable{
+	
+	private static final long serialVersionUID = -1330031225803010685L;
+	
+	/**
+	 * @Fields merchantId : 商户号
+	 */ 
+	private String merchantId;
+	
+	/**
+	 * @Fields refUserId : 关联用户Id
+	 */ 
+	private String refUserId;
+	
+	/**
+	 * @Fields name : 姓名
+	 */ 
+	private String name;
+	
+	/**
+	 * @Fields certType : 证件类型
+	 */ 
+	private String certType;
+	
+	/**
+	 * @Fields certNo : 证件号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String certNo;
+	
+	/**
+	 * @Fields certStatus : 认证类型
+	 */ 
+	private String certStatus;
+	
+	/**
+	 * @Fields phone : 手机号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String phone;
+	
+	/**
+	 * @Fields email : 邮箱
+	 */ 
+	@SensitiveInfo(type=SensitiveType.EMAIL)
+	private String email;
+	
+	/**
+	 * @Fields bankCardNo : 银行卡号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+	
+	/**
+	 * @Fields bankCardType : 银行卡类型
+	 */ 
+	private String bankCardType;
+	
+	/**
+	 * @Fields bankCode : 银行编码
+	 */ 
+	private String bankCode;
+	
+	/**
+	 * @Fields bankName : 银行名称
+	 */ 
+	private String bankName;
+	
+	/**
+	 * @Fields province : 所在省
+	 */ 
+	private String province;
+	
+	/**
+	 * @Fields city : 所在市
+	 */ 
+	private String city;
+	
+	/**
+	 * @Fields branchName : 支行名称
+	 */ 
+	private String branchName;
+	
+	/**
+	 * @Fields branchId : 支行ID
+	 */ 
+	private String branchId;
+	
+	/**
+	 * @Fields source : 注册来源
+	 */ 
+	private String source;
+	
+	/**
+	 * @Fields registerFrom : 商户端
+	 */ 
+	private String registerFrom;
+	
+	public String getRegisterFrom() {
+		return registerFrom;
+	}
+	public void setRegisterFrom(String registerFrom) {
+		this.registerFrom = registerFrom;
+	}
+	public String getSource() {
+		return source;
+	}
+	public void setSource(String source) {
+		this.source = source;
+	}
+	public String getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+	public String getRefUserId() {
+		return refUserId;
+	}
+	public void setRefUserId(String refUserId) {
+		this.refUserId = refUserId;
+	}
+	public String getCertType() {
+		return certType;
+	}
+	public void setCertType(String certType) {
+		this.certType = certType;
+	}
+	public String getCertNo() {
+		return certNo;
+	}
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public String getCertStatus() {
+		return certStatus;
+	}
+	public void setCertStatus(String certStatus) {
+		this.certStatus = certStatus;
+	}
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+	public String getBankCardType() {
+		return bankCardType;
+	}
+	public void setBankCardType(String bankCardType) {
+		this.bankCardType = bankCardType;
+	}
+	public String getBankCode() {
+		return bankCode;
+	}
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+	public String getBankName() {
+		return bankName;
+	}
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getBranchName() {
+		return branchName;
+	}
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+	public String getBranchId() {
+		return branchId;
+	}
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+	
+}

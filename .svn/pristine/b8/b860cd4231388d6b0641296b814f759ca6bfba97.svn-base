@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+
+<resultMap id="tradeLogResultMap" type="ucfTradeLog">
+	<result column="amount" property="amount" jdbcType="NUMERIC"/>
+</resultMap>
+
+<!-- insert UcfTradeLog -->
+<insert id="insertUcfTradeLog" parameterType="ucfTradeLog" keyProperty="ORDER_ID" useGeneratedKeys="true">
+	<![CDATA[
+		INSERT INTO UCF_USER_TRADE_LOG (USER_ID,ORDER_ID,AMOUNT,GMT_CREATE)
+		VALUES(#{userId,jdbcType=VARCHAR},#{orderId,jdbcType=VARCHAR},#{amount,jdbcType=NUMERIC},sysdate)
+		]]>
+</insert>
+
+<select id="queryTradeSumAmount" resultMap="tradeLogResultMap" parameterType="String" >
+	<![CDATA[
+		SELECT 	SUM(AMOUNT) as amount from UCF_USER_TRADE_LOG where USER_ID = #{userId}
+	]]>
+</select>
+</mapper>

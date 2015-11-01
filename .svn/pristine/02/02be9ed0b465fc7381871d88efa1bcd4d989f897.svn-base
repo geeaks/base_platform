@@ -1,0 +1,49 @@
+package com.ucf.customer.service;
+
+import com.ucf.customer.bo.ResultBo;
+
+/**
+ * @Description: 短信服务
+ * @ClassName: SMSService
+ * @author gaoxiang
+ * @date 2014年10月14日 上午10:05:18
+ */ 
+public interface SMSService {
+
+	String VFY_CODE_PLACEHOLDER  = "%vfyCode%";
+	
+	String[] MERCHANT_ID_LIST = {"M100","M200000390","M100007"};
+	
+	/**
+	 * @Description: 发送短信
+	 * @param phone
+	 * @param msg
+	 * @param params
+	 * @return ResultBo 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月14日 上午10:28:19
+	 */
+	public ResultBo sendSMS(String merchantId,String phone,String msg,String ... params);
+	
+	/**
+	 * @Description: 发送短信验证码
+	 * @param phone
+	 * @param msg
+	 * @param params
+	 * @return ResultBo 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月14日 上午10:28:33
+	 */
+	public ResultBo sendVfyCodeSMS(String merchantId,String phone,String msg,String ... params);
+	
+	/**
+	 * @Description: 核实短信验证码
+	 * @param phone
+	 * @param code
+	 * @return ResultBo 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月14日 上午10:28:57
+	 */
+	public ResultBo checkVfyCode(String merchantId,String phone,String code);
+	
+}

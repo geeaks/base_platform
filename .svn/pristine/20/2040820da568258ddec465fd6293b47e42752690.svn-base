@@ -1,0 +1,38 @@
+package com.ucf.customer.ws.enums;
+
+public enum EnumUserRegisterStatus {
+	USER_REGISTERD("01", "用户已注册"), USER_UNREGISTERED("02", "用户未注册");
+
+	private String code;
+	private String msgS;
+
+	EnumUserRegisterStatus(String code, String msg) {
+		this.code = code;
+		this.msgS = msg;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getMsgS() {
+		return msgS;
+	}
+
+	public void setMsgS(String msgS) {
+		this.msgS = msgS;
+	}
+
+	public boolean isRegistered() {
+		if (this.getCode().equals("01")) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+}

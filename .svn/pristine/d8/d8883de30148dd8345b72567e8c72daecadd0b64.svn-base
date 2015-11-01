@@ -1,0 +1,129 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>先锋支付--安全中心</title>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+</head>
+<body>
+<div class="navbar-wrapper">
+    	
+    	<div class="head-top">
+			<div class="container">
+	          <ul class="">
+                <li><a href="${basePath}/jsp/common/help_base.jsp">帮助中心</a></li>
+				<li class=""><a href="${basePath}/reg/index.htm">注册</a></li>
+	            <li class=""><a href="${basePath}/login/index.htm">登录</a></li>
+	          </ul>
+			</div>
+        </div>
+    
+    <script type="text/javascript">
+$(document).ready(function(){
+	$(".dropdown").mouseover(function(){
+		$(this).attr("class","dropdown open");
+	});
+	
+	$(".dropdown").mouseout(function(){
+		$(this).attr("class","dropdown");
+	});
+})
+</script>
+    
+      <div class="container">
+
+        <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a href="${basePath}/user/index.htm"><img src="${staticMemberPath}/images/logo.png" alt="..."></a>
+            </div>
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+                <li><a href="${basePath}/user/index.htm">我的账户</a></li>   
+				<li><a href="${basePath}/trade/tradeList.htm">交易记录</a></li>
+				<li><a href="${basePath}/jsp/common/safe_base.jsp">安全体系</a></li>
+                <li><a href="${basePath}/user/basicinfo.htm">会员中心</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    
+    
+<section class="bgc-gray">
+	
+	
+	 
+    
+    
+    <form id="formValid" action="">
+	<div class="user_right">
+        <div class="user_right_box">
+        	<div class="user_title"><h1><i class="ico_yonghu"></i>常见问题</h1></div>
+            <div class="w1170 mauto pb20">
+            	<ul class="bulletin-list">
+                        <li>
+                            <span class="pub-date">2014-05-26</span>
+                            <i class="icon-arrow"></i>
+                            <a href="${basePath}/jsp/common/help.jsp">注册先锋支付账户</a>
+                        </li>                     
+                  </ul>
+
+			<div align="center" style="height: 80px;"><a href="${basePath}/user/index.htm" class="but-gray but-blue w100 ml20">返回</a></div>
+        </div>
+            </div>
+        </div>
+    
+    </form>    
+
+<div class="clear"></div>
+</section>
+
+
+ 
+
+<div class="foot">
+		
+		
+		<div class="shodow "></div>
+		<div class="container">
+			<div class="teamwork">
+				合作金融机构
+			</div>
+			<div class="sponsors">
+				商户合作
+			</div>
+			<div class="aptitude">
+				先锋支付资质
+			</div>
+			<div class="notice">
+				公告<br><br>
+                先锋支付个人平台上线。2014-05-30
+                
+			</div>
+		</div>
+		<div class="container foot-text">
+			<ul class="about">
+				<li>关于先锋支付</li>
+				<li><a href="http://weibo.com/ucfpay">官方博客</a></li>
+				<li>诚征英才</li>
+				<li>联系我们</li>
+			</ul>
+			<br>
+			<ul class="copyright">
+				<li class="no-line">版权为©2005-2013 大连先锋商务服务有限公司所有   辽ICP备13000797号</li>
+			</ul>
+		</div>
+	</div>
+	
+
+
+</body></html>

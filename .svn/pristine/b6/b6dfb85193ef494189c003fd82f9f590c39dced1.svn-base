@@ -1,0 +1,296 @@
+<%@tag pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
+<%@ attribute name="id" type="java.lang.String" required="false" description="可选属性，但应保持页面唯一，如不填，默认等于name属性值"%>
+<%@ attribute name="name" type="java.lang.String" required="true" description="必填项，用于后台接收参数"%>
+<%@ attribute name="downloadPath" type="java.lang.String" required="false" description="下载控件的地址,默认为ocx"%>
+<%@ attribute name="label" type="java.lang.String" required="true" description="必填项，用于对输入项进行说明" %>
+<%@ attribute name="placeholder" type="java.lang.String" required="false" description="可选项，同HTML5的placeholder"%>
+<%@ attribute name="tip" type="java.lang.String" required="false" description="可选项，用于输入项右侧的弹出提示"%>
+<%@ attribute name="required" type="java.lang.Boolean" required="false" description="可选项，用于校验是否必填"%>
+<%@ attribute name="length" type="java.lang.String" required="false" description="可选项，用于校验输入项长度，可以是定值如：6，也是以是个范围，如：6～20"%>
+<%@ attribute name="match" type="java.lang.String" required="false" description="可选项，用于匹配指定的字段"%>
+<%@ attribute name="remoteUrl" type="java.lang.String" required="false" description="可选项，用于指定后台验证密码强度的地址"%>
+
+<spring:htmlEscape defaultHtmlEscape="false"/>
+<fmt:setTimeZone value="GMT-0"/>
+<jsp:useBean id="currentDate" class="java.util.Date"/>
+
+<c:set var="myVersion" value="10,0,0,38"/>
+<c:set var="classId" value="598BD8F9-CE1C-4b52-9C0E-6EA55E2371A7"/>
+
+<c:set var="userAgent" value="${header['User-Agent']}"/>
+<%-- <c:out value="${userAgent}"/> --%>
+<c:choose>
+	<c:when test="${fn:contains(userAgent,'Trident')}">
+		<c:set var="browser" value="IE"/>
+	</c:when>
+	<c:when test="${fn:contains(userAgent,'Chrome')}"><%-- Chrome中包含Safari字样，但Safari为包含未Chrome字样，目前通过这种方式区分两种浏览器--%>
+		<c:set var="browser" value="Chrome"/>
+	</c:when>
+	<c:when test="${fn:contains(userAgent,'Safari')}"><%-- Safari与Chrome使用的都是AppleWebKit核心，但经过测试发现对Object的支持不完全一样，也许是版本的关系，待测试--%>
+		<c:set var="browser" value="Safari"/>
+	</c:when>
+	<c:when test="${fn:contains(userAgent,'Firefox')}"><%--不能通过 Gecko来判断浏览器类型，因为 Chrome、Safari、IE11均有Gecko字样--%>
+		<c:set var="browser" value="Firefox"/>
+	</c:when>
+</c:choose>
+<%-- <c:out value="${browser}"/> --%>
+<c:choose>
+	<c:when test="${fn:contains(userAgent,'Mac OS')}">
+		<c:set var="OS" value="Mac"/>
+		<c:set var="myexe" value="ucfpay_mac_pwd.dmg"/>
+	</c:when>
+	<c:otherwise>
+		<c:set var="OS" value="Windows"/>
+		<c:set var="myexe" value="ucfpay_pwd.exe"/>
+		<c:set var="mycab" value="ucfpay_pwd.cab"/>
+	</c:otherwise>
+</c:choose>
+<%-- <c:out value="${browser}"/> --%>
+
+<c:if test="${empty downloadPath}">
+	<c:set var="downloadPath" value="ocx"/>
+</c:if>
+
+<c:if test="${empty id}">
+	<c:set var="id" value="${name}"/>
+</c:if>
+
+<%-- <spring:bind path="${name}"> --%>
+	<script>
+	$(function(){
+			var ${id}=document.getElementById("${id}");
+			var ${id}_download=document.getElementById("${id}-download");
+			var ${id}_validation=function(){
+				$('#${id}-tip').animate({
+					left : 0,
+        			opacity:0
+        		}, 500);
+				var value=${id}.GetValue();
+				$('input[name="${name}"]').val(value);
+				var length=${id}.GetLength();
+				$('input[name="${name}_len"]').val(length);
+				//var pcData=${id}.GetExtendData("random");alert(pcData);
+				//$('input[name="${name}_pcData"]').val(pcData);
+				/* console.log(${id}.RealInput);
+				console.log(value);
+				console.log(length);
+				console.log(pcData); */
+				var errorInfo,tipInfo;
+				var range="${length}".split("~");
+				var min=range[0];
+				if(range.length>1){
+					var max=range[1];
+				}
+				//console.log(min,max);
+				if((min && max) && (length<min || length>max)){
+					errorInfo="密码长度应在"+min+"~"+max+"位之间";
+				}
+				else if((min && !max && range.length==1) && length!=min){
+					errorInfo="密码长度应等于"+min;
+				}
+				else if((min && !max && range.length>1) && !length>min){
+					errorInfo="密码长度应大于"+min;
+				}
+				else if((!min && max) && !length<max){
+					errorInfo="密码长度应小于"+max;
+				}
+				if("${match}"){
+					/* var match=document.getElementById("${match}");
+					if(match){
+						console.log(match.GetValue());
+						console.log(value);
+						if(match.GetValue()!=value){//无法通过前端判断两个密码是否相等，应该是计算了时间种子，这么看这个密码控件还行
+							errorInfo="两次输入的密码应保持一致";
+						}
+					} */
+				}
+				if(!errorInfo){//前面验证都合格,则继续后台验证
+					<c:if test="${not empty remoteUrl}">
+						var parameter={
+							"${name}":value<%--,
+							"${name}_len":length,
+							"${name}_pcData":pcData,
+							"${name}_isMac":${OS=='Mac'}--%>
+						};
+						$.ajax({
+							statusCode: {404: function() {
+								alert('remoteUrl 配置错误');
+							}},
+							type:"post",
+							async:false,
+							url:"${remoteUrl}",
+							data:parameter,
+							success:function(data){
+								if(data=="LOW"){
+									errorInfo="密码强度低";
+								}
+								else if(data=="MIDDLE"){
+									errorInfo="密码强度中";
+								}
+								else if(data=="HIGH"){
+									errorInfo="密码强度高";
+								}
+							}
+						});
+					</c:if>
+				}
+				if(errorInfo){
+					$('#${id}-error').find("span").html(errorInfo);
+					$('#${id}-error').animate({
+						left : $('#${id}-error').parent().outerWidth()+"px",
+	        			opacity:1
+	        		}, 500);
+				}
+				else{
+					$('#${id}-error').animate({
+						left : 0,
+	        			opacity:0
+	        		}, 500);
+				}
+			};
+			var ${id}_show_tip=function(){
+				$('#${id}-error').animate({
+					left : 0,
+        			opacity:0
+        		}, 500);
+				if($('#${id}-tip').find("span").html()){
+					$('#${id}-tip').animate({
+	        			left : $('#${id}-tip').parent().outerWidth()+"px",
+	        			opacity:1
+	        		}, 500);
+				}
+			};
+			<c:choose>
+				<c:when test="${OS=='Mac'}">
+					try{
+						setTimeout(${id}.initEtx('<fmt:formatDate value="${currentDate}" pattern="yyyyMMddHHmmss"/>'),1000);//初始化mac插件
+						${id}_download.style.display="none";
+						${id}.onblur=${id}_validation;
+						${id}.onfocus=${id}_show_tip;
+					}catch(err){
+						${id}.style.display="none";
+					}
+						//初始化mac插件
+				</c:when>
+				<c:otherwise>
+					if(${id}.Working){
+						${id}_download.style.display="none";
+						${id}.onblur=${id}_validation;
+						${id}.onfocus=${id}_show_tip;
+						//${id}.onkeyup=${id}_validation;
+					}
+					else{
+						${id}.style.display="none";
+					}
+				</c:otherwise>
+			</c:choose>
+	});
+	</script>
+	<div class="form-group form-group-sm has-feedback" style="margin-bottom:0;">
+		<label for="${id}" class="col-sm-3 control-label">${label}</label>
+		<div class="col-sm-4" style="width:250px;">
+			<div id="${id}-download" class="form-control text-center"><a href="${pageContext.request.contextPath}/${downloadPath}/${myexe}">点此下载控件</a></div>
+			<c:choose>
+				<%--IE begin --%>
+				<c:when test="${OS=='Windows' and browser=='IE'}">
+					<object id="${id}"
+						classid="CLSID:${classId}"
+						codebase="${mycab}#Version=${myVersion}"
+						class="form-control"
+						style="border-radius:0"
+						>
+						<param name="textsize" value="12"> 
+						<param name="color" value="#555555"> 
+						<param name="bgcolor" value="#FFFFFF">  
+						<param name="bordercolor" value="#ffffff">  
+						<param name="MyTime" value="<fmt:formatDate value="${currentDate}" pattern="yyyyMMddHHmmss"/>">
+					</object>
+					<script>
+						$(function(){
+							$(".ucf-validation-info-tip,.ucf-validation-error-tip").css({"opacity":0});//兼容IE8
+						});
+					</script>
+				</c:when>
+				<%--IE end --%>
+			
+				<%--Chrome begin --%>
+				<c:when test="${OS=='Windows' and browser=='Chrome'}">
+					<embed id="${id}"
+					 type="application/${classId}"
+					 class="form-control"
+					 style="border-radius:0"
+					 textsize="12px"
+					 bordercolor="#ffffff"
+					 color="#555555"
+					 bgcolor="#FFFFFF"
+					 MyTime="<fmt:formatDate value="${currentDate}" pattern="yyyyMMddHHmmss"/>"
+					/>
+				</c:when>
+				<%--chrome end --%>
+				
+				<%--Firefox begin firefox的embed盒模型有bug，处理机制类似老版IE,width与height的值要加上padding--%>
+				<c:when test="${OS=='Windows' and browser=='Firefox'}">
+					<embed id="${id}"
+					 type="application/${classId}"
+					 class="form-control"
+					 style="border-radius:0;box-sizing:border-box;height:50px;width:220px;"
+					 textsize="12px"
+					 bordercolor="#ffffff"
+					 color="#555555"
+					 bgcolor="#FFFFFF"
+					 MyTime="<fmt:formatDate value="${currentDate}" pattern="yyyyMMddHHmmss"/>"
+					/>
+					<script>
+						$(function(){
+							var width=$('#${id}').outerWidth(true);
+							$('#${id}').css({"width":width+44+"px"});//44由.form-control的padding+border计算得出(最终由实验得出，容易吗我？)
+						});
+					</script>
+				</c:when>
+				<%--Firefox end --%>
+				
+				<%--Mac下的Chrome无法加载class="form-control"，否则控件无法接收焦点--%>
+				<c:when test="${OS=='Mac' and browser=='Chrome'}">
+					<embed id="${id}"
+					 type="application/${classId}"
+					 textsize="12px"
+					 bordercolor="#ffffff"
+					 color="#555555"
+					 bgcolor="#FFFFFF"
+					 width="260"
+					 height="36"
+					/>
+				</c:when>
+				<%--Mac下的Safari无法去掉控件本身的边框--%>
+				<c:when test="${OS=='Mac' and browser=='Safari'}">
+					<embed id="${id}"
+					 type="application/${classId}"
+					 class="form-control"
+					 style="border-radius:0"
+					 textsize="12px"
+					 bordercolor="#ffffff"
+					 color="#555555"
+					 bgcolor="#FFFFFF"
+					 width="260"
+					 height="36"
+					/>
+				</c:when>
+				<%--Mac end --%>
+			</c:choose>
+			<div id="${id}-tip" class="help-block ucf-validation-info-tip"><div class="triangle"></div><span>${tip}</span></div>
+			<div id="${id}-error" class="help-block ucf-validation-error-tip"><div class="triangle"></div><span>${tip}</span></div>
+			<input name="${name}" type="hidden" />
+			<input name="${name}_len" type="hidden" />
+			<input name="${name}_pcData" type="hidden" />
+			<input name="${name}_isMac" type="hidden" value="${OS=='Mac'}"/>
+			<%-- <form:input path="${name}" class="${className?className:'form-control'}" placeholder="${placeholder}" data-rule="required;email"/> --%>
+			<span class="glyphicon form-control-feedback"></span>
+		</div>
+	</div>
+	
+<%-- </spring:bind> --%>

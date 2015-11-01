@@ -1,0 +1,31 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>成功页面</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<META http-equiv="X-UA-Compatible" content="IE=9" >
+	<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
+</head>
+<body>
+	<div class="head">
+		<div class="container">
+			<img src="${staticMemberPath}/images/findpaypwd_logo.png" alt="...">
+		</div>
+	</div>
+	<div class="container">
+		<div class="main-top yj-succeed">
+			<span>恭喜您， 设置成功！请牢记新的支付密码</span>
+		</div>
+		<div class="main-body background-wite result-body">
+			<a class="btn mt20 mgl400" onclick="javascript:window.close();" href="#" >关 闭</a>
+		</div>
+		<footer class="container foot">
+			<p>先锋支付版所有 2005-2013 ICP证：辽ICP备13000797号</p>
+		</footer>
+	</div>
+	</div>
+</body>
+</html>

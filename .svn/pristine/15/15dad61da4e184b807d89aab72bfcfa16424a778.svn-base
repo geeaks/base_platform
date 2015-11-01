@@ -1,0 +1,12 @@
+package com.ucf.customer.utils;
+
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+
+public class IdCardUtil {
+	public static String IdCardNoEncrypt(String cardNo){
+		if (StringUtil.isEmpty(cardNo)) {
+			return "";
+		}
+		return cardNo.substring(0,1)+"****************" + cardNo.substring(cardNo.length()-1, cardNo.length());
+	}
+}

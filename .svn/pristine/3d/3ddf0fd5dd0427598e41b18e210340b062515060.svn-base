@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>先锋支付--用户login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<!-- Bootstrap -->
+<link rel="stylesheet" href="${staticMemberPath}/css/commons/bootstrap.min.css">
+
+
+<style type="text/css">
+p.tip span {font-weight:130px;
+    background-color: yellow;
+	color:red;}
+
+</style>
+</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+		<div class="container">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target=".navbar-collapse">
+					<span class="sr-only">Toggle navigation</span> <span
+						class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+				<a class="navbar-brand" href="#">Project name</a>
+			</div>
+			<div class="collapse navbar-collapse">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="#">Home</a>
+					</li>
+					<li><a href="#about">About</a>
+					</li>
+					<li><a href="#contact">Contact</a>
+					</li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+
+	<div class="container">
+
+		<div class="starter-template">
+			<h1></h1>
+			<p class="lead">先锋支付用户findPwdChooseStyle</p>
+			<form action="${basePath}/login/findPwdChoose.do" method="post">
+				<fieldset>
+				<span class="help-block" contenteditable="true">您正在为账户 ${picna } 重置登录密码   </span> 
+                 
+                 <label contenteditable="true">手机号码:${picna }</label> 
+                <a href="${basePath}/login/genVfyCode.do?mobile=${picna }">发送手机验证码</a>  
+                 
+                 <label contenteditable="true">安全保护问题:${res }</label>
+                  <input type="text" id="result" name="result" placeholder=""> <span
+						class="help-block" contenteditable="true">请填写答案.</span> 
+                   
+					<!--  
+						<span  class="help-block" contenteditable="true">通过安全保护问题</span> 
+						<a href="${staticMemberPath}/login/findPwdByEmail.do?picna=${picna }">马上找回</a><br><br><br><br><br>
+						
+						<span 	class="help-block" contenteditable="true">通过“手机验证码+证件号码”</span>
+						<a href="${staticMemberPath}/login/findPwdByPhonePre.do?picna=${picna }">马上找回</a><br><br><br><br><br>
+						-->
+						<p class="tip"><span > ${msg } </span></p>
+
+					<button type="submit" class="btn" contenteditable="true">下一步</button>
+				</fieldset>
+			</form>
+		</div>
+		
+
+	</div>
+	<!-- /.container -->
+
+		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="${staticMemberPath}/js/commons/jquery.min.js"></script>
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script	 src="${staticMemberPath}/js/commons/bootstrap.min.js"></script>
+</body>
+</html>

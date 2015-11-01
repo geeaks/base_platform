@@ -1,0 +1,105 @@
+package com.ucf.customer.controller;
+
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ucf.customer.utils.IdentifyingCode;
+import com.ucf.customer.utils.enums.EnumsTrueFlase;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+@Controller
+public class IDCodeController {
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(IDCodeController.class);
+	@Value("#{settings['devmode']}")
+	private String devmode;
+	
+	
+	@RequestMapping(value = "/idcode.do")
+	public void genIdCode(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		
+		// 设置不缓存图片
+		response.setHeader("Pragma", "No-cache");
+		response.setHeader("Cache-Control", "No-cache");
+		response.setDateHeader("Expires", 0);
+		// 指定生成的相应图片
+		response.setContentType("image/jpeg");
+		OutputStream out = null;
+		try{
+			IdentifyingCode idCode = new IdentifyingCode();
+			BufferedImage image = new BufferedImage(idCode.getWidth(),
+					idCode.getHeight(), BufferedImage.TYPE_INT_BGR);
+			Graphics2D g = image.createGraphics();
+			// 定义字体样式
+			Font myFont = new Font("黑体", Font.BOLD, 16);
+			// 设置字体
+			g.setFont(myFont);
+	
+			g.setColor(idCode.getRandomColor(200, 250));
+			// 绘制背景
+			g.fillRect(0, 0, idCode.getWidth(), idCode.getHeight());
+	
+			g.setColor(idCode.getRandomColor(180, 200));
+			idCode.drawRandomLines(g, 160);
+			String idcodeStr = idCode.drawRandomString(4, g);
+			HttpSession session  = request.getSession();
+			LOGGER.debug("*************idcode:"+idcodeStr);
+		
+			session.setAttribute("idcode", idcodeStr);
+	//		session.setExpir("idcode", 180);
+			g.dispose();
+			out = response.getOutputStream();
+			ImageIO.write(image, "JPEG", out);
+			out.flush();
+		}catch(Exception e){
+			LOGGER.error("图片验证码异常", e);
+		}finally{
+			if(out!=null){
+				out.close();
+			}
+		}	
+	}
+	
+	@RequestMapping(value= "/checkIdcode.do")
+	@ResponseBody
+	public  String checkCode(
+			@RequestParam("checkCode") String checkCode,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		HttpSession session  = request.getSession();
+		String idCode = (String) session.getAttribute("idcode");
+		
+		//开发模式不校验验证码
+		if (EnumsTrueFlase.TRUE.getCode().equals(devmode)) {
+			return "";
+		}
+		
+		if(checkCode!=null && !checkCode.trim().equals("")){
+			if(idCode==null){
+				return "验证码过期";
+			}else if(!idCode.equalsIgnoreCase(checkCode.trim())){
+				return "请输入正确的验证码";
+			}else{
+				return "";
+			}
+		}else{
+			return "验证码不可为空";
+		}
+	}
+	
+	
+}

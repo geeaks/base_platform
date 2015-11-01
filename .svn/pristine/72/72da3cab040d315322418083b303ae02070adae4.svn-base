@@ -1,0 +1,17 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+
+public class RegistReturnValueBo extends BaseBO implements Serializable{
+
+	
+	private static final long serialVersionUID = -7466213292132507303L;
+	
+	private String userId;
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+}

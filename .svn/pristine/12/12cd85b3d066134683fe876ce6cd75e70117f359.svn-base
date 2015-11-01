@@ -1,0 +1,382 @@
+package com.ucf.customer.api;
+
+import java.util.List;
+
+import com.ucf.customer.api.bo.AccountInfoRsBO;
+import com.ucf.customer.api.bo.BankCardBo;
+import com.ucf.customer.api.bo.BankCardModifyBo;
+import com.ucf.customer.api.bo.BaseResultBO;
+import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.MemberRegisterBO;
+import com.ucf.customer.api.bo.PageRs;
+import com.ucf.customer.api.bo.PhoneModifyBo;
+import com.ucf.customer.api.bo.PhotoAuthApplyBo;
+import com.ucf.customer.api.bo.RealNameParamBO;
+import com.ucf.customer.api.bo.UserAuthParamBO;
+import com.ucf.customer.api.bo.UserCardAccountRsBo;
+import com.ucf.customer.api.bo.UserInfoBo;
+import com.ucf.customer.api.bo.UserInfoRsBO;
+import com.ucf.customer.api.bo.UserRealNamedStatusRsBO;
+
+public interface MemberService {
+	
+	/**
+	 * 查询用户信息
+	 * 
+	 * @param userId
+	 */
+	UserInfoRsBO findUserInfo(String userId);
+	
+	/**
+	 * 查询用户卡 账号信息
+	 * @param userId
+	 * @param cardType  com.ucf.customer.api.enums。EnumsUserCardType
+	 * @return
+	 */
+	UserCardAccountRsBo findUserCardAccount(String userId,String cardType);
+	
+	/**
+	 * 查询用户账务信息（余额）
+	 * @param userId
+	 * @param cardType com.ucf.customer.api.enums。EnumsUserCardType
+	 * @return
+	 */
+	public AccountInfoRsBO findUserAccount(String userId, String cardType);
+	
+	/**
+	 * 校验用户支付密码
+	 * 
+	 * @param userId
+	 * @param payPwd
+	 * @return
+	 */
+	BaseResultBO verifyPayPwd(String userId, byte[] payPwd);
+	
+	/**
+	 * 校验用户支付密码
+	 * 
+	 * @param userId
+	 * @param payPwd
+	 * @return
+	 */
+	BaseResultBO verifyPayPwdByLoginName(String loginName, byte[] payPwd);
+
+	/**
+	 * 查询用户实名认证状态
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	UserRealNamedStatusRsBO findUserRealnameStatus(String userId);	
+	
+	/**
+	 * 发送短信
+	 * @param phone
+	 * @param msg
+	 * @return
+	 */
+	public MemberCommonResult<String> sendSms(String phone,String msg);
+	
+	/**
+	 * 发送短信验证码
+	 * 
+	 * @param phone
+	 *            手机号
+	 * @return
+	 */
+	BaseResultBO sendVfyCodeSMS(String phone);
+	
+	/**
+	 * 校验短信验证码
+	 * @param phone
+	 * @param code
+	 * @return
+	 */
+	public BaseResultBO checkVfyCode(String phone, String code);
+	
+	/**
+	 * 用户实名认证
+	 * @param paramBo
+	 * @return
+	 */
+	BaseResultBO realName(RealNameParamBO paramBo);
+	
+	/**
+	 * @Description: 鉴权接口
+	 * @param userAuthParamBO
+	 * @return BaseResultBO 返回类型
+	 * @author gaoxiang
+	 * @date 2014年9月26日 下午3:58:15
+	 */
+	BaseResultBO userAuth(UserAuthParamBO userAuthParamBO);
+	
+	/**
+	 * 开基金子卡
+	 * 
+	 * @param userId
+	 * @return
+	 */
+	BaseResultBO createFundSubCard(String userId);
+
+	/**
+	 * 查询用户基金子卡
+	 * @param userId
+	 * @return
+	 */
+	BaseResultBO isExistFundSubCard(String userId);
+	
+	/**
+	 * 修改用户登录密码
+	 * @param userId
+	 * @param oldPwd
+	 * @param newPwd
+	 * @return
+	 */
+	MemberCommonResult<String> modifyLoginPwd(String userId,byte [] oldPwd,byte [] newPwd);
+
+	/**
+	 * 用户认证
+	 * @param realName
+	 * @param certNo
+	 * @return
+	 */
+	public MemberCommonResult<String> userAuth(String merchantId,String realName,String certNo);
+	
+	/**
+	 * 照片认证申请
+	 * @param merchantId
+	 * @param userId
+	 * @param photoPath
+	 * @return
+	 */
+	MemberCommonResult<String>  photoAuthApply(String userId,String photoPath);
+	
+	/**
+	 * 照片审核认证
+	 * @param authApplyBo
+	 * @return
+	 */
+	MemberCommonResult<String>  photoAuthApply(PhotoAuthApplyBo authApplyBo);
+	
+	/**
+	 * 照片认证审核
+	 * @param applyId 申请的主键
+	 * @param status  状态  S F
+	 * @param auditor 审核人员
+	 * @return
+	 */
+	MemberCommonResult<String>  auditPhotoAuth(String applyId,String status,String auditor);
+	
+	/**
+	 * 照片认证审核
+	 * @param applyId 申请的主键
+	 * @param status  状态  S F
+	 * @param auditor 审核人员
+	 * @param memo  审核备注
+	 * @return
+	 */
+	MemberCommonResult<String>  auditPhotoAuth(String applyId,String status,String memo,String auditor);
+	
+	/**
+	 * 查询用户照片审核
+	 * @param userId
+	 * @return
+	 */
+	public MemberCommonResult<String> findPhotoAuthApply(String userId);
+	
+	/**
+	 * 照片审核记录查询
+	 * @param apply
+	 * @return
+	 */
+	public MemberCommonResult<String> findPhotoAuthApply(PhotoAuthApplyBo apply);
+	/**
+	 * 通过用户ID 查询用户信息
+	 * @param merchantId
+	 * @param refUserId
+	 * @return
+	 */
+	MemberCommonResult<UserInfoBo> findUserById(String userId);
+	
+	MemberCommonResult<UserInfoBo> findUserInfo(String merchantId,String refUserId);
+	
+	/**
+	 * 查询用户
+	 * @param merchantId
+	 * @param cell
+	 * @return
+	 */
+	MemberCommonResult<UserInfoBo> findUserInfoByCell(String merchantId,String cell);
+	
+	/**
+	 * 注册用户
+	 * @param userId
+	 * @param oldPwd
+	 * @param newPwd
+	 * @return
+	 */
+	MemberCommonResult<String> registerManagedUser(MemberRegisterBO memberBo);
+	
+	/**
+	 * 删除用户银行卡
+	 * @param memberBo
+	 * @return
+	 */
+	MemberCommonResult<String> delUserBankCard(String userId,String bankCardId);
+	
+	/**
+	 * 查询用户的理财银行卡列表
+	 * @param userId
+	 * @return
+	 */
+	MemberCommonResult<List<BankCardBo>> findUserBankCards(String userId);
+	
+	/**
+	 * @Description: 根据银行卡用途类型查询用户绑定的银行卡信息
+	 * @param userId
+	 * @param useType EnumBankCardUseType:该枚举的三种类型
+	 * @return MemberCommonResult<List<BankCardBo>> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午1:59:44
+	 */
+	MemberCommonResult<List<BankCardBo>> findUserBankCardsByUseType(String userId,String useType);
+	
+	/**
+	 * @Description: 根据银行卡ID查询银行卡详情
+	 * @param bankCardId
+	 * @return MemberCommonResult<BankCardBo> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午4:54:05
+	 */
+	MemberCommonResult<BankCardBo> findBankCardById(String bankCardId);
+	
+	/**
+	 * 设置支付密码
+	 * @param userId
+	 * @param payPassword
+	 * @return
+	 */
+	BaseResultBO setPayPwd(String userId, byte[] payPassword);
+	
+	/**
+	 * @Description: 工资宝注册开户
+	 * @param userBo
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-7 下午2:33:02
+	 */
+	MemberCommonResult<String> registerGZBUser(MemberRegisterBO userBo);
+	
+	/**
+	 * @Description: 修改用户手机号
+	 * @param phoneModifyBo
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-7 下午2:48:21
+	 */
+	MemberCommonResult<String> modifyUserPhone(PhoneModifyBo phoneModifyBo);
+	
+	/**
+	 * @Description: 修改用户绑定的银行卡
+	 * @param bankCardModifyBo
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-7 下午2:48:34
+	 */
+	MemberCommonResult<String> modifyUserBankCard(BankCardModifyBo bankCardModifyBo);
+	
+	/**
+	 * @Description: 设置银行卡支付状态
+	 * @param bankCardId 银行卡ID（非银行卡号）
+	 * @param isPay Y开通 N关闭
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-23 下午5:03:19
+	 */
+	public MemberCommonResult<String> setBankcardPayStatus(String bankCardId,String isPay);
+	
+	/**
+	 * @Description: 获取一个匿名用户
+	 * @return MemberCommonResult<UserInfoBo> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-12 下午12:41:09
+	 */
+	MemberCommonResult<UserInfoBo> findAnonymousUser();
+	
+	/**
+	 * @Description: 查询校验用户信息
+	 * @param merchantId
+	 * @param phone
+	 * @return MemberCommonResult<UserInfoBo> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-15 上午10:38:09
+	 */
+	MemberCommonResult<UserInfoBo> checkUserInfo(String merchantId,String phone);
+	
+	/**
+	 * @Description: 校验短信验证码
+	 * @param userId
+	 * @param code
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-15 上午10:38:47
+	 */
+	MemberCommonResult<String> checkUserSms(String userId,String code);
+	
+	/**
+	 * @Description: P2P注册开户绑卡
+	 * @param memberBo
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-3 下午2:57:36
+	 */
+	MemberCommonResult<String> registerP2PUser(MemberRegisterBO memberBo);
+	
+	/**
+	 * @Description: 某一商户下的用户是否绑定过该银行卡 (同一商户下 只会绑定一张银行卡)
+	 * @param userId
+	 * @param code
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-1 上午11:54:25
+	 */
+	MemberCommonResult<Boolean> isBankCardBound(String merchantId,String userId,String bankCardNo);
+	
+	/**
+	 * @Description: 修改用户信息
+	 * @param userInfoBo
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-31 上午10:10:58
+	 */
+	MemberCommonResult<String> modifyUserInfo(UserInfoBo userInfoBo);
+	
+	/**
+	 * @Description: 查询用户信息列表
+	 * @param userInfoBo 
+	 * @return MemberCommonResult<List<UserInfoBo>> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-8 下午2:01:09
+	 */
+	MemberCommonResult<PageRs<UserInfoBo>> findUsersInfo(UserInfoBo userInfoBo);
+	
+	/**
+	 * @Description: 刷新指定用户的缓存
+	 * @param userId
+	 * @return MemberCommonResult<String> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-8 下午2:02:46
+	 */
+	MemberCommonResult<String> refreshUserCache(String userId);
+	
+	/**
+	 * @Description: 会员系统发送短信验证码 
+	 * @param merchantId
+	 * @param phoneNumber
+	 * @param template 模板由接口调用方传入 如： 网信金额，这是验证码，验证码内容为%vfyCode%  ,先锋支付 ，%vfyCode%这段文字会被替换为验证码
+	 * @return SmsBO 返回类型
+	 * @author gaoxiang
+	 * @date 2015-5-8 上午10:43:22
+	 */
+	MemberCommonResult<String> sendTemplateSMS(String merchantId,String  phoneNumber,String template);
+}

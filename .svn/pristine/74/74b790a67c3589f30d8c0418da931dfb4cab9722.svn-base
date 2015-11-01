@@ -1,0 +1,104 @@
+package com.ucf.customer.test;
+     
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.service.UserService;
+import com.ucf.customer.utils.BizProduct;
+import com.ucf.customer.ws.bo.AccountInfoBO;
+import com.ucf.customer.ws.bo.AccountInfoParamBO;
+import com.ucf.customer.ws.bo.WebServiceReturnValueBO;
+import com.ucf.customer.ws.enums.EnumsSubCardType;
+import com.ucf.customer.ws.service.CardInfoWS;
+import com.ucf.customer.ws.service.SearchTransactionWS;
+import com.ucf.customer.ws.service.UserServiceWS;
+import com.ucf.trade.ws.bo.TradeUcfWsReturnValueBo;
+import com.ucf.trade.ws.bo.TradeUcfWsSearchOrderParamBo;
+import com.ucf.trade.ws.service.TradeUcfSearchOrderServiceWs;
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = {"classpath:/spring/applicationContext.xml"})
+public class MemberTest {
+	@Autowired
+	private UserService userInnerService;
+	
+	@Autowired
+	private UserServiceWS userServiceWS;
+	
+	@Autowired
+	private SearchTransactionWS searchTransactionWS;
+	 
+	@Autowired
+	CardInfoWS cardInfoWS;
+	@Autowired
+	private TradeUcfSearchOrderServiceWs wsTradeUcfSearchOrderServiceClient;
+	
+	@Test
+	public void testQueryTrade(){
+		
+//		TradeUcfWsSearchOrderParamBo tradeSearchOrderParamBO =  new TradeUcfWsSearchOrderParamBo();
+//		tradeSearchOrderParamBO.setUserId("10000003834");
+//		tradeSearchOrderParamBO.setStartDate(dstartDate);
+//		tradeSearchOrderParamBO.setEndDate(dendDate);
+//		tradeSearchOrderParamBO.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+//		if(tradeType!=null && !tradeType.trim().equals("")){
+//			tradeSearchOrderParamBO.setBusinessType(tradeType);
+//		}
+//		if(tradeStatus!=null && !tradeStatus.trim().equals("")){
+//			tradeSearchOrderParamBO.setOrderStatus(tradeStatus);
+//		}
+//		tradeSearchOrderParamBO.setPageNo(page);
+//		tradeSearchOrderParamBO.setPageSize(limit);
+//		if(LOGGER.isDebugEnabled()){
+//			LOGGER.debug("交易查询传入参数：" + JSON.toJSONString(tradeSearchOrderParamBO));
+//		}
+//		TradeUcfWsReturnValueBo		tradeSearchOrderRetrunValueBo = 
+//				wsTradeUcfSearchOrderServiceClient.searchOrder(tradeSearchOrderParamBO);
+//		if(LOGGER.isDebugEnabled()){
+//			LOGGER.debug("交易查询返回参数：" + JSON.toJSONString(tradeSearchOrderRetrunValueBo));
+//		}
+	}
+	
+	
+	@Test
+	public void  queryUserInfo(){
+		
+		WebServiceReturnValueBO webServiceReturnValueBO = searchTransactionWS.queryUserInfo("10000003264");
+		 System.err.println(webServiceReturnValueBO);
+		
+	}
+	
+	
+	
+	@Test
+	public void testcheckUserByIdNum(){
+	}
+	
+	
+	
+	 
+	@Test
+	public void testSearch(){
+//		WebServiceParamBO webServiceParamBO = new WebServiceParamBO();
+		
+//		webServiceParamBO.setUserId("10000003264");
+//		WebServiceReturnValueBO webServiceReturnValueBO = searchTransactionWS.queryAccountNo(webServiceParamBO);
+//		System.err.println(webServiceReturnValueBO);
+	}
+	
+	
+	@Test
+	public void testSearchUSR(){
+		AccountInfoParamBO accountInfoParamBO = new AccountInfoParamBO();
+		AccountInfoBO accountInfoBO =  userServiceWS.queryAccountNo(accountInfoParamBO);
+		accountInfoParamBO.setUserId("10000003154");
+		accountInfoParamBO.setEnumsSubCardType(EnumsSubCardType.P2P_CARD.getCode());
+		accountInfoBO =  userServiceWS.queryAccountNo(accountInfoParamBO);
+		
+		System.err.println(accountInfoBO);
+	}
+	
+}

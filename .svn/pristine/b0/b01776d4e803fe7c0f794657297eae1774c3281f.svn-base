@@ -1,0 +1,245 @@
+package com.ucf.customer.controller;
+
+import java.util.Date;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ucf.customer.action.BaseAction;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.EnumMemberUserType;
+import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UserInfoService;
+import com.ucf.customer.utils.BeanUtilEx;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.utils.enums.EnumSessionKey;
+import com.ucf.customer.utils.enums.EnumsTrueFlase;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+
+/**
+ * 
+ * 
+ * 项目名称：member <br>
+ * 类名称：MemberLogAction <br>
+ * 类描述： 用户登录退出 Action <br>
+ * 创建人：李文静 <br>
+ * 创建时间：2014-5-7 上午11:46:50 <br>
+ * 修改人：李文静 <br>
+ * 修改时间：2014-5-7 上午11:46:50 <br>
+ * 修改备注： <br>
+ * 
+ * @version
+ * 
+ */
+@Controller
+@RequestMapping({ "/login" })
+public class MemberLogController extends BaseAction {
+	
+	@Autowired
+	private LoginService loginService;
+	@Value("#{settings['devmode']}")
+	private String devmode;
+	
+	@Autowired
+	private UserInfoService userInfoService;
+
+
+	@RequestMapping({ "/index.htm" })
+	public String reg(HttpServletRequest request,HttpServletResponse response,Model model) {
+		// 已经登录的情况下，不允许再次登录
+		if (isLogin(request, response)) {
+			return "redirect:/user/index.htm";
+		}
+		String redirectUrl = request.getParameter("redirectUrl");
+		// 登录后重定向
+		if (!StringUtil.isEmpty(redirectUrl) && checkRedirectUrl(redirectUrl)) {
+			model.addAttribute("redirectUrl", redirectUrl);
+		}
+		return "user/login";
+	}
+	
+	@RequestMapping(value = "/login.htm", method = RequestMethod.POST)
+	public String checkLogin(
+		@RequestParam("username") String userName,
+		@RequestParam("checkCode") String checkCode,
+		HttpServletRequest request, HttpServletResponse response,Model model) throws Exception {
+		String redirectUrl = request.getParameter("redirectUrl");
+		// 登录后重定向
+		if (!StringUtil.isEmpty(redirectUrl) && checkRedirectUrl(redirectUrl)) {
+			model.addAttribute("redirectUrl", redirectUrl);
+		}
+		String pwd = (String) request.getAttribute("payPassword");
+		// 用户获取
+		UcfUser user = loginService.queryUserInfoByPhone(userName);
+		UcfUserLoginApp userApp = loginService.queryPersonUserAppInfo(userName);
+		// 用户校验
+		if (userApp==null || user == null) {
+			model.addAttribute("msg", "账户名或登录密码错误!");
+			return "user/login";
+		}
+		// 用户校验
+		if (pwd==null) {
+			model.addAttribute("msg", "密码解析失败，请重试!");
+			return "user/login";
+		}
+		// 参数校验
+		if (!checkParams(userName, pwd, checkCode,user, userApp,request, response, model)) {
+			return "user/login";
+		}
+		//如果参数校验通过 则更新冻结状态为否 add by gaoxiang
+		userApp = loginService.queryUserAppInfo(userName);
+		userApp.setFrozenState(Constants.FROZEN_NO);
+		loginService.updateUcfUserApp(userApp);
+		
+		// 判断用户是否绑卡
+		UcfBankCard verifyBank = new UcfBankCard();
+		verifyBank.setUserId(user.getUserId());
+		List<UcfBankCard> list = loginService.queryUcfBankCard(verifyBank);
+		// 判断用户是否实名认证
+		UcfCustomer customer = new UcfCustomer();
+		customer.setName(user.getRealName());
+		customer.setCertNo(user.getCertNo());
+		customer = loginService.queryUcfCustomerInfo(customer);
+		if (list == null) {
+			if (customer != null) {
+				newLoginInfo(request, response, user, userApp, true, true);
+			} else {
+				// 新的登录对象
+				newLoginInfo(request, response, user, userApp, false, false);
+			}
+//			return "redirect:/bank/firstaddbank.htm";
+		}else{
+			// 新的登录对象
+			newLoginInfo(request, response, user, userApp, true, true);
+		}
+		userApp.setLastLoginTime(new Date());
+		this.loginService.updateUcfUserApp(userApp);
+		// 登录后重定向
+		if (!StringUtil.isEmpty(redirectUrl) && checkRedirectUrl(redirectUrl)) {
+			return "redirect:" + request.getParameter("redirectUrl");
+		}
+		return "redirect:/user/index.htm";
+	}
+
+	private void newLoginInfo(HttpServletRequest request,
+		HttpServletResponse response, UcfUser user,
+		UcfUserLoginApp userApp, boolean isBindCard, boolean isCustomer) {
+		HttpSession session  = request.getSession();
+		MemberAgent memberAgent = new MemberAgent();
+		memberAgent.setId(user.getUserId());
+		memberAgent.setLoginId(userApp.getLoginId());
+		memberAgent.setRealName(user.getRealName());
+		memberAgent.setCertNo(user.getCertNo());
+		memberAgent.setMobile(user.getCell());
+		memberAgent.setUserType(EnumMemberUserType.Logined);
+		memberAgent.setBindCard(isBindCard);
+		memberAgent.setCustomer(isCustomer);
+		memberAgent.setLastLoginTime(userApp.getLastLoginTime());
+		session.setAttribute("MemberAgent", memberAgent);
+		session.setAttribute(EnumSessionKey.SMS_PHONE.getKey(), user.getCell());
+		// TODO 老代码支持userredis 暂时不删除
+		com.ucf.customer.ws.bo.UcfUser ucfUserBo = new com.ucf.customer.ws.bo.UcfUser();
+		BeanUtilEx.copyProperties(ucfUserBo, user);
+		session.setAttribute("user", user);
+		//记录登录日志
+		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(user.getRealName())+","+user.getUserId()+"]登录成功!");
+	}
+	
+	/**
+	 * 校验是否是合法的url
+	 * @author 林伟
+	 * @param redirectUrl 以http或https开头，中间包括xxx.ucfpay\.com,例如:http://b.ucfpay.com/a/bb/c/1/
+	 * @return 合法true or 不合法false
+	 */
+	private boolean checkRedirectUrl(String redirectUrl){
+		Pattern pattern = Pattern.compile("^https?:\\/\\/[A-Za-z0-9]*\\.ucfpay\\.com[:\\d]?[\\/\\w\\d]*\\.?[\\w\\d]*");
+		Matcher matcher = pattern.matcher(redirectUrl);
+		return matcher.matches();
+	}
+
+	private boolean checkParams(
+		String userName,String pwd, String checkCode, UcfUser user, UcfUserLoginApp userApp,
+		HttpServletRequest request,HttpServletResponse response, Model model) {
+		try {
+			String idCode = getCheckCode(request, response);
+			LOGGER.debug("------>>idCode:" + idCode);
+			if(StringUtil.isEmpty(userApp.getLoginPwd())){
+				model.addAttribute("usg", "账户名或登录密码错误!");
+				return false;
+			}
+			
+			// 非空校验
+			if (userName.trim() != null && pwd.trim() == null) {
+				model.addAttribute("usg", "请输入登录密码!");
+				return false;
+			}
+			
+			// 验证码校验
+			if (!EnumsTrueFlase.TRUE.getCode().equals(devmode)&& !idCode.equalsIgnoreCase(checkCode.trim())) {
+				model.addAttribute("msg", "验证码输入错误!");
+				return false;
+			}
+
+			ResultBo resultBo = userInfoService.checkLoginPwd(user.getUserId(), pwd.getBytes());
+			
+			if(!EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+				int times = resultBo.getErrorTimes();
+				if (times == 5) {
+//					Date date = new Date();
+//					userApp.setLastLoginTime(date);
+//					userApp.setFrozenState(Constants.FROZEN_YES);
+//					loginService.updateUcfUserApp(userApp);
+					model.addAttribute("usg", "用户被冻结!24小时后自动解冻");
+					return false;
+				}
+
+				String msg = "账户名或登录密码错误!" ;
+				if(times>2){
+					msg = "账户名或登录密码错误" + times + "次!";
+				}
+				model.addAttribute("usg", msg);
+				return false;
+			}
+			return true;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+		}
+		model.addAttribute("msg", "系统异常");
+		return false;
+	}
+	
+	@RequestMapping(value = "/gotoSafeBase.htm")
+	public String gotoSafeBase(){
+		return "common/safe_base";
+	}
+	
+	@RequestMapping(value = "/gotoSafe.htm")
+	public String gotoSafe(){
+		return "common/safe";
+	}
+	
+	@RequestMapping(value = "/gotoHelpBase.htm")
+	public String gotoHelpBase(){
+		return "common/help_base";
+	}
+	
+}

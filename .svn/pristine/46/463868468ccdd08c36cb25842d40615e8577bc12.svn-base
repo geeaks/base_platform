@@ -1,0 +1,60 @@
+package com.ucf.customer.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
+import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.utils.enums.EnumSessionKey;
+
+
+@Controller
+public abstract class BaseController {
+	
+	public final static String ERROR = "/common/error";
+	public final static String NO_LOGIN_ERROR = "/common/error";
+	public final static String SUCCESS = "/common/success";
+	
+	/**
+	 * 获取登录对象
+	 * @param request
+	 * @return
+	 */
+	public MemberAgent getMemberAgent(HttpServletRequest request) {		
+		return (MemberAgent) request.getSession().getAttribute(EnumSessionKey.MEMBER_AGENT_KEY.getKey());
+	}
+	
+	public boolean checkImgCode(HttpServletRequest request,String imgCode) {
+		HttpSession session = request.getSession();
+		String code =  (String) session.getAttribute(EnumSessionKey.IMG_CODE_KEY.getKey());
+		session.removeAttribute(EnumSessionKey.IMG_CODE_KEY.getKey());
+		if(code!=null && code.equalsIgnoreCase(imgCode)){
+			return true;
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断用户是否登录
+	 * 
+	 * @param request
+	 * @return
+	 */
+	public boolean isLogin(HttpServletRequest request) {
+		MemberAgent memberAgent = getMemberAgent(request);
+		return memberAgent == null ? false : true;
+	}
+	
+	
+	public String success(Model model,String msg){
+		model.addAttribute("msg", msg);
+		return SUCCESS;
+	}
+	
+	public String error(Model model,String msg){
+		model.addAttribute("msg", msg);
+		return ERROR;
+	}
+}

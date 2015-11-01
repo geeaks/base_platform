@@ -1,0 +1,523 @@
+package com.ucf.customer.action;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ucf.customer.api.enums.EnumCertType;
+import com.ucf.customer.api.enums.EnumUserType;
+import com.ucf.customer.bo.RealAuthBO;
+import com.ucf.customer.dao.UcfBankCardDao;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.pojo.UcfPerson;
+import com.ucf.customer.pojo.UcfQuestion;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.Cryptos;
+import com.ucf.customer.security.EnumMemberUserType;
+import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.service.ConsoleService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.RealAuthService;
+import com.ucf.customer.service.UserRegService;
+import com.ucf.customer.utils.BeanUtilEx;
+import com.ucf.customer.utils.CheckMailOrPhone;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumAccountType;
+import com.ucf.customer.utils.enums.EnumBindBankCardStatus;
+import com.ucf.customer.utils.enums.EnumConfirmStatus;
+import com.ucf.customer.utils.enums.EnumSessionKey;
+import com.ucf.customer.utils.enums.EnumVerifyLevle;
+import com.ucf.customer.utils.exception.CustomerErrorCode;
+import com.ucf.customer.utils.exception.CustomerException;
+import com.ucf.customer.ws.enums.EnumCertFrom;
+import com.ucf.customer.ws.enums.EnumCertStatus;
+import com.ucf.customer.ws.enums.EnumRegisterFrom;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+
+
+
+/**
+ * 
+*    
+* 项目名称：member  <br>
+* 类名称：MemberRegAction      <br>
+* 类描述：  会员注册action 				  <br>
+* 创建人：李文静 				  <br>
+* 创建时间：2014-5-8 上午10:41:09  <br>   
+* 修改人：李文静 				  <br>
+* 修改时间：2014-5-8 上午10:41:09  <br>  	
+* 修改备注：   				  <br>
+* @version    
+*
+ */
+@Controller
+@RequestMapping("/reg")
+public class MemberRegAction extends BaseAction{
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(LoginPasswordAction.class);
+
+	@Autowired
+	private RealAuthService realAuthService;
+	@Autowired
+	private UserRegService userRegService;
+	@Autowired
+	private UcfBankCardDao ucfBankCardDao;
+	@Autowired
+	private LoginService loginService;
+
+	@Autowired
+	private ConsoleService consoleService;
+
+	@Resource(name = "sharedTransactionTemplate")
+	private TransactionTemplate transactionTemplate;
+	/**
+	 * 展示用户注册step1页面
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/index.htm")
+	public String reg(Model model) {
+		return "reg/reg";
+	}
+	
+	/**
+	 * Description: 校验手机验证码是否正确
+	 * @Version1.0 2014-3-14 下午2:02:48 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param sid
+	 * @param source
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @throws Exception 
+	 */
+	@RequestMapping(value = "/active.htm")
+	public String active_phone(@RequestParam(value = "userNo") String phoneNo, HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+		LOGGER.debug("step2 entry!");
+		// 判断用户是否已经注册过了，防止不正常的注册
+		HttpSession session  = request.getSession();
+		if (isExsit(phoneNo)) {
+			String errMsg = "用户名已经存在";
+			model.addAttribute("errMsg", errMsg);
+			return "reg/error";
+		}
+		session.setAttribute("ssid", phoneNo);
+		session.setAttribute(EnumSessionKey.SMS_PHONE.getKey(), phoneNo);
+		LOGGER.debug("ssid:[" + SensitiveInfoUtils.mobilePhone(phoneNo) + "]");
+		model.addAttribute("ssid", phoneNo); 
+		return "reg/set_userinfo";
+	}
+
+	/**
+	 * 
+	 * Description: 保存step2注册页面，保存用户信息，卡信息，安全问题
+	 * 
+	 * @Version1.0 2014-3-25 下午1:38:22 by xuhao（xuhao@ucfgroup.com）创建
+	 * @param userRegVo
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/saveUserinfo.htm")
+	public String saveUserinfo(HttpServletRequest request,
+			@RequestParam(value = "vfyCode") String vfyCode,
+			@RequestParam(value = "lgnPwd") String lgnPwd,
+			@RequestParam(value = "paymentPassword") String paymentPassword,
+			@RequestParam(value = "realName") String realName,
+			@RequestParam(value = "certNo") String certNo,
+			@RequestParam(value = "certEffectiveYear") String certEffectiveYear,
+			@RequestParam(value = "certEffectiveMonth") String certEffectiveMonth,
+			@RequestParam(value = "quesInfo") String quesInfo,
+			@RequestParam(value = "quesRes") String quesRes,
+			HttpServletResponse response, final Model model) throws Exception {
+		LOGGER.debug("saveUserinfo entry!");
+		HttpSession session  = request.getSession();
+		String phoneNo = (String) session.getAttribute(EnumSessionKey.SMS_PHONE.getKey());
+		//短信验证码
+		if (!checkmMbileCode(request, response, vfyCode, phoneNo)) {
+			String errMsg = "手机验证码错误";
+			model.addAttribute("phoneNoerrMsg", errMsg);
+			return "reg/reg";
+		}
+		cleanMobileCode(request, response, phoneNo);
+		//安保答案去空格
+		quesRes = quesRes.replaceAll(" ", "");
+		
+		// 判断用户是否已经注册过了，防止不正常的注册
+		String ssid = (String) session.getAttribute("ssid");
+		if (isExsit(ssid)) {
+			String errMsg = "用户名已经存在";
+			model.addAttribute("errMsg", errMsg);
+			return "reg/error";
+		}
+		if(StringUtils.equals(lgnPwd, paymentPassword)){
+
+			final String errMsg = "登录密码与支付密码相同，请重新设置。";
+			model.addAttribute("errMsg", errMsg);
+			return "reg/error";
+		}
+		//生成用户ID
+		String userId = userRegService.queryUcfUserId();
+		//生成用户登录信息
+		final UcfUserLoginApp userLoginApp = new UcfUserLoginApp();
+		userLoginApp.setLoginId(ssid);
+		userLoginApp.setFrozenState(Constants.FROZEN_NO);
+		userLoginApp.setLoginPwd(Cryptos.encrypt(lgnPwd,userId));
+		//add by gaoxiang 个人会员注册 登录会员类型为个人会员
+		userLoginApp.setUserType(EnumUserType.PERSON.getCode());
+		// 此时生成用户信息
+		final UcfUser ucfUser = new UcfUser();
+		boolean isMobile=CheckMailOrPhone.isMobileNO(ssid);
+		if (isMobile) {
+			ucfUser.setCell(ssid);
+			userLoginApp.setLoginType(Constants.LOGIN_TYPE_CELL);
+			userLoginApp.setPhone(ssid);
+			ucfUser.setEnabledStatus(Constants.PHONE_ACTIVE);
+		} else {
+			ucfUser.setEmail(ssid);
+			userLoginApp.setEmail(ssid);
+			userLoginApp.setLoginType(Constants.LOGIN_TYPE_EMAIL);
+			ucfUser.setEnabledStatus(Constants.EMAIL_ACTIVE);
+		}
+		ucfUser.setRealnameStatus(Constants.VERIFY_STATUS_W);
+		SimpleDateFormat formatDate = new SimpleDateFormat("yyyy-MM");
+		Date certEffectiveDate = formatDate.parse(certEffectiveYear+"-"+certEffectiveMonth);
+		ucfUser.setCertNo(certNo);
+		ucfUser.setCertType(EnumCertType.ID_CARD.getCode());
+		ucfUser.setRealName(realName.trim());
+		ucfUser.setPinQues(quesInfo);
+		ucfUser.setPinAnsw(quesRes);
+		ucfUser.setCertValidEndDate(certEffectiveDate);
+		ucfUser.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.PERSON.getCode())));
+		ucfUser.setVerifyStatus(EnumVerifyLevle.REGISTER.getCode());//注册实名认证级别
+		// 生成卡信息
+		final UcfCard ucfCard = new UcfCard();
+		ucfCard.setPaymentPassword(Cryptos.encrypt(paymentPassword,userId));
+		ucfCard.setCardType(EnumCertType.ID_CARD.getCode());
+		Date date = new Date();
+		ucfCard.setGmtCreate(date);
+		ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());
+		ucfCard.setCertStatus(EnumCertStatus.NO_CERT.getCode());
+		// add by liwenjing
+		ucfCard.setRegisterFrom(EnumRegisterFrom.MEMBER_FROM.getCode()); 
+		
+		// 安全保护问题
+		final UcfQuestion ucfQuestion = new UcfQuestion();
+		ucfQuestion.setQuesInfo(quesInfo);
+		ucfQuestion.setQuesRes(quesRes);
+		//生成客户信息
+		final UcfCustomer  customer  = new UcfCustomer();
+		customer.setCertNo(certNo);
+		customer.setCertType(EnumCertType.ID_CARD.getCode());
+		customer.setName(realName);
+		customer.setNational("CHA"); 
+		customer.setType(Constants.CUSTOMER_TYPE_PERSON);
+		customer.setEnableStatus(Constants.ENABLE_STATUS_T);
+		customer.setGmtCreate(new Date());
+		customer.setExtFlag(Constants.EXT_FLAG_T);
+		//生成个人信息
+		final UcfPerson  personInfo = new UcfPerson ();
+		personInfo.setRealName(realName);
+		personInfo.setCell(ucfUser.getCell());
+		
+		session.setAttribute("ucfCard", ucfCard);
+		model.addAttribute("phone", ssid);
+		model.addAttribute("realName", realName);
+		String showCertNo =  certNo.substring(0, 1) + "****************" + certNo.substring(16);
+		model.addAttribute("showCertNo",showCertNo);
+		
+		userLoginApp.setUserId(userId);
+		ucfCard.setCardNo(userId);
+		ucfCard.setUserId(userId);
+		ucfQuestion.setQuesLink(userId);
+		ucfUser.setUserId(userId);
+		
+		//调用账户接口开户 ------ 
+		// -- add by  liwenjing
+		String result =loginService.createAcccount(model, EnumAccountType.PERSON,ucfCard);
+		if (!result.equals("success")) {
+			return result;
+		}
+		//调用账户接口开户 ------
+		
+		boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
+            // the code in this method executes in a transactional context
+            public Object doInTransaction(final TransactionStatus status) {
+            	try {
+        			//保存用户信息
+        			userRegService.insertUserInfo(ucfUser);
+        			UcfUserLoginApp queryUcfUserLoginApp = loginService.queryUserAppInfo(userLoginApp.getLoginId());
+        			if(queryUcfUserLoginApp!=null){
+        				throw new CustomerException(CustomerErrorCode.ERROR_USERINFO_ERR);
+        			}
+        			//保存登录信息
+        			loginService.insertLoginAppInfo(userLoginApp);
+        			//保存安全问题
+        			consoleService.addUcfQuestion(ucfQuestion);
+        			 //保存卡信息
+        			loginService.insertCardInfo(ucfCard);
+        			
+        		}catch (final Exception e) {
+        			status.setRollbackOnly();
+        		    LOGGER.error(e.getMessage(),e);
+        		    return false;
+        		} 
+				return true;
+            }
+        });
+		
+		if(!commit){
+			final String errMsg = "用户注册失败，系统异常";
+			model.addAttribute("errMsg", errMsg);
+			return "reg/error";
+		}
+		
+		UcfCustomer anotherCustomer = new UcfCustomer();
+//		anotherCustomer.setName(customer.getName());
+		anotherCustomer.setCertNo(customer.getCertNo());
+		anotherCustomer=loginService.queryUcfCustomerInfo(anotherCustomer);
+		//存在客户信息，则默认关联
+		if(anotherCustomer!=null){
+			String customerId = anotherCustomer.getCustomerId();
+			model.addAttribute("union", "0");
+			session.setAttribute("iscustomer", "1");
+			session.setAttribute("customerId", customerId);
+		}else{
+			session.setAttribute("iscustomer", "0");
+		}
+		
+		customer.setOpenStatus(Constants.OPEN_STATUS_YES);
+		session.setAttribute("ucfCard", ucfCard);
+		session.setAttribute("customer", customer);
+		session.setAttribute("personInfo", personInfo);
+		session.setAttribute("ques", ucfQuestion);
+		session.setAttribute("curPerson", ucfUser);
+		
+		model.addAttribute("realName", ucfUser.getRealName());
+		model.addAttribute("certNo", certNo);
+		model.addAttribute("ssid",ssid);
+		return "reg/finish";
+	}
+	
+	/**
+	 * 
+	 * Description: 实名认证成功页面 完成以下动作：
+	 * 保存用户信息，卡信息，银行卡信息，账户开户，开户失败则回滚，实名认证（走的是代扣），认证失败则回滚
+	 * 
+	 * @Version1.0 2014-3-12 下午4:07:15 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping(value = "/realNameAuth.htm")
+	public String realNameAuth(final RealAuthBO realAuthBO,
+			@RequestParam("bankCardNo")	final String cardNo,
+			@RequestParam("bankName")	final String bankName,
+			@RequestParam("prov")		final String prov,
+			@RequestParam("cityna")		final String cityna,
+			@RequestParam("branchName")	final String branchName,
+			@RequestParam("bankCode")	final String bankCode,
+			@RequestParam("branchBank")	final String issure,
+			HttpServletRequest request, HttpServletResponse response,final Model model)
+			throws Exception {
+			final HttpSession session  = request.getSession();
+			final UcfUser ucfUser = (UcfUser) session.getAttribute("curPerson");
+		
+			UcfBankCard insertUcfBankCard = new UcfBankCard();
+			insertUcfBankCard.setBankId(cardNo);
+			insertUcfBankCard.setUserId(ucfUser.getUserId());
+			List<UcfBankCard> ucfBankCardList = this.loginService.queryUcfBankCard(insertUcfBankCard);
+			if(ucfBankCardList!=null && ucfBankCardList.size()>0){
+				LOGGER.info("账号"+SensitiveInfoUtils.bankCard(cardNo)+"已绑卡，不能重复绑卡！");
+				model.addAttribute("errMsg", "账号"+cardNo+"已绑卡，不能重复绑卡！");
+				return "reg/error";
+			}
+			
+			
+			final UcfCustomer customer=(UcfCustomer)session.getAttribute("customer");
+			final UcfPerson personInfo=(UcfPerson)session.getAttribute("personInfo");
+			final UcfCard ucfCard=(UcfCard)session.getAttribute("ucfCard");
+			final String iscustomer=(String) session.getAttribute("iscustomer");
+			Map<Object, Object>  mapo = new HashMap<Object, Object>();
+			mapo=loginService.queryUcfUserCell(ucfUser.getUserId());
+			final String cell=(String) mapo.get("cell");
+			final String userName=(String) mapo.get("userName");
+			final String certNo=(String) mapo.get("certNo");
+		    
+			realAuthBO.setBankCardNo(cardNo.replace(" ", ""));
+			realAuthBO.setBankId(bankCode.toUpperCase());
+			realAuthBO.setBankName(bankName);
+			realAuthBO.setBranchName(branchName);
+			realAuthBO.setCardType(Constants.DEBIT_CARD);
+			realAuthBO.setCertNo(certNo);
+			realAuthBO.setCity(cityna);
+			realAuthBO.setProvince(prov);
+			realAuthBO.setUserName(userName);
+			realAuthBO.setIssuer(issure);
+			
+			if (realAuthService.realAuth(ucfUser.getUserId(), cell, realAuthBO)!=true) {
+				LOGGER.info("认证失败！");
+				model.addAttribute("errMsg", "认证失败，请登录后进行进行实名认证！");
+				return "reg/error";
+			} 
+
+		//已实名认证
+		if(iscustomer.equals("1")){
+			
+			String customerId=(String) session.getAttribute("customerId");
+			ucfCard.setCustomerId(customerId);
+			/*UcfCustomer temCustomer = new UcfCustomer();
+			temCustomer.setCustomerId(customerId);
+			temCustomer=loginService.queryUcfCustomerInfo(temCustomer);
+			String temCardNo = temCustomer.getCardNo();
+			if(!temCardNo.equals(cardNo.replace(" ", ""))){
+				//发送实名认证
+				if (realAuthService.realAuth(ucfUser.getUserId(), cell, realAuthBO)!=true) {
+					LOGGER.info("认证失败！");
+					model.addAttribute("errMsg", "认证失败，请登录后进行进行实名认证！");
+					return "reg/error";
+				} 
+			}*/
+			//未实名认证
+		}/*
+		else {
+			//发送实名认证
+			if (realAuthService.realAuth(ucfUser.getUserId(), cell, realAuthBO)!=true) {
+				LOGGER.info("认证失败！");
+				model.addAttribute("errMsg", "认证失败，请登录后进行进行实名认证！");
+				return "reg/error";
+			} 
+			
+		}*/
+		boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
+            // the code in this method executes in a transactional context
+            public Object doInTransaction(final TransactionStatus status) {
+            	try {
+					if(!iscustomer.equals("1")){
+						customer.setCertStatus(Constants.VERIFY_STATUS_T);
+						customer.setCardNo(cardNo.replace(" ", ""));
+						loginService.insertCustomer(customer);
+						UcfCustomer  temCustomer= new UcfCustomer();
+						temCustomer.setName(userName);
+						temCustomer.setCertNo(certNo);
+						final UcfCustomer anotherCustomer=loginService.queryUcfCustomerInfo(temCustomer);
+						personInfo.setCustomerId(anotherCustomer.getCustomerId());
+						ucfCard.setCustomerId(anotherCustomer.getCustomerId());
+						loginService.insertPersonInfo(personInfo);
+					}
+			
+						//add by liwenjing  添加认证来源
+					ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());	
+					if(StringUtils.isEmpty(ucfCard.getCertStatus())){
+						ucfCard.setCertStatus(EnumCertStatus.WIH_CERT.getCode());
+					}else{
+						if(ucfCard.getCertStatus().indexOf(EnumCertStatus.WIH_CERT.getCode())==-1){
+							ucfCard.setCertStatus(ucfCard.getCertStatus()+";"+EnumCertStatus.WIH_CERT.getCode());
+						}
+					}
+					loginService.updateUcfCard(ucfCard);
+					ucfUser.setRealnameStatus(Constants.VERIFY_STATUS_T);
+			//		ucfUser.setVerifyStatus(Constants.VERIFY_STATUS_T);
+					loginService.updateUcfUser(ucfUser);
+					// 保存卡信息
+					UcfBankCard ucfBankCard = new UcfBankCard();
+					StringBuffer id = new StringBuffer();
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+					StringBuffer buf = id.append(sdf.format(new Date()));
+				    StringBuffer seq=buf.append(ucfBankCardDao.getBankCardSeq());
+				    ucfBankCard.setId(seq.toString());
+					ucfBankCard.setUserId(ucfUser.getUserId());
+					ucfBankCard.setBankName(bankName);
+					ucfBankCard.setBankId(bankCode.toUpperCase());
+					ucfBankCard.setCardNo(cardNo.replace(" ", ""));
+					ucfBankCard.setCardType(Constants.DEBIT_CARD);
+					ucfBankCard.setCertFrom("system");
+					ucfBankCard.setRegisterFrom("system");
+					ucfBankCard.setGmtCreate(new Date());
+					ucfBankCard.setCertifyInfo("system");//branchName
+					ucfBankCard.setBranchname(branchName);
+					ucfBankCard.setIssuer(issure);
+					ucfBankCard.setCity(cityna);
+					ucfBankCard.setProvince(prov);
+					ucfBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+					ucfBankCard.setUnionSeq(ucfBankCardDao.getUnionSeq());
+					ucfBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+					ucfBankCard.setCertStatus(EnumCertStatus.WIH_CERT.getCode());
+					loginService.insertBankCardInfo(ucfBankCard);
+		
+	        	}catch (final Exception e) {
+	    			status.setRollbackOnly();
+	    		    LOGGER.error(e.getMessage(),e);
+	    		    return false;
+	    		} 
+				return true;
+            }
+		});
+
+		if(commit) {
+			UcfUserLoginApp userApp = loginService.queryUserAppInfo(cell);
+			MemberAgent memberAgent = new MemberAgent();
+			memberAgent.setId(ucfUser.getUserId());
+			memberAgent.setLoginId(ucfUser.getLoginId());
+			memberAgent.setRealName(ucfUser.getRealName());
+			memberAgent.setCertNo(ucfUser.getCertNo());
+			memberAgent.setMobile(ucfUser.getCell());
+			memberAgent.setUserType(EnumMemberUserType.Logined);
+			memberAgent.setBindCard(true);
+			memberAgent.setCustomer(true);
+			memberAgent.setLastLoginTime(userApp.getLastLoginTime());
+			session.setAttribute("MemberAgent", memberAgent);
+			
+			com.ucf.customer.ws.bo.UcfUser ucfUserBo = new com.ucf.customer.ws.bo.UcfUser();
+			BeanUtilEx.copyProperties(ucfUserBo,ucfUser);
+			session.setAttribute("user", ucfUser);
+			 return "reg/finish";
+		}else 
+		  return "reg/error";
+
+	}
+	
+	/**
+	 * 判断用户名是否存在
+	 * 
+	 * @param userName
+	 * @return
+	 * @throws Exception
+	 */
+	public  boolean isExsit(String userName) throws Exception {
+		UcfUserLoginApp ucfUser = loginService.queryUserAppInfo(userName);
+		if (ucfUser != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	
+	
+
+
+
+	
+}

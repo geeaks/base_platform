@@ -1,0 +1,230 @@
+/**
+ * 银行卡解绑和修改状态
+ * @copyright @余超 in 先锋支付公司
+ */
+package com.ucf.customer.service.impl;
+
+/**
+ * 
+ * @desc 	银行卡解绑和修改状态
+ * @version		1.0
+ * @date		2014-3-26 14:01:06
+ * @author 		yuchao@ucfgroup.com
+ * @param userId
+ * @param cardType
+ * @return
+ * @throws Exception
+ */
+
+import java.util.List;
+import java.util.Map;
+
+import javax.security.auth.login.AccountException;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ucf.customer.dao.UcfBankCardDao;
+import com.ucf.customer.dao.UcfUserHabitDao;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserHabit;
+import com.ucf.customer.service.BankCardService;
+import com.ucf.customer.utils.exception.CustomerException;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+
+@Service
+public class BankCardServiceImpl implements BankCardService {
+	
+	public static UcfLogger LOGGER = UcfLoggerFactory.getLogger(BankCardServiceImpl.class);
+
+	@Autowired
+	private UcfBankCardDao bankCardDao;
+	@Autowired
+	private UcfUserHabitDao userHabitDao;
+
+	@Override
+	public void insertUcfBankCard(UcfBankCard ucfBankCard) throws Exception {
+		this.bankCardDao.insertUcfBankCard(ucfBankCard);
+	}
+	
+	@Override
+	public void updateUcfBankCard(UcfBankCard ucfBankCard) throws Exception {
+		if(StringUtils.isNotEmpty(ucfBankCard.getId())){
+			this.bankCardDao.updateUcfBankCard(ucfBankCard);
+		}
+	}
+	
+	@Override
+	public UcfBankCard queryUserBankInfoById(String id) throws Exception {
+		return bankCardDao.queryUcfBankCardById(id);
+	}
+	
+	@Override
+	public List<UcfBankCard> queryUserBankInfos(String userId) {
+		try {
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setUserId(userId);
+			List<UcfBankCard> ucfBankCards = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			return ucfBankCards;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	@Override
+	public List<UcfBankCard> queryUserBankInfosByUseType(String userId,String useType) {
+		try {
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setUseType(useType);
+			List<UcfBankCard> ucfBankCards = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			return ucfBankCards;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	@Override
+	public List<UcfBankCard> queryBankCards(String userId,String cardType) {
+		try {
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setCardType(cardType);
+			List<UcfBankCard> ucfBankCards = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			return ucfBankCards;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	@Override
+	public UcfBankCard queryUserBankInfo(String userId,String bankCardNo){
+		try {
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setCardNo(bankCardNo);
+			List<UcfBankCard> ucfBankCards = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			if(ucfBankCards!=null && ucfBankCards.size()>0){
+				return ucfBankCards.get(0);
+			}
+			return null;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}
+
+	@Override
+	public UcfBankCard queryUserBankInfo(String userId,String bankCardNo,String status) {
+		try {
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setCardNo(bankCardNo);
+			ucfBankCard.setStatus(status);
+			List<UcfBankCard> ucfBankCards = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			if(ucfBankCards!=null && ucfBankCards.size()>0){
+				return ucfBankCards.get(0);
+			}
+			return null;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}	
+	
+	@Override
+	public List<UcfBankCard> queryUserBankInfos(String userId,String status) {
+		try {
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setStatus(status);
+			List<UcfBankCard> ucfBankCards = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			return ucfBankCards;
+		} catch (CustomerException e) {
+			LOGGER.error(e.getMessage(), e);
+			return null;
+		}
+	}	
+
+
+	@Override
+	public void deleteUcfBankCard(String id) throws Exception {
+		UcfBankCard ucfBankCard = queryUserBankInfoById(id);
+		if(ucfBankCard!=null){
+			ucfBankCard.setIsDelete("Y");
+			ucfBankCard.setUnionSeq(this.getUnionSeq());
+			bankCardDao.updateUcfBankCard(ucfBankCard);
+			LOGGER.info("删除银行卡号为:  " + SensitiveInfoUtils.getJson(ucfBankCard));
+		}
+	}
+
+	/**
+	 * delete the bankcard using the UcfBankCard getCardNo function
+	 */
+	@Override
+	public void deleteUcfBankCard(String userId,String bankCardNo) throws Exception {
+		UcfBankCard ucfBankCard = new UcfBankCard();
+		ucfBankCard.setUserId(userId);
+		ucfBankCard.setCardNo(bankCardNo);
+		List<UcfBankCard> ucfBankCardList = bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+		if(ucfBankCardList!=null && ucfBankCardList.size()>0){
+			ucfBankCard = ucfBankCardList.get(0);
+			ucfBankCard.setIsDelete("Y");
+			bankCardDao.updateUcfBankCard(ucfBankCard);
+			LOGGER.info("删除银行卡号为:  " + SensitiveInfoUtils.getJson(ucfBankCard));
+		}
+	}
+
+	@Override
+	public boolean checkCardNum(UcfUser ucfUser) {
+		List<UcfBankCard> bankCardHad = queryUserBankInfos(ucfUser.getUserId());
+		int cardNum = 0;
+		if (bankCardHad != null) {
+			cardNum = bankCardHad.size();
+		}
+		if (cardNum >= 5) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	@Override
+	public String getBankCardSeq() throws AccountException {
+		return bankCardDao.getBankCardSeq();
+	}
+
+	@Override
+	public long getUnionSeq() {
+		return bankCardDao.getUnionSeq();
+	}
+
+	
+	@Override
+	public void saveUserHabit(UcfUserHabit habit) throws Exception {
+		userHabitDao.insertUcfUserHabit(habit);
+	}
+
+	@Override
+	public void modifyUserHabit(UcfUserHabit habit) throws Exception {
+		userHabitDao.updateUcfUserHabit(habit);
+	}
+
+	@Override
+	public List<UcfUserHabit> queryUserHabit(UcfUserHabit habit) throws Exception {
+		return userHabitDao.queryUcfUserHabitListByWhere(habit);
+	}
+
+	@Override
+	public List<UcfBankCard> isBankCardBound(Map<String, String> map) throws Exception {
+		List<UcfBankCard> list = bankCardDao.isBankCardBound(map);
+		return list;
+	}
+}

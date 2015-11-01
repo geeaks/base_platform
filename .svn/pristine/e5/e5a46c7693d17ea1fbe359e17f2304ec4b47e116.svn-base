@@ -1,0 +1,637 @@
+package com.ucf.customer.test.api;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.bo.BankCardBo;
+import com.ucf.customer.api.bo.BankCardModifyBo;
+import com.ucf.customer.api.bo.BaseResultBO;
+import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.MemberRegisterBO;
+import com.ucf.customer.api.bo.PageRs;
+import com.ucf.customer.api.bo.PhoneModifyBo;
+import com.ucf.customer.api.bo.PhotoAuthApplyBo;
+import com.ucf.customer.api.bo.RealNameParamBO;
+import com.ucf.customer.api.bo.UserAuthParamBO;
+import com.ucf.customer.api.bo.UserCardAccountRsBo;
+import com.ucf.customer.api.bo.UserInfoBo;
+import com.ucf.customer.api.bo.UserRealNamedStatusRsBO;
+import com.ucf.customer.api.enums.EnumAuthType;
+import com.ucf.customer.api.enums.EnumBankCardUseType;
+import com.ucf.customer.api.enums.EnumCertStatus;
+import com.ucf.customer.api.enums.EnumStatus;
+import com.ucf.customer.dao.UcfCardDao;
+import com.ucf.customer.dao.UcfUserDao;
+import com.ucf.customer.dao.plugin.Page;
+import com.ucf.customer.mq.MemberMQConsumerService;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.UserService;
+import com.ucf.customer.test.BaseTest;
+import com.ucf.payment.util.constant.PaymentEnum;
+import com.ucf.platform.framework.mq.UcfReceiveMessage;
+import com.ucf.platform.framework.mq.UcfSendMessage;
+import com.ucf.platform.framework.mq.enums.RocketMQTopicEnum;
+import com.ucf.platform.framework.mq.enums.UcfMQConsumeStatus;
+import com.ucf.platform.framework.mq.producer.UcfMQProducer;
+
+/**
+ * @ClassName: MemberServiceTest
+ * @Description: MemberServiceTest 单元测试类
+ * @author gaoxiang
+ * @date 2014年9月23日 下午6:17:01
+ */ 
+public class MemberServiceTest extends BaseTest {
+	
+	@Autowired
+	private MemberService memberService;
+	
+	@Resource(name = "ucfMQProducer")
+	private UcfMQProducer ucfMQProducer;
+	
+	@Autowired
+	private UcfCardDao cardDao;
+	
+	@Autowired
+	private UcfUserDao userDao;
+	
+	@Autowired
+	private UserService userService;
+	
+	
+	@Test
+	@Rollback(false)
+	public void testMq() throws Exception{
+		MemberMQConsumerService memberMQConsumerService=new MemberMQConsumerService();
+		UcfReceiveMessage msg = new UcfReceiveMessage();
+		Map<Object, Object> mqReturnMap = new HashMap<Object, Object>();
+		mqReturnMap.put("userId","10000009711");
+		mqReturnMap.put("cardAction",PaymentEnum.CARD_ACTION_BIND.getCode());
+		mqReturnMap.put("bankAccountName","高祥");
+		mqReturnMap.put("bankAccountNo",UUID.randomUUID().toString());
+		mqReturnMap.put("certificateNo","130406199112130915");
+		mqReturnMap.put("bankId","ICBC");
+		mqReturnMap.put("bankName","工商银行");
+		mqReturnMap.put("mobileNo","18811511061");
+		mqReturnMap.put("province","北京");
+		mqReturnMap.put("city","北京市");
+		mqReturnMap.put("issuer","1234781278");
+		mqReturnMap.put("branchName","北沙滩支行");
+		mqReturnMap.put("cvn2","521");
+		mqReturnMap.put("validDate","2019/05/20");
+		msg.setBizValue(mqReturnMap);
+		UcfMQConsumeStatus doConsume = memberMQConsumerService.doConsume(msg);
+		System.err.println(doConsume);
+	}
+	
+	@Test
+	public void verifyPayPwd() throws Exception{
+		String userId = "10000008723";
+		String payPassword = "123456ff";
+		byte[] payPwd = payPassword.getBytes();
+		BaseResultBO verifyPayPwd = memberService.verifyPayPwd(userId, payPwd);
+		System.err.println(verifyPayPwd);
+	}
+
+	@Test
+	public void verifyPayPwdByLoginName() throws Exception{
+		String loginName = "18811511061";
+		String payPassword = "123456ff";
+		byte[] payPwd = payPassword.getBytes();
+		BaseResultBO checkVfyCode = memberService.verifyPayPwdByLoginName(loginName, payPwd);
+		System.err.println(checkVfyCode);
+	}
+	
+	@Test
+	public void sendVfyCodeSMS() throws Exception{
+		String phone = "15010630961";
+		BaseResultBO baseResultBO = memberService.sendVfyCodeSMS(phone);
+		System.err.println(baseResultBO);
+	}
+	
+	@Test
+	public void checkVfyCode() throws Exception{
+		String phone = "15010630961";
+		String code = "203515";
+		BaseResultBO checkVfyCode = memberService.checkVfyCode(phone, code);
+		System.err.println(checkVfyCode);
+	}
+	
+	@Test
+	public void userAuth() throws Exception{
+		UserAuthParamBO bo = new UserAuthParamBO();
+		bo.setUserId("10000008723");
+		bo.setBankCardNo("622205015445");
+		bo.setMerchantId("10010");
+		bo.setPhone("15010620844");
+		bo.setType(EnumAuthType.NAME_CERT_BANK_CELL);
+		BaseResultBO rs = memberService.userAuth(bo);
+		System.err.println(rs);
+	}
+	
+	@Test
+	@Rollback(false)
+	public void createFundSubCard() throws Exception{
+		String userId = "10000008723";
+		BaseResultBO checkVfyCode = memberService.createFundSubCard(userId);
+		System.err.println(checkVfyCode);
+	}
+	
+	@Test
+	public void isExistFundSubCard() throws Exception{
+		String userId = "10000008723";
+		BaseResultBO bo = memberService.isExistFundSubCard(userId);
+		System.err.println(bo);
+	}
+	
+	@Test
+	public void findUserCardAccount() throws Exception{
+		String userId = "10000008723";
+		UserCardAccountRsBo findUserCardAccount = memberService.findUserCardAccount(userId,"01");
+		System.err.println(findUserCardAccount);
+	}
+	
+	@Test
+	public void testfindUserRealnameStatus(){	
+		//
+		UserRealNamedStatusRsBO  returnBo = memberService.findUserRealnameStatus("10000003813");
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	/**
+	 * @Description: 实名认证失败
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午1:38:29
+	 */
+	@Test
+	@Rollback(false)
+	public void testRealNameFaile(){
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000003813");
+		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
+		paramBo.setStatus(EnumStatus.FAI.getCode());
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	/**
+	 * @Description: 实名认证成功
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午1:38:44
+	 */
+	@Test
+	@Rollback(false)
+	public void testRealNameSuc(){
+		RealNameParamBO paramBo = new RealNameParamBO();
+		paramBo.setUserId("10000004008");
+		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
+		paramBo.setStatus(EnumStatus.SUCCESS.getCode());
+		paramBo.setBankCardNo("6254874556423D3");// 银行卡号
+		paramBo.setCardType("1");
+		paramBo.setBankCode("ICBC");
+		paramBo.setBankName("工商e银行");
+		paramBo.setProvince("北e京");
+		paramBo.setPhone("15010658483");
+		paramBo.setCity("北京");
+		paramBo.setBranchBankId("110454543");
+		paramBo.setBranchBankName("工商xx银行3");
+		BaseResultBO  returnBo = memberService.realName(paramBo);
+		System.err.println(JSON.toJSON(returnBo));
+	}
+	
+	/**
+	 * 修改用户登录密码
+	 * @param userId
+	 * @param oldPwd
+	 * @param newPwd
+	 * @return
+	 */
+	@Test
+	@Rollback(false)
+	public void modfiyLoginPwd(){
+		String userId = "10000009710";
+		String oldPwd = "123456f";
+		String newPwd = "123456a";
+		MemberCommonResult<String> modfiyLoginPwd = 
+				memberService.modifyLoginPwd(userId, oldPwd.getBytes(), newPwd.getBytes());
+		System.err.println(JSON.toJSON(modfiyLoginPwd));
+	}
+	
+	/**
+	 * 通过用户ID 查询用户信息
+	 * @param merchantId
+	 * @param refUserId
+	 * @return
+	 */
+	@Test
+	public void findUserById(){
+		String userId = "10000004332";
+		MemberCommonResult<UserInfoBo> findUserById = 
+				memberService.findUserById(userId);
+		System.err.println(JSON.toJSON(findUserById));
+	}
+	
+	/**
+	 * 通过商户ID 查询用户信息
+	 * @param merchantId
+	 * @param refUserId
+	 * @return
+	 */
+	@Test
+	public void findUserInfo(){
+		String refUserId = "10000004332";
+		String merchantId = "testmerchantId";
+		MemberCommonResult<UserInfoBo> findUserById = 
+				memberService.findUserInfo(merchantId,refUserId);
+		System.err.println(JSON.toJSON(findUserById));
+	}
+	
+	/**
+	 * 注册用户
+	 * @param merchantId
+	 * @param refUserId
+	 * @return
+	 */
+	@Test
+	@Rollback(false)
+	public void registerManagedUser(){
+//		userId:10000009711
+		MemberRegisterBO memberBo = new MemberRegisterBO();
+		memberBo.setRefUserId("10000000000");
+		memberBo.setMerchantId("testmerchantId");
+		memberBo.setCertType("IDC");
+		memberBo.setCertNo("130406198912130915");
+		memberBo.setPhone("10000000000");
+		memberBo.setEmail("vsflyhigh@qq.com");
+		
+		MemberCommonResult<String> registerManagedUser = 
+				memberService.registerManagedUser(memberBo);
+		System.err.println(JSON.toJSON(registerManagedUser));
+	}
+	
+	/**
+	 * @Description: 删除用户银行卡
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年11月3日 下午3:12:00
+	 */
+	@Test
+	@Rollback(false)
+	public void delUserBankCard(){
+//		String userId = "10000009711";
+		String bankCardId = "20000007030";
+		MemberCommonResult<String> delUserBankCard = 
+				memberService.delUserBankCard(null,bankCardId);
+		System.err.println(JSON.toJSON(delUserBankCard));
+	}
+	
+	/**
+	 * @Description: 查询用户的银行卡列表
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年11月3日 下午3:12:16
+	 */
+	@Test
+	public void findUserBankCards(){
+		MemberCommonResult<List<BankCardBo>> findUserBankCards = memberService.findUserBankCards("50000015521");
+		System.err.println(JSON.toJSON(findUserBankCards));
+	}
+	
+	/**
+	 * @Description: 根据类型查询用户银行卡
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午2:30:08
+	 */
+	@Test
+	public void findUserBankCardsByUseType(){
+		MemberCommonResult<List<BankCardBo>> resultBo = 
+				memberService.findUserBankCardsByUseType("50000015521",EnumBankCardUseType.CONSUME.getCode());
+		System.err.println(JSON.toJSON(resultBo));
+	}
+	
+	/**
+	 * @Description: 通过银行卡ID查找银行卡详情
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午6:43:39
+	 */
+	@Test
+	public void findBankCardById(){
+		String bankCardId = "20000012421";
+		MemberCommonResult<BankCardBo> resultBo = 
+				memberService.findBankCardById(bankCardId);
+		System.err.println(JSON.toJSON(resultBo));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testRevMq(){
+		//发送mq消息通知p2p
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("userId","10000009711");
+		params.put("cardAction","1");
+		params.put("bankAccountName","张三");
+		params.put("bankAccountNo","6226388000000095");
+		params.put("certificateNo","51026579000128303");
+		params.put("bankId","HXB");
+		params.put("bankName","工商银行");
+		params.put("mobileNo","18100000000");
+		params.put("province","北京");
+		params.put("city","北京市");
+		params.put("issuer","1234781278");
+		params.put("branchName","北沙滩支行");
+		params.put("cvn2","248");
+		params.put("validDate","1108");
+		System.err.println("【个人账户开户】发送RocketMQ消息入参：" + JSON.toJSONString(params));
+		UcfSendMessage mqmsg = new UcfSendMessage();
+		mqmsg.setBizValue(params);
+		SendResult rocketResult = ucfMQProducer.sendMessage(
+						RocketMQTopicEnum.ROCKETMQ_TRADE_BINDCARD_TOPICANDTAG.getTopic(),
+						RocketMQTopicEnum.ROCKETMQ_TRADE_BINDCARD_TOPICANDTAG.getTag(),
+						mqmsg);
+		System.err.println("【个人账户开户】发送RocketMQ消息成功：" + rocketResult.toString());
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testPhotoAuthApply(){
+		PhotoAuthApplyBo bo = new PhotoAuthApplyBo();
+		bo.setBankCardNo("25548784545");
+		bo.setImgPath("fseff");
+		bo.setUserId("10000005301");
+		MemberCommonResult<String> rs = memberService.photoAuthApply(bo);
+		System.err.println(JSON.toJSON(rs));
+	}
+	
+	@Test
+	@Rollback(false)
+	public void testfindPhotoAuthApply(){
+		MemberCommonResult<String> rs = memberService.findPhotoAuthApply("10000005301");
+		System.err.println(JSON.toJSON(rs));
+	}
+	
+	/**
+	 * @Description: 照片审核失败
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午1:39:42
+	 */
+	@Test
+	@Rollback(false)
+	public void testAuditPhotoAuthFail(){
+		MemberCommonResult<String> rs = memberService.auditPhotoAuth("201412091000000022","F","FA");
+		System.err.println(JSON.toJSON(rs));
+	}
+	
+	/**
+	 * @Description: 照片审核成功
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午1:40:14
+	 */
+	@Test
+	@Rollback(false)
+	public void testAuditPhotoAuthSuc(){
+		MemberCommonResult<String> rs = memberService.auditPhotoAuth("201412091000000024","S","xxxx","geeaks");
+		System.err.println(JSON.toJSON(rs));
+	}
+	
+	/**
+	 * @Description: 工资宝注册开户
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-7 下午5:53:08
+	 */
+	@Test
+	@Rollback(true)
+	public void registerGZBUser(){
+		MemberRegisterBO userBo = new MemberRegisterBO();
+		userBo.setMerchantId("M26011112121");
+		userBo.setRefUserId("T260235687");
+		userBo.setBankCardNo("6212260200024937523");
+		userBo.setBankCardType("1");
+		userBo.setBankCode("ICBC");
+		userBo.setBankName("工商银行");
+		userBo.setBranchId("102100021650");
+		userBo.setProvince("北京市");
+		userBo.setCity("北京市");
+		userBo.setBranchName("中国工商银行股份有限公司北京国防大学支行");
+		userBo.setCertNo("130406198812130916");
+		userBo.setCertStatus("TRANSFER_CERT");
+		userBo.setCertType("IDC");
+		userBo.setEmail("vsgaoxiang@126.com");
+		userBo.setName("毕云涛");
+		userBo.setPhone("18811511066");
+		MemberCommonResult<String> rs = memberService.registerGZBUser(userBo);
+		System.err.println(JSON.toJSONString(rs));
+	}
+	
+	/**
+	 * @Description: 工资宝修改用户手机号
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-7 下午5:53:48
+	 */
+	@Test
+	@Rollback(true)
+	public void modifyUserPhone(){
+		PhoneModifyBo phoneModifyBo = new PhoneModifyBo();
+		phoneModifyBo.setUserId("50000015533");
+		phoneModifyBo.setOldPhone("18811511066");
+		phoneModifyBo.setPhone("18811511067");
+		MemberCommonResult<String> rs = memberService.modifyUserPhone(phoneModifyBo);
+		System.err.println(JSON.toJSONString(rs));
+	}
+	
+	/**
+	 * @Description: 工资宝修改用户银行卡信息
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-7 下午5:53:58
+	 */
+	@Test
+	@Rollback(false)
+	public void modifyUserBankCard(){
+		BankCardModifyBo bankCardModifyBo = new BankCardModifyBo();
+		bankCardModifyBo.setUserId("50000015533");
+		bankCardModifyBo.setOldBankCardNo("6212260200024937523");
+		bankCardModifyBo.setBankCardNo("6212260200024937526");
+		MemberCommonResult<String> rs = memberService.modifyUserBankCard(bankCardModifyBo);
+		System.err.println(JSON.toJSONString(rs));
+	}
+	
+	/**
+	 * @Description: 随机查询一个匿名用户
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-12 下午1:13:39
+	 */
+	@Test
+	public void findAnonymousUser(){
+		MemberCommonResult<UserInfoBo> findAnonymousUser = memberService.findAnonymousUser();
+		System.err.println(JSON.toJSONString(findAnonymousUser));
+	}
+	
+	/**
+	 * @Description: 查询用户信息，成功后发送短信验证码
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午12:52:42
+	 */
+	@Test
+	@Rollback(false)
+	public void checkUserInfo(){
+		String merchantId = "10010";
+		String phone = "18811511061";
+		MemberCommonResult<UserInfoBo> checkUserInfo = memberService.checkUserInfo(merchantId, phone);
+		System.err.println(JSON.toJSONString(checkUserInfo));
+	}
+	
+	/**
+	 * @Description: 核对验证码
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午12:52:55
+	 */
+	@Test
+	@Rollback(false)
+	public void checkUserSms(){
+		String userId = "10000004332";
+		String code = "953483";
+		MemberCommonResult<String> checkUserSms = memberService.checkUserSms(userId, code);
+		System.err.println(JSON.toJSONString(checkUserSms));
+	}
+	
+	@Test
+	@Rollback(true)
+	public void registerP2PUser(){
+		MemberRegisterBO memberBo = new MemberRegisterBO();
+		memberBo.setBankCardNo("622522235495468");
+		memberBo.setBankCardType("1");
+		memberBo.setBankCode("ICBC");
+		memberBo.setProvince("北京");
+		memberBo.setCity("北京");
+		memberBo.setBankName("昭阳区");
+		memberBo.setBranchId("123456");
+		memberBo.setCertStatus("P2P_CERT");
+		memberBo.setCertType("IDC");
+		memberBo.setEmail("vsflyhigh@qq.com");
+		memberBo.setMerchantId("merchantId");
+		memberBo.setRefUserId("refUserId");
+		memberBo.setName("气门芯");
+		memberBo.setCertNo("456987132");
+		memberBo.setPhone("18811511061");
+		memberBo.setRegisterFrom("P2B");
+		memberBo.setSource("PC");
+		MemberCommonResult<String> result = memberService.registerP2PUser(memberBo);
+		System.err.println(JSON.toJSONString(result));
+	}
+	
+	@Test
+	@Rollback(true)
+	public void updateCardInfo() throws Exception{
+		com.ucf.customer.pojo.UcfCard q1  = new com.ucf.customer.pojo.UcfCard();
+		q1.setUserId("10000003802");
+		List<com.ucf.customer.pojo.UcfCard> us = cardDao.queryUcfCardListByWhere(q1);
+		com.ucf.customer.pojo.UcfCard u = us.get(0);
+		System.out.println(JSON.toJSONString(u));
+		u.setCertStatus("XXDFDE9");
+		cardDao.updateUcfCard(u);
+		com.ucf.customer.pojo.UcfCard q  = new com.ucf.customer.pojo.UcfCard();
+		q.setUserId("10000003802");
+		System.out.println(JSON.toJSONString(cardDao.queryUcfCardListByWhere(q).get(0)));
+
+	}
+	
+	@Test
+	@Rollback(true)
+	public void updateUserInfo() throws Exception{
+		UcfUser u  = new UcfUser();
+		u.setUserId("10000003802");
+		List<UcfUser> us = userDao.queryUcfUserListByWhere(u);
+		UcfUser uu = us.get(0);
+		System.out.println(JSON.toJSONString(uu));
+		uu.setCell("XXDFDEdef9");
+		userDao.updateUcfUser(uu);
+		System.out.println(JSON.toJSONString(userDao.queryUcfUserListByWhere(u).get(0)));
+
+	}
+	
+	/**
+	 * @Description: 修改用户姓名
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-9 上午10:18:29
+	 */
+	@Test
+	@Rollback(false)
+	public void modifyUserInfo(){
+		UserInfoBo userInfoBo = new UserInfoBo();
+		userInfoBo.setUserId("10000003823");
+		userInfoBo.setRealName("SX");
+		MemberCommonResult<String> userInfo = memberService.modifyUserInfo(userInfoBo);
+		System.err.println(userInfo);
+	}
+	
+	/**
+	 * @Description: 分页查询用户信息列表
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-9 上午10:18:12
+	 */
+	@Test
+	public void findUsersInfo(){
+		UserInfoBo userInfoBo = new UserInfoBo();
+//		userInfoBo.setUserId("10000003823");
+		userInfoBo.setPageNo(1);
+		userInfoBo.setPageSize(100);
+		userInfoBo.setRealName("张文婧");
+		MemberCommonResult<PageRs<UserInfoBo>> findUsersInfo = memberService.findUsersInfo(userInfoBo);
+		System.err.println(JSON.toJSONString(findUsersInfo));
+	}
+	
+	/**
+	 * @Description: 刷新用户缓存
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-9 上午10:17:51
+	 */
+	@Test
+	public void refreshUserCache(){
+		MemberCommonResult<String> refreshUserCache = memberService.refreshUserCache("10000003823");
+		System.err.println(refreshUserCache);
+	}
+	
+	/**
+	 * @Description: 分页查询用户ID列表
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-5-20 下午3:58:26
+	 */
+	@Test
+	public void listPageUserId() throws Exception{
+		UcfUser ucfUser = new UcfUser();
+		Page page = new Page();
+		page.setCurrentPage(1);
+		page.setShowCount(20);
+		ucfUser.setPage(page);
+		List<String> userIdList = userService.listPageUserId(ucfUser);
+		System.err.println(userIdList.size());
+		System.err.println(userIdList);
+	}
+	
+}

@@ -1,0 +1,74 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<c:set var="basePath" value="${pageContext.request.contextPath }" scope="application"/>
+<jsp:include page="./resource_meta.jsp"/>
+<jsp:include page="./resource_css.jsp"/>
+<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
+  <script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
+<script src="${staticMemberPath}/js/bootstrap.min.js"></script>
+  <link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
+<jsp:include page="./resource_js.jsp"/>
+<script src="${staticMemberPath}/js/commons/holder.min.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/new/js/widget/placeholder/placeholder.v1.js"></script>
+<!--[if lte IE 9]>
+<script src="${staticMemberPath}/js/commons/respond.min.js">
+<script src="${staticMemberPath}/js/commons/html5shiv.min.js"></script>
+<![endif]-->
+<script type="text/javascript">
+<!--
+$(function() { 
+	if($.browser.msie) {
+		$("input[type='text']").placeholder();
+	} 
+});
+//-->
+function sendSMS(cellNo,smsType) {
+	var param = {
+			cellNo: cellNo,
+			smsType : smsType
+		};
+	$.ajax({
+		type:'POST',
+		async:true,
+		timeout:30000,
+		url:'${basePath}/sms/vfycode/send',
+		data:param,
+		beforeSend:function() {
+			$('#validPhoneCode').attr("disabled","disabled");
+		},
+		error:function(message){
+			alert(message.responseText);
+			$('#validPhoneCode').removeAttr("disabled");
+		},
+		success:function(result) {
+			freezeTime();
+		},
+		dataType:"json"
+	});
+};
+
+
+function sendSMSNew(cellNo,smsType) {
+	var param = {
+			cellNo: cellNo,
+			smsType : smsType
+		};
+	$.ajax({
+		type:'POST',
+		async:true,
+		timeout:30000,
+		url:'${basePath}/sms/send.htm',
+		data:param,
+		beforeSend:function() {
+			$('#validPhoneCode').attr("disabled","disabled");
+		},
+		error:function(message){
+			alert(message.responseText);
+			$('#validPhoneCode').removeAttr("disabled");
+		},
+		success:function(result) {
+			freezeTime();
+		},
+		dataType:"json"
+	});
+}
+</script>

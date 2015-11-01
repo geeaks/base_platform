@@ -1,0 +1,43 @@
+package com.ucf.customer.api.enums;
+
+/**
+ * 用户实名认证类型
+ * @author zhanglei
+ * 
+ */
+public enum EnumCertStatus {
+	NO_CERT("NO_CERT","未认证"),
+	WIH_CERT("WIH_CERT","代扣认证"),
+	CHINAPAY_CERT("CHIANPAY_CERT","中国银联认证(姓名、身份证、银行卡、预留手机号)"),
+	AUDIT_CERT("AUDIT_CERT","人工审核认证"),
+	REMIT_CERT("REMIT_CERT","打款认证"),
+	TRANSFER_CERT("TRANSFER_CERT","线下转账认证"),
+	FASTPAY_CERT("FASTPAY_CERT","快捷认证"),
+	WHITELIST_CERT("WHITELIST_CERT","白名单认证"),
+	ID_CERT("P2P_CERT", "身份认证");
+	
+	
+	private String code;
+	private String desc;
+
+	EnumCertStatus(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+}

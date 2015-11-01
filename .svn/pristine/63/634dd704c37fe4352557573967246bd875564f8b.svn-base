@@ -1,0 +1,18 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="basePath" value="${pageContext.request.contextPath }" />
+
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/common/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/common/jquery.validator.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/common/zh_CN.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/customer/com.ucf.customer.sms.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/new/js/widget/placeholder/placeholder.v1.js"></script>
+<script type="text/javascript">
+<!--
+$(function() { 
+	if($.browser.msie) {
+		$("input[type='text']").placeholder();
+	} 
+});
+//-->
+</script>
+<!--private js&css end-->

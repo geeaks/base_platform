@@ -1,0 +1,133 @@
+package com.ucf.customer.controller;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.ucf.account.ws.bo.AccountReturnValueBO;
+import com.ucf.customer.action.BaseAction;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.security.EnumMemberUserType;
+import com.ucf.customer.security.MemberAccess;
+import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.service.BankCardService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UserService;
+import com.ucf.customer.service.out.AccountService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.IdCardUtil;
+import com.ucf.customer.utils.MobileUtil;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.ws.business.TradeCallService;
+import com.ucf.onlinepay.framework.common.bean.Money;
+
+/**
+ * 
+ * 
+ * 项目名称：member <br>
+ * 类名称：UserInfoAction <br>
+ * 类描述： 用户信息管理ACTION 需要登录 <br>
+ * 创建人：李文静 <br>
+ * 创建时间：2014-5-7 上午11:46:37 <br>
+ * 修改人：李文静 <br>
+ * 修改时间：2014-5-7 上午11:46:37 <br>
+ * 修改备注： <br>
+ * 
+ * @version
+ * 
+ */
+@Controller
+@RequestMapping({ "/user" })
+public class UserInfoController extends BaseAction {
+
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private TradeCallService tradeCallServiceImpl;
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private BankCardService bankCardService;
+	
+	@Autowired
+	private AccountService accountService;
+	
+	
+	
+	@RequestMapping({ "/logout.htm" })
+	public String logout(HttpServletRequest request,HttpServletResponse response, Model model) {
+		HttpSession session  = request.getSession();
+		session.invalidate();
+		return "redirect:/login/index.htm";
+	}
+
+	@MemberAccess(EnumMemberUserType.Logined)
+	@RequestMapping({ "/index.htm" })
+	public String index(HttpServletRequest request,HttpServletResponse response, Model model) throws Exception {
+	
+		MemberAgent memberAgent = getMemberAgent(request, response);
+		UcfCard ucfcard = loginService.queryUcfCardByUserId(memberAgent.getId());
+		ResultBo ro = accountService.searchAccount(ucfcard.getAccountId());
+		Money money = new Money(0.0);
+		if(EnumResultCode.SUCCESS.getCode().equals(ro.getResult())){
+			AccountReturnValueBO rtBO = ro.getResultObject();
+			money = rtBO.getBalance();
+		}else{
+			model.addAttribute("error", "0");
+		}
+		model.addAttribute("money", money.toString());
+		request.getSession().setAttribute("userName", memberAgent.getRealName());
+		try {
+			Map<String, Object> resultMap = tradeCallServiceImpl.queryOrdersByUserId(memberAgent.getId(), null,Constants.CHAR_ORDER_SUCC, null, null, 10, 1);
+			model.addAttribute("orders", resultMap.get("orders"));
+		} catch (Exception e) {
+			model.addAttribute("neter", "0");
+		}
+		model.addAttribute("bankList", bankCardService.queryUserBankInfos(memberAgent.getId()));
+		model.addAttribute("user", loginService.queryUserInfoByPhone(memberAgent.getLoginId()));
+		model.addAttribute("cell", MobileUtil.mobileNoEncrypt(memberAgent.getMobile()));
+		model.addAttribute("lastLgnTime", memberAgent.getLastLoginTime());
+		return "user/index";
+	}
+
+	/**
+	 * 信息管理页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@MemberAccess(EnumMemberUserType.Logined)
+	@RequestMapping({ "/basicinfo.htm" })
+	public String basicinfo(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws Exception {
+		MemberAgent memberAgent = getMemberAgent(request, response);
+		UcfUser user = loginService.queryUserInfo(memberAgent.getId());
+		user.setCellEncrypt(MobileUtil.mobileNoEncrypt(user.getCell()));
+		user.setCertNoEncrypt(IdCardUtil.IdCardNoEncrypt(user.getCertNo()));
+		// 判断用户是否绑卡
+		UcfBankCard verifyBank = new UcfBankCard();
+		verifyBank.setUserId(user.getUserId());
+		List<UcfBankCard> list = loginService.queryUcfBankCard(verifyBank);
+		if(list!=null){
+			model.addAttribute("realAuth", "realAuth");
+		}
+		model.addAttribute("user", user);
+		return "user/basicinfo";
+	}
+	
+}

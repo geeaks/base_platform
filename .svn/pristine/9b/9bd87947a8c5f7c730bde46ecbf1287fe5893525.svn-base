@@ -1,0 +1,36 @@
+package com.ucf.customer.utils.enums;
+/**
+ * 
+ * Description: 实名认证类型枚举
+ * All Rights Reserved.
+ * @version 1.0  2014-5-20 上午10:00:12  by xuhao@ucfgroup.com创建
+ */
+public enum EnumStatusType {
+	IDC_TYPE("00", "代扣"), POLICE_TYPE("01", "公安部接口");
+	private String code;
+	private String desc;
+
+	EnumStatusType(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	
+	
+
+}

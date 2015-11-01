@@ -1,0 +1,285 @@
+package com.ucf.customer.ws.model;
+
+import java.util.Set;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.constraints.Pattern;
+
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+
+import com.ucf.customer.p2p.model.BaseModel;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+public class ServiceInterfaceModel extends BaseModel {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7244809524579505013L;
+	private static UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(ServiceInterfaceModel.class);
+	@NotBlank(groups = { Common.class })
+	@Length(max=8,groups = { Common.class})
+	private String serviceCode;
+	@NotBlank(groups = { Common.class })
+	@Length(max=32,groups = { Common.class})
+	private String merchantId;
+	@NotBlank(groups = { QueryUserInfo.class })
+	private String userId;
+	@Length(max=256,groups = { Common.class})
+	private String reqReserved;
+	@Length(max=256,groups = { Common.class})
+	private String signature;
+	@NotBlank(groups = { QueryBindBankCardGroup.class })
+	private String type;
+	@NotBlank(groups = { Register.class})
+	@Length(max=32,groups = { Register.class})
+	private String realName;
+	@NotBlank(groups = { Register.class})
+	private String certType;
+	@NotBlank(groups = { Register.class})
+	//@Pattern(regexp="^\\d{17}(\\d|x|X)$",message="证件号不正确",groups = { Register.class})
+	private String certNo;
+	@NotBlank(groups = { AddBankCard.class })
+	private String bankCardNo;
+	@NotBlank(groups = { QueryHabit.class,SaveUserHabit.class })
+	private String productType;
+	private String tradeType;
+	@Length(max=32,groups = { AddBankCard.class})
+	private String bankId;
+	@Length(max=32,groups = { AddBankCard.class})
+	private String cardType;
+	@Length(max=2,groups = { AddBankCard.class})
+	private String certStatus;
+	@Length(max=64,groups = { AddBankCard.class})
+	private String bankName;
+	@Length(max=64,groups = { AddBankCard.class})
+	private String province;
+	@Length(max=64,groups = { AddBankCard.class})
+	private String city;
+	@Length(max=256,groups = { AddBankCard.class})
+	private String branchName;
+	@Length(max=32,groups = { AddBankCard.class})
+	private String issuer;
+	private String bankCardId;
+	@NotBlank(groups = { ModifyPhone.class})
+	@Pattern(regexp="^1\\d{10}$",message="手机号不正确",groups = { ModifyPhone.class})
+	private String newPhoneNo;
+	private String regFrom;
+	private String freezeTimes;
+	public String getFreezeTimes() {
+		return freezeTimes;
+	}
+
+	public void setFreezeTimes(String freezeTimes) {
+		this.freezeTimes = freezeTimes;
+	}
+
+	public String getRegFrom() {
+		return regFrom;
+	}
+
+	public void setRegFrom(String regFrom) {
+		this.regFrom = regFrom;
+	}
+
+	public String getNewPhoneNo() {
+		return newPhoneNo;
+	}
+
+	public void setNewPhoneNo(String newPhoneNo) {
+		this.newPhoneNo = newPhoneNo;
+	}
+
+	@NotBlank(groups = { Register.class})
+	@Pattern(regexp="^1\\d{10}$",message="手机号不正确",groups = { Register.class})
+	private String phoneNo;
+	public String getPhoneNo() {
+		return phoneNo;
+	}
+
+	public void setPhoneNo(String phoneNo) {
+		this.phoneNo = phoneNo;
+	}
+
+	public String getBankCardId() {
+		return bankCardId;
+	}
+
+	public void setBankCardId(String bankCardId) {
+		this.bankCardId = bankCardId;
+	}
+
+	public String getIssuer() {
+		return issuer;
+	}
+
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public String getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+
+	public String getCertStatus() {
+		return certStatus;
+	}
+
+	public void setCertStatus(String certStatus) {
+		this.certStatus = certStatus;
+	}
+
+	public String getProductType() {
+		return productType;
+	}
+
+	public void setProductType(String productType) {
+		this.productType = productType;
+	}
+
+	public String getTradeType() {
+		return tradeType;
+	}
+
+	public void setTradeType(String tradeType) {
+		this.tradeType = tradeType;
+	}
+
+	public String getBankId() {
+		return bankId;
+	}
+
+	public void setBankId(String bankId) {
+		this.bankId = bankId;
+	}
+
+	public String getServiceCode() {
+		return serviceCode;
+	}
+
+	public void setServiceCode(String serviceCode) {
+		this.serviceCode = serviceCode;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getReqReserved() {
+		return reqReserved;
+	}
+
+	public void setReqReserved(String reqReserved) {
+		this.reqReserved = reqReserved;
+	}
+
+	public String getSignature() {
+		return signature;
+	}
+
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getCertType() {
+		return certType;
+	}
+
+	public void setCertType(String certType) {
+		this.certType = certType;
+	}
+
+	public String getCertNo() {
+		return certNo;
+	}
+
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String valid(ServiceInterfaceModel model, Class<?>... groups) {
+
+		Set<ConstraintViolation<ServiceInterfaceModel>> constraintViolations = this
+				.getValidator().validate(model, groups);
+
+		for (ConstraintViolation<ServiceInterfaceModel> c : constraintViolations) {
+			LOGGER.debug("参数错误," + c.getPropertyPath() + ":" + c.getMessage());
+			return "参数错误," + c.getPropertyPath() + ":" + c.getMessage();
+		}
+		return null;
+	}
+}

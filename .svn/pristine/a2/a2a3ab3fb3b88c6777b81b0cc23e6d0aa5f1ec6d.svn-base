@@ -1,0 +1,129 @@
+package com.ucf.customer.ws.bo.enterprise;
+
+import java.io.Serializable;
+
+public class GroupAccountBo implements Serializable {
+
+	/**
+	 * @Fields serialVersionUID : 序列号
+	 */ 
+	private static final long serialVersionUID = 1538075961114142794L;
+	
+	/**
+	 * @Fields respCode : 响应码
+	 */ 
+	private String respCode;
+	
+	/**
+	 * @Fields respMsg : 响应消息
+	 */ 
+	private String respMsg;
+	
+	/**
+	 * @Fields status : 业务执行状态码
+	 */ 
+	private String status;
+	
+	/**
+	 * @Fields parentMerchantId : 父商户ID
+	 */ 
+	private String parentMerchantId;
+	
+	/**
+	 * @Fields parentMerchantName : 父商户名
+	 */ 
+	private String parentMerchantName;
+	
+	/**
+	 * @Fields parentAccountNo : 父账务号
+	 */ 
+	private String parentAccountNo;
+	
+	/**
+	 * @Fields childMerchantId : 子商户ID
+	 */ 
+	private String childMerchantId;
+	
+	/**
+	 * @Fields childMerchantName : 子商户名
+	 */ 
+	private String childMerchantName;
+	
+	/**
+	 * @Fields childAccountNo : 子账务号
+	 */ 
+	private String childAccountNo;
+	
+	public String getParentMerchantName() {
+		return parentMerchantName;
+	}
+
+	public void setParentMerchantName(String parentMerchantName) {
+		this.parentMerchantName = parentMerchantName;
+	}
+
+	public String getChildMerchantName() {
+		return childMerchantName;
+	}
+
+	public void setChildMerchantName(String childMerchantName) {
+		this.childMerchantName = childMerchantName;
+	}
+
+	public String getRespCode() {
+		return respCode;
+	}
+
+	public void setRespCode(String respCode) {
+		this.respCode = respCode;
+	}
+
+	public String getRespMsg() {
+		return respMsg;
+	}
+
+	public void setRespMsg(String respMsg) {
+		this.respMsg = respMsg;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getParentMerchantId() {
+		return parentMerchantId;
+	}
+
+	public void setParentMerchantId(String parentMerchantId) {
+		this.parentMerchantId = parentMerchantId;
+	}
+
+	public String getParentAccountNo() {
+		return parentAccountNo;
+	}
+
+	public void setParentAccountNo(String parentAccountNo) {
+		this.parentAccountNo = parentAccountNo;
+	}
+
+	public String getChildMerchantId() {
+		return childMerchantId;
+	}
+
+	public void setChildMerchantId(String childMerchantId) {
+		this.childMerchantId = childMerchantId;
+	}
+
+	public String getChildAccountNo() {
+		return childAccountNo;
+	}
+
+	public void setChildAccountNo(String childAccountNo) {
+		this.childAccountNo = childAccountNo;
+	}
+	
+}

@@ -1,0 +1,25 @@
+package com.ucf.customer.dao;
+
+import java.io.Serializable;
+import java.util.List;
+import com.ucf.customer.pojo.UcfCustomer;
+
+public interface UcfCustomerDao extends Serializable {
+
+	void insertUcfCustomer(UcfCustomer ucfCustomer)throws Exception;
+
+	void updateUcfCustomer(UcfCustomer ucfCustomer)throws Exception;
+
+	void deleteUcfCustomer(String customerId)throws Exception;
+
+	UcfCustomer getUcfCustomerById(String useId);
+	
+	List<UcfCustomer> queryUcfCustomerListByWhere(UcfCustomer ucfCustomer)throws Exception;
+	/**
+	 * 客户id生成
+	 * @return
+	 * @throws Exception 
+	 */
+	public String  queryUcfCustomerId() throws Exception;
+
+}

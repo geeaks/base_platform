@@ -1,0 +1,41 @@
+package com.ucf.customer.service;
+
+import java.util.List;
+
+import com.ucf.customer.pojo.UcfUser;
+
+public interface UserRegService {
+	/**
+	 * 
+	 * Description: 在ucf_user表中新增一用户
+	 * @Version1.0 2014-3-27 下午3:48:12 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 */
+	public void insertUserInfo(UcfUser ucfUser) throws Exception;
+	
+	/**
+	 * yuchao@ucfgroup.com
+	 * add the code for update and query userinfo
+	 * 
+	 */
+	public void updateUserInfo(UcfUser ucfUser) throws Exception;
+	
+	public List<UcfUser> queryUserInfo(UcfUser ucfUser) throws Exception;
+	
+	/**
+	 * 用户id生成
+	 * @return
+	 * @throws Exception
+	 */
+	public String  queryUcfUserId() throws Exception;
+	/**
+	 * 客户ID生成
+	 * @return
+	 * @throws Exception
+	 */
+	public String  queryUcfCustomerId() throws Exception;
+	
+	//获取企业会员用户编号
+	public String  getEnterpriseMemberNO() throws Exception;
+
+
+}

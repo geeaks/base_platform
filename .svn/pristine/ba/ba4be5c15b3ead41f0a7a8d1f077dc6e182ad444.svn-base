@@ -1,0 +1,32 @@
+package com.ucf.customer.dao.impl;
+
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import com.ucf.customer.pojo.UcfPerson;
+import com.ucf.customer.dao.UcfPersonDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+
+@Repository
+public class UcfPersonDaoImpl extends BaseCustomerDao implements UcfPersonDao {
+
+private static final long serialVersionUID = -1L;
+
+	public void insertUcfPerson(UcfPerson ucfPerson)throws Exception{
+		this.insert("com.ucf.customer.insertUcfPerson", ucfPerson);
+	}
+
+	public void updateUcfPerson(UcfPerson ucfPerson)throws Exception{
+		this.update("com.ucf.customer.updateUcfPerson", ucfPerson);
+	}
+
+	public void deleteUcfPerson(String id)throws Exception{
+		this.delete("com.ucf.customer.deleteUcfPerson", id);
+	}
+
+	public List<UcfPerson> queryUcfPersonListByWhere(UcfPerson ucfPerson)throws Exception{
+		return this.queryForList("com.ucf.customer.queryUcfPersonByWhere", ucfPerson);
+	}
+
+}

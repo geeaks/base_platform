@@ -1,0 +1,51 @@
+﻿<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>先锋支付--安全中心</title>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<link href="../css/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+<c:set var="tab" value="4" scope="application"/>
+	<c:import url="/common/head.htm"></c:import>
+	<div class="person-navigation">
+		<ul class="container">
+			<li class="person-navigation-active"><a href="${basePath}/pwd/gotoPassword.htm">密码管理</a></li>
+			<%-- <li class=""><a href="${basePath}/bank/firstaddbank.htm">实名认证</a></li> --%>
+		</ul>
+	</div>
+<section class="bgc-gray">
+	<form id="formValid" action="">
+	<div class="user_right">
+		<div class="user_right_box ">
+			<div class="box_title pl20"><em class="f18">密码管理</em></div>
+			<div class="w710 mauto pb20"></div>
+			<div class="login-password">
+				<div class="w400">
+					<h4>登录密码</h4></br>
+					<span class="gry999">登录先锋支付账户时需要输入的密码</span>
+				</div>
+				<a href="${basePath}/user/pwdmodify.htm" class="psw-btn mgt10">修 改</a>
+			<div class="clear"></div>
+			</div>
+			<div class="pay-pass">
+				<div class="w400">
+					<h4>支付密码</h4></br>
+					<span class="gry999">在账户资金变动、修改账户信息时需要输入的密码</span>
+				</div>
+				<a href="${basePath}/paypwd/beforeFind" class="psw-btn mgt10">找 回</a>
+				<a href="${basePath}/paypwd/index.htm" class="psw-btn mgr0 mgt10">修 改</a>
+			<div class="clear"></div>
+			</div>
+			<div class="clear"></div>
+        </div>
+        <div class="clear"></div>
+    </div>
+    </form>
+</div>
+<div class="clear"></div>
+</section>
+<c:import url="/WEB-INF/views/jsp/common/newfooter.jsp"></c:import>
+</body>
+</html>

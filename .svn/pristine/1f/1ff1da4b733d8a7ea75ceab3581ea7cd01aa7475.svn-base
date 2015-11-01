@@ -1,0 +1,104 @@
+package com.ucf.customer.test.api;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.test.BaseTest;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.GroupAccountBo;
+import com.ucf.customer.ws.bo.enterprise.MainAccountListBO;
+import com.ucf.customer.ws.bo.enterprise.MemberRegisterResultBO;
+import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoRequestBO;
+import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoResultBO;
+import com.ucf.customer.ws.enums.EnumIdCardType;
+import com.ucf.customer.ws.enums.EnumMerchantExtra;
+import com.ucf.customer.ws.service.enterprise.EnterpriseMemberService;
+
+public class EnterpriseServiceTest extends BaseTest {
+	
+	@Autowired
+	private EnterpriseMemberService enterpriseMemberService;
+	
+	/**
+	 * @Description: 商户开户
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-28 下午3:48:57
+	 */
+	@Test
+	public void testMerchantRegister(){
+		EnterpriseMemberRegRequestBO registerRequestBO = new EnterpriseMemberRegRequestBO();
+		registerRequestBO.setEndDate("19911105");
+		registerRequestBO.setBusinessLicense("1324567489");
+		registerRequestBO.setLegalPersonNo("130406199105200915");
+		registerRequestBO.setEmail("vsflyhigh@qq.com");
+		registerRequestBO.setLoginPassword("pwd".getBytes());
+		registerRequestBO.setBankCardNo("622121564567522");
+		registerRequestBO.setAgentPersonPhone("18811511061");
+		registerRequestBO.setMerchantType(EnumMerchantExtra.GROUP_MERCHANT.getCode());
+		registerRequestBO.setLegalIdentityType(EnumIdCardType.CERT_NO.getCode());
+		registerRequestBO.setAccountType(EnumMerchantExtra.CHILD_ACCOUNT.getCode());
+		registerRequestBO.setParentUserId("M200000026");
+		MemberRegisterResultBO merchantRegister = 
+				enterpriseMemberService.merchantRegister(registerRequestBO);
+		System.err.println(JSON.toJSONString(merchantRegister));
+	}
+	
+	/**
+	 * @Description: 修改商户信息
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-28 下午3:52:46
+	 */
+	@Test
+	public void testUpdateMerchantMemberInfo(){
+		UpdateMemberInfoRequestBO updateMemberInfoRequestBO = new UpdateMemberInfoRequestBO();
+		updateMemberInfoRequestBO.setUserId("M200000026");//必传
+		
+		updateMemberInfoRequestBO.setBusinessLicense("1324567489");
+		UpdateMemberInfoResultBO updateMerchantMemberInfo = 
+				enterpriseMemberService.updateMerchantMemberInfo(updateMemberInfoRequestBO);
+		System.err.println(JSON.toJSONString(updateMerchantMemberInfo));
+	}
+	
+	/**
+	 * @Description: 查询商户信息
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-22 下午2:20:55
+	 */
+	@Test
+	public void queryMerchantInfo() {
+		EnterpriseMemberInfoResultBO resultBo = 
+				enterpriseMemberService.queryMerchantInfo("M0000000601");
+		System.err.println(JSON.toJSONString(resultBo));
+	}
+	
+	/**
+	 * @Description: 查询主账户列表
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-28 下午3:52:02
+	 */
+	@Test
+	public void testQueryMainAccountList() {
+		MainAccountListBO resultBo = enterpriseMemberService.queryMainAccountList();
+		System.err.println(JSON.toJSONString(resultBo));
+	}
+	
+	/**
+	 * @Description: 查询集团账户
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-28 下午3:52:27
+	 */
+	@Test
+	public void testQueryGroupAccount() {
+		GroupAccountBo resultBo = 
+				enterpriseMemberService.queryGroupAccount("M0000000601");
+		System.err.println(JSON.toJSONString(resultBo));
+	}
+	
+}

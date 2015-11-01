@@ -1,0 +1,42 @@
+package com.ucf.customer.dao.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.ucf.customer.dao.UcfMerchantExtraDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+import com.ucf.customer.pojo.UcfMerchantExtra;
+import com.ucf.customer.pojo.UcfUser;
+
+@Repository
+public class UcfMerchantExtraDaoImpl extends BaseCustomerDao implements UcfMerchantExtraDao {
+
+	@Override
+	public void insertUcfMerchantExtra(UcfMerchantExtra ucfMerchantExtra) throws Exception {
+		this.insert("com.ucf.customer.insertUcfMerchantExtra", ucfMerchantExtra);
+	}
+
+	@Override
+	public void updateUcfMerchantExtra(UcfMerchantExtra ucfMerchantExtra) throws Exception {
+		this.update("com.ucf.customer.updateUcfMerchantExtra", ucfMerchantExtra);
+	}
+
+	@Override
+	public void deleteUcfMerchantExtra(String userId) throws Exception {
+		this.delete("com.ucf.customer.deleteUcfMerchantExtra", userId);
+	}
+
+	@Override
+	public List<UcfMerchantExtra> queryUcfMerchantExtraListByWhere(UcfMerchantExtra ucfMerchantExtra) throws Exception {
+		List<UcfMerchantExtra> list = this.queryForList("com.ucf.customer.queryUcfMerchantExtraListByWhere", ucfMerchantExtra);
+		return list;
+	}
+
+	@Override
+	public List<UcfUser> queryMainAccountList() throws Exception {
+		List<UcfUser> list = this.queryForList("com.ucf.customer.queryMainAccountList");
+		return list;
+	}
+
+}

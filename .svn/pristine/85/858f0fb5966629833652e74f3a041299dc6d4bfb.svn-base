@@ -1,0 +1,99 @@
+/**
+ *
+ * @author gavin
+ * @date 2014-4-18 下午2:29:35
+ */
+package com.ucf.customer.interceptor;
+
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.utils.exception.P2PCustomerException;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+@Repository
+public class CheckUserInterceptor extends HandlerInterceptorAdapter {
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(CheckUserInterceptor.class);
+	@Autowired
+	private LoginService loginService;
+	private static String tip = "用户被冻结，24小时内不可进行找回密码操作";
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response, Object handler) throws P2PCustomerException {
+		try {
+			String backUrl = request.getParameter("backUrl");
+			request.setAttribute("backUrl", backUrl);
+			String uri = request.getRequestURI();
+			
+			boolean beFilter = true;
+			
+			if (beFilter) {
+				if (uri.indexOf("p2p")>0) {
+					
+					String userId = request.getParameter("userId");
+					String merchantId = request.getParameter("merchantId");
+					UcfUser user = loginService.queryUserInfo(userId, merchantId);
+					if (null==user || !merchantId.equals(user.getRefMerchant())) {
+						request.setAttribute("msg", "用户查询失败");
+						throw new P2PCustomerException();
+					}
+						
+						UcfCard card = loginService.queryUcfCardByUserId(userId);
+						
+						if (null!=card && "P2P".equals(card.getRegisterFrom())) {
+							if ("B".equals(user.getEnabledStatus())) {
+								user.getGmtLastModified();
+								
+								Date lastdate = user.getGmtLastModified();
+								Date currentDate =  new Date();
+								Calendar lsdate = Calendar.getInstance();
+								Calendar currDate = Calendar.getInstance();
+								
+								lsdate.setTime(null==lastdate?new Date():lastdate);
+								currDate.setTime(currentDate);
+								
+								lsdate.add(Calendar.DATE, 1);
+								
+
+								if(lsdate.equals(currDate)  || lsdate.before(currDate)){
+									user.setEnabledStatus("T");//冻结用户
+									user.setGmtLastModified(new Date());
+									loginService.updateUcfUser(user);
+								} else {
+									request.setAttribute("msg", tip);
+									throw new P2PCustomerException();
+								}
+								
+							}
+							return true;
+						} else {
+							request.setAttribute("msg", "用户类型错误");
+							throw new P2PCustomerException();
+							
+						}
+//					}
+				}
+			}
+
+			
+		} catch (Exception e) {
+			LOGGER.debug(e.getMessage(),e);
+			if (e instanceof P2PCustomerException)
+				throw (P2PCustomerException)e;
+			request.setAttribute("msg", "操作失败");
+			throw new P2PCustomerException();
+		}
+		return true;
+	}
+
+}

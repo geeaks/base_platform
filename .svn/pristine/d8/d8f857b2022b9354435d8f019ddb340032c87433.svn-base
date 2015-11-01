@@ -1,0 +1,31 @@
+package com.ucf.customer.utils.enums;
+
+public enum EnumsTrueFlase {
+	TRUE("true", "成功"),
+	FALSE("false","失败");
+	private String code;
+	private String desc;
+
+	EnumsTrueFlase(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	
+	
+}

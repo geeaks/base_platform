@@ -1,0 +1,15 @@
+package com.ucf.customer.utils;
+
+public enum BusinessType {
+	DEPOSIT("10"),//充值
+	WITHDRAAW("14"),//提现
+	REALNAME("13"),//实名认证
+	;
+	private String code;
+	private BusinessType(String code){
+		this.code = code;
+	}
+	public String getCode(){
+		return code;
+	}
+}

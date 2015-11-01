@@ -1,0 +1,221 @@
+package com.ucf.customer.ws.service.impl;
+
+/**
+ * 
+ * @desc 	 调用webService接口获取卡信息
+ * @version		1.0
+ * @date		2014-4-1 14:01:06
+ * @author 		yuchao@ucfgroup.com
+ * @return
+ * @throws Exception
+ */
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfSubCard;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UserInfoService;
+import com.ucf.customer.utils.BeanUtilEx;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.bo.CardInfoParamBO;
+import com.ucf.customer.ws.bo.CardInfoReturnValueBO;
+import com.ucf.customer.ws.bo.VerifyBO;
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.service.CardInfoWS;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.log.LoggerLevel;
+import com.ucf.platform.framework.log.annotation.DigestLogAnnotated;
+
+
+public class CardInfoWSImpl implements CardInfoWS {
+
+	private static final UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(CardInfoWSImpl.class);
+
+	@Autowired
+	private CardService cardService;
+
+	@Autowired
+	private LoginService loginService;
+	
+	@Autowired
+	private UserInfoService userInfoService;
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006",
+	logFileName = "DEFAULT.DIG",
+    loggerLevel = LoggerLevel.INFO)
+	public CardInfoReturnValueBO queryCardInfo(
+			CardInfoParamBO cardInfoParamBO){
+		LOGGER.info("queryCardInfo:" + SensitiveInfoUtils.getJson(cardInfoParamBO));
+		CardInfoReturnValueBO bo = new CardInfoReturnValueBO();
+		UcfCard card = null;//TODO
+		try {
+			card = cardService.queryCardInfo(cardInfoParamBO.getCardNo());
+			if(null!=card&&!"".equals(card.getCardNo()))
+			{
+				//pojo 转换
+				com.ucf.customer.ws.bo.UcfCard ucfCardWS = new  com.ucf.customer.ws.bo.UcfCard();
+				BeanUtilEx.copyProperties(ucfCardWS, card);
+				bo.setReturnValueCard(ucfCardWS);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		if (null==card || null == cardInfoParamBO.getCardNo() || "".equals(cardInfoParamBO.getCardNo())) {
+			bo.setResultCode("0");
+			bo.setMessage("fail");
+			return bo;
+		} else {
+			if ("1".equals(card.getSubCardFlag())) {// 0存在子卡
+
+				UcfSubCard ucfSubCard = new UcfSubCard();
+				ucfSubCard.setCardNo(card.getCardNo());
+				ucfSubCard.setCardType(cardInfoParamBO.getCardType());
+				try {
+					List<UcfSubCard> list = cardService
+							.queryUcfSubCard(ucfSubCard);
+					if (null != list && 0 < list.size()) {
+						
+						List<com.ucf.customer.ws.bo.UcfSubCard> ucfSubCardsWSubCards = new ArrayList<com.ucf.customer.ws.bo.UcfSubCard>();
+						
+						//pojo 转换
+						for (UcfSubCard temp : list) {
+							com.ucf.customer.ws.bo.UcfSubCard temCard = new com.ucf.customer.ws.bo.UcfSubCard();
+							BeanUtilEx.copyProperties(temCard, temp);
+							ucfSubCardsWSubCards.add(temCard);
+						}
+						
+						bo.setReturnValueUcfSubCard(ucfSubCardsWSubCards);
+						bo.setResultCode("1");
+						bo.setMessage("succ");
+						return bo;
+					}
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(),e);
+				}
+
+			}else{
+				bo.setResultCode("1");
+				bo.setMessage("succ");
+			}
+		}
+		return bo;
+	}
+
+	@DigestLogAnnotated(digestIdentificationCode = "1006",
+			logFileName = "DEFAULT.DIG",
+		    loggerLevel = LoggerLevel.INFO)
+	@Override
+	public VerifyBO verifyPayPassword(String merchantId, String userId,byte [] payPassword) {
+		LOGGER.info("verifyPayPassword:" + "merchantId-" + merchantId + " userId-" + userId);
+		VerifyBO verifyBO = new VerifyBO();
+		// 参数校验
+		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId) || payPassword==null || payPassword.length ==0 ) {
+			verifyBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			verifyBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			verifyBO.setStatus(EnumMemberCode.ERROR.getCode());
+			return verifyBO;
+		}
+		ResultBo resultBo = userInfoService.checkPayPwd(userId, payPassword);
+		if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+			verifyBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			verifyBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			verifyBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+		}else{
+			if(resultBo.getErrorTimes() == 5){
+				verifyBO.setRespCode(EnumMemberCode.VERIFY_LOGIN_PASSWORD_FAIL_FIVE_TIMES.getCode());
+				verifyBO.setRespMsg(EnumMemberCode.VERIFY_LOGIN_PASSWORD_FAIL_FIVE_TIMES.getMsgS());
+				verifyBO.setStatus(EnumMemberCode.ERROR.getCode());
+				verifyBO.setErrorTimes(5);
+			}else{
+				verifyBO.setRespCode(EnumMemberCode.VERIFY_PAY_PASSWORD_FAIL.getCode());
+				verifyBO.setRespMsg(EnumMemberCode.VERIFY_PAY_PASSWORD_FAIL.getMsgS());
+				verifyBO.setStatus(EnumMemberCode.ERROR.getCode());
+				verifyBO.setErrorTimes(resultBo.getErrorTimes());
+			}
+		}
+		return verifyBO;
+	}
+
+	@DigestLogAnnotated(digestIdentificationCode = "1006",
+			logFileName = "DEFAULT.DIG",
+		    loggerLevel = LoggerLevel.INFO)
+	@Override
+	public BaseBO buildPayPassword(String merchantId, String userId,byte  [] payPassword) {
+		LOGGER.info("buildPayPassword:" + "merchantId-" + merchantId + " userId-" + userId);
+		BaseBO baseBO = new BaseBO();
+		// 参数校验
+		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId) || payPassword == null || payPassword.length == 0) {
+			baseBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			baseBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			return baseBO;
+		}
+		try {
+			userInfoService.resetPayPwd(userId, payPassword);	
+			baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+			baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			return baseBO;
+		} catch (Exception e1) {
+			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return baseBO;
+		}
+	}
+
+	@DigestLogAnnotated(digestIdentificationCode = "1006",
+			logFileName = "DEFAULT.DIG",
+		    loggerLevel = LoggerLevel.INFO)
+	@Override
+	public BaseBO updatePayPassword(String merchantId, String userId,byte  [] payPassword, byte  [] newPayPassword) {
+		LOGGER.info("updatePayPassword:" + "merchantId-" + merchantId + " userId-" + userId);
+		BaseBO baseBO = new BaseBO();
+		// 参数校验
+		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId) || payPassword==null || payPassword.length == 0 || newPayPassword==null || newPayPassword.length==0) {
+			baseBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			baseBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			return baseBO;
+		}
+		try {
+			UcfCard ucfCard = cardService.queryCardInfo(userId);
+			if(ucfCard==null){
+				baseBO.setStatus(EnumMemberCode.NO_EXIST_USER.getCode());
+				baseBO.setRespCode(EnumMemberCode.NO_EXIST_USER.getCode());
+				baseBO.setRespMsg(EnumMemberCode.NO_EXIST_USER.getMsgS());
+				return baseBO;
+			}
+			ResultBo resultBo = userInfoService.checkPayPwd(userId, payPassword);
+			if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+				userInfoService.resetPayPwd(userId, newPayPassword);
+				baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				return baseBO;
+			}else{
+				baseBO.setStatus(EnumMemberCode.WRONG_PAY_PASSWORD.getCode());
+				baseBO.setRespCode(EnumMemberCode.WRONG_PAY_PASSWORD.getCode());
+				baseBO.setRespMsg(resultBo.getMsg());
+				return baseBO;
+			}
+		} catch (Exception e) {
+			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return baseBO;
+		}
+	}
+
+}

@@ -1,0 +1,88 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="basePath" value="${pageContext.request.contextPath }" /> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>先锋支付--修改用户支付密码</title>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<link href="${staticMemberPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
+<link href="${staticMemberPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css" />
+<link href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet" />
+<script src="${basePath}/passwordControl/index.js" type="text/javascript"></script>
+<style>
+	p label{
+		font-weight:400;
+	}
+	p input{
+		height:40px !important;
+	}
+</style>
+</head>
+<body>
+<c:import url="/common/head.htm"></c:import>
+<section class="bgc-gray">
+        <div class="box">
+        <div class="fd-main">
+            <div class="fd-center">
+			<div class="box_title pl20"><em class="f18">修改支付密码</em></div>
+			<div class="main-body background-wite ps-md-passw">
+				<form action="${basePath}/pwd/modifypaypwd.htm" id="setPasswdForm" method="post" data-validator-option="{theme:'ucfgroup_effect',timely:2}">
+					<p><label for="name" style="float:left;">原支付密码 :</label>
+						<jsp:include page="../p2p/passwordControl/resource_pwd.jsp" /></p><br/><br/>
+					<p><label for="name">新支付密码 :</label>
+						<input type="password" id="paymentPassword" name="paymentPassword" class="idbox w228" onpaste="return false;" data-tip="6-20位字符，必须包含：大写字母、小写字母、数字、符号至少两种"/></p>
+					<p><label for="name">确认密码 :</label>
+						<input type="password" id="repeatpaymentPassword"  name="repeatpaymentPassword" class="idbox w228" onpaste="return false;" data-tip="必须与上面一致"/></p>
+					<p><label for="name">手机号码 :</label>
+						${mobile } &nbsp;</p>
+					<p><label for="name">短信验证码 :</label>
+						<input type="text" id="verCode" name="verCode" maxlength="6" data-tip="输入手机6位验证码，如：888666" style=" vertical-align: middle;margin-bottom:2px;width:105px;"/>
+						<input id="validPhoneCode" type="button" onclick="sendSMSNew(${cell},1);" style="height: 40px; font-size: 12px; padding-left:0px; width: 105px;color:#666666;margin-left:5px;" value="获取验证码">
+					</p>
+					<span style="display:inline-block; margin-left:123px; color:#f85048;">${msg}</span>
+					</br>
+					
+					<a class="btn mt20 mgl113" style="margin-top: 25px;" onclick="Form_Submit('setPasswdForm');">确 定</a>
+				</form>
+			</div>
+            </div>
+        </div>
+        </div>
+    </section>
+<c:import url="/common/footer.htm"></c:import>
+<jsp:include page="../common/resource_js.jsp"/>
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#setPasswdForm').validator({
+		stopOnError: false,
+		timely: true,
+		rules: {
+			 pwdCheck: function(element) {
+				 return (!(/^[A-Za-z]*$/.test(element.value)) && !(/^[0-9]*$/.test(element.value)) 
+						&& /^[A-Za-z0-9-+_!@#$%^&*()]*$/.test(element.value)) || '密码不符合要求';
+			 },checkLgnPwd:function (){
+				 var pwd=$("#pwd").val();
+				 var paymentPassword=$("#paymentPassword").val();
+				 if(pwd==paymentPassword){
+					 return "新支付密码不可与原支付密码相同";
+				 }
+				 return true;
+			 }
+		},
+		fields: {
+			'paymentPassword':'required;length[6~20];pwdCheck;checkLgnPwd;',
+			'repeatpaymentPassword':{
+			   rule: "required;match(paymentPassword)",
+			   msg: {match: "请确保两次输入支付密码相同!"}
+			},
+			'verCode':'required;length[6]'
+		}
+	});
+});
+</script>
+<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticMemberPath}/js/zh_CN.js" type="text/javascript"></script>
+<script src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
+</body>
+</html>

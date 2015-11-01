@@ -1,0 +1,23 @@
+package com.ucf.customer.dao;
+
+import java.io.Serializable;
+import java.util.List;
+import com.ucf.customer.pojo.UcfOrg;
+
+public interface UcfOrgDao extends Serializable {
+
+	void insertUcfOrg(UcfOrg ucfOrg)throws Exception;
+
+	void updateUcfOrg(UcfOrg ucfOrg)throws Exception;
+
+	void deleteUcfOrg(String id)throws Exception;
+
+	List<UcfOrg> queryUcfOrgListByWhere(UcfOrg ucfOrg)throws Exception;
+	
+	List<UcfOrg> listPageUcfOrg(UcfOrg ucfOrg)throws Exception;
+	
+	UcfOrg quertUcfById(String id);
+
+	UcfOrg quertUcfByUserId(String userid);
+
+}

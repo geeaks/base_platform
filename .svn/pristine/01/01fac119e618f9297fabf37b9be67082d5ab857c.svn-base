@@ -1,0 +1,48 @@
+package com.ucf.customer.ws.enums;
+
+/**
+ * 
+ * 
+ * 项目名称：member <br>
+ * 类名称：EnumRegisterFrom <br>
+ * 类描述：注册来源 <br>
+ * 创建人：李文静 <br>
+ * 创建时间：2014-5-12 下午5:23:26 <br>
+ * 修改人：李文静 <br>
+ * 修改时间：2014-5-12 下午5:23:26 <br>
+ * 修改备注： <br>
+ * 
+ * @version
+ * 
+ */
+public enum EnumRegisterFrom {
+	MEMBER_FROM("member", "会员系统"), 
+	P2P_FROM("P2P", "P2P系统"),
+	GZB_FROM("GZB", "工资宝系统"),
+	MANAGED_FROM("managed", "外部系统"),
+	ENTERPRISE_FROM("ENTERPRISE","商户端发起");
+	private String code;
+	private String desc;
+
+	EnumRegisterFrom(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+}

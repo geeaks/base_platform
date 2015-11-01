@@ -1,0 +1,330 @@
+package com.ucf.customer.api.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.dubbo.common.utils.StringUtils;
+import com.ucf.customer.api.IEnterpriseMemberService;
+import com.ucf.customer.api.bo.BaseResultBO;
+import com.ucf.customer.api.bo.EnterpriseMemberBO;
+import com.ucf.customer.api.bo.EnterpriseMemberQueryBO;
+import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.OperatorBo;
+import com.ucf.customer.dao.plugin.Page;
+import com.ucf.customer.api.bo.PageRs;
+import com.ucf.customer.api.enums.EnumRespStatusCode;
+import com.ucf.customer.api.enums.EnumUserType;
+import com.ucf.customer.bo.EnterpriseParamBO;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.dao.UcfOrgDao;
+import com.ucf.customer.pojo.UcfOperator;
+import com.ucf.customer.pojo.UcfOrg;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.Cryptos;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.OperatorService;
+import com.ucf.customer.service.UserInfoService;
+import com.ucf.customer.utils.BeanUtilEx;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.ws.enums.EnumCertFrom;
+import com.ucf.customer.ws.enums.EnumRegisterFrom;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+public class EnterpriseMemberServiceImpl implements IEnterpriseMemberService {
+	
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(EnterpriseMemberServiceImpl.class);
+	
+	@Autowired
+	private UserInfoService  userInfoService;
+	@Autowired
+	private OperatorService  operatorService;
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private UcfOrgDao ucfOrgDao;
+	
+	@Override
+	public BaseResultBO registerMember(EnterpriseMemberBO paramBo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseResultBO updaterMember(EnterpriseMemberBO paramBo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseResultBO registerManagedMember(EnterpriseMemberBO enterpriseMemberBo) {
+		EnterpriseParamBO paramBo = new EnterpriseParamBO();
+		paramBo.setAgentPersonPhone(enterpriseMemberBo.getAgentPersonPhone());
+		paramBo.setAgentPersonName(enterpriseMemberBo.getAgentPersonName());
+		paramBo.setEnterpriseFullName(enterpriseMemberBo.getEnterpriseFullName());
+		paramBo.setEnterpriseShortName(enterpriseMemberBo.getEnterpriseShortName());
+		paramBo.setBusinessLicense(enterpriseMemberBo.getBusinessLicense());
+		paramBo.setRegFrom(EnumRegisterFrom.P2P_FROM.getCode());
+		paramBo.setSource(EnumCertFrom.WEB_FROM.getCode());
+		paramBo.setType(EnterpriseParamBO.MANAGED_ACCOUNT);
+		paramBo.setIsSignCustomer("N");
+		if(StringUtil.isEmpty(enterpriseMemberBo.getBankCardNo())){
+			paramBo.setBindBankCard(false);
+		}else{
+			paramBo.setBindBankCard(true);
+			paramBo.setBankCardName(enterpriseMemberBo.getBankCardName());
+			paramBo.setBankCardNo(enterpriseMemberBo.getBankCardNo());
+			paramBo.setBankCode(enterpriseMemberBo.getBankCode());
+			paramBo.setBankName(enterpriseMemberBo.getBankName());
+			paramBo.setProvinces(enterpriseMemberBo.getProvinces());
+			paramBo.setCity(enterpriseMemberBo.getCity());
+			paramBo.setIssuerName(enterpriseMemberBo.getIssuerName());
+			paramBo.setIssuer(enterpriseMemberBo.getIssuer());
+		}	
+
+		paramBo.setMerchantId(enterpriseMemberBo.getRefMerchant());
+		paramBo.setOuterUserId(enterpriseMemberBo.getRefUser());
+		//用户注册
+		ResultBo rsbo = userInfoService.register(paramBo);
+		BaseResultBO baseResultBO = new BaseResultBO();
+		baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		if(EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
+			baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+			baseResultBO.setRespMsg("注册成功");
+			baseResultBO.setUserId(rsbo.getResultObject().toString());
+		}else if(EnumResultCode.EXIST.getCode().equals(rsbo.getResult())){
+			baseResultBO.setStatus(EnumRespStatusCode.EXIST_USER.getCode());
+			baseResultBO.setRespMsg(EnumRespStatusCode.EXIST_USER.getMsg());
+		}else if(EnumResultCode.REPEAT.getCode().equals(rsbo.getResult())){
+			baseResultBO.setStatus(EnumRespStatusCode.EXIST_MOBLEPHOE.getCode());
+			baseResultBO.setRespMsg(EnumRespStatusCode.EXIST_MOBLEPHOE.getMsg());
+		}else{
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg(rsbo.getMsg());
+		}
+		return baseResultBO;
+	}
+
+	@Override
+	public BaseResultBO updaterManagedMember(EnterpriseMemberBO registerRequestBO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+
+	@Override
+	public BaseResultBO registerMerchant(EnterpriseMemberBO registerRequestBO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseResultBO updateMerchant(EnterpriseMemberBO registerRequestBO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseResultBO audit(String UserId, String status) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseResultBO addUcfOperator(OperatorBo ucfOperatorBo) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		UcfOperator ucfOperator = new UcfOperator();
+		try {
+			BeanUtilEx.copyProperties(ucfOperator, ucfOperatorBo);
+			baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+			String loginPwd = Cryptos.encrypt(ucfOperator.getLoginPwd(), ucfOperator.getUserId());
+			ucfOperator.setLoginPwd(loginPwd);
+			operatorService.insertUcfOperator(ucfOperator);
+			//add by gaoxiang 生成用户登录信息
+			final UcfUserLoginApp userLoginApp = new UcfUserLoginApp();
+			userLoginApp.setLoginId(ucfOperatorBo.getEmail());
+			userLoginApp.setUserId(ucfOperatorBo.getUserId());
+			userLoginApp.setPhone(ucfOperatorBo.getCell());
+			userLoginApp.setEmail(ucfOperatorBo.getEmail());
+			userLoginApp.setFrozenState(Constants.FROZEN_NO);
+			userLoginApp.setLoginPwd(loginPwd);
+			userLoginApp.setUserType(EnumUserType.OPERATOR_TYPE.getCode());
+			userLoginApp.setLoginType(Constants.LOGIN_TYPE_EMAIL);
+			loginService.insertLoginAppInfo(userLoginApp);
+		} catch (Exception e) {
+			baseResultBO.setRespMsg(e.getMessage());
+			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+		}
+		return baseResultBO;
+	}
+
+	@Override
+	public BaseResultBO modifyUcfOperator(OperatorBo ucfOperatorBo) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		UcfOperator ucfOperator = new UcfOperator();
+		try {
+			BeanUtilEx.copyProperties(ucfOperator, ucfOperatorBo);
+			baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+			//如果密码不为空则加密
+			if(StringUtils.isNotEmpty(ucfOperator.getLoginPwd())){
+				String password = Cryptos.encrypt(ucfOperator.getLoginPwd(), ucfOperator.getUserId());
+				ucfOperator.setLoginPwd(password);
+				//add by gaoxiang 修改操作员登录密码
+				final UcfUserLoginApp userLoginApp = loginService.queryUserAppInfo(ucfOperator.getEmail());
+				userLoginApp.setLoginPwd(password);
+				loginService.updateUcfUserApp(userLoginApp);
+			}
+			operatorService.updateUcfOperator(ucfOperator);
+		} catch (Exception e) {
+			baseResultBO.setRespMsg(e.getMessage());
+			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+		}
+		return baseResultBO;
+	}
+
+	@Override
+	public BaseResultBO modifyMerchantPayPwd(String userId,byte [] oldPwd,byte [] newPwd) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		try {
+			if(StringUtils.isEmpty(userId)){
+				baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+				baseResultBO.setRespMsg("用户id不能为空");
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			}else{
+				ResultBo rsbo = userInfoService.checkPayPwd(userId, oldPwd);
+				if(EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
+					userInfoService.resetPayPwd(userId, newPwd);
+					baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+					LOGGER.info("商户["+userId+"]修改支付密码成功！");
+				}else{
+					baseResultBO.setRespMsg("原支付密码错误");
+					baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				}
+				baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			}
+		} catch (Exception e) {
+			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("很抱歉，系统异常");
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			LOGGER.error("修改商户支付密码系统异常",e);
+		}
+		return baseResultBO;
+	}
+
+	@Override
+	public MemberCommonResult<PageRs<EnterpriseMemberBO>> findEnterpriseMemberInfo(EnterpriseMemberQueryBO enterpriseMemberQueryBO) {
+		try {
+			UcfOrg ucfOrg = new UcfOrg();
+			Page page = new Page();
+			if(enterpriseMemberQueryBO.getPageNo()==0){
+				enterpriseMemberQueryBO.setPageNo(1);
+			}
+			if(enterpriseMemberQueryBO.getPageSize()==0){
+				enterpriseMemberQueryBO.setPageSize(1);
+			}
+			page.setCurrentPage(enterpriseMemberQueryBO.getPageNo());
+			page.setShowCount(enterpriseMemberQueryBO.getPageSize());
+			//设置查询分页信息
+			ucfOrg.setPage(page);
+			ucfOrg.setRealName(enterpriseMemberQueryBO.getName());
+			ucfOrg.setUserId(enterpriseMemberQueryBO.getMerchantId());
+			//分页查询
+			List<UcfOrg> list = ucfOrgDao.listPageUcfOrg(ucfOrg);
+			//转换结果集
+			List<EnterpriseMemberBO> convertList = this.convert(list);
+			//返回结果
+			PageRs<EnterpriseMemberBO> returnPage = new PageRs<EnterpriseMemberBO>();
+			returnPage.setPageList(convertList);
+			returnPage.setCount(ucfOrg.getPage().getTotalResult());
+			returnPage.setPageNo(ucfOrg.getPage().getCurrentPage());
+			returnPage.setPageSize(ucfOrg.getPage().getShowCount());
+			return new MemberCommonResult<PageRs<EnterpriseMemberBO>>(EnumRespStatusCode.SUCCESS.getCode(), "", returnPage);
+		} catch (Exception e) {
+			LOGGER.error("商户查询系统异常",e);
+			return new MemberCommonResult<PageRs<EnterpriseMemberBO>>(EnumRespStatusCode.ERROR.getCode(), "系统异常", null);
+		}
+	}
+
+	/**
+	 * @Description: 转换查询结果
+	 * @param list
+	 * @return List<EnterpriseMemberBO> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-4 上午10:28:43
+	 */
+	private List<EnterpriseMemberBO> convert(List<UcfOrg> list) {
+		List<EnterpriseMemberBO> boList = new ArrayList<EnterpriseMemberBO>();
+		for(UcfOrg ucfOrg : list){
+			EnterpriseMemberBO enterpriseMemberBO = new EnterpriseMemberBO();
+			//企业用户ID
+			enterpriseMemberBO.setUserId(ucfOrg.getUserId());
+			//代理人名称
+			enterpriseMemberBO.setAgentPersonName(ucfOrg.getAgentName());
+			//代理人身份证号码
+			enterpriseMemberBO.setAgentPersonNo(ucfOrg.getAgentCard());
+			//代理人手机号码
+			enterpriseMemberBO.setAgentPersonPhone(ucfOrg.getPhone());
+			//代理人邮箱
+//			enterpriseMemberBO.setAgentPersonEmail(ucfOrg.getEmail());
+			//邮箱
+			enterpriseMemberBO.setEmail(ucfOrg.getEmail());
+			//企业网址
+			enterpriseMemberBO.setEnterpriseURL(ucfOrg.getMallUrl());
+			//企业全称
+			enterpriseMemberBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
+			//企业简称
+			enterpriseMemberBO.setEnterpriseShortName(ucfOrg.getCompanyName());
+			//营业执照号
+//			enterpriseMemberBO.setBusinessLicense(ucfOrg.get);
+			//证件到期时间
+			enterpriseMemberBO.setEndDate(new SimpleDateFormat("yyyy-MM-dd").format(ucfOrg.getCharetExpire()));
+			//法人姓名
+			enterpriseMemberBO.setLegalPersonName(ucfOrg.getLegalPerson());
+			//法人身份证号
+			enterpriseMemberBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
+			//企业地址
+			enterpriseMemberBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
+			//邮政编码
+			enterpriseMemberBO.setZipCode(ucfOrg.getPost());
+			//联系电话
+			enterpriseMemberBO.setEnterprisePhone(ucfOrg.getCell());
+			//传真
+			enterpriseMemberBO.setFax(ucfOrg.getFax());
+			//企业账户开户行名称
+			enterpriseMemberBO.setBankName(ucfOrg.getSettleBankName());
+			//开户行Code
+			enterpriseMemberBO.setBankCode(ucfOrg.getSettleBankCode());
+			//对公账号
+			enterpriseMemberBO.setBankCardNo(ucfOrg.getSettleCardNo());
+			//开户行省份
+			enterpriseMemberBO.setProvinces(ucfOrg.getProvince());
+			//开户行城市
+			enterpriseMemberBO.setCity(ucfOrg.getCity());
+			//开户行支行名称
+			enterpriseMemberBO.setIssuerName(ucfOrg.getBranchName());
+//			//联行号
+//			enterpriseMemberBO.setIssuer(ucfOrg);
+//			//账户名称
+//			enterpriseMemberBO.setBankCardName(ucfOrg);
+			//营业执照副本
+			enterpriseMemberBO.setLicenseCopy(ucfOrg.getLicenseCopy());
+			//组织机构代码证
+			enterpriseMemberBO.setOrgCertificate(ucfOrg.getOrgCertificate());
+			//税务登记证明
+			enterpriseMemberBO.setTaxCertificate(ucfOrg.getTaxCertificate());
+			//法人身份证复印件
+			enterpriseMemberBO.setLegalIdentityCopy(ucfOrg.getLegalIdentityCop());
+			
+			boList.add(enterpriseMemberBO);
+		}
+		return boList;
+	}
+	
+}

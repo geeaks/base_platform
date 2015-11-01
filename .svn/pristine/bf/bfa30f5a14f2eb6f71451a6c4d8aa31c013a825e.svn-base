@@ -1,0 +1,63 @@
+package com.ucf.customer.interceptor;
+
+import java.util.Map;
+
+import org.aspectj.lang.JoinPoint;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+@Component
+@Aspect  
+public class CheckUserAspect {  
+	
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(CheckUserAspect.class);
+
+	
+	@Autowired
+	private LoginService loginService;
+	@Pointcut("execution(* com.ucf.customer.ws.service.ServiceInterfaceWS.service(..))")  
+//    @Pointcut("execution(* com.ucf.customer.service.*.*(..))")  
+    private void anyMethod(){}//定义一个切入点  
+	@Autowired
+	private CardService cardService;
+    @SuppressWarnings("unchecked")
+	@Before("anyMethod()")  
+    public void doBasicProfiling(JoinPoint point) {  
+        //访问目标方法的参数：
+        Object[] args = point.getArgs();
+        if (null!=args&&args.length>0) {
+        	Map<String,String> m = (Map<String,String>)args[0];
+        	if (m.containsKey("userId")) {
+	        	try {
+	        		UcfUser user = loginService.queryUserInfo(m.get("userId"));
+	        		if (null!=user) {
+	        			if (!(m.containsKey("merchantId")&&null!=m.get("merchantId")&&!"".equals(m.get("merchantId")))) {
+	        				m.put("merchantId", user.getRefMerchant());
+	        			}
+	        			UcfCard card = cardService.queryCardInfo(m.get("userId"));
+		        		if (null!=card) {
+		        			m.put("regFrom", card.getRegisterFrom());
+		        		}
+	        		}
+	        		
+				} catch (Exception e) {
+					 LOGGER.error(e.getMessage(),e);
+				}
+	        	
+        	} else if (!m.containsKey("regFrom")) {
+        		m.put("regFrom", "P2P");
+        	}
+        }
+    }  
+    
+}

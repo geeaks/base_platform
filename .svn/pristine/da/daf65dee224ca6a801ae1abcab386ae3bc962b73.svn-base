@@ -1,0 +1,42 @@
+package com.ucf.customer.api.enums;
+
+public enum EnumsUserCardType {
+	
+	PERSON_CARD("00","个人主账户","01"),
+	MERCHANT_CARD("00","商户主账户","00"),
+	FUND_CARD("01", "基金账户","03");
+
+	private String code;//用户帐户类型
+	private String accountCode;//账务开户类型
+	private String msg;
+
+	EnumsUserCardType(String code, String msg,String accountCode) {
+		this.code = code;
+		this.msg = msg;
+		this.accountCode = accountCode;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getAccountCode() {
+		return accountCode;
+	}
+
+	public void setAccountCode(String accountCode) {
+		this.accountCode = accountCode;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+}

@@ -1,0 +1,82 @@
+package com.ucf.customer.api.bo;
+
+import java.io.Serializable;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * @Description: 工资宝手机号修改 入参实体类
+ * @ClassName: GZBPhoneModifyBo
+ * @author gaoxiang
+ * @date 2015-1-7 下午2:30:49
+ */ 
+public class PhoneModifyBo implements Serializable {
+
+	/**
+	 * @Fields serialVersionUID : 序列号
+	 */ 
+	private static final long serialVersionUID = 4943138177415565147L;
+	
+	/**
+	 * @Fields merchantId : 商户号
+	 */ 
+	private String merchantId;
+	
+	/**
+	 * @Fields userId : 会员用户ID
+	 */ 
+	private String userId;
+	
+	/**
+	 * @Fields oldPhone : 原手机号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String oldPhone;
+	
+	/**
+	 * @Fields phone : 新手机号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String phone;
+	
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getOldPhone() {
+		return oldPhone;
+	}
+
+	public void setOldPhone(String oldPhone) {
+		this.oldPhone = oldPhone;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	@Override
+	public String toString() {
+		return "GZBPhoneModifyBo [merchantId=" + merchantId + ", userId="
+				+ userId + ", oldPhone=" + oldPhone + ", phone=" + phone + "]";
+	}
+	
+}

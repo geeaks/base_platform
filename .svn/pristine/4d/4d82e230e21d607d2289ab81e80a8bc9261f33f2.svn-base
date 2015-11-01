@@ -1,0 +1,74 @@
+package com.ucf.customer.test.dao;
+
+import java.util.Date;
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.dao.UcfRealnamePhotoApplyDAO;
+import com.ucf.customer.pojo.UcfRealnamePhotoApply;
+import com.ucf.customer.test.BaseTest;
+
+
+public class UcfRealnamePhotoApplyDAOTest extends BaseTest {
+	
+	@Autowired
+	private UcfRealnamePhotoApplyDAO ucfRealnamePhotoApplyDAO;
+
+	@Test
+	@Rollback(false)
+	public void testInsert() {
+		UcfRealnamePhotoApply ucfRealnamePhotoApply = new UcfRealnamePhotoApply();
+		ucfRealnamePhotoApply.setUserId("10002");
+		ucfRealnamePhotoApply.setImgPath("/d:ldldl");
+		ucfRealnamePhotoApply.setMemo("ddd");
+		ucfRealnamePhotoApply.setModifyer("ddd");
+		ucfRealnamePhotoApply.setVerifyer("dsfs");
+		ucfRealnamePhotoApply.setStatus("dd");
+		ucfRealnamePhotoApply.setCreateor("ct");
+		ucfRealnamePhotoApply.setBankCardNo("6205500");
+		ucfRealnamePhotoApplyDAO.insert(ucfRealnamePhotoApply);
+	}
+
+	@Test
+	@Rollback(false)
+	public void testquery() {
+		UcfRealnamePhotoApply ucfRealnamePhotoApply = ucfRealnamePhotoApplyDAO
+				.selectByPrimaryKey("201412251000000045");
+		System.err.println(JSON.toJSONString(ucfRealnamePhotoApply));
+	}
+
+	@Test
+	@Rollback(false)
+	public void testqueryList() {
+		UcfRealnamePhotoApply ucfRealnamePhotoApply = new UcfRealnamePhotoApply();
+		ucfRealnamePhotoApply.setUserId("10002");
+		ucfRealnamePhotoApply.setStatus("N");
+		List<UcfRealnamePhotoApply> ucfRealnamePhotoApplys = ucfRealnamePhotoApplyDAO
+				.select(ucfRealnamePhotoApply);
+
+		System.err.println(JSON.toJSONString(ucfRealnamePhotoApplys));
+	}
+	
+	
+	@Test
+	@Rollback(false)
+	public void testupdate() {
+		UcfRealnamePhotoApply ucfRealnamePhotoApply = ucfRealnamePhotoApplyDAO
+				.selectByPrimaryKey("201412251000000045");
+		ucfRealnamePhotoApply.setStatus("S");
+		ucfRealnamePhotoApply.setGmtVerify(new Date());
+		ucfRealnamePhotoApply.setVerifyer("v01");
+		ucfRealnamePhotoApply.setMemo("wefef");
+		ucfRealnamePhotoApplyDAO.updateByPrimaryKeySelective(ucfRealnamePhotoApply);
+		System.err.println(ucfRealnamePhotoApply);
+	}
+	
+	
+	
+	
+
+}

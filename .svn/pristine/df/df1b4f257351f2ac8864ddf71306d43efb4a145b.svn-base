@@ -1,0 +1,136 @@
+
+package com.ucf.customer.service.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ucf.customer.dao.UcfCardDao;
+import com.ucf.customer.dao.UcfSubCardDao;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfSubCard;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.utils.enums.EnumRedisKey;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+
+@Service("cardService")
+public class CardServiceImpl implements CardService {
+	private static UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(CardServiceImpl.class);
+
+	
+	@Autowired
+	private UcfCardDao cardDao;
+
+	@Autowired
+	private UcfSubCardDao subCardDao;
+
+	public List<UcfCard> getCardInfo(String userId, String cardType) throws Exception {
+		UcfCard card = new UcfCard();
+		card.setUserId(userId);
+		card.setCardType(cardType);
+		//card.setUserId("10000000200");
+		//card.setCardType("IDC");
+		List<UcfCard> list = new ArrayList<UcfCard>();
+		LOGGER.debug("card info", SensitiveInfoUtils.getJson(card));
+		list = this.cardDao.queryUcfCardListByWhere(card);
+		
+		
+		if(list.size()!=0){
+		if (list.get(0) != null) {
+			card = list.get(0);
+			LOGGER.debug("UserId:" + card.getUserId() + ": CardType:" + card.getCardType());
+			return list;
+		 }
+	   }
+		return null;
+	}
+
+	public UcfCard queryCardInfo(String userId) throws Exception {
+		UcfCard card = new UcfCard();
+		List<UcfCard> list = new ArrayList<UcfCard>();
+		card.setUserId(userId);
+		list = this.cardDao.queryUcfCardListByWhere(card);
+        if(null==list || list.size()==0){
+        	return null;
+        }
+		if (list.size() > 0) { 
+			card = list.get(0);
+		}
+		return card;
+	}
+
+	@Override
+	public void insertUcfCard(UcfCard ucfCard) throws Exception{
+		this.cardDao.insertUcfCard(ucfCard);
+	}
+
+	@Override
+	public void updateUcfSubCard(UcfSubCard ucfSubCard) throws Exception {
+		this.subCardDao.updateUcfSubCard(ucfSubCard);
+		
+	}
+
+	@Override
+	public void updateUcfCard(UcfCard ucfCard) throws Exception {
+		 try {
+			this.cardDao.updateUcfCard(ucfCard);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		
+	}
+	@Override
+	public List<UcfSubCard> queryUcfSubCard(UcfSubCard ucfSubCard) throws Exception{
+		return this.subCardDao.queryUcfSubCardListByWhere(ucfSubCard);
+	}
+
+	@Override
+	public void freezeUcfCard(String userId, String type, String merchantId) {
+		UcfCard card = new UcfCard();
+		try {
+			UcfCard ucfCard = new UcfCard();
+			ucfCard.setCardNo(userId);
+			List<UcfCard> list = this.cardDao.queryUcfCardListByWhere(ucfCard);
+			if (null!=list&&list.size()>0) {
+				card = list.get(0);
+			}
+			if ("0".equals(type)) {//解冻
+				card.setLastPayFailDt(new Date());
+				card.setRepeatPaypasswordErrorTimes(new BigDecimal(0));
+				cardDao.updateUcfCard(card);
+			} else {//冻结
+					Date date  = new Date();
+					card.setLastPayFailDt(date);
+					card.setRepeatPaypasswordErrorTimes(new BigDecimal(type));
+				cardDao.updateUcfCard(card);
+			}
+			
+		} catch (Exception e) {
+			LOGGER.error("查询用户主卡异常",e);
+		}
+		
+	}
+
+	@Override
+	public String getSubCardNo() throws Exception {
+		return "SC" +  subCardDao.getSubCardNo();
+	}
+
+	@Override
+	public void inserUcfSubCard(UcfSubCard ucfSubCard) throws Exception {
+		subCardDao.insertUcfSubCard(ucfSubCard);
+	}
+
+	@Override
+	public void refreshCardInfo(String userId) throws Exception {
+		cardDao.refreshCardInfo(userId, EnumRedisKey.UCF_CARD_QUERY_BY_USERId.getTimeout());
+	}
+
+}

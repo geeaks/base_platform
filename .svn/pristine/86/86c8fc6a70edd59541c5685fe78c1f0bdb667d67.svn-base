@@ -1,0 +1,36 @@
+package com.ucf.customer.api.enums;
+
+/**
+ * 用户实名认证类型
+ * @author zhanglei
+ * 
+ */
+public enum EnumStatus {
+	SUCCESS("S","成功"),
+	FAI("F","失败"),
+	ING("I","处理中");
+	private String code;
+	private String msg;
+
+	EnumStatus(String code, String msg) {
+		this.code = code;
+		this.msg = msg;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	
+}

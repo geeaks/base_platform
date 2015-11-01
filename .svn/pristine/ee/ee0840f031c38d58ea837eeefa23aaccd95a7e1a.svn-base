@@ -1,0 +1,156 @@
+/**
+ * Description: SpringContextTestsUserTest.java
+ * All Rights Reserved.
+ * @version 1.0  2014-4-16 下午12:51:55  by tim（chenhaifeng@ucfgroup.com）创建
+ */
+package com.ucf.customer.test;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import com.ucf.customer.ws.service.ServiceInterfaceWS;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserHabit;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UserHabitService;
+import com.ucf.customer.utils.Constants;
+
+/**
+ * Description: 
+ * All Rights Reserved.
+ * @version 1.0  2014-4-16 下午12:51:55  by tim（chenhaifeng@ucfgroup.com）创建
+ */
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/spring/applicationContext.xml"})
+public class ServiceInterfaceWSTest extends AbstractTransactionalJUnit4SpringContextTests{
+	@Autowired
+	private ServiceInterfaceWS serviceInterfaceWSImpl;
+	@Autowired
+	private LoginService loginService;
+	@Test
+	public void serviceInterfaceTest005() {
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode", "UMPC0005");
+		map.put("merchantId", "123qwe");
+		map.put("userId", "10000002810");
+		map.put("reqReserved", "");
+		map.put("signature", "Y");
+		Map<String,String> resultMap = serviceInterfaceWSImpl.service(map);
+		resultMap.get("respCode");
+	}
+	
+	@Test
+	public void serviceInterfaceTest004() {
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode", "UMPC0004");
+		map.put("merchantId", "123qwe");
+		map.put("userId", "10000002808");
+		map.put("type", "jk");
+		map.put("reqReserved", "");
+		map.put("signature", "Y");
+		Map<String,String> resultMap = serviceInterfaceWSImpl.service(map);
+		resultMap.get("respCode");
+		resultMap.get("Status");
+		resultMap.get("bankCardList");
+		resultMap.get("signature");
+	}
+	
+	@Test
+	public void queryUser() throws Exception {
+		/*UcfUser user = loginService.queryUserInfo("10000003020");
+		user.getUserId();*/
+		UcfUser user = new UcfUser();
+		user.setUserId("10000003202");
+		List<UcfUser> list = loginService.queryUcfUser(user);
+		if (null!=list&&list.size()>0) {
+			
+		}
+	}
+	@Autowired
+	private UserHabitService userHabitService;
+	@Test
+	public void queryUserHabit() throws Exception {
+		/*Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode", "UMPC0006");
+		map.put("userId", "10000002808");
+		map.put("type", "jk");
+		map.put("reqReserved", "");
+		map.put("signature", "Y");
+		Map<String,String> resultMap = serviceInterfaceWS.service(map);
+		resultMap.get("respCode");
+		resultMap.get("Status");
+		resultMap.get("signature");*/
+		
+		UcfUserHabit habit = new UcfUserHabit();
+		habit.setUserId("10000003202");
+		habit.setProductType("0");
+		habit.setTradeType("1");
+		habit.setStatus(Constants.ENABLE_STATUS_T);
+		List<UcfUserHabit> list = userHabitService.query(habit);
+		if (null!=list&&list.size()>0) {
+			
+		}
+	}
+	@Test
+	public void saveUserHabit() throws Exception {
+		
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode", "UMPS0001");
+		map.put("merchantId", "UMPS0004");
+		map.put("userId", "10000003801");
+		map.put("productType", "0");
+		map.put("tradeType", "1");
+		
+		map.put("bankId", "ICBC");
+		map.put("reqReserved", "");
+		map.put("signature", "");
+		Map<String,String> resultMap = serviceInterfaceWSImpl.service(map);
+		resultMap.get("respCode");
+		resultMap.get("Status");
+		resultMap.get("signature");
+	}
+	@Test
+	public void reg() throws Exception {
+		
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode", "UMPS0004");
+		map.put("merchantId", "UMPS0003");
+		map.put("phoneNo", "13811811157");
+		map.put("realName", "杨洋");
+		map.put("certType", "IDC");
+		map.put("certNo", "232722198305150219");
+
+		map.put("reqReserved", "");
+		map.put("signature", "Y");
+		Map<String,String> resultMap = serviceInterfaceWSImpl.service(map);
+		resultMap.get("respCode");
+		resultMap.get("Status");
+		resultMap.get("signature");
+	}
+	@Test
+	public void delBankCard() throws Exception {
+		
+		Map<String,String> map = new HashMap<String,String>();
+		map.put("serviceCode", "UMPS0002");
+		map.put("merchantId", "UMPS0004");
+		map.put("userId", "10000003801");
+		map.put("cardType", "1");
+		map.put("certStatus", "3");
+		map.put("bankCardId", "10000002011");
+		
+		map.put("reqReserved", "");
+		map.put("signature", "Y");
+		Map<String,String> resultMap = serviceInterfaceWSImpl.service(map);
+		resultMap.get("respCode");
+		resultMap.get("Status");
+		resultMap.get("signature");
+	}
+}

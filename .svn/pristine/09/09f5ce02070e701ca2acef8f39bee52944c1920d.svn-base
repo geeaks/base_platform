@@ -1,0 +1,65 @@
+package com.ucf.customer.ws.business;
+
+import java.util.Map;
+
+import com.ucf.customer.ws.model.ServiceInterfaceModel;
+
+
+public interface BusinessService {
+
+	/*
+	 * UMPC0005查询用户信息
+	 */
+	public Map<String, String> queryUserInfo(ServiceInterfaceModel model, Map<String, String> returnMap);
+	
+	/*
+	 * UMPC0001查询账户余额
+	 */
+	public Map<String, String> queryBanlance(ServiceInterfaceModel model, Map<String, String> returnMap);
+	
+	/*
+	 * UMPC0002查询开户状态
+	 */
+	public Map<String, String> queryUserStatus(ServiceInterfaceModel model, Map<String, String> returnMap);
+	
+	/*
+	 * UMPC0003实名认证状态查询
+	 */
+	public Map<String, String> queryRealNameStatus(ServiceInterfaceModel model, Map<String, String> returnMap);
+	
+	/*
+	 * UMPC0004账户已绑定银行卡查询
+	 */
+	public Map<String, String> queryBindBankCards(ServiceInterfaceModel model, Map<String, String> returnMap);
+	
+	/*
+	 * UMPC0006查询用户最近使用银行
+	 */
+	public Map<String, String> queryUserHabitBanks(ServiceInterfaceModel model, Map<String, String> returnMap);
+	
+	/*
+	 * UMPS0001保存用户交易成功时使用的银行
+	 */
+	public Map<String, String> saveUserHabitBank(ServiceInterfaceModel model, Map<String, String> returnMap);
+	/*
+	 * UMPS0002保存用户交易成功时使用的银行
+	 */
+	public Map<String, String> deleteUcfBankCard(ServiceInterfaceModel model,
+			Map<String, String> returnMap);
+	public Map<String, String> updateUcfBankCard(ServiceInterfaceModel model, Map<String, String> returnMap);
+	/*
+	 * UMPS0003保存用户交易成功时使用的银行
+	 */
+	public Map<String, String> addUcfBankCard(ServiceInterfaceModel model, Map<String, String> returnMap);
+	/*
+	 * UMPS0004注册用户
+	 */
+	public Map<String, String> reg(ServiceInterfaceModel model, Map<String, String> returnMap);
+
+	public Map<String, String> modigyPhoneNo(ServiceInterfaceModel model,
+			Map<String, String> returnMap);
+
+	public Map<String, String> freezeCard(ServiceInterfaceModel model,
+			Map<String, String> returnMap);
+
+}

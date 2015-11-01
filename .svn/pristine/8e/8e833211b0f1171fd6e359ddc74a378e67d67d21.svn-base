@@ -1,0 +1,161 @@
+package com.ucf.customer.utils;
+
+import java.security.Key;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.AlgorithmParameterSpec;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.DESedeKeySpec;
+import javax.crypto.spec.IvParameterSpec;
+
+import sun.misc.BASE64Decoder;
+
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+public class TrippleDes {
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(TrippleDes.class);
+	// 设置解密密钥，此密钥和客户端控件加密用的密钥一致，请勿更改，否则无法解密
+	private static final byte[] DESkey = {
+		(byte) 0xB3,(byte) 0xCE,(byte) 0x3E,(byte) 0xBB,(byte) 0xD4,0x05,0x42,0x78,
+		(byte) 0x8B,0x16,0x23,0x40,(byte) 0xE9,(byte) 0xEA,0x33,(byte) 0x96,
+		(byte) 0x87,0x24,0x50,0x4D,(byte) 0xBB,(byte) 0xE3,(byte) 0xEC,0x3B
+		};
+
+	// 设置向量，请勿更改，否则无法解密
+	private static final byte[] DESIV = {(byte) 0xB7,(byte) 0x2B,(byte) 0x98,0x3C,(byte) 0x9B,0x67,(byte) 0xBD,0x3A};
+
+	
+	//MD5用到的salt
+	private static final byte md5Salt[]={
+		(byte)0xB7, (byte)0x2B, (byte)0x98, (byte)0x3C, (byte)0x9B, (byte)0x67, (byte)0xBD, (byte)0x3A
+		};
+	
+	// 加密算法的参数接口，IvParameterSpec是它的一个实现
+	static AlgorithmParameterSpec iv = null;
+
+	private static Key key = null;
+
+	public TrippleDes() throws Exception {
+		DESedeKeySpec keySpec = new DESedeKeySpec(DESkey);// 设置密钥参数
+		iv = new IvParameterSpec(DESIV);// 设置向量
+		SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("TripleDes");// 获得密钥工厂
+		key = keyFactory.generateSecret(keySpec);// 得到密钥对象
+	}
+
+	//解密
+	public String decode(String data) throws Exception {
+		Cipher deCipher = Cipher.getInstance("DESede/CBC/PKCS5Padding");
+		deCipher.init(Cipher.DECRYPT_MODE, key, iv);
+		BASE64Decoder base64Decoder = new BASE64Decoder();
+		try{
+			byte[] pasByte = deCipher.doFinal(base64Decoder.decodeBuffer(data));
+			return new String(pasByte, "utf-8");
+		}catch(Exception ex){
+			return "解密失败";
+		}		
+	}
+	
+	//解密Mac地址
+	public String getMacAddress(String fingerprint) throws Exception{
+		String macEnc = "";
+		try{
+			macEnc = fingerprint.substring(fingerprint.indexOf("<Data1>")+7, fingerprint.indexOf("</Data1>"));
+		}catch(Exception e){
+			return "参数错误";
+		}
+		return decode(macEnc);
+	}
+	//解密硬盘序列号
+	public String getDiskNumber(String fingerprint) throws Exception{
+		String diskNumberEnc = "";
+		try{
+			diskNumberEnc = fingerprint.substring(fingerprint.indexOf("<Data2>")+7, fingerprint.indexOf("</Data2>"));
+		}catch(Exception e){
+			return "参数错误";
+		}
+		return decode(diskNumberEnc);
+	}
+	//解密CPU信息
+	public String getCPUInfo(String fingerprint) throws Exception{
+		String cpuInfoEnc = "";
+		try{
+			cpuInfoEnc = fingerprint.substring(fingerprint.indexOf("<Data3>")+7, fingerprint.indexOf("</Data3>"));
+		}catch(Exception e){
+			return "参数错误";
+		}
+		return decode(cpuInfoEnc);
+	}
+	
+	//MD5
+	public String md5(String str){
+		String s=str;
+		if(s==null){
+			return "";
+		}else{
+			String value = null;
+			MessageDigest md5 = null;
+			try {
+				md5 = MessageDigest.getInstance("MD5");
+				}catch (NoSuchAlgorithmException ex) {
+					LOGGER.error(ex.getMessage(),ex);
+				}		
+				sun.misc.BASE64Encoder baseEncoder = new sun.misc.BASE64Encoder();
+				try {			
+					value = baseEncoder.encode(md5.digest(s.getBytes("utf-8")));
+					} catch (Exception ex) {
+						LOGGER.error(ex.getMessage(),ex);
+					}
+			return value;
+			}
+	}
+	
+	//Base64
+	public String getBASE64(byte[] b) {
+		String s = null;
+		if (b != null) {
+			s = new sun.misc.BASE64Encoder().encode(b);
+		}
+		return s;
+	}
+	
+	//判断是否篡改了报文
+	public boolean isSignRight(String fingerprint,String random){
+		try{
+			String md5Client = fingerprint.substring(fingerprint.indexOf("<Sign>")+"<Sign>".length(),fingerprint.indexOf("</Sign>"));
+			String extendData = fingerprint.substring(fingerprint.indexOf("<ExtendData>"),fingerprint.indexOf("<Sign>"));
+			String mySalt=getBASE64(md5Salt);
+			String oriStr = random + extendData + mySalt;
+			String md5Server = md5(oriStr);
+			if(md5Client.equals(md5Server)){
+				return true;
+			}else{
+				return false;
+			}
+		}catch(Exception e){
+			return false;
+		}
+	}
+	
+	
+	
+	public static void main(String[] args) throws Exception {
+		//测试
+		TrippleDes tDes = new TrippleDes();
+		//机器指纹报文，包含加密后的Mac地址、硬盘序列号和CPU信息
+		String fingerprint="<ExtendData><Data1>1zM2gPD4BQIQAFNH2yB9KuNZ8milgR0d</Data1><Data2>G8RrffbmsgZ4iEcJwaBsRCKRAOV3RSc/</Data2><Data3>bGK9etmK1HtSsqj0wWCAXZtgP4Horf5aHtKYIRHXFXS9UzqK8ov1RPxj5vBNKITr</Data3></ExtendData><Sign>ohcAFS0Qk7ynMYIXKD/Kkw==</Sign>";
+		fingerprint = "11";
+		boolean isOk = tDes.isSignRight(fingerprint, "random");
+		if(isOk){
+			LOGGER.info("机器指纹报文未被篡改");
+		}else{
+			LOGGER.info("机器指纹报文已被篡改");
+		}
+		
+		LOGGER.info("MAC地址: "+tDes.getMacAddress(fingerprint));
+		LOGGER.info("硬盘序列号: "+tDes.getDiskNumber(fingerprint));
+		LOGGER.info("CPU信息: "+tDes.getCPUInfo(fingerprint));
+	}
+}

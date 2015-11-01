@@ -1,0 +1,64 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="ucfgroup" tagdir="/WEB-INF/tags" %>
+<c:set var="basePath" value="${pageContext.request.contextPath }" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>修改支付密码</title>
+	<meta name="description" content="">
+	<meta name="author" content="">
+	<META http-equiv="X-UA-Compatible" content="IE=9" >
+	<link href="${staticMemberPath}/css/bootstrap.min.css" rel="stylesheet">
+	<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
+	<script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
+	<jsp:include page="../common/resource_js.jsp"/>
+</head>
+<body>
+	<div class="head">
+		<div class="container">
+			<img src="${staticMemberPath}/images/findpaypwd_logo.png" alt="...">
+		</div>
+	</div>
+	<div class="container">
+		<div class="main-top border-yellow find">
+			<div class="guide">
+				<img src="${staticMemberPath}/images/find_paypwd2.png"></img>
+			</div>
+			<div class="main-body" style="margin-left: 150px">
+				<form id="setPasswdForm" name="setPasswdForm" action="${basePath}/p2p/setPasswd.do" class="form-horizontal" method="post" data-validator-option="{theme:'ucfgroup_effect',timely:2}" style="margin-top: 40px;">
+					<input type="hidden" name="userId" value="${userId}"/>
+					<input type="hidden" name="merchantId" value="${merchantId}"/>
+					<ucfgroup:encrypted-password label="设置新支付密码 :" name="payPassword" tip="支付密码为6位数字，建议不要与银行取款密码相同" length="6"/>
+					<ucfgroup:encrypted-password label="确认新支付密码 :" name="payPassword1" tip="请与上面一致" length="6"/>
+					<c:if test="${msg ne null}">
+						<p style="margin-left:210px;">
+							<span style="color: red">${msg}</span>
+						</p>
+					</c:if>
+					<a class="btn mt20 mgl113" style="margin-left:210px;border-radius:0;" onclick="subForm()" href="javascript:void(0)">下一步</a>
+				</form>
+			</div>
+		</div>
+		<footer class="container foot">
+			<p>先锋支付版所有 2005-2013 ICP证：辽ICP备13000797号</p>
+		</footer>
+	</div>
+	</div>
+<link href="${staticMemberPath}/css/ucfgroup-pwd-nicevalidator-extends.css" rel="stylesheet"></link>
+<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticMemberPath}/js/ucfgroup-paypwd-nicevalidator-extends.js" type="text/javascript"></script>
+<script language="javascript">
+function subForm(){
+	var flag=document.getElementById("payPassword").GetLength()==6 && document.getElementById("payPassword1").GetLength()==6;
+	$('input[name="payPassword"]').val(document.getElementById("payPassword").GetValue());
+	$('input[name="payPassword1"]').val(document.getElementById("payPassword1").GetValue());
+	if(flag){
+		var form=document.setPasswdForm;
+		form.submit();
+	}
+}
+</script>
+</body>
+</html>

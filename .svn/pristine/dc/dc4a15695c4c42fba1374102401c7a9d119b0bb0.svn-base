@@ -1,0 +1,116 @@
+package com.ucf.customer.action;
+
+import java.io.PrintWriter;
+import java.util.Random;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.SMSService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.utils.enums.EnumSMSTemplate;
+import com.ucf.customer.utils.enums.EnumSessionKey;
+import com.ucf.customer.ws.bo.SmsBO;
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.service.UserServiceWS;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+
+/**
+ * 
+ * Description: 验证码发送 All Rights Reserved.
+ * 
+ * @version 1.0 2014-3-18 下午4:11:29 by 李晓明（lixiaoming@ucfgroup.com）创建
+ */
+@Controller
+@RequestMapping({ "/sms" })
+public class SMSAction extends BaseAction {
+
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(SMSAction.class);
+	@Autowired
+	private SMSService smsService;
+	@Autowired
+	private UserServiceWS userServiceWS;
+
+	/**
+	 * Description: 发送手机验证码
+	 * 
+	 * @Version1.0 2014-3-18 下午3:40:52 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param cellNo
+	 * @throws Exception
+	 */
+	@RequestMapping({ "vfycode/send" })
+	public void sendSms(@RequestParam(value = "smsType", required = false) String smsType, HttpServletRequest request, HttpServletResponse response,
+			Model model, PrintWriter printWriter) {
+		HttpSession session = request.getSession();
+		String systemType = request.getParameter("systemType");
+		String cellNo = request.getParameter("cellNo");
+		if (null == cellNo || "".equals(cellNo))
+			cellNo = (String) session.getAttribute(systemType);
+		UcfUser user = (UcfUser) session.getAttribute("user");
+		if (user != null) {
+			LOGGER.warn("用户未登录或者过期但发短信，手机号" + SensitiveInfoUtils.mobilePhone(cellNo));
+		}
+		String jsonString = "";
+		String vfyCode = sendActiveSMS(cellNo, smsType);
+		session.setAttribute("vfyCode", vfyCode);
+		String info = "验证码已发送";
+		model.addAttribute("info", info);
+		jsonString = JSONObject.toJSONString(info);
+		printWriter.write(jsonString);
+		printWriter.flush();
+		printWriter.close();
+	}
+
+	private String sendActiveSMS(String userMobile, String smsType) {
+		ResultBo checkVfbo = smsService.sendVfyCodeSMS("M100",userMobile, EnumSMSTemplate.MemberVfyCode.getContent());
+		if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
+			return checkVfbo.getResultObject().toString();
+		}else{
+			LOGGER.info("手机号[" + userMobile + "]发送短信出参:" + JSON.toJSONString(checkVfbo));
+		}
+		return null;
+	}
+
+	/**
+	 * Description: 发送手机验证码
+	 * @Version1.0 2014-3-18 下午3:40:52 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param cellNo
+	 * @throws Exception
+	 */
+	@RequestMapping({ "/send.htm" })
+	public void sendSmsNew(@RequestParam(value = "smsType") String smsType, HttpServletRequest request, HttpServletResponse response, Model model,
+			PrintWriter printWriter) {
+		try {
+			HttpSession session = request.getSession();
+			String cellNo = (String) session.getAttribute(EnumSessionKey.SMS_PHONE.getKey());
+			ResultBo checkVfbo = smsService.sendVfyCodeSMS("M100",cellNo, EnumSMSTemplate.MemberVfyCode.getContent());
+			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
+				session.setAttribute("vfyCode|" + cellNo, checkVfbo.getResultObject().toString());
+				LOGGER.info("发送的短信,手机号：" + SensitiveInfoUtils.mobilePhone(cellNo) + "|短信vfyCode：" + JSONObject.toJSONString(checkVfbo));
+				printWriter.write(JSONObject.toJSONString("验证码已发送"));
+			}else{
+				printWriter.write(checkVfbo.getMsg());
+			}
+		} catch (Exception e) {
+			LOGGER.error("调用会员发送短信接口失败");
+			printWriter.write(JSONObject.toJSONString("验证码发送失败"));
+		}
+		printWriter.flush();
+		printWriter.close();
+	}
+
+}

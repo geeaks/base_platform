@@ -1,0 +1,535 @@
+package com.ucf.customer.service.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.apache.cxf.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
+
+import com.ucf.account.ws.bo.OpenAccountParamBO;
+import com.ucf.account.ws.bo.OpenAccountReturnValueBo;
+import com.ucf.account.ws.service.OpenAccountWS;
+import com.ucf.customer.api.enums.EnumUserType;
+import com.ucf.customer.dao.UcfBankCardDao;
+import com.ucf.customer.dao.UcfCardDao;
+import com.ucf.customer.dao.UcfCustomerDao;
+import com.ucf.customer.dao.UcfOrgDao;
+import com.ucf.customer.dao.UcfPersonDao;
+import com.ucf.customer.dao.UcfQuestionDao;
+import com.ucf.customer.dao.UcfUserDao;
+import com.ucf.customer.dao.UcfUserLoginAppDao;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.pojo.UcfOrg;
+import com.ucf.customer.pojo.UcfPerson;
+import com.ucf.customer.pojo.UcfQuestion;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.Cryptos;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.TransCode;
+import com.ucf.customer.utils.enums.EnumAccountType;
+import com.ucf.customer.utils.exception.CustomerException;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.redis.support.ICache;
+
+@Service("loginService")
+public class LoginServiceImpl implements LoginService {
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(LoginServiceImpl.class);
+	
+	@Resource(name="redisKVManager")
+	private ICache<String> cache = null;
+	
+	private static final String USER_QUES_ASW_KEY = "member_check_ques_answ";
+	private static final int USER_QUES_ASW_TIME_OUT = 60*60*24; 
+	@Autowired
+	private UcfUserDao userDao;
+	@Autowired
+	private UcfCardDao ucfCardDao;
+    @Autowired
+    private UcfBankCardDao bankCardDao;
+    @Autowired
+    private UcfCustomerDao customerDao;
+    @Autowired
+    private UcfPersonDao personDao;
+	@Autowired
+	private UcfQuestionDao ucfQuestionDao;
+	@Autowired
+	private UcfUserLoginAppDao ucfUserLoginAppDao;
+	@Autowired
+	private UcfOrgDao ucfOrgDao;
+	@Autowired
+	private OpenAccountWS openAccountWSClient;
+
+
+
+	public UcfUser queryUserInfo(String userId) throws Exception {
+		UcfUser ucfUser = new UcfUser();
+		ucfUser.setUserId(userId);
+		List<UcfUser> list = this.userDao.queryUcfUserListByWhere(ucfUser);
+		if (null!=list&&list.size()>0) {
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	public UcfUser queryUserInfo(String userId, String merchantId) throws Exception {
+		//add by gaoxiang 增加入参判断
+		if(StringUtils.isEmpty(userId) || StringUtils.isEmpty(merchantId)){
+			return null;
+		}
+		UcfUser ucfUser = new UcfUser();
+		ucfUser.setUserId(userId);
+		List<UcfUser> list = this.userDao.queryUcfUserListByWhere(ucfUser);
+		if (null!=list&&list.size()>0) {
+			UcfUser u =  list.get(0);
+			if(merchantId.equals(u.getRefMerchant())){
+				return u;
+			}
+		}
+		return null;
+	}
+
+	public List<UcfQuestion> queryUcfQuestion(String email) throws Exception {
+		UcfQuestion ques = new UcfQuestion();
+		List<UcfQuestion> list = new ArrayList<UcfQuestion>();
+		ques.setQuesLink(email);
+
+		list = this.ucfQuestionDao.queryUcfQuestionListByWhere(ques);
+		return list;
+	}
+
+	@Override
+	public void updateUcfQuestion(UcfQuestion ucfQuestion) throws Exception {
+		this.ucfQuestionDao.updateUcfQuestion(ucfQuestion);
+		
+	}
+
+	@Override
+	public void updateUcfUser(UcfUser ucfUser) throws Exception {
+		 this.userDao.updateUcfUser(ucfUser);
+		
+	}
+
+	@Override
+	public void insertUserInfo(UcfUser userInfo) throws Exception {
+		this.userDao.insertUcfUser(userInfo);
+		
+	}
+
+	@Override
+	public UcfUser queryUserInfoByPhone(String phone) throws Exception {
+		//add by liwenjing 解决同一个手机号注册多次，通过手机号找用户错误的临时解决方案，该方法需要重写
+		UcfUserLoginApp userApp=queryUserAppInfo(phone);
+		//mod by gaoxiang 如果不存在返回null
+		if(userApp==null){
+			return null;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(userApp.getUserId());
+		if (this.userDao.queryUcfUserListByWhere(user).size()>0) {
+			return this.userDao.queryUcfUserListByWhere(user).get(0);
+		}else {
+			return null;
+		}
+		
+	}
+
+	@Override
+	public void insertBankCardInfo(UcfBankCard bankCardInfo) throws Exception {
+		this.bankCardDao.insertUcfBankCard(bankCardInfo);
+	}
+
+	@Override
+	public void insertCardInfo(UcfCard ucfCardInfo) throws Exception {
+		this.ucfCardDao.insertUcfCard(ucfCardInfo);
+	}
+
+	@Override
+	public UcfCard queryUcfCardByUserId(String userId) throws Exception {
+		UcfCard  card = new UcfCard();
+		card.setUserId(userId);
+		List<UcfCard> list = this.ucfCardDao.queryUcfCardListByWhere(card);
+		if (list.size()==1) {
+			return list.get(0);
+		}else {
+			return null;
+		}
+	}
+	
+	@Override
+	public UcfCard queryUcfCardByUserId(String userId,String from) throws Exception {
+		UcfCard  card = new UcfCard();
+		card.setUserId(userId);
+		card.setRegisterFrom(from);
+		if (this.ucfCardDao.queryUcfCardListByWhere(card).size()>0) {
+			return this.ucfCardDao.queryUcfCardListByWhere(card).get(0)  ; 
+		}else {
+			return null;
+		}
+	}
+
+	@Override
+	public List<UcfBankCard> queryUcfBankCard(UcfBankCard ucfBankCard) {
+		List<UcfBankCard>  list  =  new ArrayList<UcfBankCard>();
+		try {
+			list=this.bankCardDao.queryUcfBankCardListByWhere(ucfBankCard);
+			if(list.size()==0){
+				return null;
+			}
+		} catch (CustomerException e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+ 		return list;
+	}
+
+	@Override
+	public void updateBankCard(UcfBankCard ucfBankCard) throws Exception {
+		this.bankCardDao.updateUcfBankCard(ucfBankCard);
+	}
+
+	@Override
+	public List<UcfBankCard> queryUcfBankCardByUserId(String userId)
+			throws Exception {
+		UcfBankCard  card=new UcfBankCard();
+		card.setUserId(userId);
+		return this.bankCardDao.queryUcfBankCardListByWhere(card);
+	}
+
+	@Override
+	public void insertLoginAppInfo(UcfUserLoginApp ucfUserLoginApp)
+			throws Exception {
+		this.ucfUserLoginAppDao.insertUcfUserLoginApp(ucfUserLoginApp);
+		
+	}
+
+	@Override
+	public UcfUserLoginApp queryUserAppInfo(String loginId) throws Exception {
+		UcfUserLoginApp  ucfUserLoginApp = new UcfUserLoginApp();
+		List<UcfUserLoginApp> list = new ArrayList<UcfUserLoginApp>();
+		ucfUserLoginApp.setLoginId(loginId);
+		list = this.ucfUserLoginAppDao.queryUcfUserLoginAppListByWhere(ucfUserLoginApp);
+		if(list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
+	
+	@Override
+	public UcfUserLoginApp queryPersonUserAppInfo(String loginId) throws Exception {
+		UcfUserLoginApp  ucfUserLoginApp = new UcfUserLoginApp();
+		List<UcfUserLoginApp> list = new ArrayList<UcfUserLoginApp>();
+		ucfUserLoginApp.setLoginId(loginId);
+		ucfUserLoginApp.setUserType(EnumUserType.PERSON.getCode());
+		list = this.ucfUserLoginAppDao.queryUcfUserLoginAppListByWhere(ucfUserLoginApp);
+		if(list.size()>0){
+			return list.get(0);
+		}
+		return null;
+	}
+
+	@Override
+	public void updateUcfUserApp(UcfUserLoginApp userLoginApp) throws Exception {
+		this.ucfUserLoginAppDao.updateUcfUserLoginApp(userLoginApp);
+	}
+
+	@Override
+	public List<UcfUser> queryUcfUser(UcfUser user) throws Exception {
+		 
+		return this.userDao.queryUcfUserListByWhere(user); 
+	}
+	
+	/**
+	 * 判断用户的两个密码是否相同
+	 * @param userId
+	 * @param pwd1
+	 * @param pwd2
+	 * @return
+	 */
+	@Override
+	public boolean isUserPwdMatch(String userId, String pwd1,String pwd2){
+		if(pwd1.equals(pwd2)){
+			return true;
+		}
+		String pwdSec1 = Cryptos.encrypt(pwd1, userId);
+		String pwdSec2 = Cryptos.encrypt(pwd2, userId);
+		if(pwdSec1.equals(pwdSec2) || pwdSec1.equals(pwd2) || pwd1.equals(pwdSec2)){
+			return true;
+		}
+		return false;
+	}
+	
+	@Override
+	public boolean isUserPayPwdMatch(String userId, String payPwd)
+			throws Exception {
+		UcfCard  card = new UcfCard();
+		card.setUserId(userId);
+		//card.setPaymentPassword(payPwd);
+		List<UcfCard> list = this.ucfCardDao.queryUcfCardListByWhere(card);
+		if(list!=null&&list.size()>0){
+			UcfCard ucfcard = list.get(0);
+			if(ucfcard.getPaymentPassword()!=null && !ucfcard.getPaymentPassword().trim().equals("")){
+				if(ucfcard.getPaymentPassword().length() <=20){
+					if(ucfcard.getPaymentPassword().equals(payPwd)){
+						ucfcard.setPaymentPassword(Cryptos.encrypt(ucfcard.getPaymentPassword(), userId));
+						ucfCardDao.updateUcfCard(ucfcard);
+						return true;
+					}
+					return false;
+				}else{
+					return Cryptos.validate(ucfcard.getPaymentPassword(), payPwd, userId);
+				}
+			}
+	   }
+		return false;
+	}
+	
+	public boolean isUserMatch(String userId, String pwd) throws Exception {
+		
+		UcfUserLoginApp  userApp = new UcfUserLoginApp();
+		/*boolean isEmail  =CheckMailOrPhone.isEmail(userId)  ;
+		if(isEmail){
+			userApp.setEmail(userId);
+		}else{
+			userApp.setPhone(userId);
+		}*/
+		userApp.setUserId(userId);
+		
+		//userApp.setLoginPwd(pwd);
+		List<UcfUserLoginApp> list = this.ucfUserLoginAppDao.queryUcfUserLoginAppListByWhere(userApp);
+		
+		if(list!=null&&list.size()>0){
+			if (list.get(0) != null) {
+				userApp = (UcfUserLoginApp) list.get(0);
+				LOGGER.debug(":Phone:" + SensitiveInfoUtils.mobilePhone(userApp.getPhone()));
+				if(userApp.getLoginPwd()!=null && !userApp.getLoginPwd().trim().equals("")){
+					if(userApp.getLoginPwd().length() <=20){
+						if(userApp.getLoginPwd().equals(pwd)){
+							userApp.setLoginPwd(Cryptos.encrypt(userApp.getLoginPwd(), userId));
+							ucfUserLoginAppDao.updateUcfUserLoginApp(userApp);
+							return true;
+						}
+						return false;
+					}else{
+						return Cryptos.validate(userApp.getLoginPwd(), pwd, userId);
+					}
+				}
+			 }
+	   }
+		return false;
+	}
+
+	@Override
+	public Map<Object, Object> queryUcfUserCell(String userId)  {
+		 
+		try {
+			return this.userDao.queryUcfUserCell(userId);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		return new HashMap<Object, Object>();
+	}
+
+	@Override
+	public void updateUcfCard(UcfCard ucfCard) throws Exception {
+		 
+		this.ucfCardDao.updateUcfCard(ucfCard);
+	}
+
+	@Override
+	public Map<Object, Object> queryUcfBankCardInfo(String userId)
+			throws Exception {
+		UcfBankCard card = new UcfBankCard();
+		List<UcfBankCard> list = new ArrayList<UcfBankCard>();
+		Map <Object, Object> map=new HashMap<Object, Object>();
+		card.setUserId(userId);
+		list=this.bankCardDao.queryUcfBankCardListByWhere(card);
+		if(list.size()>0){
+			card=list.get(0);
+			map.put("cardNo", card.getCardNo());
+		}
+		return map;
+	}
+
+	@Override
+	public void insertCustomer(UcfCustomer customer) throws Exception {
+		this.customerDao.insertUcfCustomer(customer);
+	}
+
+	@Override
+	public UcfCustomer queryUcfCustomerInfo(UcfCustomer customer) throws Exception {
+		 
+		List<UcfCustomer> list = new ArrayList<UcfCustomer>();
+		list = this.customerDao.queryUcfCustomerListByWhere(customer);
+		if(list.size()==0 ){
+			return null;
+		}else{
+			return list.get(0);  
+		}
+		
+	}
+
+	@Override
+	public void insertPersonInfo(UcfPerson person) throws Exception {
+		 
+		this.personDao.insertUcfPerson(person);
+	}
+
+	@Override
+	public void updateUcfCustomer(UcfCustomer customer) throws Exception {
+		 
+		this.customerDao.updateUcfCustomer(customer);
+	}
+
+	@Override
+	public boolean checkPWD(Model model,String userId) {
+		try {
+			UcfCard  ucfCard=queryUcfCardByUserId(userId);
+			if(ucfCard.getRepeatPaypasswordErrorTimes()!=null){
+				BigDecimal errtimes=ucfCard.getRepeatPaypasswordErrorTimes();
+				Date lastdate = ucfCard.getLastPayFailDt();
+				Date currentDate =  new Date();
+				Calendar lsdate = Calendar.getInstance();
+				Calendar currDate = Calendar.getInstance();
+				
+				lsdate.setTime(lastdate);
+				currDate.setTime(currentDate);
+				
+				lsdate.add(Calendar.DATE, 1);
+				
+
+				if(lsdate.equals(currDate)  || lsdate.before(currDate)){
+					ucfCard.setRepeatPaypasswordErrorTimes(BigDecimal.valueOf(0l));
+					ucfCard.setLastPayFailDt(null);
+					updateUcfCard(ucfCard);
+				}else if(errtimes.intValue() >= 5){
+					model.addAttribute("msg", "用户支付密码已经被冻结,不可做银行卡相关操作!24小时后自动解冻！");
+					model.addAttribute("freeze", "0");
+					 return false;
+				}
+			}
+			return true;
+			
+			
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		return false;
+	}
+
+	@Override
+	public boolean checkQusAndAsw(String userId) {
+		try {
+			String sessId = cache.get(USER_QUES_ASW_KEY + userId, String.class);
+			if (sessId != null) {
+				int times = Integer.parseInt(sessId);
+				if (times >= 5) {
+					return false;
+				} else {
+					return true;
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		return true;
+	}
+
+	@Override
+	public int setQusAndAsw(boolean status, String userId) {
+		try {
+			if(status == true){
+				cache.delete(USER_QUES_ASW_KEY + userId);
+			}else{
+				String sessId =  cache.get(USER_QUES_ASW_KEY + userId, String.class);
+				if (sessId != null) {
+					int times = Integer.parseInt(sessId) + 1;
+					cache.set(USER_QUES_ASW_KEY + userId, String.valueOf(times), USER_QUES_ASW_TIME_OUT, TimeUnit.SECONDS);
+					return times;
+				}else{
+					cache.set(USER_QUES_ASW_KEY + userId, 1 , USER_QUES_ASW_TIME_OUT, TimeUnit.SECONDS);
+					return 1;
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		return 0;
+	}
+
+	@Override
+	public String createAcccount(final Model model,EnumAccountType accountType,final UcfCard ucfCard) {
+		OpenAccountParamBO openAccountParamBO = new OpenAccountParamBO();
+		openAccountParamBO.setCardId(ucfCard.getCardNo());
+		openAccountParamBO.setAccountType(accountType.getCode());
+		openAccountParamBO.setCreateOperator(Constants.OPERATE);
+		openAccountParamBO.setCurrency(Constants.TRANS_CUR);
+		openAccountParamBO.setBalanceDirection(Constants.BANLANCE_DIR);
+		openAccountParamBO.setTransCode(TransCode.OPENACCOUNT.getTransCode());
+		openAccountParamBO.setSubTransCode(TransCode.OPENACCOUNT.getSubTransCode());
+		openAccountParamBO.setOutOrderNo(""+UUID.randomUUID());
+		openAccountParamBO.setTransRule(Constants.TRANS_RULE_YES);
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("调用开户接口传入参数：" + SensitiveInfoUtils.getJson(openAccountParamBO));//账务系统修改
+		}
+		
+		final OpenAccountReturnValueBo ret = openAccountWSClient.openAccount(openAccountParamBO );
+		if (null==ret) {
+			LOGGER.debug("msg:[调用账户接口开户,返回null]");
+			model.addAttribute("errMsg", "系统异常，请重试");
+			return "reg/error";
+		} else 
+		if(null!=ret&&ret.getCode().compareTo("0000")!=0){
+			final String msg = ret.getMsg();
+			LOGGER.debug("errcode:["+ret.getCode()+"]");
+			LOGGER.debug("msg:["+msg+"]");
+			model.addAttribute("errMsg", "系统异常，请重试");
+			return "reg/error";
+		}
+		
+		ucfCard.setAccountId(ret.getAccountNo());
+		return "success";
+	}
+
+	@Override
+	public UcfUserLoginApp queryUserLoginApp(UcfUserLoginApp loginApp)
+			throws Exception {
+		List<UcfUserLoginApp> list = new ArrayList<UcfUserLoginApp>();
+		list=this.ucfUserLoginAppDao.queryUcfUserLoginAppListByWhere(loginApp);
+		if(list==null || list.size()==0){
+			return null;
+		}
+		return list.get(0);
+	}
+
+	@Override
+	public UcfUser queryUcfUserInfo(UcfUser user) throws Exception {
+		List<UcfUser> userList = this.userDao.queryUcfUserListByWhere(user);
+		 if(userList.isEmpty()){
+			 return null;
+		 }else{
+			 return userList.get(0);
+		 }
+	}
+
+	@Override
+	public void insertOrganizational(UcfOrg organizational) throws Exception {
+		this.ucfOrgDao.insertUcfOrg(organizational);
+	}
+	
+}

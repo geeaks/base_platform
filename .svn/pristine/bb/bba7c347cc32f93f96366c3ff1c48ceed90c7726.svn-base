@@ -1,0 +1,177 @@
+package com.ucf.customer.dao.impl;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Repository;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.ucf.customer.dao.UcfUserDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.utils.RedisUtils;
+import com.ucf.customer.utils.enums.EnumRedisKey;
+import com.ucf.customer.ws.enums.EnumUserType;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.redis.support.ICache;
+
+@Repository
+public class UcfUserDaoImpl extends BaseCustomerDao implements UcfUserDao {
+
+	private static final long serialVersionUID = -1L;
+	
+	private static final UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(UcfUserDaoImpl.class);
+
+	@Resource(name="redisKVManager")
+	private ICache<String> cache = null;
+	
+	public void insertUcfUser(UcfUser ucfUser) throws Exception {
+		this.insert("com.ucf.customer.insertUcfUser", ucfUser);
+		refreshUserInfo(ucfUser.getUserId(),EnumRedisKey.UCF_USER_QUERY_BY_USERId.getTimeout());
+	}
+
+	public void updateUcfUser(UcfUser ucfUser) throws Exception {
+		this.update("com.ucf.customer.updateUcfUser", ucfUser);
+		refreshUserInfo(ucfUser.getUserId(),EnumRedisKey.UCF_USER_QUERY_BY_USERId.getTimeout());
+	}
+
+	public void deleteUcfUser(String userId) throws Exception {
+		cache.delete(EnumRedisKey.UCF_USER_QUERY_BY_USERId.getKey() + userId);
+		this.delete("com.ucf.customer.deleteUcfUser", userId);
+	}
+
+	public List<UcfUser> queryUcfUserListByWhere(UcfUser ucfUser) throws Exception {
+		boolean isUserId = ucfUser.booleanUserId();
+		if (isUserId) {
+			UcfUser u = getUcfUserByUserId(ucfUser.getUserId());
+			List<UcfUser> ucfUsers  = new ArrayList<UcfUser>();
+			ucfUsers.add(u);
+			return ucfUsers;
+		} else {
+			List<UcfUser> ucfUsers = this.queryForList("com.ucf.customer.queryUcfUserByWhere", ucfUser);
+			return ucfUsers;
+		}
+	}
+	
+	public String queryUcfUserId() throws Exception {
+		return this.getOne("com.ucf.customer.getUcfUserId", null);
+	}
+
+	@Override
+	public Map<Object, Object> queryUcfUserCell(String userId) throws Exception {
+		UcfUser user = new UcfUser();
+		Map<Object, Object> map = new HashMap<Object, Object>();
+		user.setUserId(userId);
+		List<UcfUser> list = new ArrayList<UcfUser>();
+		list = this.queryForList("com.ucf.customer.queryUcfUserByWhere", user);
+		user = list.get(0);
+		map.put("cell", user.getCell());
+		map.put("certNo", user.getCertNo());
+		map.put("userName", user.getRealName());
+		return map;
+	}
+
+	@Override
+	public UcfUser getUcfUserByUserId(String userId) {
+		if (cache.isExist(EnumRedisKey.UCF_USER_QUERY_BY_USERId.getKey() + userId)) {
+			try{
+				String resultString = cache.get(EnumRedisKey.UCF_USER_QUERY_BY_USERId.getKey() + userId,String.class);
+				return JSON.parseObject(resultString, UcfUser.class);
+			}catch(Exception e){
+				LOGGER.warn("查询用户信息缓存处理异常", e);
+			}
+		}else{
+			//TODO 下次上线删除 兼容 ******BEGIN******
+			String oldkey = "UCF_USER_QUERY_BY_USERId_" + userId;
+			if (RedisUtils.hasKey(oldkey)) {				
+				String resultString = RedisUtils.getVaueByKey(oldkey);
+				refreshUserInfo(userId,EnumRedisKey.UCF_USER_QUERY_BY_USERId.getTimeout());
+				return JSON.parseObject(resultString, UcfUser.class);
+			} 			
+			String oldlistkey = "UCF_USER_LIST_QUERY_BY_USERId" + userId;
+			if (RedisUtils.hasKey(oldlistkey)) {
+				String resultString = RedisUtils.getVaueByKey(oldlistkey);
+				refreshUserInfo(userId,EnumRedisKey.UCF_USER_QUERY_BY_USERId.getTimeout());
+				List<UcfUser> ucfUsers = JSON.parseObject(resultString, new TypeReference<List<UcfUser>>() { });
+				if(ucfUsers!=null && ucfUsers.size()>0){
+					return ucfUsers.get(0);
+				}
+			}
+			//TODO 下次上线删除 兼容 ******END******
+		}
+		return searchByUserId(userId);
+	}
+
+	private UcfUser searchByUserId(String userId) {
+		UcfUser ucfUser = this.getOne("com.ucf.customer.getUcfUserByUserId", userId);
+		if(ucfUser!= null){
+			cache.set(EnumRedisKey.UCF_USER_QUERY_BY_USERId.getKey() + userId, JSON.toJSONString(ucfUser), EnumRedisKey.UCF_USER_QUERY_BY_USERId.getTimeout(), TimeUnit.SECONDS);
+		}
+		return ucfUser;
+	}
+
+	@Override
+	public List<UcfUser> queryUcfUserListByType(EnumUserType userType) {
+		return this.queryForList("com.ucf.customer.queryUcfUserListByType",
+				userType.getCode());
+	}
+
+	@Override
+	public String getEnterpriseMemberNO_SEQ() throws Exception {
+		return this.getOne("com.ucf.customer.getEnterpriseMemberNO", null);
+	}
+
+	@Override
+	public String monitorValidConnent() throws Exception{
+		return this.getOne("com.ucf.customer.monitorValidConnent",null);
+	}
+
+	@Override
+	public List<UcfUser> findAnonymousUser() throws Exception {
+		UcfUser ucfUser = new UcfUser();
+		//匿名用户类型为-1
+		ucfUser.setUserType(new BigDecimal(-1));
+		String redisKey = EnumRedisKey.ANONYNOUS_UCF_USER_LIST_QUERY.getKey();
+		if (cache.isExist(redisKey)) {
+			String resultString =  cache.get(redisKey,String.class);
+			logger.info("查询匿名用户缓存命中：" + resultString);
+			List<UcfUser> list = JSON.parseObject(resultString, new TypeReference<List<UcfUser>>() { });
+			return list;
+		} else {
+			List<UcfUser> list = this.queryForList("com.ucf.customer.queryUcfUserByWhere", ucfUser);
+			if (list != null && list.size()>0) {
+				cache.set(redisKey, JSON.toJSONString(list), EnumRedisKey.ANONYNOUS_UCF_USER_LIST_QUERY.getTimeout(), TimeUnit.SECONDS);
+			}
+			return list;
+		}
+	}
+	
+	@Override
+	public void refreshUserInfo(String userId,int timeout) {
+		UcfUser u = new UcfUser();
+		u.setUserId(userId);
+		//更新完 重新查询 放到redis里
+		List<UcfUser> ucfUserNew = this.queryForList("com.ucf.customer.queryUcfUserByWhere", u);
+		if (ucfUserNew!=null && ucfUserNew.size()>0) {
+			//根据userId查询单个USER
+			cache.set(EnumRedisKey.UCF_USER_QUERY_BY_USERId.getKey() + userId, JSON.toJSONString(ucfUserNew.get(0)), 
+					timeout, TimeUnit.SECONDS);
+		}
+	}
+
+	
+	@Override
+	public List<UcfUser> listPageUcfUser(UcfUser user) throws Exception {
+		List<UcfUser> list = this.queryForList("com.ucf.customer.listPageUcfUser", user);
+		return list;
+	}
+}

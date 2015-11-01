@@ -1,0 +1,31 @@
+package com.ucf.customer.security;
+
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * action层控制用户访问
+ * 
+ * @author fish
+ * 
+ */
+@Target({ ElementType.METHOD, ElementType.TYPE, ElementType.PACKAGE })
+@Retention(RetentionPolicy.RUNTIME)
+public @interface MemberAccess {
+	/**
+	 * 可以访问此action的用户类型，多个类型之间为 或 关系，<br/>
+	 * 注意用户类型直接有包含关系<br/>
+	 * MemberUserType.Visitor包含所有登录、未登录会员<br/>
+	 * MemberUserType.Logined包含所有已经登录会员<br/>
+	 * 例如，无权限控制 @MemberAccess({ MemberUserType.Visitor }) <br/>
+	 * 登录用户有权 @MemberAccess({ MemberUserType.Logined }) <br/>
+	 * 商户用户有权 @MemberAccess({ MemberUserType.Merchant }) <br/>
+	 * 如果value为空，则视为任意用户都可访问(等同于MemberUserType.Visitor)
+	 * 
+	 * @return
+	 */
+	EnumMemberUserType[] value() default {};
+
+}

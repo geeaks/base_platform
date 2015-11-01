@@ -1,0 +1,168 @@
+package com.ucf.customer.ws.bo.enterprise;
+
+import java.io.Serializable;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * 企业会员信息
+ * @author zhanglei
+ *
+ */
+public class EnterpriseMemberInfoBO implements Serializable {
+
+	private static final long serialVersionUID = -1372437893334495901L;
+	
+	//企业全称	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String enterpriseFullName;
+	//企业简称	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String enterpriseShortName;
+	//营业执照号	
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String businessLicense;
+	//证件到期时间	
+	private String endDate;
+	//法人姓名	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String legalPersonName;
+	//法人身份证号	
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String legalPersonNo;
+	//企业地址	
+	@SensitiveInfo(type=SensitiveType.ADDRESS)
+	private String enterpriseAddress;
+	//联系电话	
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String enterprisePhone;
+	//开户行名称	
+	private String bankName;
+	//开户行Code	
+	private String bankCode;
+	//对公账号	
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+	//开户行省份	
+	private String provinces;
+	//开户行城市	
+	private String city;
+	//开户行支行名称	
+	private String issuerName;
+	//联行号	
+	private String issuer;
+	//账户名称	
+	private String bankCardName;
+	
+	/**
+	 * 可用状态
+	 */
+	private String enabledStatus;
+	
+	
+	public String getEnterpriseFullName() {
+		return enterpriseFullName;
+	}
+	public void setEnterpriseFullName(String enterpriseFullName) {
+		this.enterpriseFullName = enterpriseFullName;
+	}
+	public String getEnterpriseShortName() {
+		return enterpriseShortName;
+	}
+	public void setEnterpriseShortName(String enterpriseShortName) {
+		this.enterpriseShortName = enterpriseShortName;
+	}
+	public String getBusinessLicense() {
+		return businessLicense;
+	}
+	public void setBusinessLicense(String businessLicense) {
+		this.businessLicense = businessLicense;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public String getLegalPersonName() {
+		return legalPersonName;
+	}
+	public void setLegalPersonName(String legalPersonName) {
+		this.legalPersonName = legalPersonName;
+	}
+	public String getLegalPersonNo() {
+		return legalPersonNo;
+	}
+	public void setLegalPersonNo(String legalPersonNo) {
+		this.legalPersonNo = legalPersonNo;
+	}
+	public String getEnterpriseAddress() {
+		return enterpriseAddress;
+	}
+	public void setEnterpriseAddress(String enterpriseAddress) {
+		this.enterpriseAddress = enterpriseAddress;
+	}
+	public String getEnterprisePhone() {
+		return enterprisePhone;
+	}
+	public void setEnterprisePhone(String enterprisePhone) {
+		this.enterprisePhone = enterprisePhone;
+	}
+	public String getBankName() {
+		return bankName;
+	}
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+	public String getBankCode() {
+		return bankCode;
+	}
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+	public String getProvinces() {
+		return provinces;
+	}
+	public void setProvinces(String provinces) {
+		this.provinces = provinces;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getIssuerName() {
+		return issuerName;
+	}
+	public void setIssuerName(String issuerName) {
+		this.issuerName = issuerName;
+	}
+	public String getIssuer() {
+		return issuer;
+	}
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
+	}
+	public String getBankCardName() {
+		return bankCardName;
+	}
+	public void setBankCardName(String bankCardName) {
+		this.bankCardName = bankCardName;
+	}
+	public String getEnabledStatus() {
+		return enabledStatus;
+	}
+	public void setEnabledStatus(String enabledStatus) {
+		this.enabledStatus = enabledStatus;
+	}
+	
+
+}

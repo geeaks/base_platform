@@ -1,0 +1,23 @@
+package com.ucf.customer.dao;
+
+import java.io.Serializable;
+import java.util.List;
+import com.ucf.customer.pojo.UcfSubCard;
+
+public interface UcfSubCardDao extends Serializable {
+
+	void insertUcfSubCard(UcfSubCard ucfSubCard)throws Exception;
+
+	void updateUcfSubCard(UcfSubCard ucfSubCard)throws Exception;
+
+	void deleteUcfSubCard(String subCardNo)throws Exception;
+
+	List<UcfSubCard> queryUcfSubCardListByWhere(UcfSubCard ucfSubCard)throws Exception;
+
+	/**
+	 * 获取子卡编码 走seq
+	 * @return
+	 */
+	String getSubCardNo();
+
+}

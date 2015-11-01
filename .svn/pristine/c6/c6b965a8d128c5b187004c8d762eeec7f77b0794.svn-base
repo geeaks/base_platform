@@ -1,0 +1,301 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UcfOrgBO implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3799453748194746089L;
+
+	private String id;
+	
+	private String customerId;
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String realName;
+	private String coperation;
+	private String internet;
+	private String agentCard;
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String agentName;
+	private String coperationCard;
+	private String country;
+	private String province;
+	private String city;
+	@SensitiveInfo(type=SensitiveType.ADDRESS)
+	private String address;
+	private String phone;
+	private String fax;
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String cell;
+	private String zip;
+	@SensitiveInfo(type=SensitiveType.EMAIL)
+	private String email;
+	private Date gmtCreate;
+	private Date gmtModified;
+	private String memo;
+	private String userId;
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String companyFullName;
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String companyName;
+	private String charetNo;
+	private Date charetExpire;
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String legalPerson;
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String legalIdentity;
+	private String mallUrl;
+	private String companyAdd;
+	private String post;
+	private String settleBankCode;
+	private String settleBankName;
+	private String settleCardNo;
+	private String branchName;
+	private String payeeName;
+	private String licenseCopy;
+	private String orgCertificate;
+	private String taxCertificate;
+	private String legalIdentityCop;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCustomerId() {
+		return customerId;
+	}
+	public void setCustomerId(String customerId) {
+		this.customerId = customerId;
+	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	public String getCoperation() {
+		return coperation;
+	}
+	public void setCoperation(String coperation) {
+		this.coperation = coperation;
+	}
+	public String getInternet() {
+		return internet;
+	}
+	public void setInternet(String internet) {
+		this.internet = internet;
+	}
+	public String getAgentCard() {
+		return agentCard;
+	}
+	public void setAgentCard(String agentCard) {
+		this.agentCard = agentCard;
+	}
+	public String getAgentName() {
+		return agentName;
+	}
+	public void setAgentName(String agentName) {
+		this.agentName = agentName;
+	}
+	public String getCoperationCard() {
+		return coperationCard;
+	}
+	public void setCoperationCard(String coperationCard) {
+		this.coperationCard = coperationCard;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getFax() {
+		return fax;
+	}
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+	public String getCell() {
+		return cell;
+	}
+	public void setCell(String cell) {
+		this.cell = cell;
+	}
+	public String getZip() {
+		return zip;
+	}
+	public void setZip(String zip) {
+		this.zip = zip;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public Date getGmtCreate() {
+		return gmtCreate;
+	}
+	public void setGmtCreate(Date gmtCreate) {
+		this.gmtCreate = gmtCreate;
+	}
+	public Date getGmtModified() {
+		return gmtModified;
+	}
+	public void setGmtModified(Date gmtModified) {
+		this.gmtModified = gmtModified;
+	}
+	public String getMemo() {
+		return memo;
+	}
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getCompanyFullName() {
+		return companyFullName;
+	}
+	public void setCompanyFullName(String companyFullName) {
+		this.companyFullName = companyFullName;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+	public String getCharetNo() {
+		return charetNo;
+	}
+	public void setCharetNo(String charetNo) {
+		this.charetNo = charetNo;
+	}
+	public Date getCharetExpire() {
+		return charetExpire;
+	}
+	public void setCharetExpire(Date charetExpire) {
+		this.charetExpire = charetExpire;
+	}
+	public String getLegalPerson() {
+		return legalPerson;
+	}
+	public void setLegalPerson(String legalPerson) {
+		this.legalPerson = legalPerson;
+	}
+	public String getLegalIdentity() {
+		return legalIdentity;
+	}
+	public void setLegalIdentity(String legalIdentity) {
+		this.legalIdentity = legalIdentity;
+	}
+	public String getMallUrl() {
+		return mallUrl;
+	}
+	public void setMallUrl(String mallUrl) {
+		this.mallUrl = mallUrl;
+	}
+	public String getCompanyAdd() {
+		return companyAdd;
+	}
+	public void setCompanyAdd(String companyAdd) {
+		this.companyAdd = companyAdd;
+	}
+	public String getPost() {
+		return post;
+	}
+	public void setPost(String post) {
+		this.post = post;
+	}
+	public String getSettleBankCode() {
+		return settleBankCode;
+	}
+	public void setSettleBankCode(String settleBankCode) {
+		this.settleBankCode = settleBankCode;
+	}
+	public String getSettleBankName() {
+		return settleBankName;
+	}
+	public void setSettleBankName(String settleBankName) {
+		this.settleBankName = settleBankName;
+	}
+	public String getSettleCardNo() {
+		return settleCardNo;
+	}
+	public void setSettleCardNo(String settleCardNo) {
+		this.settleCardNo = settleCardNo;
+	}
+	public String getBranchName() {
+		return branchName;
+	}
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+	public String getPayeeName() {
+		return payeeName;
+	}
+	public void setPayeeName(String payeeName) {
+		this.payeeName = payeeName;
+	}
+	public String getLicenseCopy() {
+		return licenseCopy;
+	}
+	public void setLicenseCopy(String licenseCopy) {
+		this.licenseCopy = licenseCopy;
+	}
+	public String getOrgCertificate() {
+		return orgCertificate;
+	}
+	public void setOrgCertificate(String orgCertificate) {
+		this.orgCertificate = orgCertificate;
+	}
+	public String getTaxCertificate() {
+		return taxCertificate;
+	}
+	public void setTaxCertificate(String taxCertificate) {
+		this.taxCertificate = taxCertificate;
+	}
+	public String getLegalIdentityCop() {
+		return legalIdentityCop;
+	}
+	public void setLegalIdentityCop(String legalIdentityCop) {
+		this.legalIdentityCop = legalIdentityCop;
+	}
+
+	
+}

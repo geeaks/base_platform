@@ -1,0 +1,140 @@
+package com.ucf.customer.mq;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
+
+import org.apache.cxf.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.api.enums.EnumCertStatus;
+import com.ucf.customer.dao.UcfUserDao;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumVerifyLevle;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.mq.UcfMQRuntimeException;
+import com.ucf.platform.framework.mq.UcfReceiveMessage;
+import com.ucf.platform.framework.mq.UcfTopicTagAssemble;
+import com.ucf.platform.framework.mq.consumer.AbstractUcfMQSyncConsumerConcurrently;
+import com.ucf.platform.framework.mq.enums.RocketMQTopicEnum;
+import com.ucf.platform.framework.mq.enums.UcfMQConsumeStatus;
+
+/**
+ * @Description: 白名单认证MQ消费服务
+ * @ClassName: WhiteListMQConsumerService
+ * @author gaoxiang
+ * @date 2015-3-11 下午1:08:45
+ */ 
+public class WhiteListMQConsumerService extends AbstractUcfMQSyncConsumerConcurrently {
+	
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(WhiteListMQConsumerService.class);
+	
+	@Autowired
+	private UcfUserDao ucfUserDao;
+	@Resource(name="loginService")
+	private LoginService loginService;
+	
+	@Override
+	public UcfTopicTagAssemble getTopicAndTagExpress() {
+		UcfTopicTagAssemble assemble = new UcfTopicTagAssemble();
+		assemble.setTopic(RocketMQTopicEnum.ROCKETMQ_MEMBER_WHITE_LIST_TOPICANDTAG.getTopic());
+		assemble.setTag(RocketMQTopicEnum.ROCKETMQ_MEMBER_WHITE_LIST_TOPICANDTAG.getTag());
+		return assemble;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public UcfMQConsumeStatus doConsume(UcfReceiveMessage msg) throws UcfMQRuntimeException {
+		Map<Object, Object> bizValue = (Map<Object, Object>) msg.getBizValue();
+		Map<Object, Object> printMap = new HashMap<Object,Object>();
+		printMap.putAll((Map<Object, Object>) msg.getBizValue());
+		LOGGER.info("会员白名单认证mq入参：" + JSON.toJSONString(printMap));
+		String certNo = (String) bizValue.get("certNo");
+		String refMerchant = (String) bizValue.get("refMerchant");
+		boolean status = (Boolean) bizValue.get("status");
+		//校验 身份证号和关联商户号
+		if(StringUtils.isEmpty(certNo) || StringUtils.isEmpty(refMerchant)){
+			LOGGER.info("身份证号或关联商户号为空!");
+			return UcfMQConsumeStatus.SUCCESS;
+		}
+		UcfUser ucfUser = new UcfUser();
+		ucfUser.setCertNo(certNo);
+		ucfUser.setRefMerchant(refMerchant);
+		try {
+			List<UcfUser> userList = ucfUserDao.queryUcfUserListByWhere(ucfUser);
+			if(userList!=null && userList.size()>0){
+				//如果有多个用户 则都修改为高级认证级别
+				for(UcfUser user : userList){
+					UcfCard card = loginService.queryUcfCardByUserId(user.getUserId());
+					String certStatus = card.getCertStatus();
+					if(status){
+						//用户已 通过实名认证
+						user.setRealnameStatus(Constants.VERIFY_STATUS_T);
+						//用户实名认证级别修改为高级实名
+						user.setVerifyStatus(EnumVerifyLevle.SENIOR.getCode());//高级实名认证级别
+						//用户修改为白名单认证
+						if (StringUtils.isEmpty(certStatus)) {
+							card.setCertStatus(EnumCertStatus.WHITELIST_CERT.getCode());
+						} else {
+							if (certStatus.indexOf(EnumCertStatus.WHITELIST_CERT.getCode()) == -1) {
+								card.setCertStatus(certStatus + ";"+ EnumCertStatus.WHITELIST_CERT.getCode());
+							}
+						}
+					}else{
+						if (!StringUtils.isEmpty(certStatus)) {
+							if (EnumCertStatus.WHITELIST_CERT.getCode().equals(certStatus)) {
+								card.setCertStatus("");
+							}
+							if (certStatus.indexOf(EnumCertStatus.WHITELIST_CERT.getCode()) != -1) {
+								card.setCertStatus(certStatus.replace(";"+ EnumCertStatus.WHITELIST_CERT.getCode(), ""));
+							}
+						}
+						user.setVerifyStatus(judgeVerifyLevel(certStatus));
+					}
+					ucfUserDao.updateUcfUser(user);
+					loginService.updateUcfCard(card);
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return UcfMQConsumeStatus.LATER;
+		}
+		return UcfMQConsumeStatus.SUCCESS;
+	}
+
+	/**
+	 * @Description: 判断认证级别
+	 * @param certStatus
+	 * @return String 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-12 下午4:33:49
+	 */
+	private String judgeVerifyLevel(String certStatus) {
+		if(StringUtils.isEmpty(certStatus)){
+			return EnumVerifyLevle.REGISTER.getCode();
+		//如果是小额转账认证 或者 照片审核认证 属于高级认证
+		}else if(certStatus.indexOf(EnumCertStatus.TRANSFER_CERT.getCode()) != -1
+				||certStatus.indexOf(EnumCertStatus.AUDIT_CERT.getCode()) != -1){
+			return EnumVerifyLevle.SENIOR.getCode();
+		//如果是小额打款认证 或者 快捷认证 属于普通认证
+		}else if(certStatus.indexOf(EnumCertStatus.REMIT_CERT.getCode()) != -1
+				||certStatus.indexOf(EnumCertStatus.FASTPAY_CERT.getCode()) != -1){
+			return EnumVerifyLevle.ORDINARY.getCode();
+		}else{
+			return EnumVerifyLevle.REGISTER.getCode();
+		}
+	}
+
+	@Override
+	public void handleMQException(UcfReceiveMessage msg) {
+		
+	}
+	
+}

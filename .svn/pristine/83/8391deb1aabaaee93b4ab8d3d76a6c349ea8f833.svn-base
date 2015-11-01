@@ -1,0 +1,84 @@
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+	<form id="sform"
+		action="https://202.101.25.181/gateway/api/frontTransRequest.do"
+		method="post">
+		<input type="hidden" name="subMerAbbr" id="subMerAbbr" value="" /><input
+			type="hidden" name="issInsCode" id="issInsCode" value="" /><input
+			type="hidden" name="commodityUrl" id="commodityUrl" value="" /><input
+			type="hidden" name="txnSubType" id="txnSubType" value="01" /><input
+			type="hidden" name="txnAmt" id="txnAmt" value="100" /><input
+			type="hidden" name="termId" id="termId" value="" /><input
+			type="hidden" name="backUrl" id="backUrl"
+			value="http://114.113.156.160:8080/finExchange/transaction/callbackTransactionController/callBackTransaction?channel=UPOP" /><input
+			type="hidden" name="merNote" id="merNote" value="" /><input
+			type="hidden" name="interactMode" id="interactMode" value="" /><input
+			type="hidden" name="subMerId" id="subMerId" value="" /><input
+			type="hidden" name="merCatCode" id="merCatCode" value="4899" /><input
+			type="hidden" name="signature" id="signature"
+			value="wWWuvNjLYMX05ybvrKEHg7dmx6CfGI1p/pDfF80W+Pciy8srXokvJmFg8lVTg3+cKGyCRXYKD6Ku68VkgWLtPJNJDk8l0xYBluljqfRhHscZ8GhQzKNt7s1kvw2xjGLO+POkuXtKS4cVHjYTHbRJUfpZH3dCYBZoSQqiOjPC76U=" /><input
+			type="hidden" name="sndInsCode" id="sndInsCode" value="" /><input
+			type="hidden" name="userMac" id="userMac" value="" /><input
+			type="hidden" name="merId" id="merId" value="700000000080004" /><input
+			type="hidden" name="payTimeoutTime" id="payTimeoutTime" value="" /><input
+			type="hidden" name="subMerName" id="subMerName" value="" /><input
+			type="hidden" name="orderTimeoutInterval" id="orderTimeoutInterval"
+			value="" /><input type="hidden" name="commodityUnitPrice"
+			id="commodityUnitPrice" value="" /><input type="hidden"
+			name="merUserRegDt" id="merUserRegDt" value="" /><input type="hidden"
+			name="accNo" id="accNo" value="" /><input type="hidden"
+			name="shippingStreet" id="shippingStreet" value="" /><input
+			type="hidden" name="certId" id="certId"
+			value="138376116281075500358147679948632758390" /><input
+			type="hidden" name="merType" id="merType" value="0" /><input
+			type="hidden" name="bizType" id="bizType" value="000801" /><input
+			type="hidden" name="reqReserved" id="reqReserved" value="" /><input
+			type="hidden" name="shippingCountryCode" id="shippingCountryCode"
+			value="" /><input type="hidden" name="txnTime" id="txnTime"
+			value="20140317180259" /><input type="hidden" name="acqInsCode"
+			id="acqInsCode" value="48751000" /><input type="hidden"
+			name="version" id="version" value="3.0.0" /><input type="hidden"
+			name="termType" id="termType" value="" /><input type="hidden"
+			name="merAbbr" id="merAbbr" value="测试" /><input type="hidden"
+			name="shippingDistrictCode" id="shippingDistrictCode" value="" /><input
+			type="hidden" name="encoding" id="encoding" value="UTF-8" /><input
+			type="hidden" name="shippingFlag" id="shippingFlag" value="" /><input
+			type="hidden" name="commodityQty" id="commodityQty" value="" /><input
+			type="hidden" name="encryptCertId" id="encryptCertId" value="" /><input
+			type="hidden" name="orderId" id="orderId"
+			value="20140317000000002c0c054b6" /><input type="hidden"
+			name="customPayType" id="customPayType" value="" /><input
+			type="hidden" name="txnType" id="txnType" value="01" /><input
+			type="hidden" name="defaultPayType" id="defaultPayType" value="" /><input
+			type="hidden" name="frontUrl" id="frontUrl"
+			value="http://localhost:9000${basePath}/depositController/callBack.do" /><input
+			type="hidden" name="currencyCode" id="currencyCode" value="156" /><input
+			type="hidden" name="frontFailUrl" id="frontFailUrl"
+			value="http://localhost:9000${basePath}/depositController/callBack.do" /><input
+			type="hidden" name="merUserId" id="merUserId" value="" /><input
+			type="hidden" name="commodityName" id="commodityName" value="" /><input
+			type="hidden" name="customerIp" id="customerIp" value="" /><input
+			type="hidden" name="reserved" id="reserved" value="" /><input
+			type="hidden" name="customerInfo" id="customerInfo" value="" /><input
+			type="hidden" name="merUserEmail" id="merUserEmail" value="" /><input
+			type="hidden" name="accType" id="accType" value="01" /><input
+			type="hidden" name="shippingCityCode" id="shippingCityCode" value="" /><input
+			type="hidden" name="merName" id="merName" value="测试商户" /><input
+			type="hidden" name="commodityCategory" id="commodityCategory"
+			value="" /><input type="hidden" name="shippingProvinceCode"
+			id="shippingProvinceCode" value="" /><input type="hidden"
+			name="supPayType" id="supPayType" value="" /><input type="hidden"
+			name="accessType" id="accessType" value="1" />
+	</form>
+</body>
+<script type="text/javascript">document.all.sform.submit();</script>
+
+</body>
+</html>

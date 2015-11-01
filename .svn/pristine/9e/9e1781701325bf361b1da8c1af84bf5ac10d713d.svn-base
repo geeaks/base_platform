@@ -1,0 +1,99 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+
+import com.ucf.customer.ws.enums.EnumAuthType;
+import com.ucf.customer.ws.enums.EnumFieldType;
+import com.ucf.customer.ws.enums.FieldAccess;
+import com.ucf.customer.ws.enums.FieldName;
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * 银行鉴权接口
+ * 
+ * 项目名称：member-client 类名称：UserAuthParamBO 类描述： 创建人：李文静 创建时间：2014-6-18 上午10:40:23
+ * 修改人：lenovo 修改时间：2014-6-18 上午10:40:23 修改备注：
+ * 
+ * @version
+ * 
+ */
+public class UserAuthParamBO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8641903371121227047L;
+
+	/**
+	 * 商户号
+	 */
+	private String merchantId;
+
+	/**
+	 * 01（姓名、身份证 校验） 02 （银行卡、银行预留手机号 校验） 03 （姓名、身份证、银行卡、银行预留手机号 校验） 参考 EnumAuthType
+	 */
+	@FieldName("鉴权类型不能为空")
+	private EnumAuthType type;
+
+	/**
+	 * user id
+	 */
+	@FieldName("用户id不能为空")
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String userId;
+
+	/**
+	 * 银行卡号
+	 */
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+
+	/**
+	 * 银行预留手机号
+	 */
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String phone;
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+
+	public EnumAuthType getType() {
+		return type;
+	}
+
+	public void setType(EnumAuthType type) {
+		this.type = type;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+}

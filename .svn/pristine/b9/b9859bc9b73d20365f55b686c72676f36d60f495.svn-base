@@ -1,0 +1,60 @@
+package com.ucf.customer.test;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ucf.customer.ws.bo.WebServiceParamBO;
+import com.ucf.customer.ws.bo.WebServiceReturnValueBO;
+import com.ucf.customer.ws.service.QueryBankCards;
+/**
+ * 卡信息查询单元测试 
+ * QueryBankCardsTest
+ * @author yuzengjia
+ * @date 2014-5-14 下午2:52:38
+ *
+ */
+public class QueryBankCardsTest extends BaseTest {
+
+	//帐户类型：FUND_CARD("01", "基金账户"),P2P_CARD("02","P2P账户");
+	@Autowired
+	private QueryBankCards queryBankCard;
+	/**
+	 * 用户为空，类型不为空
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午2:58:04
+	 */
+	@Test
+	public void queryBankCardsWithUserNull(){
+		WebServiceParamBO webServiceParamBO = new WebServiceParamBO();
+//		webServiceParamBO.setUserId("10000003039");
+		webServiceParamBO.setType("1");
+		WebServiceReturnValueBO returnValueBO = queryBankCard.queryBankCards(webServiceParamBO);
+		System.out.println(returnValueBO);
+	}
+	/**
+	 * 卡类型为空，用户不为空
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午3:24:23
+	 */
+	@Test
+	public void queryBankCardsWithCardTypeNull(){
+		WebServiceParamBO webServiceParamBO = new WebServiceParamBO();
+		webServiceParamBO.setUserId("10000003039");
+//		webServiceParamBO.setType("1");
+		WebServiceReturnValueBO returnValueBO = queryBankCard.queryBankCards(webServiceParamBO);
+		System.out.println(returnValueBO);
+	}
+	/**
+	 * 用户不存在
+	 * @author yuzengjia
+	 * @date 2014-5-14 下午3:26:27
+	 */
+	@Test
+	public void queryBankCardsWithUserNotExist(){
+		WebServiceParamBO webServiceParamBO = new WebServiceParamBO();
+		webServiceParamBO.setUserId("1000004329");
+		webServiceParamBO.setType("1");
+		WebServiceReturnValueBO returnValueBO = queryBankCard.queryBankCards(webServiceParamBO);
+		System.out.println(returnValueBO);
+	}
+}

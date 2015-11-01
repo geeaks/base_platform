@@ -1,0 +1,55 @@
+package com.ucf.customer.utils;
+
+import java.io.Serializable;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.ucf.onlinepay.framework.common.util.Serializer;
+
+public class SerializableSerializer {
+	private final static transient Log logger = LogFactory.getLog(SerializableSerializer.class);
+	
+	public static byte[] raw(Serializable value){
+		byte[] bytes = null;
+		try{
+			if(value!=null){
+				bytes = Serializer.serializeToByteArray(value);
+			}
+			/*
+			 ByteArrayOutputStream bo = new ByteArrayOutputStream();
+			 ObjectOutputStream oo = new ObjectOutputStream(bo);
+			 oo.writeObject(value);
+			 bytes = bo.toByteArray();
+			 bo.close();
+			 oo.close();
+			 */
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		return bytes;
+	}
+	
+	public static Object unRaw(byte[] bytes){
+		Object ret = null;
+		try{
+			if(bytes!=null){
+				ret = Serializer.deSerialize(bytes);
+			}
+			/*
+			ByteArrayInputStream bi = new ByteArrayInputStream(bytes);
+			ObjectInputStream oi = new ObjectInputStream(bi);
+			ret = oi.readObject();
+			bi.close();
+			oi.close();
+			*/
+		}catch(Exception e){
+			logger.error(e.getMessage(),e);
+		}
+		return ret;
+	}
+	
+	
+	
+	
+}

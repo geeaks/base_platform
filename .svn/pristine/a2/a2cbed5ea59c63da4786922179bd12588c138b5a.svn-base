@@ -1,0 +1,161 @@
+package com.ucf.customer.security;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.ucf.customer.pojo.UcfUser;
+
+public class MemberAgent implements Serializable {
+	private static final long serialVersionUID = -5549570252858013318L;
+
+	public static final String MemberAgentTag = "memberAgent";
+
+	private String id;
+	private String loginId;
+	private String realName;
+	private String certNo;
+	private String mobile;
+	private EnumMemberUserType userType;
+	
+	private Date lastLoginTime;
+	
+	/**
+	 * 是否绑卡
+	 */
+	private boolean isBindCard;
+	/**
+	 * 是否实名认证
+	 */
+	private boolean isCustomer;
+	
+	
+	
+	
+	public Date getLastLoginTime() {
+		return lastLoginTime;
+	}
+
+
+
+
+	public void setLastLoginTime(Date lastLoginTime) {
+		this.lastLoginTime = lastLoginTime;
+	}
+
+
+
+
+	public boolean isCustomer() {
+		return isCustomer;
+	}
+
+
+
+
+	public void setCustomer(boolean isCustomer) {
+		this.isCustomer = isCustomer;
+	}
+
+
+
+
+	public MemberAgent() {
+		super();
+	}
+
+	
+	
+	
+	public boolean isBindCard() {
+		return isBindCard;
+	}
+
+
+
+
+	public void setBindCard(boolean isBindCard) {
+		this.isBindCard = isBindCard;
+	}
+
+
+
+
+	public String getCertNo() {
+		return certNo;
+	}
+
+
+
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
+	}
+
+
+
+	public String getMobile() {
+		return mobile;
+	}
+
+
+
+	public void setMobile(String mobile) {
+		this.mobile = mobile;
+	}
+
+
+
+	public MemberAgent(UcfUser ucfUser) {
+		super();
+		this.id = ucfUser.getUserId();
+		this.loginId = ucfUser.getLoginId();
+		this.realName = ucfUser.getRealName();
+		this.userType = EnumMemberUserType.Logined; //目前默认普通用户
+		if (this.userType == null) {
+			throw new IllegalArgumentException("unknow user type:"
+					+ ucfUser.getUserType());
+		}
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getLoginId() {
+		return loginId;
+	}
+
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public EnumMemberUserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(EnumMemberUserType userType) {
+		this.userType = userType;
+	}
+
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+
+	public static String getMemberagenttag() {
+		return MemberAgentTag;
+	}
+	
+	
+
+}

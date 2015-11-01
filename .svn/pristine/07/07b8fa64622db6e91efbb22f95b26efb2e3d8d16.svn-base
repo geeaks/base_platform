@@ -1,0 +1,243 @@
+package com.ucf.customer.ws.service;
+
+import com.ucf.customer.ws.bo.AccountInfoBO;
+import com.ucf.customer.ws.bo.AccountInfoParamBO;
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.bo.P2PQueryUserinfoParamBo;
+import com.ucf.customer.ws.bo.P2PQueryUserinfoReturnValueBo;
+import com.ucf.customer.ws.bo.QueryAuthrealParamBo;
+import com.ucf.customer.ws.bo.QueryAuthrealReturnValueBo;
+import com.ucf.customer.ws.bo.RegistParamBo;
+import com.ucf.customer.ws.bo.RegistReturnValueBo;
+import com.ucf.customer.ws.bo.SmsBO;
+import com.ucf.customer.ws.bo.UcfOrgBO;
+import com.ucf.customer.ws.bo.UserAuthParamBO;
+import com.ucf.customer.ws.bo.UserBankInfoBO;
+import com.ucf.customer.ws.bo.UserCheckResultBO;
+import com.ucf.customer.ws.bo.UserInfoBO;
+import com.ucf.customer.ws.bo.UserLoginReturnBO;
+import com.ucf.customer.ws.enums.EnumUserType;
+
+
+/**
+ * 
+*    
+* 项目名称：member   
+* 类名称：UserServiceWS   
+* 类描述：   会员提供的dubbo服务接口
+* 创建人：李文静 
+* 创建时间：2014-5-4 上午9:24:10   
+* 修改人：李文静 
+* 修改时间：2014-5-4 上午9:24:10   
+* 修改备注：   
+* @version    
+*
+ */
+public interface UserServiceWS {
+	
+	/**
+	 * 校验身份证对应的用户是否存在，<br>
+	 * 存在则返回登录url<br>
+	 * 不存在则返回注册url<br>
+	 * @param idNum
+	 * @param userName
+	 * @return
+	 */
+	@Deprecated
+	public UserCheckResultBO checkUserByIdNum(String certNo,String userName);
+	
+	
+	
+	
+	/**
+	 * 传入会员id ，会员系统进行销户
+	 * @param userId
+	 * @return
+	 */
+	@Deprecated
+	public boolean cancelAccount(String userId);
+	
+	
+	
+	/**
+	 * 通过会员id获取会员信息
+	 * @param userid
+	 * @return
+	 */
+	@Deprecated
+	public UserInfoBO getUsreInfoByUserId(String userid);
+	
+	
+	
+	/**
+	 * 通过会员id查询会员的主卡的账户id  <br>
+	 * 如果有传子卡类型则进一步查询子卡账户id <br>
+	 * @param accountInfoParamBD 会员id必传， 子卡类型不是必传
+	 * @return
+	 */
+	@Deprecated
+	public AccountInfoBO queryAccountNo(AccountInfoParamBO accountInfoParamBO);
+	
+	/**
+	 * 用户登录
+	 * @param userId 用户ID
+	 * @param cookieVal cookie值
+	 * @return
+	 */
+	@Deprecated
+	public UserLoginReturnBO  login(String userId,String cookieVal);
+	
+	
+	
+	
+	
+	
+	
+	/**
+	 * 查询用户绑定的银行卡类别
+	 * @param merchantId  商户号
+	 * @param userId 用户id
+	 * @return UserBankInfoBO 
+	 */
+	@Deprecated
+	public UserBankInfoBO queryUserBankInfos(String merchantId,String userId);
+	
+	
+	/**
+	 * 用户绑定银行卡用户支付成功后，调用此dubbo服务，把用户支付使用的银行卡进行绑定。
+	 * @param userInfoBO : 	<br>merchantId	平台商id <br>
+							userId	用户ID<br>
+							cardNo	卡号<br>
+							bankCode	银行编号<br>
+							bankName	银行名称<br>
+							cardType	类型<br>
+							province	省<br>
+							city	市<br>
+							branchBankId	联行号<br>
+							branchBankName	联行号名称<br>
+
+	 * @return
+	 */
+	public BaseBO bindBankCard(UserInfoBO userInfoBO);
+	
+	
+	/**
+	 * 预绑卡后修改卡的状态
+	 * @param merchantId 平台商ID
+	 * @param userId 会员用户ID
+	 * @param bankCardNo  银行卡号
+	 * @param status 状态 S 成功  F 失败
+	 * @return
+	 */
+	public BaseBO updateBankCardStatus(String merchantId,String userId,String bankCardNo,String status);
+	
+	/**
+	 * 
+	* 创建时间：2014-6-17 下午5:50:50  
+	* 项目名称：member-client  
+	* @author limeng3@ucfgroup.com  
+	* 方法说明：解除用户银行卡关联
+	 */
+	public BaseBO missContactUserBankCard(String merchantId,String userId,String bankCardNo);
+	
+	/**
+	 * 会员系统发送短信
+	 * @param merchantId
+	 * @param phoneNumber
+	 * @return
+	 */
+	public SmsBO sendSms(String merchantId,String  phoneNumber);
+	
+	
+
+	/**
+	 * 会员系统校验短信
+	 * @param merchantId
+	 * @param phoneNumber
+	 * @param code
+	 * @return
+	 */
+	public SmsBO checkSms(String merchantId,String  phoneNumber,String code);
+	
+	
+	
+	/**
+	 * P2P注册开户
+	 * @param bo
+	 * @return
+	 */
+	public RegistReturnValueBo openAccount(RegistParamBo bo);
+	
+	
+	/**
+	 * 普通会员开户（汇源）
+	 * @param bo
+	 * @return
+	 */
+	public RegistReturnValueBo register(RegistParamBo bo);
+	
+	
+	/**
+	 * 查询用户ID
+	 */
+	public String searchUserId(String phoneNumber);
+	
+	/**
+	 * P2P实名认证状态查询
+	 * @param bo
+	 * @return
+	 */
+	public QueryAuthrealReturnValueBo queryAuthreal(QueryAuthrealParamBo bo);
+	
+	/**
+	 * p2p用户信息查询
+	 * @param bo
+	 * @return
+	 */
+	public P2PQueryUserinfoReturnValueBo queryUserinfo(P2PQueryUserinfoParamBo bo);
+	/**
+	 * 返回任意一个匿名用户信息
+	 * @param userType 用户类型 -1为匿名用户
+	 * @return
+	 * @throws Exception 
+	 */
+	@Deprecated
+	public UserInfoBO queryUnsignedUser(EnumUserType userType) throws Exception;
+
+
+
+
+	/**
+	 * 获取商户信息接口
+	 * @param id
+	 * @return
+	 */
+	public UcfOrgBO getUcfOrgBoById(String id);
+	
+	
+	/**
+	 * 用户鉴权接口
+	 * @param userAuthParamBO
+	 * @return
+	 */
+	@Deprecated
+	public BaseBO userAuth(UserAuthParamBO userAuthParamBO);
+	
+	/**
+	 * 个人用户注册用户鉴权接口
+	 * @param userAuthParamBO
+	 * @return
+	 */
+	@Deprecated
+	public BaseBO individualUserAuth(String realName,String certNo,String bankCardNo);
+	
+	
+	/**
+	 * 会员系统发送短信验证码 
+	 * @param merchantId
+	 * @param phoneNumber
+	 * @param template  模板由接口调用方传入 如： 网信金额，这是验证码，验证码内容为%vfyCode%  ,先锋支付 ，%vfyCode%这段文字会被替换为验证码
+	 * @return
+	 */
+	public SmsBO sendSms(String merchantId,String  phoneNumber,String template);
+}

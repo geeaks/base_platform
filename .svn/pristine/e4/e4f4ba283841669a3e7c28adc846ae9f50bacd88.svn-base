@@ -1,0 +1,177 @@
+package com.ucf.customer.api.bo;
+
+import java.io.Serializable;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * @Description: 工资宝银行卡修改 入参实体类
+ * @ClassName: GZBBankCardModifyBo
+ * @author gaoxiang
+ * @date 2015-1-7 下午2:30:49
+ */ 
+public class BankCardModifyBo implements Serializable {
+
+	
+	/**
+	 * @Fields serialVersionUID : 序列号
+	 */ 
+	private static final long serialVersionUID = 5863108790821370673L;
+
+	/**
+	 * @Fields merchantId : 商户号
+	 */ 
+	private String merchantId;
+	
+	/**
+	 * @Fields userId : 会员用户ID
+	 */ 
+	private String userId;
+	
+	/**
+	 * @Fields bankCardNo : 原银行卡号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String oldBankCardNo;
+	
+	/**
+	 * @Fields bankCardNo : 银行卡号
+	 */ 
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+	
+	/**
+	 * @Fields bankCardType : 银行卡类型
+	 */ 
+	private String bankCardType;
+	
+	/**
+	 * @Fields bankCode : 银行编码
+	 */ 
+	private String bankCode;
+	
+	/**
+	 * @Fields bankName : 银行名称
+	 */ 
+	private String bankName;
+	
+	/**
+	 * @Fields province : 所在省
+	 */ 
+	private String province;
+	
+	/**
+	 * @Fields city : 所在市
+	 */ 
+	private String city;
+	
+	/**
+	 * @Fields branchName : 支行名称
+	 */ 
+	private String branchName;
+	
+	/**
+	 * @Fields branchId : 支行ID
+	 */ 
+	private String branchId;
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getOldBankCardNo() {
+		return oldBankCardNo;
+	}
+
+	public void setOldBankCardNo(String oldBankCardNo) {
+		this.oldBankCardNo = oldBankCardNo;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String getBankCardType() {
+		return bankCardType;
+	}
+
+	public void setBankCardType(String bankCardType) {
+		this.bankCardType = bankCardType;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getBranchName() {
+		return branchName;
+	}
+
+	public void setBranchName(String branchName) {
+		this.branchName = branchName;
+	}
+
+	public String getBranchId() {
+		return branchId;
+	}
+
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+	
+	@Override
+	public String toString() {
+		return "GZBBankCardModifyBo [merchantId=" + merchantId + ", userId="
+				+ userId + ", oldBankCardNo=" + oldBankCardNo + ", bankCardNo="
+				+ bankCardNo + ", bankCardType=" + bankCardType + ", bankCode="
+				+ bankCode + ", bankName=" + bankName + ", province="
+				+ province + ", city=" + city + ", branchName=" + branchName
+				+ ", branchId=" + branchId + "]";
+	}
+	
+}

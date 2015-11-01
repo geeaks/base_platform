@@ -1,0 +1,29 @@
+package com.ucf.customer.dao.impl;
+
+import org.springframework.stereotype.Repository;
+import java.util.List;
+import com.ucf.customer.pojo.UcfUserHabit;
+import com.ucf.customer.dao.UcfUserHabitDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+@Repository
+public class UcfUserHabitDaoImpl extends BaseCustomerDao implements UcfUserHabitDao {
+
+private static final long serialVersionUID = -1L;
+
+	public void insertUcfUserHabit(UcfUserHabit ucfUserHabit)throws Exception{
+		this.insert("com.ucf.customer.insertUcfUserHabit", ucfUserHabit);
+	}
+
+	public void updateUcfUserHabit(UcfUserHabit ucfUserHabit)throws Exception{
+		this.update("com.ucf.customer.updateUcfUserHabit", ucfUserHabit);
+	}
+
+	public void deleteUcfUserHabit(String userId)throws Exception{
+		this.delete("com.ucf.customer.deleteUcfUserHabit", userId);
+	}
+
+	public List<UcfUserHabit> queryUcfUserHabitListByWhere(UcfUserHabit ucfUserHabit)throws Exception{
+		return this.queryForList("com.ucf.customer.queryUcfUserHabitByWhere", ucfUserHabit);
+	}
+
+}

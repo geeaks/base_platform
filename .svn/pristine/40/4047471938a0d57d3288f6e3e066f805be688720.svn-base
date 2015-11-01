@@ -1,0 +1,13 @@
+package com.ucf.customer.service;
+
+/**
+ * 
+ * Description: 充值服务
+ * All Rights Reserved.
+ * @version 1.0  2014-3-31 下午2:53:59  by 李晓明（lixiaoming@ucfgroup.com）创建
+ */
+public interface TradeService {
+	
+	public String getTradeRechargeUrl();
+	public String getUnioLoginUrl();
+}

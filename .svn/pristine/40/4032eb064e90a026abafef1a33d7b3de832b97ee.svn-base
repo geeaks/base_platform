@@ -1,0 +1,29 @@
+package com.ucf.customer.utils.exception;
+
+public enum CustomerErrorCode implements ErrorCode{
+	
+	ERROR_DB("customer_001","数据库错误"),
+	ERROR_PAYMENTPWD_ERR("customer_002","支付密码错误"),
+	ERROR_OPEN_ACCOUNT_FAIL("customer_003","开户失败"),
+	ERROR_CARD_NOT_EXSIT("customer_004","提现银行卡不存在"),
+	ERROR_USERINFO_ERR("customer_005","设置用户信息失败");
+	
+	private CustomerErrorCode(String code, String desc) {
+        this.code = code;
+        this.desc = desc;
+    }
+	
+	private String code;
+    private String desc;
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public String getDesc() {
+        return desc;
+    }
+	
+}

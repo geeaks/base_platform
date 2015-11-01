@@ -1,0 +1,27 @@
+package com.ucf.customer.utils;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+
+/**
+ * 
+ * 
+ * 项目名称：member 类名称：MobileUtil 类描述： 手机号码工具类 创建人：李文静 创建时间：2014-4-24 下午5:42:00
+ * 修改人：李文静 修改时间：2014-4-24 下午5:42:00 修改备注：
+ * 
+ * @version
+ * 
+ */
+public class MobileUtil {
+	public static Log LOGGER = LogFactory.getLog(MobileUtil.class);
+
+	public static String mobileNoEncrypt(String mobileNo) {
+		if (StringUtil.isEmpty(mobileNo)) {
+			return "";
+		}
+		return mobileNo.substring(0, 3) + "****" + mobileNo.substring(7, 11);
+	}
+	
+}

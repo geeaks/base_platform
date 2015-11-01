@@ -1,0 +1,422 @@
+package com.ucf.customer.p2p.controller;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.ucf.customer.api.enums.EnumCertType;
+import com.ucf.customer.api.enums.EnumUserType;
+import com.ucf.customer.bo.IndividualAccountBo;
+import com.ucf.customer.dao.UcfBankCardDao;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.pojo.UcfPerson;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.security.Cryptos;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UserRegService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumAccountType;
+import com.ucf.customer.utils.enums.EnumBindBankCardStatus;
+import com.ucf.customer.utils.enums.EnumConfirmStatus;
+import com.ucf.customer.utils.enums.EnumVerifyLevle;
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.enums.EnumCertFrom;
+import com.ucf.customer.ws.enums.EnumCertStatus;
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.EnumRegisterFrom;
+import com.ucf.customer.ws.service.UserServiceWS;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.mq.UcfSendMessage;
+import com.ucf.platform.framework.mq.enums.RocketMQTopicEnum;
+import com.ucf.platform.framework.mq.producer.UcfMQProducer;
+import com.ucf.platform.framework.redis.support.IAtomic;
+import com.ucf.platform.framework.redis.support.ICache;
+
+/**
+ * 项目名称：member <br>
+ * 类名称：IndividualAccountController <br>
+ * 类描述： 个人账户开户 <br>
+ * 创建人：geeaks <br>
+ * 创建时间：2014-7-21 下午6:55:39 <br>
+ * 修改人：geeaks <br>
+ * 修改时间：2014-7-21 下午6:55:39 <br>
+ * 修改备注： <br>
+*/ 
+@Controller
+@RequestMapping("/openAccount")
+public class IndividualAccountController {
+	
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(IndividualAccountController.class);
+	
+	@Resource
+	private LoginService loginService;
+	@Resource(name = "sharedTransactionTemplate")
+	private TransactionTemplate transactionTemplate;
+	@Resource
+	private UserRegService userRegService;
+	@Resource
+	private UcfBankCardDao ucfBankCardDao;
+	@Resource
+	private UserServiceWS userServiceWS;
+	@Resource(name = "ucfMQProducer")
+	private UcfMQProducer ucfMQProducer;
+	
+	private final String REG_USER_KEY = "p2p_user_reg_req_key";
+	//防止重复提交 为form表单生成的token
+	private final String INDIVIDUAL_ACCOUNT_FORM_TOKEN = "INDIVIDUAL_ACCOUNT_FORM_TOKEN";
+
+	@Autowired
+	private IAtomic<String> atomic = null;
+	
+	/**
+	 * @Description: 转到个人账户开户页面
+	 * @author geeaks
+	 */
+	@RequestMapping(value = "/individualAccount.htm")
+	public String turnToOpenAccountPage(Model model,IndividualAccountBo regModel, HttpServletRequest request,HttpServletResponse response){
+		
+		regModel.setP2pUserId(StringUtils.isNotBlank(request.getParameter("userId"))?request.getParameter("userId"):"");
+		HttpSession session = request.getSession();
+		if(StringUtils.isBlank(regModel.getPhoneNo()) && StringUtils.isBlank(regModel.getMerchantId())){
+			regModel=(IndividualAccountBo) session.getAttribute(REG_USER_KEY);
+		}
+		if(regModel==null){
+			model.addAttribute("msg", "传入参数错误！");
+			return "p2p/err";
+		}
+		String msg = "";
+		try {
+			session.setAttribute(REG_USER_KEY, regModel);
+			//验证参数
+			if(StringUtils.isEmpty(regModel.getPhoneNo())){
+				model.addAttribute("msg", "手机号码phoneNo不能为空！");
+				return "p2p/err";
+			}
+			if(StringUtils.isEmpty(regModel.getP2pUserId())){
+				model.addAttribute("msg", "平台商的userId不能为空！");
+				return "p2p/err";
+			}
+			if(StringUtils.isEmpty(regModel.getMerchantId())){
+				model.addAttribute("msg", "平台商的merchantId不能为空！");
+				return "p2p/err";
+			}
+//			if(StringUtils.isEmpty(regModel.getReturnUrl())){
+//				model.addAttribute("msg", "跳转地址returnUrl不能为空！");
+//				return "p2p/err";
+//			}
+			String formID = UUID.randomUUID().toString();
+			session.setAttribute(INDIVIDUAL_ACCOUNT_FORM_TOKEN, formID);
+			regModel.setFormID(formID);
+			model.addAttribute("individualAccountBo", regModel);
+			//校验手机号，判断用户是否已经注册过了，防止不正常的注册
+			if(isExsit(regModel.getPhoneNo(),regModel.getMerchantId())){
+				msg="手机号已被占用！";
+				model.addAttribute("msg", msg);
+				return "p2p/err";
+			}
+			return "p2p/openAccount/individualAccount";
+		} catch (Exception e) {
+			LOGGER.error("个人会员开户异常", e);
+			model.addAttribute("msg", "系统异常！");
+			return "p2p/err";
+		}
+	}
+	
+	/**
+	* @Description: 开户操作
+	* @author geeaks
+	*/
+	@RequestMapping(value = "/openIndividualAccount.do")
+	public String openIndividualAccount(Model model,HttpServletRequest request,
+			HttpServletResponse response,IndividualAccountBo individualAccountBo){
+		/**-跳转到错误页面时传入的相关参数-*/
+		String msg ="";
+		HttpSession session = request.getSession();
+		IndividualAccountBo regModel=(IndividualAccountBo) session.getAttribute(REG_USER_KEY);
+		String p2pUserId = regModel.getP2pUserId();
+		final String phoneNo = regModel.getPhoneNo();
+		String merchantId = regModel.getMerchantId();
+		/**-----end--------*/
+		
+		try {
+			String formId = (String) session.getAttribute(INDIVIDUAL_ACCOUNT_FORM_TOKEN);
+			session.removeAttribute(INDIVIDUAL_ACCOUNT_FORM_TOKEN);
+			if(StringUtils.isEmpty(formId) || !formId.equals(individualAccountBo.getFormID())){
+				msg="表单重复提交,请耐心等待！";
+				model.addAttribute("msg", msg);
+				return "p2p/err";
+			}
+			//校验手机号，判断用户是否已经注册过了，防止不正常的注册
+			if(isExsit(phoneNo,merchantId)){
+				msg="手机号已被占用！";
+				model.addAttribute("msg", msg);
+				return "p2p/err";
+			}
+			
+			//支付密码确认
+			String payPassword=individualAccountBo.getPayPassword();
+			String payPassword1=individualAccountBo.getPayPassword1();
+			if(!payPassword.equals(payPassword1)){
+				LOGGER.info("支付密码和确认密码不相等！");
+				model.addAttribute("msg", "支付密码和确认密码不相等！");
+				model.addAttribute("backUrl", "openAccount/individualAccount.htm");
+				return "p2p/err";
+			}
+			//判断密码
+			boolean flag=checkPassword(payPassword);
+			if(payPassword.length()<6 || payPassword.length()>20 || flag){
+				LOGGER.info("密码不符合要求！");
+				model.addAttribute("msg", "必须是6-20个英文字母、数字或符号，不能是纯数字 ！");
+				model.addAttribute("backUrl", "openAccount/individualAccount.htm");
+				return "p2p/err";
+			}
+			individualAccountBo.setPaymentPassword(payPassword);
+			//一天内实名认证错误超过3次 判断
+			try{
+				//实名认证次数
+				int authTime = 0;
+				if (atomic.isExist("authTime" + "|" + p2pUserId)) {
+					authTime=atomic.getLong("authTime" + "|" + p2pUserId).intValue() ;
+				}
+				authTime++;
+				if (authTime > 3) {
+					LOGGER.info("一天内实名认证错误超过3次！");
+					model.addAttribute("msg", "一天内实名认证错误超过3次，此ID两天内不能进行开户！");
+					return "p2p/err";
+				}
+				//记录第一次认证时间
+				if (1 == authTime) {
+					atomic.set("authTime" + "|" + p2pUserId, 1, 60 * 60 * 24 * 2, TimeUnit.SECONDS); 
+				}else{
+					atomic.incrementAndGet("authTime" + "|" + p2pUserId, 1);
+				}
+			}catch(Exception e){
+				LOGGER.error(e.getMessage(), e);
+			}
+			
+			final String cardNo=individualAccountBo.getBankCardNo();
+			final String bankName=individualAccountBo.getBankName();
+			final String bankCode=individualAccountBo.getBankCode();
+			final String branchName=individualAccountBo.getBranchName();
+			final String issure=individualAccountBo.getIssure();
+			final String cityna=individualAccountBo.getCityna();
+			final String prov=individualAccountBo.getProv();
+			
+			//新实体的ID
+			String id = userRegService.queryUcfUserId();
+			// 此时生成用户信息
+			final UcfUser ucfUser = new UcfUser();
+			ucfUser.setUserId(id);
+			ucfUser.setCell(phoneNo);
+			ucfUser.setRefMerchant(merchantId);
+			ucfUser.setRefUser(p2pUserId);
+			ucfUser.setEnabledStatus(Constants.PHONE_ACTIVE);
+			ucfUser.setRealnameStatus(Constants.VERIFY_STATUS_W);
+			ucfUser.setCertNo(individualAccountBo.getCertNo());
+			ucfUser.setCertType(EnumCertType.ID_CARD.getCode());
+			ucfUser.setRealName(individualAccountBo.getRealName().trim());
+			ucfUser.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.PERSON.getCode())));
+			ucfUser.setVerifyStatus(EnumVerifyLevle.REGISTER.getCode());//注册实名认证级别
+			//实名认证
+			BaseBO bo = userServiceWS.individualUserAuth(ucfUser.getRealName(),ucfUser.getCertNo(),cardNo.replace(" ", ""));
+			//假装成功
+//			bo.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			if (!bo.getRespCode().equals(EnumMemberCode.SUCCESS.getCode())) {// 实名认证成功
+				LOGGER.info("认证失败！");
+				model.addAttribute("msg", "认证失败，请核实信息后重新填写！");
+				model.addAttribute("backUrl", "openAccount/individualAccount.htm");
+				return "p2p/err";
+			}
+			
+			// 生成卡信息
+			final UcfCard ucfCard = new UcfCard();
+			ucfCard.setCardNo(id);
+			ucfCard.setUserId(id);
+			ucfCard.setPaymentPassword(Cryptos.encrypt(individualAccountBo.getPaymentPassword(),id));
+			ucfCard.setCardType(EnumCertType.ID_CARD.getCode());
+			ucfCard.setGmtCreate(new Date());
+			ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());
+			ucfCard.setRegisterFrom(EnumRegisterFrom.P2P_FROM.getCode());
+			
+			//调用账户接口开户 
+			String result =loginService.createAcccount(model,EnumAccountType.PERSON,ucfCard);
+			if (!result.equals("success")) {
+				LOGGER.info("调用账务开户接口开户失败！");
+				model.addAttribute("msg", "系统异常，注册失败！");
+				model.addAttribute("backUrl", "openAccount/individualAccount.htm");
+				return "p2p/err";
+			}
+			
+			//生成客户信息
+			final UcfCustomer customer = new UcfCustomer();
+			customer.setCertNo(individualAccountBo.getCertNo());
+			customer.setCertType(EnumCertType.ID_CARD.getCode());
+			customer.setName(individualAccountBo.getRealName());
+			customer.setNational("CHA"); 
+			customer.setType(Constants.CUSTOMER_TYPE_PERSON);
+			customer.setEnableStatus(Constants.ENABLE_STATUS_T);
+			customer.setGmtCreate(new Date());
+			customer.setCertStatus(Constants.VERIFY_STATUS_T);
+			customer.setCardNo(cardNo.replace(" ", ""));
+			customer.setExtFlag(Constants.EXT_FLAG_T);
+			//生成个人信息
+			final UcfPerson  personInfo = new UcfPerson ();
+			personInfo.setRealName(individualAccountBo.getRealName());
+			personInfo.setCell(ucfUser.getCell());
+			
+			boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						//保存用户信息
+						userRegService.insertUserInfo(ucfUser);
+						//保存卡信息
+						loginService.insertCardInfo(ucfCard);
+						ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());
+						ucfCard.setCertStatus(EnumCertStatus.CHINAPAY_CERT.getCode());
+						loginService.updateUcfCard(ucfCard);
+						ucfUser.setRealnameStatus(Constants.VERIFY_STATUS_T);
+						loginService.updateUcfUser(ucfUser);
+						// 保存卡信息
+						UcfBankCard ucfBankCard = new UcfBankCard();
+						StringBuffer id = new StringBuffer();
+						SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+						StringBuffer buf = id.append(sdf.format(new Date()));
+						StringBuffer seq=buf.append(ucfBankCardDao.getBankCardSeq());
+						ucfBankCard.setId(seq.toString());
+						ucfBankCard.setUserId(ucfUser.getUserId());
+						ucfBankCard.setBankName(bankName);
+						ucfBankCard.setBankId(bankCode.toUpperCase());
+						ucfBankCard.setCardNo(cardNo.replace(" ", ""));
+						ucfBankCard.setCardType(Constants.DEBIT_CARD);
+						ucfBankCard.setCertFrom("system");
+//						ucfBankCard.setPhone(phoneNo);
+						ucfBankCard.setRegisterFrom("system");
+						ucfBankCard.setGmtCreate(new Date());
+						ucfBankCard.setCertifyInfo("system");//branchName
+						ucfBankCard.setBranchname(branchName);
+						ucfBankCard.setIssuer(issure);
+						ucfBankCard.setCity(cityna);
+						ucfBankCard.setProvince(prov);
+						ucfBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+						ucfBankCard.setUnionSeq(ucfBankCardDao.getUnionSeq());
+						ucfBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+						ucfBankCard.setCertStatus(EnumCertStatus.CHINAPAY_CERT.getCode());
+						loginService.insertBankCardInfo(ucfBankCard);
+					}catch (final Exception e) {
+						status.setRollbackOnly();
+						LOGGER.error(e.getMessage(),e);
+						return false;
+					}
+					return true;
+				}
+			});
+			
+			if(!commit){
+				msg = "请勿重复提交，请点击“关闭”返回查询注册状态！";
+				model.addAttribute("msg", msg);
+				model.addAttribute("backUrl", null);
+				return "p2p/err";
+			}
+			
+			//发送mq消息通知p2p
+			HashMap<String, String> params = new HashMap<String, String>();
+			//平台商id
+			params.put("merchantId", individualAccountBo.getMerchantId());
+			//p2p平台用户ID
+			params.put("p2pUserId", p2pUserId);
+			//资管平台用户ID
+			params.put("userId", id);
+			//姓名
+			params.put("realName", individualAccountBo.getRealName().trim());
+			//证件类型
+			params.put("cardType", individualAccountBo.getCertType());
+			//证件号码
+			params.put("cardNo", individualAccountBo.getCertNo());
+			//手机号
+			params.put("phoneNo", individualAccountBo.getPhoneNo());
+			//请求保留域
+			params.put("reqReserved", individualAccountBo.getReqReserved());
+			//开户结果回调通知商户地址
+			params.put("callBackUrl", individualAccountBo.getCallBackUrl());
+			HashMap<String, String> printMap = new HashMap<String, String>(params);
+			printMap.put("realName", SensitiveInfoUtils.chineseName(params.get("realName")));
+			printMap.put("cardNo", SensitiveInfoUtils.idCardNum(params.get("cardNo")));
+			printMap.put("phoneNo", SensitiveInfoUtils.mobilePhone(params.get("phoneNo")));
+			LOGGER.info("【个人账户开户】发送RocketMQ消息入参：" + JSON.toJSONString(printMap));
+			UcfSendMessage mqmsg = new UcfSendMessage();
+			mqmsg.setBizValue(params);
+			SendResult rocketResult = ucfMQProducer.sendMessage(
+							RocketMQTopicEnum.ROCKETMQ_TRADE_P2P_PERSONAL_REGISTER_TOPICANDTAG.getTopic(),
+							RocketMQTopicEnum.ROCKETMQ_TRADE_P2P_PERSONAL_REGISTER_TOPICANDTAG.getTag(),
+							mqmsg);
+			LOGGER.info("【个人账户开户】发送RocketMQ消息成功：" + rocketResult.toString());
+			model.addAttribute("msg", "注册成功!");
+			//如果未传returnUrl 进入有关闭按钮的成功页面
+			String returnUrl = regModel.getReturnUrl();
+			if(StringUtils.isEmpty(returnUrl)){
+				return "p2p/success";
+			}else{
+				model.addAttribute("returnUrl", returnUrl);
+				return "p2p/openAccount/individualAccountSuccess";
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			model.addAttribute("msg", e.getCause());
+			return "p2p/err";
+		}
+		
+	}
+	
+	/**
+	 * 判断用户名是否存在
+	 * @param userName
+	 * @return
+	 * @throws Exception
+	 */
+	private boolean isExsit(String cell,String merchant) throws Exception {
+		UcfUser ucfUser1=new UcfUser();
+		ucfUser1.setCell(cell);
+		ucfUser1.setRefMerchant(merchant);
+		UcfUser ucfUser = loginService.queryUcfUserInfo(ucfUser1);
+		if (ucfUser != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+	public static boolean checkPassword(String str) {
+		String regex1 = "^[A-Za-z]+$";
+		String regex2 = "^[0-9]+$";
+		return match(regex1, str) || match(regex2, str);
+	}
+	private static boolean match(String regex, String str) {
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(str);
+		return matcher.matches();
+	}
+}

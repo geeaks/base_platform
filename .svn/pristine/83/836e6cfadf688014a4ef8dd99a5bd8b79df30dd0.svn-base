@@ -1,0 +1,325 @@
+package com.ucf.customer.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.ucf.account.ws.bo.AccountReturnValueBO;
+import com.ucf.customer.action.BaseAction;
+import com.ucf.customer.api.enums.EnumBankCardType;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.security.EnumMemberUserType;
+import com.ucf.customer.security.MemberAccess;
+import com.ucf.customer.service.BankCardService;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UserInfoService;
+import com.ucf.customer.service.UserService;
+import com.ucf.customer.service.impl.ExpriseTimesService;
+import com.ucf.customer.service.out.AccountService;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.onlinepay.framework.common.bean.Money;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.trade.ws.service.TradeUcfWithdrawServiceWs;
+
+/**
+ * 
+ * 
+ * 项目名称：member <br>
+ * 类名称：WithDrawAction <br>
+ * 类描述：提现action <br>
+ * 创建人：李文静 <br>
+ * 创建时间：2014-5-9 下午1:44:36 <br>
+ * 修改人：李文静 <br>
+ * 修改时间：2014-5-9 下午1:44:36 <br>
+ * 修改备注： <br>
+ * 
+ * @version
+ * 
+ */
+
+@Controller
+@RequestMapping({ "/withdraw" })
+public class WithDrawController extends BaseAction {
+
+	private static UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(WithDrawController.class);
+	
+	@Autowired
+	private CardService cardService;
+
+	@Autowired
+	private BankCardService  bankCardService;
+
+	@Autowired
+	private AccountService accountService;
+
+	@Autowired
+	private LoginService loginService;
+
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private UserInfoService userInfoService;
+
+	@Autowired
+	private ExpriseTimesService expriseTimesService;
+	
+	@Autowired
+	private TradeUcfWithdrawServiceWs tradeUcfWithdrawServiceWsClient;
+
+	/**
+	 * 提现初始化页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@MemberAccess(EnumMemberUserType.Logined)
+	@RequestMapping({ "/index.htm" })
+	public String index(HttpServletRequest request,HttpServletResponse response, Model model) throws Exception {
+		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		if(!"T".equals(user.getRealnameStatus())){
+			return "realNameAuth/index";
+		}
+		List<UcfBankCard> bankCards = bankCardService.queryBankCards(user.getUserId(), EnumBankCardType.DEBIT_CARD.getCode());
+		if(bankCards==null || bankCards.isEmpty()){
+			return "redirect:/bank/index.htm";
+		}
+		model.addAttribute("cardList", bankCards);
+		model.addAttribute("msg", request.getParameter("msg"));
+		UcfCard ucfcard = loginService.queryUcfCardByUserId(user.getUserId());
+		ResultBo ro = accountService.searchAccount(ucfcard.getAccountId());
+		Money money = new Money(0.0);
+		if(EnumResultCode.SUCCESS.getCode().equals(ro.getResult())){
+			AccountReturnValueBO rtBO = ro.getResultObject();
+			money = rtBO.getBalance().subtract(rtBO.getFreezeAmount());
+		}else{
+			model.addAttribute("error", "0");
+		}
+		model.addAttribute("money", money.toString());
+		// 调用账户接口，获取可用余额
+		model.addAttribute("money", money);
+		return "withdraw/index";
+		
+	}
+
+	@RequestMapping({ "/withdraw.htm" })
+	public String withdraw(@RequestParam("pwd") String pwd, @RequestParam("fund") String fund, 
+			HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
+
+//		HttpSession session  = request.getSession();
+//		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+//		/**
+//		 * 获取用户卡的支付密码
+//		 */
+//		pwd = (String)request.getAttribute("payPassword");
+//		ResultBo resultBo = userInfoService.checkPayPwd(user.getUserId(), pwd.getBytes());
+//		if(!EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+//			model.addAttribute("msg", resultBo.getMsg());
+//			return "withdraw/index";
+//		}
+//		String info = "提现成功";
+//		float transAmount = Float.parseFloat(fund);
+//		WithDrawChecker withDrawChecker = check(user.getUserId(), transAmount);
+//		if (!withDrawChecker.isAccess()) {
+//			info = "提现失败,失败信息[" + withDrawChecker.getCheckInfo() + "]";
+//			model.addAttribute("msg", info);
+//			return "forward:/common/success.htm?msg="+info+"！&flag=true";
+//		}
+//		Money amount = new Money(fund);
+//		Map<Object, Object> mapo = new HashMap<Object, Object>();
+//		mapo = loginService.queryUcfUserCell(user.getUserId());
+//		TradeUcfWsParamBo tradeUcfWsParamBo = new TradeUcfWsParamBo();
+//		tradeUcfWsParamBo.setAmount(amount);
+//		tradeUcfWsParamBo.setBusinessType(BusinessType.WITHDRAAW.getCode());
+//		tradeUcfWsParamBo.setUserId(user.getUserId());
+//		tradeUcfWsParamBo.setTransCur("156");
+//		//modify by gaoxiang 银行卡为页面选择 没有默认提现银行卡
+////		UcfBankCard bankCard = (UcfBankCard) session.getAttribute("bankCard");
+//		UcfBankCard bankCard = new UcfBankCard();
+//		bankCard.setId(request.getParameter("bankCardId"));
+//		bankCard.setUserId(user.getUserId());
+//		bankCard=consoleService.getWithDrawCard(bankCard);
+//		if (bankCard==null) {
+//			info = "提现失败,失败信息[ 查询提现银行卡为空 ]";
+//			model.addAttribute("msg", info);
+//			return "forward:/common/success.htm?msg="+info+"！&flag=true";
+//		}
+//		
+//		Map<Object, Object> mapo2 = loginService.queryUcfBankCardInfo(user.getUserId());
+//		tradeUcfWsParamBo.setBankCardNo((String) mapo2.get("cardNo"));
+//		tradeUcfWsParamBo.setBankCardUserName((String) mapo.get("userName"));
+//		tradeUcfWsParamBo.setBankNo(bankCard.getBankId().toUpperCase());
+//		tradeUcfWsParamBo.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+//		tradeUcfWsParamBo.setIssuer(bankCard.getIssuer());
+//		if (LOGGER.isDebugEnabled()) {
+//			LOGGER.debug("提现接口传递参数：" + SensitiveInfoUtils.getJson(tradeUcfWsParamBo));//交易系统修改
+//		}
+//		TradeUcfWsReturnValueBo bo = tradeUcfWithdrawServiceWsClient.withdraw(tradeUcfWsParamBo);
+//		if (LOGGER.isDebugEnabled()) {
+//			LOGGER.debug("提现接口返回参数：" + SensitiveInfoUtils.getJson(bo));//交易系统修改
+//		}
+////		bo=null;
+//		//如果接口返回为空 
+//		if(null == bo || null == bo.getReturnValueMap()){
+//			info = "提现失败,接口返回为空";
+//			model.addAttribute("msg", info);
+//			return "forward:/common/success.htm?msg="+info+"！&flag=true";
+//		}
+//		//如果接口返回的result为成功S
+//		if("S".equals(bo.getReturnValueMap().get("result"))) {
+//			// 提现成功需要更新提现次数和当日提现金额
+//			updateWithDrawChecker(withDrawChecker, user.getUserId());
+//			model.addAttribute("msg", "提现成功");
+//			session.setAttribute("withDrawMark", "1");
+//			return "forward:/common/success.htm?msg=提现成功！";
+//		//如果接口返回的result为处理中I
+//		}else if("I".equals(bo.getReturnValueMap().get("result"))){
+//			info = "提现中,请稍后查看交易流水！";
+//			model.addAttribute("msg", info);
+//			return "forward:/common/success.htm?msg="+info+"！";
+//		//如果接口返回的result为失败F
+//		}else if("F".equals(bo.getReturnValueMap().get("result"))){
+//			info = "提现失败";
+//			model.addAttribute("msg", info);
+//			return "forward:/common/success.htm?msg="+info+"！&flag=true";
+//		//接口返回为未知结果
+//		}else{
+//			info = "提现失败,未知的返回结果";
+//			model.addAttribute("msg", info);
+//			return "forward:/common/success.htm?msg="+info+"！&flag=true";
+//		}
+		return null;
+	}
+
+//	/**
+//	 * 
+//	 * Description: 更新提现金额和次数
+//	 * 
+//	 * @Version1.0 2014-3-31 上午11:52:48 by 李晓明（lixiaoming@ucfgroup.com）创建
+//	 * @param withDrawChecker
+//	 */
+//	private void updateWithDrawChecker(WithDrawChecker withDrawChecker,
+//			String userId) {
+//		String withDrawTimeskey = userId + "_" + "withDrawTimeskey";
+//		String withDrawAmountkey = userId + "_" + "withDrawAmountkey";
+//		int curTimes = withDrawChecker.getCurTimes();
+//		redisClient.put(withDrawAmountkey, withDrawChecker.getCurAmount());
+//		redisClient.put(withDrawTimeskey, curTimes + 1);
+//		if (curTimes == 0) {
+//			// 设置超时时间一天
+//			redisClient.setExpire(withDrawTimeskey, 24 * 60 * 60);
+//			redisClient.setExpire(withDrawAmountkey, 24 * 60 * 60);
+//		}
+//	}
+//
+//	private WithDrawChecker check(String userId, float transAmount) {
+//		
+//		String redisTimesKey = EnumRedisKey.WITHDRAW_TIMES_KEY + userId;
+//		String redisAmountKey = EnumRedisKey.WITHDRAW_AMOUNT_KEY + userId;
+//		if(expriseTimesService.canDo(redisTimesKey, EnumRedisKey.WITHDRAW_TIMES_KEY.getNumber())){
+//			
+//		}
+//		if(expriseTimesService.canDo(redisAmountKey, EnumRedisKey.WITHDRAW_AMOUNT_KEY.getNumber())){
+//			
+//		}
+//		
+//		int times = 1;
+//		if(cache.isExist(redisTimesKey)){
+//			times = cache.get(redisTimesKey, Integer.class) + 1;
+//		}else{
+//			cache.set(redisTimesKey, times, arg2, arg3);
+//		}
+//		if(cache.isExist(redisAmountKey)){
+//			
+//		}
+//		WithDrawChecker withDrawChecker = new WithDrawChecker();
+//		String withDrawTimeskey = userId + "_" + "withDrawTimeskey";
+//		String withDrawAmountkey = userId + "_" + "withDrawAmountkey";
+//		String checkInfo = "";
+//		float curAmount = transAmount;
+//		int curTimes = 0;
+//		boolean access = true;
+////		if (redisClient.hasAttribute(withDrawTimeskey)) {
+////			curTimes = (Integer) redisClient.get(withDrawTimeskey);
+////			curAmount = curAmount + (Float) redisClient.get(withDrawAmountkey);
+////		}
+//
+//		// 大于最大提现次数
+//		if (curTimes > Constants.MAX_WITHDRAW_TIMES) {
+//			checkInfo = "大于最大提现次数";
+//			access = false;
+//		} else if (curAmount > Constants.MAX_WITHDRAW_AMOUNT) {
+//			checkInfo = "大于最大提现金额";
+//			access = false;
+//		}
+//
+//		withDrawChecker.setCurTimes(curTimes);
+//		withDrawChecker.setCurAmount(curAmount);
+//		withDrawChecker.setCheckInfo(checkInfo);
+//		withDrawChecker.setAccess(access);
+//
+//		return withDrawChecker;
+//	}
+//
+//	/**
+//	 * 
+//	 * Description: 提现限制实体类 All Rights Reserved.
+//	 * 
+//	 * @version 1.0 2014-3-31 上午11:45:27 by 李晓明（lixiaoming@ucfgroup.com）创建
+//	 */
+//	class WithDrawChecker {
+//		int curTimes;
+//		float curAmount;
+//		String checkInfo;
+//		boolean access;
+//
+//		public int getCurTimes() {
+//			return curTimes;
+//		}
+//
+//		public void setCurTimes(int curTimes) {
+//			this.curTimes = curTimes;
+//		}
+//
+//		public float getCurAmount() {
+//			return curAmount;
+//		}
+//
+//		public void setCurAmount(float curAmount) {
+//			this.curAmount = curAmount;
+//		}
+//
+//		public String getCheckInfo() {
+//			return checkInfo;
+//		}
+//
+//		public void setCheckInfo(String checkInfo) {
+//			this.checkInfo = checkInfo;
+//		}
+//
+//		public boolean isAccess() {
+//			return access;
+//		}
+//
+//		public void setAccess(boolean access) {
+//			this.access = access;
+//		}
+//	}
+
+}

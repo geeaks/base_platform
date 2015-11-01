@@ -1,0 +1,98 @@
+package com.ucf.customer.interceptor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.stereotype.Component;
+
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+
+@Component
+@Aspect  
+public class SensitiveInformationAspect {  
+	
+	@Pointcut("execution(* com.ucf.customer.service.HiddenService.hidden(..))")  
+    private void anyMethod(){}//定义一个切入点  
+      
+    @Around("anyMethod()")  
+    public Object doBasicProfiling(ProceedingJoinPoint pjp) throws Throwable{  
+        Object object = pjp.proceed();//执行该方法  
+        if (object instanceof List) {
+        	List<Object> returnList = new ArrayList<Object>();
+        	@SuppressWarnings("unchecked")
+			List<Object> l = (ArrayList<Object>)object;
+        	for (Object o : l) {
+        		returnList.add(shift(o));
+        	}
+        } else {
+        	object = shift(object);
+        }
+        return object;  
+    }  
+    
+    private Object shift(Object object) {
+    	if (object instanceof UcfBankCard) {
+        	UcfBankCard bankCard = (UcfBankCard)object;
+        	bankCard.setPaymentPassword("******");
+        	int beginLen = 0;
+        	int endLen = 5;
+        	if (null!=bankCard.getCardNo()&&!"".equals(bankCard.getCardNo())&&bankCard.getCardNo().length()>endLen) {
+        		bankCard.setCardNo(hidenchar(bankCard.getCardNo(),beginLen,bankCard.getCardNo().length()-endLen).toString());
+        	}
+        	object = bankCard;
+        } else if (object instanceof UcfUserLoginApp) {
+        	UcfUserLoginApp login = (UcfUserLoginApp)object;
+        	login.setLoginPwd("******");
+        	int beginLen = 2;
+        	int endLen = 4;
+        	if (null!=login.getPhone()&&!"".equals(login.getPhone())&&login.getPhone().length()>endLen) {
+        		login.setPhone(hidenchar(login.getPhone(),beginLen,login.getPhone().length()-endLen).toString());
+        	}
+        	object = login;
+        } else if (object instanceof UcfUser) {
+        	UcfUser user = (UcfUser)object;
+        	int beginLen = 1;
+        	int endLen = 2;
+        	int phoneBeginLen = 3;
+        	int phoneEndLen = 5;
+        	if (null!=user.getRealName()&&!"".equals(user.getRealName())&&user.getRealName().length()>endLen) {
+        		user.setRealName(hidenchar(user.getRealName(),beginLen,user.getRealName().length()).toString());
+        	}
+        	if (null!=user.getCertNo()&&!"".equals(user.getCertNo())&&user.getCertNo().length()>endLen) {
+        		user.setCertNo(hidenchar(user.getCertNo(),beginLen,user.getCertNo().length()-endLen).toString());
+        	}
+        	if (null!=user.getCell()&&!"".equals(user.getCell())&&user.getCell().length()>phoneEndLen) {
+        		user.setCell(hidenchar(user.getCell(),phoneBeginLen,user.getCell().length()-phoneEndLen).toString());
+        	}
+        	object = user;
+        } else if (object instanceof UcfCard) {
+        	UcfCard card = (UcfCard)object;
+        	object = card;
+        }
+    	return object;
+    }
+    
+    private StringBuffer hidenchar(String param,int begin,int end) {
+    	StringBuffer  buffer = new StringBuffer();
+		if (null!=param&&!"".equals(param)) {
+			
+			char[]  chars =param.toCharArray();
+			for(int i=0;i<chars.length;i++){
+				if(i>=begin && i<=end){
+					chars[i]='*';
+					buffer.append(chars[i]);
+				} else
+				buffer.append(chars[i])	;
+				
+			}
+		}
+		return buffer;
+	}
+}

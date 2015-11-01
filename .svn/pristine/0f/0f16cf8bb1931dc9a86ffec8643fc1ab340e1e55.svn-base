@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+<!-- insert UcfMerchantExtra --> 
+<insert id="insertUcfMerchantExtra" parameterType="com.ucf.customer.pojo.UcfMerchantExtra" keyProperty="id" useGeneratedKeys="true">
+	<![CDATA[
+		INSERT INTO UCF_MERCHANT_EXTRA (USER_ID, MERCHANT_TYPE, ACCOUNT_TYPE, PARENT_USER_ID,
+		FIRST_BUSINESS_CODE,FIRST_BUSINESS_NAME,SECOND_BUSINESS_CODE,SECOND_BUSINESS_NAME,PRODUCT_CODE,PRODUCT_NAME) 
+		VALUES (#{userId,jdbcType=VARCHAR}, #{merchantType,jdbcType=VARCHAR}, #{accountType,jdbcType=VARCHAR}, 
+		#{parentUserId,jdbcType=VARCHAR}, #{firstBusinessCode,jdbcType=VARCHAR}, #{firstBusinessName,jdbcType=VARCHAR}, 
+		#{secondBusinessCode,jdbcType=VARCHAR}, #{secondBusinessName,jdbcType=VARCHAR}, #{productCode,jdbcType=VARCHAR}, #{productName,jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<!-- update UcfMerchantExtra -->
+<update id="updateUcfMerchantExtra" parameterType="com.ucf.customer.pojo.UcfMerchantExtra">
+	<![CDATA[
+		UPDATE UCF_MERCHANT_EXTRA SET USER_ID=#{userId} 
+	]]>
+<if test="null != merchantType">
+	<![CDATA[
+		,MERCHANT_TYPE=#{merchantType} 
+	]]>
+</if>
+<if test="null != accountType">
+	<![CDATA[
+		,ACCOUNT_TYPE=#{accountType} 
+	]]>
+</if>
+<if test="null != parentUserId">
+	<![CDATA[
+		,PARENT_USER_ID=#{parentUserId} 
+	]]>
+</if>
+<if test="null != firstBusinessCode">
+	<![CDATA[
+		,FIRST_BUSINESS_CODE=#{firstBusinessCode} 
+	]]>
+</if>
+<if test="null != firstBusinessName">
+	<![CDATA[
+		,FIRST_BUSINESS_NAME=#{firstBusinessName} 
+	]]>
+</if>
+<if test="null != secondBusinessCode">
+	<![CDATA[
+		,SECOND_BUSINESS_CODE=#{secondBusinessCode} 
+	]]>
+</if>
+<if test="null != secondBusinessName">
+	<![CDATA[
+		,SECOND_BUSINESS_NAME=#{secondBusinessName} 
+	]]>
+</if>
+<if test="null != productCode">
+	<![CDATA[
+		,PRODUCT_CODE=#{productCode} 
+	]]>
+</if>
+<if test="null != productName">
+	<![CDATA[
+		,PRODUCT_NAME=#{productName} 
+	]]>
+</if>
+<![CDATA[
+	WHERE USER_ID = #{userId} 
+]]>
+</update>
+
+<!-- delete UcfMerchantExtra -->
+<delete id="deleteUcfMerchantExtra" parameterType="string">
+	<![CDATA[
+		DELETE FROM UCF_MERCHANT_EXTRA WHERE USER_ID = #{userId} 
+	]]>
+</delete>
+
+<!-- select UcfMerchantExtra -->
+<select id="queryUcfMerchantExtraListByWhere" resultType="ucfMerchantExtra" parameterType="ucfMerchantExtra" >
+	<![CDATA[
+		SELECT t.USER_ID as userId,t.MERCHANT_TYPE as merchantType,t.ACCOUNT_TYPE as accountType,t.PARENT_USER_ID as parentUserId,
+		t.FIRST_BUSINESS_CODE as firstBusinessCode,t.FIRST_BUSINESS_NAME as firstBusinessName,
+		t.SECOND_BUSINESS_CODE as secondBusinessCode,t.SECOND_BUSINESS_NAME as secondBusinessName,
+		t.PRODUCT_CODE as productCode, t.PRODUCT_NAME as productName 
+		FROM UCF_MERCHANT_EXTRA t WHERE t.USER_ID = #{userId} 
+	]]>
+	<if test="null != merchantType and '' != merchantType">
+		<![CDATA[
+			AND t.MERCHANT_TYPE = #{merchantType}
+		]]>
+	</if>
+	<if test="null != accountType and '' != accountType">
+		<![CDATA[
+			AND t.ACCOUNT_TYPE = #{accountType}
+		]]>
+	</if>
+	<if test="null != parentUserId and '' != parentUserId">
+		<![CDATA[
+			AND t.PARENT_USER_ID = #{parentUserId}
+		]]>
+	</if>
+	<if test="null != firstBusinessCode">
+	<![CDATA[
+		AND FIRST_BUSINESS_CODE=#{firstBusinessCode} 
+	]]>
+</if>
+<if test="null != firstBusinessName">
+	<![CDATA[
+		AND FIRST_BUSINESS_NAME=#{firstBusinessName} 
+	]]>
+</if>
+<if test="null != secondBusinessCode">
+	<![CDATA[
+		AND SECOND_BUSINESS_CODE=#{secondBusinessCode} 
+	]]>
+</if>
+<if test="null != secondBusinessName">
+	<![CDATA[
+		AND SECOND_BUSINESS_NAME=#{secondBusinessName} 
+	]]>
+</if>
+<if test="null != productCode">
+	<![CDATA[
+		AND PRODUCT_CODE=#{productCode} 
+	]]>
+</if>
+<if test="null != productName">
+	<![CDATA[
+		,PRODUCT_NAME=#{productName} 
+	]]>
+</if>
+</select>
+
+<select id="queryMainAccountList" resultType="com.ucf.customer.pojo.UcfUser">
+	<![CDATA[
+		SELECT USER_ID as userId,CARD_NO as cardNo,
+		REAL_NAME as realName,GENDER as gender,CERT_TYPE as certType,
+		CERT_NO as certNo,USER_TYPE as userType,EMAIL as email,ZIP_CODE as zipCode,
+		CITY as city,PROVINCE as province,ADDRESS as address,PHONE as phone,CELL as cell,
+		ENABLED_STATUS as enabledStatus,GMT_LAST_MODIFIED as gmtLastModified,
+		LAST_LOGIN_FAIL_DT_BAK as lastLoginFailDtBak,MEMO as memo,FIRM_NAME as firmName,
+		SECURITY_CODE as securityCode,RETURN_URL as returnUrl,
+		IS_SIGN_CUSTOMER as isSignCustomer,GMT_SIGN as gmtSign,GMT_CREATE as gmtCreate,
+		SUPPLY_STAGE as supplyStage,VERIFY_STATUS as verifyStatus,
+		CERT_VALID_BEGIN_DATE as certValidBeginDate,CERT_VALID_END_DATE as certValidEndDate,
+		COUNTRY as country,AREA as area,PROFESSION as profession,REALNAME_STATUS as realnameStatus,
+		PIN_QUES as pinQues,PIN_ANSW as pinAnsw,LGN_PWD as lgnPwd,FROZEN_STATE as frozenState,
+		LOGIN_ID as loginId,REF_USER as refUser,REF_MERCHANT as refMerchant,AMOUNT as amount FROM UCF_USER
+		where USER_ID in(SELECT u.USER_ID from UCF_MERCHANT_EXTRA u where u.ACCOUNT_TYPE='1')
+	]]>
+</select>
+</mapper>

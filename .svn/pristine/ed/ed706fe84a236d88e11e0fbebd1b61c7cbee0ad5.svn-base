@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+<!-- insert UcfQuestion -->
+<insert id="insertUcfQuestion" parameterType="ucfQuestion" keyProperty="id" useGeneratedKeys="true">
+	<![CDATA[
+		INSERT INTO UCF_QUESTION (
+	QUES_NO,QUES_INFO,QUES_RES,QUES_LINK
+		)VALUES(
+		UCF_QUESTION_SEQ.nextval,#{quesInfo,jdbcType=VARCHAR},#{quesRes,jdbcType=VARCHAR},#{quesLink,jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<!-- update UcfQuestion -->
+<update id="updateUcfQuestion" parameterType="ucfQuestion">
+	<![CDATA[
+		UPDATE 
+		UCF_QUESTION 
+		SET 
+		 QUES_NO=QUES_NO
+	]]>
+			<if test="null != quesInfo">
+	<![CDATA[
+,QUES_INFO = #{quesInfo}
+	]]>
+	</if>
+	<if test="null != quesRes">
+	<![CDATA[
+,QUES_RES = #{quesRes}
+	]]>
+	</if>
+	<if test="null != quesLink">
+	<![CDATA[
+,QUES_LINK = #{quesLink}
+	]]>
+	</if>
+	<![CDATA[
+
+		WHERE  QUES_NO = #{quesNo} 
+	]]>
+</update>
+
+<!-- delete UcfQuestion -->
+<delete id="deleteUcfQuestion" parameterType="string">
+	<![CDATA[
+		DELETE FROM UCF_QUESTION WHERE id = #{id}
+	]]>
+</delete>
+
+<!-- select UcfQuestion -->
+<select id="queryUcfQuestionByWhere" resultType="ucfQuestion" parameterType="ucfQuestion" >
+<![CDATA[
+SELECT 
+QUES_NO as quesNo,QUES_INFO as quesInfo,QUES_RES as quesRes,QUES_LINK as quesLink FROM UCF_QUESTION WHERE ROWNUM <= 10 
+]]>
+<if test="null != quesNo and '' != quesNo">
+<![CDATA[
+AND QUES_NO = #{quesNo}
+]]>
+</if>
+<if test="null != quesInfo and '' != quesInfo">
+<![CDATA[
+AND QUES_INFO = #{quesInfo}
+]]>
+</if>
+<if test="null != quesRes and '' != quesRes">
+<![CDATA[
+AND QUES_RES = #{quesRes}
+]]>
+</if>
+<if test="null != quesLink and '' != quesLink">
+<![CDATA[
+AND QUES_LINK = #{quesLink}
+]]>
+</if>
+</select>
+</mapper>

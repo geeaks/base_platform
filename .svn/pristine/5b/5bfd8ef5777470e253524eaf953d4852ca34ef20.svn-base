@@ -1,0 +1,11 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<div class="user_nav">
+    	<ul>
+        	<li<c:if test="${index eq '1'}" > class="user_select" </c:if> ><a href="${basePath}/user/overview.htm">账户总览</a> </li>
+            <li <c:if test="${index eq '2'}"> class="user_select" </c:if>><a href="${basePath}/trade/tradeList.htm">交易记录</a></li>
+            <li <c:if test="${index eq '3'}"> class="user_select" </c:if> ><a href="${basePath}/user/basicinfo.htm">信息管理</a></li>
+            <li <c:if test="${index eq '4'}"> class="user_select" </c:if> ><a href="${basePath}/bank/index.htm">银行卡管理</a></li>
+            <li <c:if test="${index eq '5'}"> class="user_select" </c:if>><a href="${basePath}/deposit/index.htm">充值</a></li>
+            <li <c:if test="${index eq '6'}"> class="user_select" </c:if>><a href="${basePath}/withdraw/index.htm">提现</a></li>
+        </ul>
+</div>

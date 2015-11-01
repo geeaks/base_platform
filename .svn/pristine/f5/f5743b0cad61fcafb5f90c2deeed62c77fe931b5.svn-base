@@ -1,0 +1,43 @@
+package com.ucf.customer.ws.bo.enterprise;
+
+import java.io.Serializable;
+
+public class MemberReviewRequestBO implements Serializable{
+
+	private static final long serialVersionUID = -4121927659275744984L;
+	
+	//平台商id	
+	private String merchantId;
+	//企业用户ID	
+	private String userId;
+	//用户类型
+	private String userType;
+	//审核结果类型 0：不通过 1：通过
+	private String reviewType;
+	
+	public String getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getUserType() {
+		return userType;
+	}
+	public void setUserType(String userType) {
+		this.userType = userType;
+	}
+	public String getReviewType() {
+		return reviewType;
+	}
+	public void setReviewType(String reviewType) {
+		this.reviewType = reviewType;
+	}
+	
+}

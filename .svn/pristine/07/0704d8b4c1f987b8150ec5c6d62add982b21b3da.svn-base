@@ -1,0 +1,58 @@
+package com.ucf.customer.pojo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.ucf.onlinepay.framework.common.bean.Money;
+/**
+ * 用户交易记录
+ * @author 张磊
+ *
+ */
+public class UcfTradeLog implements Serializable {
+
+
+	private static final long serialVersionUID = 8848096658241791036L;
+	/**
+	 * 用户ID
+	 */
+	private String userId;
+	/**
+	 * 订单号
+	 */
+	private String orderId;
+	/**
+	 * 金额
+	 */
+	private Money amount;
+	/**
+	 * 创建时间
+	 */
+	private Date gmtCreate;
+	
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getOrderId() {
+		return orderId;
+	}
+	public void setOrderId(String orderId) {
+		this.orderId = orderId;
+	}
+	public Money getAmount() {
+		return amount;
+	}
+	public void setAmount(Money amount) {
+		this.amount = amount;
+	}
+	public Date getGmtCreate() {
+		return gmtCreate;
+	}
+	public void setGmtCreate(Date gmtCreate) {
+		this.gmtCreate = gmtCreate;
+	}
+
+}

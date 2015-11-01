@@ -1,0 +1,1774 @@
+package com.ucf.customer.api.impl;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import javax.annotation.Resource;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.util.StringUtils;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.ucf.account.ws.bo.AccountReturnValueBO;
+import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.bo.AccountInfoRsBO;
+import com.ucf.customer.api.bo.BankCardBo;
+import com.ucf.customer.api.bo.BankCardModifyBo;
+import com.ucf.customer.api.bo.BaseResultBO;
+import com.ucf.customer.api.bo.MemberRegisterBO;
+import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.PageRs;
+import com.ucf.customer.api.bo.PhoneModifyBo;
+import com.ucf.customer.api.bo.PhotoAuthApplyBo;
+import com.ucf.customer.api.bo.RealNameParamBO;
+import com.ucf.customer.api.bo.UserAuthParamBO;
+import com.ucf.customer.api.bo.UserCardAccountRsBo;
+import com.ucf.customer.api.bo.UserInfoBo;
+import com.ucf.customer.api.bo.UserInfoRsBO;
+import com.ucf.customer.api.bo.UserRealNamedStatusRsBO;
+import com.ucf.customer.api.enums.EnumAuthType;
+import com.ucf.customer.api.enums.EnumBankCardType;
+import com.ucf.customer.api.enums.EnumCertStatus;
+import com.ucf.customer.api.enums.EnumCertType;
+import com.ucf.customer.api.enums.EnumPhotoAuditType;
+import com.ucf.customer.api.enums.EnumRealnameStatus;
+import com.ucf.customer.api.enums.EnumRespStatusCode;
+import com.ucf.customer.api.enums.EnumStatus;
+import com.ucf.customer.api.enums.EnumUserType;
+import com.ucf.customer.api.enums.EnumsUserCardType;
+import com.ucf.customer.bo.RegisterParamBO;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.dao.UcfCustomerDao;
+import com.ucf.customer.dao.UcfPersonDao;
+import com.ucf.customer.dao.UcfRealnamePhotoApplyDAO;
+import com.ucf.customer.dao.plugin.Page;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.pojo.UcfPerson;
+import com.ucf.customer.pojo.UcfRealnamePhotoApply;
+import com.ucf.customer.pojo.UcfSubCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.Cryptos;
+import com.ucf.customer.service.BankCardService;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.SMSService;
+import com.ucf.customer.service.UserInfoService;
+import com.ucf.customer.service.UserRegService;
+import com.ucf.customer.service.UserService;
+import com.ucf.customer.service.out.AccountService;
+import com.ucf.customer.service.out.PaymentService;
+import com.ucf.customer.utils.BeanUtilEx;
+import com.ucf.customer.utils.CheckMailOrPhone;
+import com.ucf.customer.utils.CommonUtils;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumBindBankCardStatus;
+import com.ucf.customer.utils.enums.EnumConfirmStatus;
+import com.ucf.customer.utils.enums.EnumRedisKey;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.utils.enums.EnumSMSTemplate;
+import com.ucf.customer.utils.enums.EnumTrueFalse;
+import com.ucf.customer.utils.enums.EnumUserEnabledStatus;
+import com.ucf.customer.utils.enums.EnumVerifyLevle;
+import com.ucf.customer.api.enums.EnumBankCardUseType;
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.EnumRegisterFrom;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.log.LoggerLevel;
+import com.ucf.platform.framework.log.annotation.DigestLogAnnotated;
+import com.ucf.platform.framework.mq.UcfSendMessage;
+import com.ucf.platform.framework.mq.enums.RocketMQTopicEnum;
+import com.ucf.platform.framework.mq.producer.UcfMQProducer;
+import com.ucf.platform.framework.redis.support.ICache;
+import com.ucf.trade.ws.bo.TradeUcfWsParamBo;
+import com.ucf.trade.ws.bo.TradeUcfWsReturnValueBo;
+import com.ucf.trade.ws.service.TradeUcfSearchCardBINServiceWs;
+
+public class MemberServiceImpl implements MemberService {
+	
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(MemberServiceImpl.class);
+	
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private UserInfoService userInfoService;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private CardService cardService;
+	@Autowired
+	private TradeUcfSearchCardBINServiceWs tradeUcfSearchCardBINServicews; 
+	@Autowired
+	private BankCardService bankCardService;
+	@Autowired
+	private SMSService smsService;
+	@Autowired
+	private PaymentService paymentService;
+	@Autowired
+	private UcfRealnamePhotoApplyDAO photoApplyDao;
+	@Resource(name = "sharedTransactionTemplate")
+	private TransactionTemplate transactionTemplate;
+	@Resource(name = "ucfMQProducer")
+	private UcfMQProducer ucfMQProducer;
+	@Autowired
+	private AccountService accountService;
+	@Autowired
+	private UserRegService userRegService;
+	@Autowired
+	private UcfCustomerDao customerDao;
+	@Autowired
+	private UcfPersonDao personDao;
+	@Resource(name="redisKVManager")
+	private ICache<String> cache = null;
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public UserRealNamedStatusRsBO findUserRealnameStatus(String userId) {
+		UserRealNamedStatusRsBO rsbo = new UserRealNamedStatusRsBO();
+		// 参数校验
+		if(StringUtil.isEmpty(userId)){
+			rsbo.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			rsbo.setStatus(EnumRespStatusCode.PARAM_ERROR.getCode());
+			rsbo.setRespMsg(EnumRespStatusCode.PARAM_ERROR.getMsg());
+			return rsbo;
+		}
+		try {
+			UcfUser user = this.loginService.queryUserInfo(userId);
+			UcfCard ucfCard = loginService.queryUcfCardByUserId(userId);
+			rsbo.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			if (Constants.VERIFY_STATUS_T.equals(user.getRealnameStatus())) {
+				rsbo.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				rsbo.setRespMsg("用户已实名认证");
+			} else {
+				rsbo.setStatus(EnumRespStatusCode.ERROR.getCode());
+				rsbo.setRespMsg("用户未通过实名认证");
+			}
+			rsbo.setCertStatus(ucfCard.getCertStatus());
+			rsbo.setErrorTimes(ucfCard.getCertErrorTimes());	
+		} catch (Exception e) {
+			rsbo.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			rsbo.setStatus(EnumRespStatusCode.ERROR.getCode());
+			rsbo.setRespMsg("系统异常");
+			LOGGER.error("查询用户实名认证信息异常",e);
+		}
+		return rsbo;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO realName(RealNameParamBO paramBo) {
+		LOGGER.info("实名认证参数：" + SensitiveInfoUtils.getJson(paramBo));
+		BaseResultBO  bo = new BaseResultBO();
+		try {
+			if(!paramBo.validate()){
+				bo.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+				bo.setRespMsg("参数错误");
+				bo.setStatus(EnumRespStatusCode.PARAM_ERROR.getCode());
+				return bo;
+			}
+			UcfUser user = this.loginService.queryUserInfo(paramBo.getUserId());
+			if(EnumStatus.SUCCESS.getCode().equals(paramBo.getStatus())){
+				ResultBo rsbo = userInfoService.realName(user.getUserId(), user.getRealName(), user.getCertType(), user.getCertNo(), paramBo.getCertType());
+				if(EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
+					//快捷认证 和 小额转账 认证
+					if(EnumCertStatus.FASTPAY_CERT.getCode().equals(paramBo.getCertType()) 
+							|| EnumCertStatus.TRANSFER_CERT.getCode().equals(paramBo.getCertType())){
+						List<UcfBankCard> list = bankCardService.queryUserBankInfosByUseType(user.getUserId(), EnumBankCardUseType.FINANCIAL.getCode());
+						UcfBankCard updateBankCard = null;
+						if(list==null || list.isEmpty() || list.size()>1){
+							boolean isUpdate = false;
+							if(list!=null && list.size()>1){
+								for(UcfBankCard bc : list){
+									if(paramBo.getBankCardNo().equals(bc.getCardNo())){
+										updateBankCard = bc;
+										isUpdate = true;
+										break;
+									}
+								}
+							}
+							if(!isUpdate){
+								final UcfBankCard insertBankCard = new UcfBankCard();
+								SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+								StringBuffer bankCardId = new StringBuffer();
+								bankCardId.append(sdf.format(new Date()));
+								bankCardId.append(bankCardService.getBankCardSeq());
+								insertBankCard.setId(bankCardId.toString());
+								insertBankCard.setUserId(paramBo.getUserId());
+								insertBankCard.setBankId(paramBo.getBankCode());
+								insertBankCard.setBankName(paramBo.getBankName());
+								insertBankCard.setProvince(paramBo.getProvince());
+								insertBankCard.setPhone(paramBo.getPhone());
+								insertBankCard.setCity(paramBo.getCity());
+								insertBankCard.setIssuer(paramBo.getBranchBankId());
+								insertBankCard.setCardNo(paramBo.getBankCardNo());// 银行卡号
+								insertBankCard.setCardType(Constants.DEBIT_CARD);
+								insertBankCard.setBranchname(paramBo.getBranchBankName());
+								insertBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+								insertBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+								insertBankCard.setCertStatus(paramBo.getCertType());
+								//add by gaoxiang 小额转账认证绑卡 使用类型为理财卡
+								insertBankCard.setUseType(EnumBankCardUseType.FINANCIAL.getCode());
+								insertBankCard.setIsPay("Y");
+								insertBankCard.setIsWithdraw("Y");
+								if(list!=null && list.size() >0){
+									insertBankCard.setUnionSeq(bankCardService.getUnionSeq());
+								}else{
+									insertBankCard.setUnionSeq(0);
+								}
+								bankCardService.insertUcfBankCard(insertBankCard);
+							}
+						}else {
+							updateBankCard = list.get(0);
+						}
+						if(updateBankCard!=null){
+							boolean isEqual = updateBankCard.getCardNo().equals(paramBo.getBankCardNo());
+							LOGGER.info("小额转账修改前的银行卡：" + JSON.toJSONString(updateBankCard));
+							updateBankCard.setBankId(paramBo.getBankCode());
+							updateBankCard.setBankName(paramBo.getBankName());
+							updateBankCard.setProvince(paramBo.getProvince());
+							updateBankCard.setPhone(paramBo.getPhone());
+							updateBankCard.setCity(paramBo.getCity());
+							updateBankCard.setIssuer(paramBo.getBranchBankId());
+							updateBankCard.setCardNo(paramBo.getBankCardNo());// 银行卡号
+							updateBankCard.setCardType(Constants.DEBIT_CARD);
+							updateBankCard.setBranchname(paramBo.getBranchBankName());
+							updateBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+							updateBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+							if(!isEqual || StringUtil.isEmpty(updateBankCard.getCertStatus())){
+								updateBankCard.setCertStatus(paramBo.getCertType());
+							}else if(updateBankCard.getCertStatus().indexOf(paramBo.getCertType()) < 0){
+								updateBankCard.setCertStatus(updateBankCard.getCertStatus() + ";" +  paramBo.getCertType());
+							}
+							LOGGER.info("小额转账修改后的银行卡：" + JSON.toJSONString(updateBankCard));
+							bankCardService.updateUcfBankCard(updateBankCard);
+						}
+					}else if(EnumCertStatus.REMIT_CERT.getCode().equals(paramBo.getCertType())){
+						String redisKey = EnumRedisKey.REMIT_CERT_USER_BANKCARD_KEY.getKey() + paramBo.getUserId();
+						//小额打款处理
+						cache.set(redisKey, paramBo.getBankCardNo(), EnumRedisKey.REMIT_CERT_USER_BANKCARD_KEY.getTimeout(), TimeUnit.SECONDS);
+					}
+					bo.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+					bo.setRespMsg("认证成功");
+					bo.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				}else{
+					bo.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+					bo.setRespMsg(rsbo.getMsg());
+					bo.setStatus(EnumRespStatusCode.ERROR.getCode());
+				}
+			}else{
+				UcfCard ucfcard = cardService.queryCardInfo(user.getUserId());
+				ucfcard.setCertErrorTimes(ucfcard.getCertErrorTimes()+1);
+				cardService.updateUcfCard(ucfcard);
+				bo.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+				bo.setRespMsg("更新错误次数成功");
+				bo.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				bo.setErrorTimes(ucfcard.getCertErrorTimes());
+			}
+		} catch (Exception e) {
+			bo.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			bo.setStatus(EnumRespStatusCode.ERROR.getCode());
+			bo.setRespMsg("系统异常");
+			LOGGER.error("用户实名认证异常",e);
+		}		
+		return bo;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public UserInfoRsBO findUserInfo(String userId) {
+		UserInfoRsBO userInfoRsBO = new UserInfoRsBO();
+		if(StringUtils.isEmpty(userId)){
+			userInfoRsBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			userInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			userInfoRsBO.setRespMsg("用户Id不能为空");
+		}else{
+			try {
+				UcfUser ucfUser = loginService.queryUserInfo(userId);
+				userInfoRsBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+				if(ucfUser != null){
+					BeanUtilEx.copyProperties(userInfoRsBO, ucfUser);
+					userInfoRsBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+					UcfCard card = cardService.queryCardInfo(userId);
+					if(!StringUtils.isEmpty(card.getPaymentPassword())){
+						userInfoRsBO.setSetPayPwd(true);
+					}else{
+						userInfoRsBO.setSetPayPwd(false);
+					}
+				}else{
+					userInfoRsBO.setRespMsg(EnumRespStatusCode.NO_EXIST_USER.getMsg());
+					userInfoRsBO.setStatus(EnumRespStatusCode.NO_EXIST_USER.getCode());
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户信息异常:",e);
+				userInfoRsBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+				userInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				userInfoRsBO.setRespMsg("查询用户信息异常");
+			}
+		}
+		return userInfoRsBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public UserCardAccountRsBo findUserCardAccount(String userId, String cardType) {
+		LOGGER.info("查询用户账号输路参数：userId" + userId + " cardType：" + cardType);
+		UserCardAccountRsBo userCardAccountRsBo = new UserCardAccountRsBo();
+		try {
+			UcfCard card = cardService.queryCardInfo(userId);
+			if(card!=null){
+				userCardAccountRsBo.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				userCardAccountRsBo.setMainCardId(card.getCardNo());
+				userCardAccountRsBo.setMainAccountId(card.getAccountId());
+				//如果cardType为 01 基金账户
+				if(!(EnumsUserCardType.PERSON_CARD.getCode().equals(cardType) || EnumsUserCardType.MERCHANT_CARD.getCode().equals(cardType))){
+					//查询 基金子卡 信息
+					UcfSubCard ucfSubCard = new UcfSubCard();
+					ucfSubCard.setCardNo(card.getCardNo());
+					ucfSubCard.setCardType(cardType);
+					 List<UcfSubCard> subCards = cardService.queryUcfSubCard(ucfSubCard);
+					//如果 存在子卡
+					if(subCards!=null&& subCards.size()>0){
+						UcfSubCard subCard = subCards.get(0);
+						userCardAccountRsBo.setSubCardId(subCard.getSubCardNo());
+						userCardAccountRsBo.setSubAccountId(subCard.getAccountNo());
+						userCardAccountRsBo.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+					}else{
+						userCardAccountRsBo.setStatus(EnumRespStatusCode.ERROR.getCode());
+						userCardAccountRsBo.setRespMsg("未找到相关子卡信息");
+					}
+				}else{
+					userCardAccountRsBo.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				}
+			}else{
+				userCardAccountRsBo.setRespMsg("未找到该用户的卡信息");
+				userCardAccountRsBo.setStatus(EnumRespStatusCode.ERROR.getCode());
+			}
+			userCardAccountRsBo.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		} catch (Exception e) {
+			userCardAccountRsBo.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			userCardAccountRsBo.setStatus(EnumRespStatusCode.ERROR.getCode());
+			userCardAccountRsBo.setRespMsg("系统异常");
+			LOGGER.error("很抱歉，系统异常，异常信息:",e);
+		}
+		LOGGER.info("查询用户账号输出参数：" + SensitiveInfoUtils.getJson(userCardAccountRsBo));
+		return userCardAccountRsBo;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public AccountInfoRsBO findUserAccount(String userId, String cardType) {
+		AccountInfoRsBO accountInfoRsBO = new AccountInfoRsBO();
+		try {
+			UcfCard card = cardService.queryCardInfo(userId);
+			if(card!=null){
+				accountInfoRsBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				if(!(EnumsUserCardType.PERSON_CARD.getCode().equals(cardType) || EnumsUserCardType.MERCHANT_CARD.getCode().equals(cardType))){
+					//查询子卡
+					UcfSubCard ucfSubCard = new UcfSubCard();
+					ucfSubCard.setCardNo(card.getCardNo());
+					ucfSubCard.setCardType(cardType);
+					List<UcfSubCard> subCards = cardService.queryUcfSubCard(ucfSubCard);
+					//如果 存在子卡
+					if(subCards!=null&& subCards.size()>0){
+						UcfSubCard subCard = subCards.get(0);
+						ResultBo rsBo = accountService.searchAccount(subCard.getAccountNo());
+						if(EnumRespStatusCode.SUCCESS.getCode().equals(rsBo.getResult())){
+							accountInfoRsBO.setCardNo(subCard.getSubCardNo());
+							accountInfoRsBO.setAccountId(subCard.getAccountNo());
+							AccountReturnValueBO rvbo = rsBo.getResultObject();
+							accountInfoRsBO.setBalance(rvbo.getBalance());
+							accountInfoRsBO.setCreditAmount(rvbo.getCreditAmount());
+							accountInfoRsBO.setFreezeAmount(rvbo.getFreezeAmount());
+							accountInfoRsBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+						}else{
+							accountInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+							accountInfoRsBO.setRespMsg(rsBo.getMsg());
+						}
+					}else{
+						accountInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+						accountInfoRsBO.setRespMsg("用户子卡不存在");
+					}
+				}else{
+					ResultBo rsBo = accountService.searchAccount(card.getAccountId());
+					if(EnumRespStatusCode.SUCCESS.getCode().equals(rsBo.getResult())){
+						accountInfoRsBO.setCardNo(card.getCardNo());
+						accountInfoRsBO.setAccountId(card.getAccountId());
+						AccountReturnValueBO rvbo = rsBo.getResultObject();
+						accountInfoRsBO.setBalance(rvbo.getBalance());
+						accountInfoRsBO.setCreditAmount(rvbo.getCreditAmount());
+						accountInfoRsBO.setFreezeAmount(rvbo.getFreezeAmount());
+						accountInfoRsBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+					}else{
+						accountInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+						accountInfoRsBO.setRespMsg(rsBo.getMsg());
+					}
+				}
+			}else{
+				accountInfoRsBO.setRespMsg("用户账户不存在");
+				accountInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			}
+			accountInfoRsBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		} catch (Exception e) {
+			accountInfoRsBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			accountInfoRsBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			accountInfoRsBO.setRespMsg("系统异常");
+			LOGGER.error("查询用户余额异常",e);
+		}
+		return accountInfoRsBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO verifyPayPwd(String userId, byte [] payPwd) {
+		ResultBo resultBo = userInfoService.checkPayPwd(userId, payPwd);
+		BaseResultBO baseResultBO = new BaseResultBO();
+		baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+			baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+		}else{
+			baseResultBO.setRespMsg(resultBo.getMsg());
+			baseResultBO.setErrorTimes(resultBo.getErrorTimes());
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+		}
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO verifyPayPwdByLoginName(String loginName, byte[] payPwd) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		try {
+			if(StringUtils.isEmpty(loginName)){
+				baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+				baseResultBO.setRespMsg("登录名为空,请输入登录名");
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			}else{
+				UcfUserLoginApp ucfUserLoginApp = loginService.queryUserAppInfo(loginName);
+				if(ucfUserLoginApp!=null){
+					baseResultBO = verifyPayPwd(ucfUserLoginApp.getUserId(),payPwd);
+					baseResultBO.setUserId(ucfUserLoginApp.getUserId());
+				}else{
+					LOGGER.info("未找到"+SensitiveInfoUtils.mobilePhone(loginName)+"该用户,请检查您的用户名");
+					baseResultBO.setRespMsg("未找到该用户,请检查您的用户名");
+					baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				}
+				baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			}
+		} catch (Exception e) {
+			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("很抱歉，系统异常");
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			LOGGER.error("系统异常",e);
+		}
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> modifyLoginPwd(String userId,byte [] oldPwd,byte [] newPwd){
+		try {
+			ResultBo rsbo = userInfoService.checkLoginPwd(userId, oldPwd);
+			if(EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
+				//TODO userInfoService.resetLgnPwd(userId, newPwd);
+				//add by gaoxiang 修改登录密码
+				UcfUser user = loginService.queryUserInfo(userId);
+				final UcfUserLoginApp userLoginApp = loginService.queryUserAppInfo(user.getEmail());
+				userLoginApp.setLoginPwd(Cryptos.encrypt(new String(newPwd),userId));
+				loginService.updateUcfUserApp(userLoginApp);
+				return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(), "");
+			}else{
+				LOGGER.warn("密码校验" + SensitiveInfoUtils.getJson(rsbo));
+				return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),rsbo.getMsg(),"");
+			}
+		} catch (Exception e) {
+			LOGGER.error("修改用户登录密码", e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> sendSms(String phone,String msg) {
+		ResultBo smsbo = smsService.sendSMS(null,phone, msg);
+		if(EnumResultCode.SUCCESS.getCode().equals(smsbo.getResult())){
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"发送成功","S");
+		}else{
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),smsbo.getMsg(),"F");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO sendVfyCodeSMS(String phone) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		if(StringUtils.isEmpty(phone)){
+			baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("手机号码不能为空");
+		}else{
+			ResultBo checkVfbo = smsService.sendVfyCodeSMS(null,phone, EnumSMSTemplate.MemberVfyCode.getContent());
+			baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
+				baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+			}else{
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setRespMsg(checkVfbo.getMsg());
+			}
+		}
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO checkVfyCode(String phone, String code) {
+		ResultBo checkVfbo = smsService.checkVfyCode(null,phone, code);
+		BaseResultBO baseResultBO = new BaseResultBO();
+		baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
+			baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+		}else{
+			baseResultBO.setRespMsg(checkVfbo.getMsg());
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+		}
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO userAuth(UserAuthParamBO userAuthParamBO) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		try {
+			// 参数校验
+			String result = CommonUtils.check(userAuthParamBO);
+			if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
+				baseResultBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				baseResultBO.setRespMsg(result);
+				return baseResultBO;
+			}
+			UcfUser ucfUser =  loginService.queryUserInfo(userAuthParamBO.getUserId());
+			if (ucfUser == null) {
+				baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setRespMsg("未找到该用户");
+				return baseResultBO;
+			}
+			baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			ResultBo bo = paymentService.userAuth(userAuthParamBO.getMerchantId(),userAuthParamBO.getType().getCode(), ucfUser.getRealName(), 
+					ucfUser.getCertNo(), userAuthParamBO.getBankCardNo(),userAuthParamBO.getPhone(),userAuthParamBO.getCardType(),userAuthParamBO.getCvn2(),userAuthParamBO.getValidDate(),userAuthParamBO.getBankId());
+			if(EnumRespStatusCode.SUCCESS.getCode().equals(bo.getResult())){
+				baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				baseResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			}else {
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setRespMsg(EnumMemberCode.AUTH_ERROR.getMsgS());
+			}
+		} catch (Exception e) {
+			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("系统异常，异常信息:"+e.getMessage());
+			LOGGER.error(e.getMessage(),e);
+		}
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO createFundSubCard(String userId) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		if(StringUtils.isEmpty(userId)){
+			baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("用户Id不能为空");
+		}else{
+			try {
+				ResultBo bo = userInfoService.createSubCard(userId, EnumsUserCardType.FUND_CARD);
+				if(EnumResultCode.SUCCESS.getCode().equals(bo.getResult())){
+					baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+					baseResultBO.setRespMsg("开卡成功");
+				}else if(EnumResultCode.EXIST.getCode().equals(bo.getResult())){
+					baseResultBO.setStatus(EnumRespStatusCode.EXIST_SUBCARD.getCode());
+					baseResultBO.setRespMsg(EnumRespStatusCode.EXIST_SUBCARD.getMsg());
+				}else{
+					baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+					baseResultBO.setRespMsg(bo.getMsg());
+				}
+				baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(), e);
+				baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setRespMsg("系统异常");
+			}
+		}
+		LOGGER.info("调用创建基金自卡返回："+SensitiveInfoUtils.getJson(baseResultBO));
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO isExistFundSubCard(String userId) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		if(StringUtils.isEmpty(userId)){
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("用户Id不能为空");
+		}else{
+			ResultBo resultBo = userInfoService.isExistSubCard(userId, EnumsUserCardType.FUND_CARD);
+			if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+				baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+				baseResultBO.setRespMsg("已开通基金子卡");
+			}else{
+				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+				baseResultBO.setRespMsg(resultBo.getMsg());
+			}
+		}
+		return baseResultBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> userAuth(String merchantId,String realName,String certNo){
+		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(realName) || StringUtil.isEmpty(certNo)) {
+			return new MemberCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"F");
+		}
+		ResultBo bo = paymentService.userAuth(merchantId,EnumAuthType.NAME_CERT.getCode(), realName, 
+				certNo, null,null,null,null,null,null);
+		if(EnumRespStatusCode.SUCCESS.getCode().equals(bo.getResult())){
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+		}else {
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"F");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> photoAuthApply(String userId, String photoPath) {
+		PhotoAuthApplyBo authApplyBo = new PhotoAuthApplyBo();
+		authApplyBo.setUserId(userId);
+		authApplyBo.setImgPath(photoPath);
+		return photoAuthApply(authApplyBo);
+	}
+	
+	/**
+	 * 照片审核认证
+	 * @param authApplyBo
+	 * @return
+	 */
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> photoAuthApply(PhotoAuthApplyBo authApplyBo){
+		try {
+			if (authApplyBo == null || StringUtil.isEmpty(authApplyBo.getUserId())
+					|| StringUtil.isEmpty(authApplyBo.getImgPath())) {
+				return new MemberCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"F");
+			}
+
+			UcfUser ucfUser = loginService.queryUserInfo(authApplyBo.getUserId());
+			if (ucfUser == null) {
+				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+			}
+
+			UcfRealnamePhotoApply checkIngApply = new UcfRealnamePhotoApply();
+			checkIngApply.setUserId(authApplyBo.getUserId());
+			checkIngApply.setStatus("N");
+			List<UcfRealnamePhotoApply> ingPhotoApplys = photoApplyDao.select(checkIngApply);
+			if (ingPhotoApplys.size() > 0) {
+				return new MemberCommonResult<String>(EnumRespStatusCode.EXIST_APPLY.getCode(),"用户照片审核申请审核中，不可重复申请！","F");
+			}
+			UcfRealnamePhotoApply ucfRealnamePhotoApply = new UcfRealnamePhotoApply();
+			ucfRealnamePhotoApply.setUserId(authApplyBo.getUserId());
+			ucfRealnamePhotoApply.setImgPath(authApplyBo.getImgPath());
+			//add by gaoxiang 增加照片审核类型   默认为身份证、银行卡审核类型
+			ucfRealnamePhotoApply.setType(StringUtils.isEmpty(authApplyBo.getType())?
+					EnumPhotoAuditType.IDCARD_BANKCARD_AUTH.getCode() : authApplyBo.getType());
+			ucfRealnamePhotoApply.setBankCardNo(authApplyBo.getBankCardNo());
+			ucfRealnamePhotoApply.setMemo(null);
+			ucfRealnamePhotoApply.setCreateor("system");
+			ucfRealnamePhotoApply.setStatus("N");
+			photoApplyDao.insert(ucfRealnamePhotoApply);
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"E");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> findPhotoAuthApply(String userId){
+		PhotoAuthApplyBo record = new PhotoAuthApplyBo();
+		record.setUserId(userId);
+		record.setType(EnumPhotoAuditType.IDCARD_BANKCARD_AUTH.getCode());
+		return findPhotoAuthApply(record);
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> findPhotoAuthApply(PhotoAuthApplyBo apply){
+		UcfRealnamePhotoApply record = new UcfRealnamePhotoApply();
+		record.setUserId(apply.getUserId());
+		record.setType(apply.getType());
+		record.setBankCardNo(apply.getBankCardNo());
+		List<UcfRealnamePhotoApply> list = photoApplyDao.select(record);
+		MemberCommonResult<String> result = null;
+		if (list == null || list.isEmpty()) {//没有认证记录
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"未申请","");
+		} else {
+			int succ = 0;
+			int dealing = 0;
+			String msg = "";
+			for (UcfRealnamePhotoApply en : list) {
+				if ("N".equals(en.getStatus())) {
+					dealing++;
+				} else if ("S".equals(en.getStatus())) {
+					succ++;
+					break;
+				}else{
+					msg = en.getMemo();
+				}
+			}
+			if (succ > 0) {
+				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+			} else if (dealing > 0) {
+				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"I");
+			} else {
+				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),msg,"F");
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> auditPhotoAuth(String applyId,
+			String status, String auditor) {
+		return auditPhotoAuth(applyId,status,null,auditor);
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> auditPhotoAuth(String applyId,String status,String memo,String auditor){
+		UcfRealnamePhotoApply ucfRealnamePhoto = photoApplyDao.selectByPrimaryKey(applyId);
+		if(ucfRealnamePhoto==null){
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"记录不存在","E");
+		}
+		if(!"N".equals(ucfRealnamePhoto.getStatus())){
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"记录状态不为待审核状态","F");
+		}
+		ucfRealnamePhoto.setStatus(status);
+		ucfRealnamePhoto.setMemo(memo);
+		ucfRealnamePhoto.setVerifyer(auditor);
+		ucfRealnamePhoto.setGmtVerify(new Date());
+		photoApplyDao.updateByPrimaryKeySelective(ucfRealnamePhoto);
+		try {
+			if("S".equals(status)){
+				UcfUser user = this.loginService.queryUserInfo(ucfRealnamePhoto.getUserId());
+				ResultBo rsbo = userInfoService.realName(user.getUserId(), user.getRealName(), user.getCertType(), user.getCertNo(), EnumCertStatus.AUDIT_CERT.getCode());
+				if(!EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
+					return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"实名认证状态更新失败","F");
+				}
+				List<UcfBankCard> userBankList = bankCardService.queryUserBankInfosByUseType(user.getUserId(), EnumBankCardUseType.FINANCIAL.getCode());
+				if(EnumPhotoAuditType.LIMIT_OPT_AUTH.getCode().equals(ucfRealnamePhoto.getType())){
+					if(userBankList == null || userBankList.size()==0){
+						LOGGER.warn(ucfRealnamePhoto.getUserId() + "不存在银行卡");
+						return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户不存在银行卡","F");
+					}
+					UcfBankCard b = userBankList.get(0);
+					if(b.getCardNo().equals(ucfRealnamePhoto.getBankCardNo())){
+						updateBankCardOptCertStatus(b);
+					}else{
+						LOGGER.warn(ucfRealnamePhoto.getUserId() + "提升额度的银行卡与已绑定银行卡不一致,审核[" + ucfRealnamePhoto.getBankCardNo()+ " ] 原银行卡["+ b.getCardNo() + " ]");
+						return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"提升额度的银行卡与已绑定银行卡不一致","F");
+					}
+				}else if(EnumPhotoAuditType.IDCARD_BANKCARD_AUTH.getCode().equals(ucfRealnamePhoto.getType())
+						|| StringUtil.isEmpty(ucfRealnamePhoto.getType())){
+					if(userBankList == null || userBankList.size()==0){
+						realNameBindBankCard(ucfRealnamePhoto, user);
+					}else{
+						UcfBankCard b = userBankList.get(0);
+						if(b.getCardNo().equals(ucfRealnamePhoto.getBankCardNo())){
+							updateBankCardCertStatus(b);
+							noticeBindBankCard(user, b);
+						}else{
+							//如果是预绑卡状态 则删除掉 再进行绑卡
+							bankCardService.deleteUcfBankCard(b.getId());
+							realNameBindBankCard(ucfRealnamePhoto, user);
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			LOGGER.error("照片审核异常", e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"F");
+		}
+		return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+	}
+
+	/**
+	 * 照片审核认证(提升限额)修改银行卡认证信息
+	 * @param b
+	 * @throws Exception
+	 */
+	private void updateBankCardOptCertStatus(UcfBankCard b) throws Exception {
+		if(StringUtil.isEmpty(b.getCertStatus())){
+			b.setCertStatus(EnumCertStatus.AUDIT_CERT.getCode());
+		}else if(b.getCertStatus().indexOf(EnumCertStatus.AUDIT_CERT.getCode()) < 0 ){
+			b.setCertStatus(b.getCertStatus() + ";" + EnumCertStatus.AUDIT_CERT.getCode());
+		}
+		bankCardService.updateUcfBankCard(b);
+	}
+	
+	/**
+	 * 照片审核认证修改银行卡认证信息
+	 * @param b
+	 * @throws Exception
+	 */
+	private void updateBankCardCertStatus(UcfBankCard b) throws Exception {
+		String redisKey = EnumRedisKey.REMIT_CERT_USER_BANKCARD_KEY.getKey() + b.getUserId();
+		if(cache.isExist(redisKey) && b.getCardNo().equals(cache.get(redisKey,String.class))){
+			if(StringUtil.isEmpty(b.getCertStatus())){
+				b.setCertStatus(EnumCertStatus.REMIT_CERT.getCode() + ";" + EnumCertStatus.AUDIT_CERT.getCode());
+			}else{
+				if(b.getCertStatus().indexOf(EnumCertStatus.REMIT_CERT.getCode()) < 0 ){
+					b.setCertStatus(b.getCertStatus() + ";" + EnumCertStatus.REMIT_CERT.getCode());
+				}
+				if(b.getCertStatus().indexOf(EnumCertStatus.AUDIT_CERT.getCode()) < 0 ){
+					b.setCertStatus(b.getCertStatus() + ";" + EnumCertStatus.AUDIT_CERT.getCode());
+				}
+			}
+			cache.delete(redisKey);
+		}else{
+			if(StringUtil.isEmpty(b.getCertStatus())){
+				b.setCertStatus(EnumCertStatus.AUDIT_CERT.getCode());
+			}else{
+				if(b.getCertStatus().indexOf(EnumCertStatus.AUDIT_CERT.getCode()) < 0 ){
+					b.setCertStatus(b.getCertStatus() + ";" + EnumCertStatus.AUDIT_CERT.getCode());
+				}
+			}
+		}
+		bankCardService.updateUcfBankCard(b);
+	}
+	
+	/**
+	 * @Description: 照片审核后 进行绑卡,成功后发送MQ通知
+	 * @param ucfRealnamePhoto
+	 * @param user
+	 * @throws AccountException
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-12 下午3:53:36
+	 */
+	private void realNameBindBankCard(UcfRealnamePhotoApply ucfRealnamePhoto, UcfUser user) throws Exception {
+		//查询卡bin相关信息
+		TradeUcfWsParamBo tradeBo = new TradeUcfWsParamBo();
+		tradeBo.setBankCardNo(ucfRealnamePhoto.getBankCardNo());
+		tradeBo.setPlateNo(Constants.NEWPLATFORM);//01：老平台  02: 新平台
+		TradeUcfWsReturnValueBo bo = tradeUcfSearchCardBINServicews.searchCardBIN(tradeBo);
+		Map<Object, Object> returnMap =  bo.getReturnValueMap();
+		//成功条数
+		String bankId = null;
+		String bankName = null;
+		if (Constants.SUCCESS.equals((String)returnMap.get("result"))) {
+			bankId = (String) returnMap.get("bankCode");
+			bankName = (String) returnMap.get("bankName");
+		}
+		final UcfBankCard bankCard = new UcfBankCard();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		StringBuffer bankCardId = new StringBuffer();
+		bankCardId.append(sdf.format(new Date()));
+		bankCardId.append(bankCardService.getBankCardSeq());
+		bankCard.setId(bankCardId.toString());
+		bankCard.setUserId(user.getUserId());
+		bankCard.setCardNo(ucfRealnamePhoto.getBankCardNo());// 银行卡号
+		bankCard.setBankId(bankId);
+		bankCard.setBankName(bankName);
+		bankCard.setCardType(Constants.DEBIT_CARD);
+		bankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+		bankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+		bankCard.setUnionSeq(0);
+		bankCard.setIsPay("Y");
+		bankCard.setIsWithdraw("Y");
+		
+		//小额打款处理
+		String redisKey = EnumRedisKey.REMIT_CERT_USER_BANKCARD_KEY.getKey() + user.getUserId();
+		if(cache.isExist(redisKey) && ucfRealnamePhoto.getBankCardNo().equals(cache.get(redisKey,String.class))){
+			bankCard.setCertStatus(EnumCertStatus.REMIT_CERT + ";" + EnumCertStatus.AUDIT_CERT.getCode());
+			cache.delete(redisKey);
+		}else{
+			bankCard.setCertStatus(EnumCertStatus.AUDIT_CERT.getCode());
+		}
+		//add by gaoxiang 照片审核通过绑卡 使用类型为理财卡
+		bankCard.setUseType(EnumBankCardUseType.FINANCIAL.getCode());
+		bankCardService.insertUcfBankCard(bankCard);
+		noticeBindBankCard(user, bankCard);
+	}
+
+	private void noticeBindBankCard(UcfUser user, final UcfBankCard bankCard) {
+		//发送mq消息通知
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put("merchantId", user.getRefMerchant());//商户号
+		params.put("userId", user.getUserId());//用户Id
+		params.put("phone", user.getCell());//用户手机号码
+		params.put("accountNo", bankCard.getCardNo());//银行卡号
+		params.put("bankName", bankCard.getBankName());//银行名称
+		params.put("bankNo", bankCard.getBankId());//银行编码(ICBC)
+		LOGGER.info("【身份验证绑卡】发送RocketMQ消息入参：" + JSON.toJSONString(params));
+		UcfSendMessage mqmsg = new UcfSendMessage();
+		mqmsg.setBizValue(params);
+		SendResult rocketResult = ucfMQProducer.sendMessage(
+				RocketMQTopicEnum.ROCKETMQ_MEMBER_REMIT_BINDCARD_NOTIFY_MOBILE_TOPICANDTAG.getTopic(),
+				RocketMQTopicEnum.ROCKETMQ_MEMBER_REMIT_BINDCARD_NOTIFY_MOBILE_TOPICANDTAG.getTag(), mqmsg);
+		LOGGER.info("【身份验证绑卡】发送RocketMQ消息成功：" + rocketResult.toString());
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<UserInfoBo> findUserById(String userId) {
+		MemberCommonResult<UserInfoBo> rs = null;
+		if(StringUtils.isEmpty(userId)){
+			LOGGER.info("用户Id不能为空");
+			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"用户Id不能为空",null);
+		}else{
+			try {
+				UcfUser ucfUser = loginService.queryUserInfo(userId);
+				if(ucfUser != null){
+					UserInfoBo userInfoBo = new UserInfoBo();
+					BeanUtilEx.copyProperties(userInfoBo, ucfUser);
+					UcfCard card = cardService.queryCardInfo(userId);
+					if(!StringUtils.isEmpty(card.getPaymentPassword())){
+						userInfoBo.setSetPayPwd(true);
+					}else{
+						userInfoBo.setSetPayPwd(false);
+					}
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+				}else{
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户信息异常:",e);
+				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+			}
+		}
+		return rs;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<UserInfoBo> findUserInfo(String merchantId,
+			String refUserId) {
+		MemberCommonResult<UserInfoBo> rs = null;
+		if(StringUtils.isEmpty(merchantId) || StringUtils.isEmpty(refUserId)){
+			LOGGER.info("商户Id或关联用户Id不能为空");
+			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"商户Id或关联用户Id不能为空",null);
+		}else{
+			try {
+				UcfUser ucfUser = userService.findUserInfo(merchantId, refUserId);
+				if(ucfUser != null){
+					UserInfoBo userInfoBo = new UserInfoBo();
+					BeanUtilEx.copyProperties(userInfoBo, ucfUser);
+					UcfCard card = cardService.queryCardInfo(ucfUser.getUserId());
+					if(!StringUtils.isEmpty(card.getPaymentPassword())){
+						userInfoBo.setSetPayPwd(true);
+					}else{
+						userInfoBo.setSetPayPwd(false);
+					}
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+				}else{
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户信息异常:",e);
+				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+			}
+		}
+		return rs;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public BaseResultBO setPayPwd(String userId, byte[] payPassword) {
+		BaseResultBO baseResultBO = new BaseResultBO();
+		try {
+			userInfoService.resetPayPwd(userId, payPassword);
+			baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
+			baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
+		} catch (Exception e) {
+			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
+			baseResultBO.setRespMsg("系统异常，异常信息:"+e.getMessage());
+			LOGGER.error("设置支付密码失败",e);
+		}
+		return baseResultBO;
+	}
+	
+	/**
+	 * 查询用户
+	 * @param merchantId
+	 * @param cell
+	 * @return
+	 */
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<UserInfoBo> findUserInfoByCell(String merchantId,String cell){
+		MemberCommonResult<UserInfoBo> rs = null;
+		if(StringUtils.isEmpty(merchantId) || StringUtils.isEmpty(cell)){
+			LOGGER.info("商户Id或手机号不能为空");
+			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"商户Id或关联用户Id不能为空",null);
+		}else{
+			try {
+				UcfUser ucfUser = userService.findUserInfoByCell(merchantId, cell);
+				if(ucfUser != null){
+					UserInfoBo userInfoBo = new UserInfoBo();
+					BeanUtilEx.copyProperties(userInfoBo, ucfUser);
+					UcfCard card = cardService.queryCardInfo(ucfUser.getUserId());
+					if(!StringUtils.isEmpty(card.getPaymentPassword())){
+						userInfoBo.setSetPayPwd(true);
+					}else{
+						userInfoBo.setSetPayPwd(false);
+					}
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+				}else{
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户信息异常:",e);
+				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+			}
+		}
+		return rs;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> registerManagedUser(MemberRegisterBO memberBo) {
+		RegisterParamBO paramBo = new RegisterParamBO();
+		paramBo.setRefUser(memberBo.getRefUserId());
+		paramBo.setRefMerchant(memberBo.getMerchantId());
+		paramBo.setCertType(memberBo.getCertType());
+		paramBo.setCertNo(memberBo.getCertNo());
+		if(StringUtil.isEmpty(memberBo.getPhone()) && !StringUtil.isEmpty(memberBo.getRefUserId()) && memberBo.getRefUserId().length()<=32){
+			paramBo.setPhoneNo(memberBo.getRefUserId());
+		}else{
+			paramBo.setPhoneNo(memberBo.getPhone());
+		}
+		paramBo.setUserType(Integer.parseInt(EnumUserType.PERSON.getCode()));
+		paramBo.setEmail(memberBo.getEmail());
+		paramBo.setRealName(memberBo.getName());
+		paramBo.setUserType(1);
+		paramBo.setSource(memberBo.getSource());
+		paramBo.setRegFrom(memberBo.getRegisterFrom());
+		return userInfoService.registerManagedUser(paramBo);
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> delUserBankCard(String userId,
+			String bankCardId) {
+		MemberCommonResult<String> result = null;
+		if(StringUtils.isEmpty(bankCardId)){
+			result = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"银行卡号不能为空","E");
+		}else{
+			try {
+				bankCardService.deleteUcfBankCard(bankCardId);
+				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(), "S");
+			} catch (Exception e) {
+				LOGGER.error("删除用户银行卡", e);
+				result = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","E");
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<List<BankCardBo>> findUserBankCards(String userId) {
+		MemberCommonResult<List<BankCardBo>> result = null;
+		if(StringUtils.isEmpty(userId)){
+			LOGGER.info("用户ID不能为空");
+			result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空",null);
+		}else{
+			try {
+				//查询用户的理财卡
+				List<UcfBankCard>  bankCards = bankCardService.queryUserBankInfos(userId);
+				if(bankCards!= null && bankCards.size()!=0){
+					List<BankCardBo> list = new ArrayList<BankCardBo>();
+					for(UcfBankCard b : bankCards){
+						BankCardBo bo = new BankCardBo();
+						BeanUtils.copyProperties(b, bo);
+						bo.setBranchBankId(b.getIssuer());
+						bo.setBranchBankName(b.getBranchname());
+						bo.setBankCode(b.getBankId());
+						bo.setBankCardId(b.getId());
+						if(EnumBankCardType.CREDIT_CARD.getCode().equals(b.getCardType()) &&
+								!StringUtils.isEmpty(b.getCvn2())){
+							try{
+								bo.setCvn2(Cryptos.aesDecrypt(b.getCvn2()));
+							}catch(Exception e){
+								LOGGER.error("银行卡CVN2解密异常", e);
+							}
+						}
+						if(EnumBankCardType.CREDIT_CARD.getCode().equals(b.getCardType()) &&
+								!StringUtils.isEmpty(b.getValidDate())){
+							try{
+								bo.setValidDate(Cryptos.aesDecrypt(b.getValidDate()));
+							}catch(Exception e){
+								LOGGER.error("银行卡validDate解密异常", e);
+							}
+						}
+						list.add(bo);
+					}
+					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(), list);
+				}else{
+					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(),"用户未绑定银行卡", new ArrayList<BankCardBo>());
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户银行卡", e);
+				result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<List<BankCardBo>> findUserBankCardsByUseType(String userId,String useType) {
+		MemberCommonResult<List<BankCardBo>> result = null;
+		if(StringUtils.isEmpty(userId)){
+			LOGGER.info("用户ID不能为空");
+			result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空",null);
+		}else{
+			try {
+				//根据使用类型查询用户的银行卡
+				List<UcfBankCard> bankCards = bankCardService.queryUserBankInfosByUseType(userId,useType);
+				if(bankCards!= null && bankCards.size()!=0){
+					List<BankCardBo> list = new ArrayList<BankCardBo>();
+					for(UcfBankCard b : bankCards){
+						BankCardBo bo = new BankCardBo();
+						BeanUtils.copyProperties(b, bo);
+						bo.setBranchBankId(b.getIssuer());
+						bo.setBranchBankName(b.getBranchname());
+						bo.setBankCode(b.getBankId());
+						bo.setBankCardId(b.getId());
+						if(EnumBankCardType.CREDIT_CARD.getCode().equals(b.getCardType()) &&
+								!StringUtils.isEmpty(b.getCvn2())){
+							try{
+								bo.setCvn2(Cryptos.aesDecrypt(b.getCvn2()));
+							}catch(Exception e){
+								LOGGER.error("银行卡CVN2解密异常", e);
+							}
+						}
+						if(EnumBankCardType.CREDIT_CARD.getCode().equals(b.getCardType()) &&
+								!StringUtils.isEmpty(b.getValidDate())){
+							try{
+								bo.setValidDate(Cryptos.aesDecrypt(b.getValidDate()));
+							}catch(Exception e){
+								LOGGER.error("银行卡validDate解密异常", e);
+							}
+						}
+						list.add(bo);
+					}
+					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(), list);
+				}else{
+					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(),"用户未绑定银行卡", null);
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户银行卡", e);
+				result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<BankCardBo> findBankCardById(String bankCardId) {
+		MemberCommonResult<BankCardBo> result = null;
+		if(StringUtils.isEmpty(bankCardId)){
+			LOGGER.info("银行卡ID不能为空");
+			result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.ERROR.getCode(),"银行卡ID不能为空",null);
+		}else{
+			try {
+				UcfBankCard bankCard = bankCardService.queryUserBankInfoById(bankCardId);
+				if(bankCard!=null){
+					BankCardBo bankCardBo = new BankCardBo();
+					BeanUtils.copyProperties(bankCard, bankCardBo);
+					bankCardBo.setBranchBankId(bankCard.getIssuer());
+					bankCardBo.setBranchBankName(bankCard.getBranchname());
+					bankCardBo.setBankCode(bankCard.getBankId());
+					bankCardBo.setBankCardId(bankCard.getId());
+					if(EnumBankCardType.CREDIT_CARD.getCode().equals(bankCard.getCardType()) &&
+							!StringUtils.isEmpty(bankCard.getCvn2())){
+						try{
+							bankCardBo.setCvn2(Cryptos.aesDecrypt(bankCard.getCvn2()));
+						}catch(Exception e){
+							LOGGER.error("银行卡CVN2解密异常", e);
+						}
+					}
+					if(EnumBankCardType.CREDIT_CARD.getCode().equals(bankCard.getCardType()) &&
+							!StringUtils.isEmpty(bankCard.getValidDate())){
+						try{
+							bankCardBo.setValidDate(Cryptos.aesDecrypt(bankCard.getValidDate()));
+						}catch(Exception e){
+							LOGGER.error("银行卡validDate解密异常", e);
+						}
+					}
+					result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.SUCCESS.getCode(), bankCardBo);
+				}else{
+					result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.SUCCESS.getCode(),"未找到该银行卡", null);
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询用户银行卡", e);
+				result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+			}
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> registerGZBUser(MemberRegisterBO userBo) {
+		LOGGER.info("工资宝注册开户入参:"+JSON.toJSONString(userBo));
+		UcfUser u = userInfoService.isExistsMerchantUser(userBo.getMerchantId(),userBo.getRefUserId());
+		if(u != null){
+			return new MemberCommonResult<String>(EnumRespStatusCode.EXIST_USER.getCode(),EnumRespStatusCode.EXIST_USER.getMsg(),u.getUserId());
+		}
+		MemberCommonResult<String>  result = null;
+		try {
+			final String userId = userService.queryUcfUserId();
+			//保存用户信息
+			final UcfUser user = new UcfUser();
+			user.setRefMerchant(userBo.getMerchantId());
+			user.setUserId(userId);
+			user.setRealName(userBo.getName());
+			user.setCertType(userBo.getCertType());
+			user.setCertNo(userBo.getCertNo());
+			user.setCell(userBo.getPhone());
+			user.setEmail(userBo.getEmail());
+			user.setRefUser(userBo.getRefUserId());
+			user.setUserType(BigDecimal.valueOf(Integer.parseInt(EnumUserType.PERSON.getCode())));
+			user.setRealnameStatus(EnumRealnameStatus.REALNAMED.getCode());
+			user.setEnabledStatus(EnumUserEnabledStatus.T.getCode());
+			user.setVerifyStatus(EnumVerifyLevle.SENIOR.getCode());//高级实名认证级别
+			//保存账户信息
+			final UcfCard card = new UcfCard();
+			card.setCardNo(userId);
+			card.setUserId(userId);
+			card.setCardType(EnumsUserCardType.PERSON_CARD.getCode());
+			card.setRegisterFrom(EnumRegisterFrom.GZB_FROM.getCode());
+			card.setCertFrom(EnumRegisterFrom.MANAGED_FROM.getCode());
+			//默认传 线下转账认证 TRANSFER_CERT
+			card.setCertStatus(userBo.getCertStatus());
+			//保存银行卡信息
+			final UcfBankCard bankCard = new UcfBankCard();
+			StringBuffer id = new StringBuffer();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			StringBuffer buf = id.append(sdf.format(new Date()));
+			StringBuffer seq = buf.append(bankCardService.getBankCardSeq());
+			bankCard.setId(seq.toString());
+			bankCard.setUserId(userId);
+			bankCard.setCardNo(userBo.getBankCardNo());
+			bankCard.setCardType(userBo.getBankCardType());
+			bankCard.setBankId(userBo.getBankCode());
+			bankCard.setBankName(userBo.getBankName());
+			bankCard.setProvince(userBo.getProvince());
+			bankCard.setCity(userBo.getCity());
+			bankCard.setBranchname(userBo.getBranchName());
+			bankCard.setIssuer(userBo.getBranchId());
+			bankCard.setUnionSeq(bankCardService.getUnionSeq());
+			bankCard.setIsPay("Y");
+			bankCard.setIsWithdraw("Y");
+			//add by gaoxiang 工资宝注册开户 使用类型为消费卡
+			bankCard.setUseType(EnumBankCardUseType.CONSUME.getCode());
+			bankCard.setCertStatus(userBo.getCertStatus());
+			//保存客户信息
+			final UcfCustomer customer = new UcfCustomer();
+			customer.setCertNo(userBo.getCertNo());
+			customer.setCertType(EnumCertType.ID_CARD.getCode());
+			customer.setName(userBo.getName());
+			customer.setCardNo(userBo.getBankCardNo());
+			customer.setOpenStatus(Constants.OPEN_STATUS_YES);
+			customer.setCertStatus(Constants.VERIFY_STATUS_T);
+			customer.setNational("CHA");
+			customer.setType(Constants.CUSTOMER_TYPE_PERSON);
+			customer.setEnableStatus(Constants.ENABLE_STATUS_T);
+			customer.setGmtCreate(new Date());
+			customer.setExtFlag(Constants.EXT_FLAG_T);
+			//账务开户
+			ResultBo rsBo = accountService.createAcccount(card.getCardNo(), EnumsUserCardType.PERSON_CARD.getAccountCode());
+			LOGGER.info(JSON.toJSONString(rsBo));
+			if (EnumResultCode.SUCCESS.getCode().equals(rsBo.getResult())) {
+				card.setAccountId(rsBo.getResultObject().toString());
+			}else{
+				result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"帐务开户失败","");
+				return result;
+			}
+			boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						// 保存用户信息
+						userService.insertUserInfo(user);
+						
+						bankCardService.insertUcfBankCard(bankCard);
+						// 判断customer表是否存在记录
+						UcfCustomer anotherCustomer = new UcfCustomer();
+						anotherCustomer.setCertNo(customer.getCertNo());
+						anotherCustomer = loginService.queryUcfCustomerInfo(anotherCustomer);
+						if (anotherCustomer == null) {
+							loginService.insertCustomer(customer);
+							anotherCustomer = new UcfCustomer();
+							anotherCustomer.setCertNo(customer.getCertNo());
+							anotherCustomer = loginService.queryUcfCustomerInfo(anotherCustomer);
+							//保存个人信息
+							final UcfPerson person = new UcfPerson();
+							person.setCustomerId(anotherCustomer.getCustomerId());
+							person.setRealName(anotherCustomer.getName());
+							person.setCell(user.getCell());
+							loginService.insertPersonInfo(person);
+						}
+						//add by gaoxiang 卡里保存客户id
+						card.setCustomerId(anotherCustomer.getCustomerId());
+						cardService.insertUcfCard(card);
+					} catch (final Exception e) {
+						status.setRollbackOnly();
+						LOGGER.error(e.getMessage(), e);
+						return false;
+					}
+					return true;
+				}
+			});
+			if(!commit){
+				result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"数据库操作异常","F");
+			}else{
+				result = new  MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
+			}
+		} catch (Exception e) {
+			 LOGGER.error(e.getMessage(),e);
+			 result =  new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> modifyUserPhone(PhoneModifyBo phoneModifyBo) {
+		LOGGER.info("工资宝修改用户手机号码入参:"+JSON.toJSONString(phoneModifyBo));
+		try {
+			UcfUser ucfUser = userService.queryUserInfoById(phoneModifyBo.getUserId());
+			//用户不存在
+			if(ucfUser==null){
+				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+			}
+			//判断原手机号是否正确
+			if(!ucfUser.getCell().equals(phoneModifyBo.getOldPhone())){
+				return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"原手机号码错误","F");
+			}
+			//保存新手机号码
+			ucfUser.setCell(phoneModifyBo.getPhone());
+			loginService.updateUcfUser(ucfUser);
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户手机号码修改成功","S");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> modifyUserBankCard(BankCardModifyBo bankCardModifyBo) {
+		LOGGER.info("工资宝修改用户银行卡入参:"+JSON.toJSONString(bankCardModifyBo));
+		try {
+			UcfBankCard ucfBankCard = bankCardService.queryUserBankInfo(bankCardModifyBo.getUserId(), bankCardModifyBo.getOldBankCardNo());
+			//银行卡不存在不存在
+			if(ucfBankCard==null){
+				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_BANKCARD.getCode(),EnumRespStatusCode.NO_EXIST_BANKCARD.getMsg(),"F");
+			}
+			//修改银行卡信息
+			ucfBankCard.setCardNo(bankCardModifyBo.getBankCardNo());
+			ucfBankCard.setCardType(bankCardModifyBo.getBankCardType());
+			ucfBankCard.setBankId(bankCardModifyBo.getBankCode());
+			ucfBankCard.setBankName(bankCardModifyBo.getBankName());
+			ucfBankCard.setProvince(bankCardModifyBo.getProvince());
+			ucfBankCard.setCity(bankCardModifyBo.getCity());
+			ucfBankCard.setBranchname(bankCardModifyBo.getBranchName());
+			ucfBankCard.setIssuer(bankCardModifyBo.getBranchId());
+			bankCardService.updateUcfBankCard(ucfBankCard);
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户银行卡修改成功","S");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> setBankcardPayStatus(String bankcardId,String isPay) {
+		//如果银行卡id或者开关关 一键支付标记为空 则返回参数校验错误
+		if(StringUtils.isEmpty(bankcardId) || StringUtils.isEmpty(isPay)){
+			return new MemberCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"入参存在空值");
+		}else{
+			try {
+				UcfBankCard ucfBankCard = bankCardService.queryUserBankInfoById(bankcardId);
+				//银行卡不存在不存在
+				if(ucfBankCard==null){
+					return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_BANKCARD.getCode(),EnumRespStatusCode.NO_EXIST_BANKCARD.getMsg(),"F");
+				}
+				//开关一键支付
+				ucfBankCard.setIsPay(isPay);
+				bankCardService.updateUcfBankCard(ucfBankCard);
+				return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"修改一键支付功能成功","S");
+			} catch (Exception e) {
+				LOGGER.error(e.getMessage(),e);
+				return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+			}
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<UserInfoBo> findAnonymousUser() {
+		MemberCommonResult<UserInfoBo> rs;
+		try {
+			List<UcfUser> userList = userService.findAnonymousUser();
+			if(userList != null && userList.size()>0){
+				UserInfoBo userInfoBo = new UserInfoBo();
+				UcfUser ucfUser = userList.get(new Random().nextInt(userList.size()));
+				BeanUtilEx.copyProperties(userInfoBo, ucfUser);
+				UcfCard card = cardService.queryCardInfo(ucfUser.getUserId());
+				if(!StringUtils.isEmpty(card.getPaymentPassword())){
+					userInfoBo.setSetPayPwd(true);
+				}else{
+					userInfoBo.setSetPayPwd(false);
+				}
+				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+			}else{
+				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+			}
+		} catch (Exception e) {
+			LOGGER.error("查询匿名用户信息异常:",e);
+			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询匿名用户信息异常",null);
+		}
+		return rs;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<UserInfoBo> checkUserInfo(String merchantId, String phone) {
+		MemberCommonResult<UserInfoBo> rs;
+		try {
+			UcfUser user = userService.findUserInfoByCell(merchantId,phone);
+			if(user != null){
+				UserInfoBo userInfoBo = new UserInfoBo();
+				BeanUtilEx.copyProperties(userInfoBo, user);
+				UcfCard card = cardService.queryCardInfo(user.getUserId());
+				if(!StringUtils.isEmpty(card.getPaymentPassword())){
+					userInfoBo.setSetPayPwd(true);
+				}else{
+					userInfoBo.setSetPayPwd(false);
+				}
+				//发送短信验证码
+				BaseResultBO resultBo = this.sendVfyCodeSMS(phone);
+				//如果发送短信成功
+				if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getStatus())){
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+				}else{
+					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.MSG_SEND_ERROR.getCode(),EnumRespStatusCode.MSG_SEND_ERROR.getMsg(),null);
+				}
+			}else{
+				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+			}
+		} catch (Exception e) {
+			LOGGER.error("查询用户信息异常:",e);
+			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+		}
+		return rs;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> checkUserSms(String userId, String code) {
+		MemberCommonResult<String> rs;
+		try {
+			UcfUser ucfUser = userService.queryUserInfoById(userId);
+			if(ucfUser == null){
+				rs = new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+			}else{
+				ResultBo resultBo = smsService.checkVfyCode(null,ucfUser.getCell(), code);
+				rs = new MemberCommonResult<String>(resultBo.getResult(),resultBo.getMsg(),"");
+			}
+		} catch (Exception e) {
+			LOGGER.error("校验验证码会员系统异常:",e);
+			rs = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"校验验证码会员系统异常",null);
+		}
+		return rs;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<PageRs<UserInfoBo>> findUsersInfo(UserInfoBo userInfoBo) {
+		UcfUser user = new UcfUser();
+		try {
+			//设置分页信息
+			if(userInfoBo.getPageNo()==0){
+				userInfoBo.setPageNo(1);
+			}
+			if(userInfoBo.getPageSize()==0){
+				userInfoBo.setPageSize(1);
+			}
+			Page page = new Page();
+			page.setCurrentPage(userInfoBo.getPageNo());
+			page.setShowCount(userInfoBo.getPageSize());
+			
+			user.setUserId(userInfoBo.getUserId());
+			user.setRealName(userInfoBo.getRealName());
+			user.setCell(userInfoBo.getCell());
+			user.setCertNo(userInfoBo.getCertNo());
+			user.setPage(page);
+			List<UcfUser> list = userService.listPageUcfUser(user);
+			List<UserInfoBo> arrayList = new ArrayList<UserInfoBo>();
+			for(UcfUser ucfUser:list){
+				UserInfoBo userInfo = new UserInfoBo();
+				BeanUtilEx.copyProperties(userInfo, ucfUser);
+				arrayList.add(userInfo);
+			}
+			//返回结果
+			PageRs<UserInfoBo> pageRs = new PageRs<UserInfoBo>();
+			pageRs.setPageList(arrayList);
+			pageRs.setCount(user.getPage().getTotalResult());
+			pageRs.setPageNo(user.getPage().getCurrentPage());
+			pageRs.setPageSize(user.getPage().getShowCount());
+			return new MemberCommonResult<PageRs<UserInfoBo>>(EnumRespStatusCode.SUCCESS.getCode(),"查询成功",pageRs);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return new MemberCommonResult<PageRs<UserInfoBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> refreshUserCache(String userId) {
+		if(StringUtils.isEmpty(userId)){
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空","F");
+		}
+		try{
+			//刷新用户缓存
+			userService.refreshUserInfo(userId);
+			cardService.refreshCardInfo(userId);
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"刷新用户缓存成功",null);
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> modifyUserInfo(UserInfoBo userInfoBo) {
+		LOGGER.info("修改用户信息入参:"+JSON.toJSONString(userInfoBo));
+		if(StringUtils.isEmpty(userInfoBo.getUserId())){
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空","F");
+		}
+		try {
+			UcfUser ucfUser = userService.queryUserInfoById(userInfoBo.getUserId());
+			//用户不存在
+			if(ucfUser==null){
+				LOGGER.info("用户["+userInfoBo.getUserId()+"]不存在！");
+				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+			}
+			//保存新名字
+			if(!StringUtils.isEmpty(userInfoBo.getRealName())){
+				ucfUser.setRealName(userInfoBo.getRealName());
+				UcfCustomer ucfCustomer = customerDao.getUcfCustomerById(userInfoBo.getUserId());
+				//如果存在客户信息
+				if(ucfCustomer!=null){
+					ucfCustomer.setName(userInfoBo.getRealName());
+					customerDao.updateUcfCustomer(ucfCustomer);
+					//如果存在person信息则修复
+					UcfPerson ucfPerson = new UcfPerson();
+					ucfPerson.setCustomerId(ucfCustomer.getCustomerId());
+					List<UcfPerson> list = personDao.queryUcfPersonListByWhere(ucfPerson);
+					if(list!=null && list.size()>0){
+						UcfPerson person = list.get(0);
+						person.setRealName(userInfoBo.getRealName());
+						personDao.updateUcfPerson(person);
+					}
+				}
+			}
+			//修改手机号
+			ucfUser.setCell(userInfoBo.getCell());
+			//修改商户状态
+			ucfUser.setEnabledStatus(userInfoBo.getEnabledStatus());
+			loginService.updateUcfUser(ucfUser);
+			LOGGER.info("用户["+userInfoBo.getUserId()+"]信息修改成功!");
+			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户姓名修改成功","S");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+		}
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> registerP2PUser(MemberRegisterBO memberBo) {
+		MemberCommonResult<String>  result = null;
+		// 此时生成用户信息
+		try {
+			boolean isMobile = CheckMailOrPhone.isMobileNO(memberBo.getPhone());
+			final UcfUser ucfUser = new UcfUser();
+			if (isMobile) {
+				ucfUser.setCell(memberBo.getPhone());
+			}
+			ucfUser.setRefMerchant(memberBo.getMerchantId());
+			List<UcfUser> list = userRegService.queryUserInfo(ucfUser);
+			if (null != list && list.size() > 0) {
+				for (UcfUser user : list) {
+					if (user.getRealName().equals(memberBo.getName())&&user.getCertNo().equals(memberBo.getCertNo())) {
+						result = new  MemberCommonResult<String>(EnumMemberCode.EXIST_USER.getCode(),EnumMemberCode.EXIST_USER.getMsgS(),user.getUserId());
+					} else {
+						result = new  MemberCommonResult<String>(EnumMemberCode.EXIST_MOBLEPHOE.getCode(),EnumMemberCode.EXIST_MOBLEPHOE.getMsgS(),"");
+					}
+					return result;
+				}
+			}
+			final String userId = userService.queryUcfUserId();
+			ucfUser.setUserId(userId);
+			ucfUser.setCell(memberBo.getPhone());
+			ucfUser.setEmail(memberBo.getEmail());
+			ucfUser.setRealName(memberBo.getName());
+			ucfUser.setRefMerchant(memberBo.getMerchantId());
+			ucfUser.setRefUser(memberBo.getRefUserId());
+			ucfUser.setCertType(memberBo.getCertType());
+			ucfUser.setCertNo(memberBo.getCertNo());
+			ucfUser.setUserType(new BigDecimal(1));
+			ucfUser.setRealnameStatus(EnumRealnameStatus.NOT_REALNAMED.getCode());//未认证
+			ucfUser.setEnabledStatus(EnumUserEnabledStatus.T.getCode());
+			ucfUser.setVerifyStatus(EnumVerifyLevle.REGISTER.getCode());//注册实名认证级别
+			ucfUser.setLoginId(memberBo.getPhone());
+			final UcfCard card = new UcfCard();
+			card.setCardNo(userId);
+			card.setUserId(userId);
+			card.setCardType(EnumsUserCardType.PERSON_CARD.getCode());
+			card.setRegisterFrom(EnumRegisterFrom.P2P_FROM.getCode());
+			card.setCertFrom(memberBo.getSource());
+			//用户属于未认证状态
+			card.setCertStatus(EnumCertStatus.NO_CERT.getCode());
+			//保存银行卡信息
+			final UcfBankCard bankCard = new UcfBankCard();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			StringBuffer bankCardId = new StringBuffer();
+			bankCardId.append(sdf.format(new Date()));
+			bankCardId.append(bankCardService.getBankCardSeq());
+			bankCard.setId(bankCardId.toString());
+			bankCard.setUserId(ucfUser.getUserId());
+			bankCard.setCardNo(memberBo.getBankCardNo());// 银行卡号
+			bankCard.setBankId(memberBo.getBankCode());
+			bankCard.setBankName(memberBo.getBankName());
+			bankCard.setCardType(memberBo.getBankCardType());
+			bankCard.setProvince(memberBo.getProvince());
+			bankCard.setCity(memberBo.getCity());
+			bankCard.setBranchname(memberBo.getBranchName());
+			bankCard.setIssuer(memberBo.getBranchId());
+			bankCard.setPhone(memberBo.getPhone());
+			bankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+			bankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+			bankCard.setUnionSeq(0);
+			bankCard.setIsPay("Y");
+			bankCard.setIsWithdraw("Y");
+			bankCard.setUseType(EnumBankCardUseType.FINANCIAL.getCode());
+			
+			boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						ResultBo rsBo = accountService.createAcccount(card.getCardNo(), EnumsUserCardType.PERSON_CARD.getAccountCode());
+						LOGGER.info(SensitiveInfoUtils.getJson(rsBo));
+						if (EnumResultCode.SUCCESS.getCode().equals(rsBo.getResult())) {
+							card.setAccountId(rsBo.getResultObject().toString());
+						}else{
+							throw new Exception("账务开户异常");
+						}
+						// 保存用户信息
+						userService.insertUserInfo(ucfUser);
+						cardService.insertUcfCard(card);
+						bankCardService.insertUcfBankCard(bankCard);
+					} catch (final Exception e) {
+						status.setRollbackOnly();
+						LOGGER.error(e.getMessage(), e);
+						return false;
+					}
+					return true;
+				}
+			});
+			if(!commit){
+				result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"事物执行异常","");
+			}else{
+				result = new  MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			result =  new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<Boolean> isBankCardBound(String merchantId,String userId, String bankCardNo) {
+		MemberCommonResult<Boolean> result;
+		try {
+			Map<String,String> map = new HashMap<String,String>();
+			map.put("merchantId", merchantId);
+			map.put("bankCardNo", bankCardNo);
+			map.put("userId", userId);
+			List<UcfBankCard> list = bankCardService.isBankCardBound(map);
+			if(list!=null && list.size()>0){
+				result = new MemberCommonResult<Boolean>(EnumRespStatusCode.SUCCESS.getCode(),"已绑定银行卡",true);
+			}else{
+				result = new MemberCommonResult<Boolean>(EnumRespStatusCode.SUCCESS.getCode(),"未绑定银行卡",false);
+			}
+		} catch (Exception e) {
+			LOGGER.error("校验银行卡是否绑定系统异常:",e);
+			result = new MemberCommonResult<Boolean>(EnumRespStatusCode.ERROR.getCode(),"系统异常",false);
+		}
+		return result;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberCommonResult<String> sendTemplateSMS(String merchantId, String phoneNumber,String template) {
+		MemberCommonResult<String> rs;
+		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(phoneNumber)) {
+			rs = new MemberCommonResult<String>(EnumMemberCode.PARAM_ERROR.getCode(),EnumMemberCode.PARAM_ERROR.getMsgS(),null);
+			return rs;
+		}
+		//如果未传递template参数  则默认会员的短信模板
+		template = StringUtils.isEmpty(template)? EnumSMSTemplate.MemberVfyCode.getContent() : template;
+		try {
+			ResultBo resultBo = smsService.sendVfyCodeSMS(merchantId,phoneNumber, template);
+			if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
+				rs = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"发送成功",resultBo.getResultObject().toString());
+			}else{
+				rs = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),resultBo.getMsg(),null);
+			}
+		} catch (Exception e) {
+			LOGGER.error("发送模板短信失败",e);
+			rs = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"会员系统异常",null);
+		}
+		return rs;
+	}
+}

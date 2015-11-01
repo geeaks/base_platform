@@ -1,0 +1,254 @@
+package com.ucf.customer.test;
+
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import com.ucf.customer.mq.MemberMQConsumerService;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = { "classpath:/spring/applicationContext.xml",
+		"classpath*:/spring-mvc.xml",
+		"classpath*:/com/ucf/framework/rocketmq/config/spring/framework-rocketmq-context.xml"})
+public class MemberMQConsumerServiceTest {
+     
+private static final UcfLogger logger = UcfLoggerFactory.getLogger(MemberMQConsumerService.class);
+	
+//	@Resource(name = "rocketMQMsgService")
+//	private RocketMQMsgService msgService;
+//	
+//	@Autowired
+//	private UserService userService;
+//	
+//	@Autowired
+//	private LoginService loginService;
+//	
+//	@Autowired
+//	private CardService cardService;
+//	
+//	@Autowired
+//	private RealAuthService realAuthService;
+//	
+//	@Autowired
+//	private BankCardService bankCardService;
+//	
+//	@Autowired
+//	private UcfBankCardDao ucfBankCardDao;
+//	
+//	@Resource(name = "sharedTransactionTemplate")
+//	private TransactionTemplate transactionTemplate;
+//	
+//	@Test
+//	public void test(){
+//		Map<Object,Object> MqReturnMap =new HashMap<Object,Object>();
+//		MqReturnMap.put("operationFlag", "1");
+//		MqReturnMap.put("userId", "10000003801");
+//		MqReturnMap.put("userName", "李文静");
+//		MqReturnMap.put("bankAccountNo", "621226020003837974");
+//		MqReturnMap.put("certNo", "330322198902042435");
+//		MqReturnMap.put("bankCode", "ICBC");
+//		MqReturnMap.put("bankName", "工商银行");
+//		MqReturnMap.put("mobileNo", "13757162414");
+//		MqReturnMap.put("province", "北京");
+//		MqReturnMap.put("city", "北京是");
+//		MqReturnMap.put("issuer", "102333328228");
+//		MqReturnMap.put("branchName", "中国工商银行温州乐清柳市支行");
+//		
+//		String operationFlag = (String)MqReturnMap.get("operationFlag");//操作标准 
+//		String userId = (String)MqReturnMap.get("userId");
+//		final String userName = (String)MqReturnMap.get("userName");
+//		String bankAccountNo = (String)MqReturnMap.get("bankAccountNo");//银行卡号
+//		final String certNo = (String)MqReturnMap.get("certNo");
+//		String bankCode = (String)MqReturnMap.get("bankCode");
+//		String bankName = (String)MqReturnMap.get("bankName");
+//		final String mobileNo = (String)MqReturnMap.get("mobileNo");
+//		String province = (String)MqReturnMap.get("province");
+//		String city = (String)MqReturnMap.get("city");
+//		String issuer = (String)MqReturnMap.get("issuer");
+//		String branchName = (String)MqReturnMap.get("branchName");
+//
+//		UcfBankCard queryUcfBankCard = new UcfBankCard();
+//		queryUcfBankCard.setCardNo(bankAccountNo);//银行卡号
+//		if("0".equals(operationFlag)){//绑卡
+//			try {
+//				List<UcfBankCard> ucfBankCardList = bankCardService.queryUcfBankCard(queryUcfBankCard);
+//				if(ucfBankCardList.size()==0){//卡不存在
+//					Date date = new Date();
+//					final UcfCustomer customer = new UcfCustomer();
+//					customer.setCertNo(certNo);
+//					customer.setCertType(Constants.ID_CARD);
+//					customer.setName(userName);
+//					customer.setCardNo(bankAccountNo.replace(" ", ""));//银行卡号
+//					customer.setOpenStatus(Constants.OPEN_STATUS_YES);
+//					customer.setCertStatus(Constants.VERIFY_STATUS_T);
+//					customer.setNational("CHA");
+//					customer.setType(Constants.CUSTOMER_TYPE_PERSON);
+//					customer.setEnableStatus(Constants.ENABLE_STATUS_T);
+//					customer.setGmtCreate(date);
+//					customer.setExtFlag(Constants.EXT_FLAG_T);
+//					
+//					final UcfUser ucfUser = userService.queryUserInfoById(userId);
+//					
+//					final UcfBankCard insertBankCard = new UcfBankCard();
+//					SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//					StringBuffer bankCardId = new StringBuffer();
+//					bankCardId.append(sdf.format(new Date()));
+//					bankCardId.append(ucfBankCardDao.getBankCardSeq());
+//					insertBankCard.setId(bankCardId.toString());
+//					insertBankCard.setUserId(userId);
+//					insertBankCard.setBankId(bankCode);
+//					insertBankCard.setBankName(bankName);
+//					insertBankCard.setProvince(province);
+//					insertBankCard.setCity(city);
+//					insertBankCard.setIssuer(issuer);
+//					insertBankCard.setCardNo(bankAccountNo.replace(" ", ""));//银行卡号
+//					insertBankCard.setCardType(Constants.DEBIT_CARD);
+//					insertBankCard.setBranchname(branchName);
+//					insertBankCard.setCertStatus(Constants.CERT_STATUS_WITHGRAW_INIT);
+//					insertBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+//					final UcfCard ucfCard = this.loginService.queryUcfCardByUserId(userId);
+//					
+//					if(!"".equals(ucfCard.getCertFrom()) && ucfCard.getCertFrom()==null){
+//						ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());
+//					}
+//					if(StringUtils.isEmpty(ucfCard.getCertStatus())){
+//						ucfCard.setCertStatus(EnumCertStatus.WIH_CERT.getCode());
+//					}else{
+//						if(ucfCard.getCertStatus().indexOf(EnumCertStatus.WIH_CERT.getCode())==-1){
+//							ucfCard.setCertStatus(ucfCard.getCertStatus()+";"+EnumCertStatus.WIH_CERT.getCode());
+//						}
+//					}
+//					
+//					if("T".equals(ucfUser.getRealnameStatus())){//以实名认证
+//						
+//						boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
+//							public Object doInTransaction(final TransactionStatus status) {
+//								try {
+//									loginService.insertBankCardInfo(insertBankCard);
+//									// 判断customer表是否存在记录
+//									UcfCustomer anotherCustomer = new UcfCustomer();
+//									anotherCustomer.setCertNo(customer.getCertNo());
+//									anotherCustomer = loginService.queryUcfCustomerInfo(anotherCustomer);
+//									if (anotherCustomer == null) {
+//										loginService.insertCustomer(customer);
+//										anotherCustomer = new UcfCustomer();
+//										anotherCustomer.setCertNo(customer.getCertNo());
+//										anotherCustomer = loginService.queryUcfCustomerInfo(anotherCustomer);
+//									}
+//									
+//									ucfCard.setCustomerId(anotherCustomer.getCustomerId());
+//									cardService.updateUcfCard(ucfCard);
+//									
+//									//添加银行卡
+//									final UcfPerson person = new UcfPerson();
+//									person.setCustomerId(anotherCustomer.getCustomerId());
+//									person.setRealName(userName);
+//									person.setCell(mobileNo);
+//									loginService.insertPersonInfo(person);
+//								} catch (final Exception e) {
+//									status.setRollbackOnly();
+//									logger.error(e.getMessage(), e);
+//									return false;
+//								}
+//								return true;
+//							}
+//						});
+//						if(commit){
+//							logger.info("-----------绑卡失败失败：" + JSON.toJSONString(insertBankCard));
+//						}
+//					}else{//未实名认证
+//						
+//						RealAuthBO bo = new RealAuthBO();
+//						bo.setBankId(bankCode);
+//						bo.setBankName(bankName);
+//						bo.setBranchName(branchName);
+//						bo.setCardType(Constants.DEBIT_CARD);// jiejika 1 daijika 2
+//						bo.setCertNo(certNo);
+//						bo.setCity(city);
+//						bo.setProvince(province);
+//						bo.setUserName(userName);
+//						bo.setIssuer(issuer);
+//						boolean flag = false;
+//						logger.info("-----------实名认证开始");
+//						flag = realAuthService.realAuth(userId, null, bo);
+//						logger.info("-----------实名认证结束" + flag);
+//						if(flag){//实名认证成功
+//							boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
+//								public Object doInTransaction(final TransactionStatus status) {
+//									try {
+//										// 判断customer表是否存在记录
+//										UcfCustomer anotherCustomer = new UcfCustomer();
+//										anotherCustomer.setCertNo(customer.getCertNo());
+//										anotherCustomer = loginService.queryUcfCustomerInfo(anotherCustomer);
+//										if (anotherCustomer == null) {
+//											loginService.insertCustomer(customer);
+//											anotherCustomer = new UcfCustomer();
+//											anotherCustomer.setCertNo(customer.getCertNo());
+//											anotherCustomer = loginService.queryUcfCustomerInfo(anotherCustomer);
+//										}
+//										//插入Ucf_Person表
+//										final UcfPerson person = new UcfPerson();
+//										person.setCustomerId(anotherCustomer.getCustomerId());
+//										person.setRealName(userName);
+//										person.setCell(mobileNo);
+//										loginService.insertPersonInfo(person);
+//										//更新Ucf_Card表
+//										ucfCard.setCustomerId(anotherCustomer.getCustomerId());
+//										loginService.updateUcfCard(ucfCard);
+//		
+//										loginService.insertBankCardInfo(insertBankCard);
+//		
+//										ucfUser.setRealName(userName);
+//										ucfUser.setCertNo(certNo);
+//										ucfUser.setRealnameStatus(Constants.VERIFY_STATUS_T);
+//										loginService.updateUcfUser(ucfUser);
+//									} catch (final Exception e) {
+//										status.setRollbackOnly();
+//										logger.error(e.getMessage(), e);
+//										return false;
+//									}
+//									return true;
+//								}
+//							});
+//							if(commit){
+//								logger.info("-----------绑卡失败失败：" + JSON.toJSONString(insertBankCard));
+//							}
+//						}else{
+//							logger.info("-----------实名认证失败：" + JSON.toJSONString(bo));
+//						}
+//					}
+//				}else{
+//					logger.info("-----------卡信息已存在不允许重复绑卡：" + JSON.toJSONString(ucfBankCardList));
+//				}
+//			} catch (Exception e) {
+//				logger.error(e.getMessage(), e);
+//				logger.info("-----------绑卡时系统错误：" + e.getMessage());
+//			}
+//		}else if("1".equals(operationFlag)){//修改银行卡
+//			try {
+//				List<UcfBankCard> ucfBankCardList = bankCardService.queryUcfBankCard(queryUcfBankCard);
+//				if(ucfBankCardList.size()>0){
+//					boolean updateFlag=false;
+//					UcfBankCard ucfBankCard = ucfBankCardList.get(0);
+//					if(ucfBankCard.getProvince()==null || "".equals(ucfBankCard.getProvince())){
+//						ucfBankCard.setProvince(province);
+//						updateFlag=true;
+//					}
+//					if(ucfBankCard.getCity()==null || "".equals(ucfBankCard.getCity())){
+//						ucfBankCard.setCity(city);
+//						updateFlag=true;
+//					}
+//					if(ucfBankCard.getIssuer()==null || "".equals(ucfBankCard.getIssuer())){
+//						ucfBankCard.setIssuer(issuer);
+//						updateFlag=true;
+//					}
+//					if(updateFlag){bankCardService.updateUcfBankCard(ucfBankCard);}
+//				}
+//			} catch (Exception e) {
+//				logger.info("-----------修改银行卡时系统错误：" + e.getMessage());
+//			}
+//		}
+//	}
+}

@@ -1,0 +1,518 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+<!-- insert UcfUser -->
+<insert id="insertUcfUser" parameterType="ucfUser" keyProperty="id" useGeneratedKeys="true">
+	<![CDATA[
+		INSERT INTO UCF_USER (
+	USER_ID,CARD_NO,REAL_NAME,GENDER,CERT_TYPE,CERT_NO,USER_TYPE,EMAIL,ZIP_CODE,CITY,PROVINCE,ADDRESS,PHONE,CELL,ENABLED_STATUS,GMT_LAST_MODIFIED,LAST_LOGIN_FAIL_DT_BAK,MEMO,FIRM_NAME,SECURITY_CODE,RETURN_URL,IS_SIGN_CUSTOMER,GMT_SIGN,GMT_CREATE,SUPPLY_STAGE,VERIFY_STATUS,CERT_VALID_BEGIN_DATE,CERT_VALID_END_DATE,COUNTRY,AREA,PROFESSION,REALNAME_STATUS,PIN_QUES,PIN_ANSW,LGN_PWD,FROZEN_STATE,LOGIN_ID,REF_USER,REF_MERCHANT
+		)VALUES(
+		#{userId,jdbcType=VARCHAR},#{cardNo,jdbcType=VARCHAR},#{realName,jdbcType=VARCHAR},#{gender,jdbcType=VARCHAR},#{certType,jdbcType=VARCHAR},#{certNo,jdbcType=VARCHAR},#{userType,jdbcType=NUMERIC},#{email,jdbcType=VARCHAR},#{zipCode,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{cell,jdbcType=VARCHAR},#{enabledStatus,jdbcType=VARCHAR},sysdate,#{lastLoginFailDtBak,jdbcType=TIMESTAMP},#{memo,jdbcType=VARCHAR},#{firmName,jdbcType=VARCHAR},#{securityCode,jdbcType=VARCHAR},#{returnUrl,jdbcType=VARCHAR},#{isSignCustomer,jdbcType=CHAR},sysdate,sysdate,#{supplyStage,jdbcType=CHAR},#{verifyStatus,jdbcType=CHAR},#{certValidBeginDate,jdbcType=TIMESTAMP},#{certValidEndDate,jdbcType=TIMESTAMP},#{country,jdbcType=VARCHAR},#{area,jdbcType=VARCHAR},#{profession,jdbcType=VARCHAR},#{realnameStatus,jdbcType=VARCHAR},#{pinQues,jdbcType=VARCHAR},#{pinAnsw,jdbcType=VARCHAR},#{lgnPwd,jdbcType=VARCHAR},#{frozenState,jdbcType=CHAR},#{loginId,jdbcType=VARCHAR},#{refUser,jdbcType=VARCHAR},#{refMerchant,jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<select id="getUcfUserId"  resultType="java.lang.String">
+	select UCF_USER_SEQ.nextval from dual
+</select>
+
+<select id="getEnterpriseMemberNO"  resultType="java.lang.String">
+	select UCF_ENTERPRISE_MERCHANT_SEQ.nextval from dual
+</select>
+
+<select id="monitorValidConnent"  resultType="java.lang.String">
+	select MONITOR_MEMBER_CONNENT_SEQ.nextval from dual
+</select>
+
+<select id="getUcfUserByUserId"  parameterType="java.lang.String" resultType="ucfUser" >
+<![CDATA[
+	SELECT 
+	USER_ID as userId,CARD_NO as cardNo,
+	REAL_NAME as realName,GENDER as gender,CERT_TYPE as certType,
+	CERT_NO as certNo,USER_TYPE as userType,EMAIL as email,ZIP_CODE as zipCode,
+	CITY as city,PROVINCE as province,ADDRESS as address,PHONE as phone,CELL as cell,
+	ENABLED_STATUS as enabledStatus,GMT_LAST_MODIFIED as gmtLastModified,
+	LAST_LOGIN_FAIL_DT_BAK as lastLoginFailDtBak,MEMO as memo,FIRM_NAME as firmName,
+	SECURITY_CODE as securityCode,RETURN_URL as returnUrl,
+	IS_SIGN_CUSTOMER as isSignCustomer,GMT_SIGN as gmtSign,GMT_CREATE as gmtCreate,
+	SUPPLY_STAGE as supplyStage,VERIFY_STATUS as verifyStatus,
+	CERT_VALID_BEGIN_DATE as certValidBeginDate,CERT_VALID_END_DATE as certValidEndDate,
+	COUNTRY as country,AREA as area,PROFESSION as profession,REALNAME_STATUS as realnameStatus,
+	PIN_QUES as pinQues,PIN_ANSW as pinAnsw,LGN_PWD as lgnPwd,FROZEN_STATE as frozenState,
+	LOGIN_ID as loginId,REF_USER as refUser,REF_MERCHANT as refMerchant,AMOUNT as amount
+	FROM UCF_USER WHERE USER_ID = #{userId,jdbcType=VARCHAR}
+]]>
+</select>
+
+<!-- update UcfUser -->
+<update id="updateUcfUser" parameterType="ucfUser">
+	<![CDATA[
+		UPDATE 
+		UCF_USER 
+		SET 
+		 USER_ID=USER_ID
+	]]>
+			<if test="null != cardNo">
+	<![CDATA[
+,CARD_NO = #{cardNo}
+	]]>
+	</if>
+	<if test="null != realName">
+	<![CDATA[
+,REAL_NAME = #{realName}
+	]]>
+	</if>
+	<if test="null != gender">
+	<![CDATA[
+,GENDER = #{gender}
+	]]>
+	</if>
+	<if test="null != certType">
+	<![CDATA[
+,CERT_TYPE = #{certType}
+	]]>
+	</if>
+	<if test="null != certNo">
+	<![CDATA[
+,CERT_NO = #{certNo}
+	]]>
+	</if>
+	<if test="null != userType">
+	<![CDATA[
+,USER_TYPE = #{userType}
+	]]>
+	</if>
+	<if test="null != email">
+	<![CDATA[
+,EMAIL = #{email}
+	]]>
+	</if>
+	<if test="null != zipCode">
+	<![CDATA[
+,ZIP_CODE = #{zipCode}
+	]]>
+	</if>
+	<if test="null != city">
+	<![CDATA[
+,CITY = #{city}
+	]]>
+	</if>
+	<if test="null != province">
+	<![CDATA[
+,PROVINCE = #{province}
+	]]>
+	</if>
+	<if test="null != address">
+	<![CDATA[
+,ADDRESS = #{address}
+	]]>
+	</if>
+	<if test="null != phone">
+	<![CDATA[
+,PHONE = #{phone}
+	]]>
+	</if>
+	<if test="null != cell">
+	<![CDATA[
+,CELL = #{cell}
+	]]>
+	</if>
+	<if test="null != enabledStatus">
+	<![CDATA[
+,ENABLED_STATUS = #{enabledStatus}
+	]]>
+	</if>
+	<if test="null != gmtLastModified">
+	<![CDATA[
+,GMT_LAST_MODIFIED = sysdate
+	]]>
+	</if>
+	<if test="null != lastLoginFailDtBak">
+	<![CDATA[
+,LAST_LOGIN_FAIL_DT_BAK = #{lastLoginFailDtBak}
+	]]>
+	</if>
+	<if test="null != memo">
+	<![CDATA[
+,MEMO = #{memo}
+	]]>
+	</if>
+	<if test="null != firmName">
+	<![CDATA[
+,FIRM_NAME = #{firmName}
+	]]>
+	</if>
+	<if test="null != securityCode">
+	<![CDATA[
+,SECURITY_CODE = #{securityCode}
+	]]>
+	</if>
+	<if test="null != returnUrl">
+	<![CDATA[
+,RETURN_URL = #{returnUrl}
+	]]>
+	</if>
+	<if test="null != isSignCustomer">
+	<![CDATA[
+,IS_SIGN_CUSTOMER = #{isSignCustomer}
+	]]>
+	</if>
+	<if test="null != gmtSign">
+	<![CDATA[
+,GMT_SIGN = #{gmtSign}
+	]]>
+	</if>
+	<if test="null != gmtCreate">
+	<![CDATA[
+,GMT_CREATE = #{gmtCreate}
+	]]>
+	</if>
+	<if test="null != supplyStage">
+	<![CDATA[
+,SUPPLY_STAGE = #{supplyStage}
+	]]>
+	</if>
+	<if test="null != verifyStatus">
+	<![CDATA[
+,VERIFY_STATUS = #{verifyStatus}
+	]]>
+	</if>
+	<if test="null != certValidBeginDate">
+	<![CDATA[
+,CERT_VALID_BEGIN_DATE = #{certValidBeginDate}
+	]]>
+	</if>
+	<if test="null != certValidEndDate">
+	<![CDATA[
+,CERT_VALID_END_DATE = #{certValidEndDate}
+	]]>
+	</if>
+	<if test="null != country">
+	<![CDATA[
+,COUNTRY = #{country}
+	]]>
+	</if>
+	<if test="null != area">
+	<![CDATA[
+,AREA = #{area}
+	]]>
+	</if>
+	<if test="null != profession">
+	<![CDATA[
+,PROFESSION = #{profession}
+	]]>
+	</if>
+	<if test="null != realnameStatus">
+	<![CDATA[
+,REALNAME_STATUS = #{realnameStatus}
+	]]>
+	</if>
+	<if test="null != pinQues">
+	<![CDATA[
+,PIN_QUES = #{pinQues}
+	]]>
+	</if>
+	<if test="null != pinAnsw">
+	<![CDATA[
+,PIN_ANSW = #{pinAnsw}
+	]]>
+	</if>
+	<if test="null != lgnPwd">
+	<![CDATA[
+,LGN_PWD = #{lgnPwd}
+	]]>
+	</if>
+	<if test="null != frozenState">
+	<![CDATA[
+,FROZEN_STATE = #{frozenState}
+	]]>
+	</if>
+	<if test="null != loginId">
+	<![CDATA[
+,LOGIN_ID = #{loginId}
+	]]>
+	</if>
+	<if test="null != refUser">
+	<![CDATA[
+,REF_USER = #{refUser}
+	]]>
+	</if>
+	<if test="null != refMerchant">
+	<![CDATA[
+,REF_MERCHANT = #{refMerchant}
+	]]>
+	</if>
+	<if test="null != amount">
+	<![CDATA[
+,AMOUNT = #{amount}
+	]]>
+	</if>	
+	<![CDATA[
+	WHERE  USER_ID = #{userId} 
+	]]>
+</update>
+
+<!-- delete UcfUser -->
+<delete id="deleteUcfUser" parameterType="string">
+	<![CDATA[
+		DELETE FROM UCF_USER WHERE id = #{id}
+	]]>
+</delete>
+
+<!-- select UcfUser -->
+<select id="queryUcfUserListByType" resultType="ucfUser" parameterType="string" >
+<![CDATA[
+SELECT 
+USER_ID as userId,CARD_NO as cardNo,REAL_NAME as realName,GENDER as gender,CERT_TYPE as certType,CERT_NO as certNo,USER_TYPE as userType,EMAIL as email,ZIP_CODE as zipCode,CITY as city,
+PROVINCE as province,ADDRESS as address,PHONE as phone,CELL as cell,ENABLED_STATUS as enabledStatus,GMT_LAST_MODIFIED as gmtLastModified,LAST_LOGIN_FAIL_DT_BAK as lastLoginFailDtBak,MEMO as memo,
+FIRM_NAME as firmName,SECURITY_CODE as securityCode,RETURN_URL as returnUrl,IS_SIGN_CUSTOMER as isSignCustomer,GMT_SIGN as gmtSign,GMT_CREATE as gmtCreate,SUPPLY_STAGE as supplyStage,
+VERIFY_STATUS as verifyStatus,CERT_VALID_BEGIN_DATE as certValidBeginDate,CERT_VALID_END_DATE as certValidEndDate,COUNTRY as country,AREA as area,PROFESSION as profession,REALNAME_STATUS as realnameStatus,
+PIN_QUES as pinQues,PIN_ANSW as pinAnsw,LGN_PWD as lgnPwd,FROZEN_STATE as frozenState,LOGIN_ID as loginId,REF_USER as refUser,REF_MERCHANT as refMerchant,AMOUNT as amount  FROM UCF_USER WHERE ROWNUM <= 10 
+AND USER_TYPE = #{userType}
+]]>
+</select>
+
+<select id="queryUcfUserByWhere" resultType="ucfUser" parameterType="ucfUser" >
+<![CDATA[
+SELECT 
+USER_ID as userId,CARD_NO as cardNo,REAL_NAME as realName,GENDER as gender,CERT_TYPE as certType,CERT_NO as certNo,USER_TYPE as userType,EMAIL as email,ZIP_CODE as zipCode,CITY as city,PROVINCE as province,ADDRESS as address,PHONE as phone,CELL as cell,ENABLED_STATUS as enabledStatus,GMT_LAST_MODIFIED as gmtLastModified,LAST_LOGIN_FAIL_DT_BAK as lastLoginFailDtBak,MEMO as memo,FIRM_NAME as firmName,SECURITY_CODE as securityCode,RETURN_URL as returnUrl,IS_SIGN_CUSTOMER as isSignCustomer,GMT_SIGN as gmtSign,GMT_CREATE as gmtCreate,SUPPLY_STAGE as supplyStage,VERIFY_STATUS as verifyStatus,CERT_VALID_BEGIN_DATE as certValidBeginDate,CERT_VALID_END_DATE as certValidEndDate,COUNTRY as country,AREA as area,PROFESSION as profession,REALNAME_STATUS as realnameStatus,PIN_QUES as pinQues,PIN_ANSW as pinAnsw,LGN_PWD as lgnPwd,FROZEN_STATE as frozenState,LOGIN_ID as loginId,REF_USER as refUser,REF_MERCHANT as refMerchant,AMOUNT as amount  FROM UCF_USER WHERE ROWNUM <= 10 
+]]>
+<include refid="whereClause"></include>
+</select>
+
+<select id="listPageUcfUser" resultType="ucfUser" parameterType="ucfUser" flushCache="true" >
+<![CDATA[
+SELECT 
+USER_ID as userId,CARD_NO as cardNo,REAL_NAME as realName,GENDER as gender,CERT_TYPE as certType,CERT_NO as certNo,
+USER_TYPE as userType,EMAIL as email,ZIP_CODE as zipCode,CITY as city,PROVINCE as province,ADDRESS as address,PHONE as phone,
+CELL as cell,ENABLED_STATUS as enabledStatus,GMT_LAST_MODIFIED as gmtLastModified,LAST_LOGIN_FAIL_DT_BAK as lastLoginFailDtBak,
+MEMO as memo,FIRM_NAME as firmName,SECURITY_CODE as securityCode,RETURN_URL as returnUrl,IS_SIGN_CUSTOMER as isSignCustomer,
+GMT_SIGN as gmtSign,GMT_CREATE as gmtCreate,SUPPLY_STAGE as supplyStage,VERIFY_STATUS as verifyStatus,
+CERT_VALID_BEGIN_DATE as certValidBeginDate,CERT_VALID_END_DATE as certValidEndDate,COUNTRY as country,AREA as area,
+PROFESSION as profession,REALNAME_STATUS as realnameStatus,PIN_QUES as pinQues,PIN_ANSW as pinAnsw,LGN_PWD as lgnPwd,
+FROZEN_STATE as frozenState,LOGIN_ID as loginId,REF_USER as refUser,REF_MERCHANT as refMerchant,AMOUNT as amount 
+FROM UCF_USER WHERE 1=1 
+]]>
+<include refid="whereClause"></include>
+ ORDER BY GMT_CREATE DESC
+</select>
+
+<select id="queryUcfUserCellByWhere" resultType="java.lang.String" parameterType="java.lang.String" >
+<![CDATA[
+SELECT 
+CELL as cell FROM UCF_USER WHERE ROWNUM <= 10 
+]]>
+<if test="null != userId and '' != userId">
+<![CDATA[
+AND USER_ID = #{userId}
+]]>
+</if>
+</select>
+
+<select id="listPageUserId" resultType="java.lang.String" parameterType="ucfUser" flushCache="true" >
+	<![CDATA[
+		SELECT USER_ID as userId FROM UCF_USER WHERE 1=1
+	]]>
+	<include refid="whereClause"></include>
+	 ORDER BY USER_ID DESC
+</select>
+	
+<!-- where条件 -->
+<sql id="whereClause">
+	<if test="null != userId and '' != userId">
+	<![CDATA[
+	AND USER_ID = #{userId} 
+	]]>
+	</if>
+	<if test="null != cardNo and '' != cardNo">
+	<![CDATA[
+	AND CARD_NO = #{cardNo} 
+	]]>
+	</if>
+	<if test="null != realName and '' != realName">
+	<![CDATA[
+	AND REAL_NAME = #{realName} 
+	]]>
+	</if>
+	<if test="null != gender and '' != gender">
+	<![CDATA[
+	AND GENDER = #{gender} 
+	]]>
+	</if>
+	<if test="null != certType and '' != certType">
+	<![CDATA[
+	AND CERT_TYPE = #{certType} 
+	]]>
+	</if>
+	<if test="null != certNo and '' != certNo">
+	<![CDATA[
+	AND CERT_NO = #{certNo} 
+	]]>
+	</if>
+	<if test="null != userType">
+	<![CDATA[
+	AND USER_TYPE = #{userType} 
+	]]>
+	</if>
+	<if test="null != email and '' != email">
+	<![CDATA[
+	AND EMAIL = #{email} 
+	]]>
+	</if>
+	<if test="null != zipCode and '' != zipCode">
+	<![CDATA[
+	AND ZIP_CODE = #{zipCode} 
+	]]>
+	</if>
+	<if test="null != city and '' != city">
+	<![CDATA[
+	AND CITY = #{city} 
+	]]>
+	</if>
+	<if test="null != province and '' != province">
+	<![CDATA[
+	AND PROVINCE = #{province} 
+	]]>
+	</if>
+	<if test="null != address and '' != address">
+	<![CDATA[
+	AND ADDRESS = #{address} 
+	]]>
+	</if>
+	<if test="null != phone and '' != phone">
+	<![CDATA[
+	AND PHONE = #{phone} 
+	]]>
+	</if>
+	<if test="null != cell and '' != cell">
+	<![CDATA[
+	AND CELL = #{cell} 
+	]]>
+	</if>
+	<if test="null != enabledStatus and '' != enabledStatus">
+	<![CDATA[
+	AND ENABLED_STATUS = #{enabledStatus} 
+	]]>
+	</if>
+	<if test="null != gmtLastModified">
+	<![CDATA[
+	AND GMT_LAST_MODIFIED = #{gmtLastModified} 
+	]]>
+	</if>
+	<if test="null != lastLoginFailDtBak">
+	<![CDATA[
+	AND LAST_LOGIN_FAIL_DT_BAK = #{lastLoginFailDtBak} 
+	]]>
+	</if>
+	<if test="null != memo and '' != memo">
+	<![CDATA[
+	AND MEMO = #{memo} 
+	]]>
+	</if>
+	<if test="null != firmName and '' != firmName">
+	<![CDATA[
+	AND FIRM_NAME = #{firmName} 
+	]]>
+	</if>
+	<if test="null != securityCode and '' != securityCode">
+	<![CDATA[
+	AND SECURITY_CODE = #{securityCode} 
+	]]>
+	</if>
+	<if test="null != returnUrl and '' != returnUrl">
+	<![CDATA[ 
+	AND RETURN_URL = #{returnUrl} 
+	]]> 
+	</if>
+	<if test="null != isSignCustomer and '' != isSignCustomer">
+	<![CDATA[
+	AND IS_SIGN_CUSTOMER = #{isSignCustomer} 
+	]]>
+	</if>
+	<if test="null != gmtSign">
+	<![CDATA[
+	AND GMT_SIGN = #{gmtSign} 
+	]]>
+	</if>
+	<if test="null != gmtCreate">
+	<![CDATA[
+	AND GMT_CREATE = #{gmtCreate} 
+	]]>
+	</if>
+	<if test="null != supplyStage and '' != supplyStage">
+	<![CDATA[
+	AND SUPPLY_STAGE = #{supplyStage} 
+	]]>
+	</if>
+	<if test="null != verifyStatus and '' != verifyStatus">
+	<![CDATA[
+	AND VERIFY_STATUS = #{verifyStatus} 
+	]]>
+	</if>
+	<if test="null != certValidBeginDate">
+	<![CDATA[
+	AND CERT_VALID_BEGIN_DATE = #{certValidBeginDate} 
+	]]>
+	</if>
+	<if test="null != certValidEndDate">
+	<![CDATA[
+	AND CERT_VALID_END_DATE = #{certValidEndDate} 
+	]]>
+	</if>
+	<if test="null != country and '' != country">
+	<![CDATA[
+	AND COUNTRY = #{country} 
+	]]>
+	</if>
+	<if test="null != area and '' != area">
+	<![CDATA[
+	AND AREA = #{area} 
+	]]>
+	</if>
+	<if test="null != profession and '' != profession">
+	<![CDATA[
+	AND PROFESSION = #{profession} 
+	]]>
+	</if>
+	<if test="null != realnameStatus and '' != realnameStatus">
+	<![CDATA[
+	AND REALNAME_STATUS = #{realnameStatus} 
+	]]>
+	</if>
+	<if test="null != pinQues and '' != pinQues">
+	<![CDATA[
+	AND PIN_QUES = #{pinQues} 
+	]]>
+	</if>
+	<if test="null != pinAnsw and '' != pinAnsw">
+	<![CDATA[
+	AND PIN_ANSW = #{pinAnsw} 
+	]]>
+	</if>
+	<if test="null != lgnPwd and '' != lgnPwd">
+	<![CDATA[
+	AND LGN_PWD = #{lgnPwd} 
+	]]>
+	</if>
+	<if test="null != frozenState and '' != frozenState">
+	<![CDATA[
+	AND FROZEN_STATE = #{frozenState} 
+	]]>
+	</if>
+	<if test="null != loginId and '' != loginId">
+	<![CDATA[
+	AND LOGIN_ID = #{loginId} 
+	]]>
+	</if>
+	<if test="null != refUser and '' != refUser">
+	<![CDATA[
+	AND REF_USER = #{refUser} 
+	]]>
+	</if>
+	<if test="null != refMerchant and '' != refMerchant">
+	<![CDATA[
+	AND REF_MERCHANT = #{refMerchant} 
+	]]>
+	</if>
+</sql>
+	
+</mapper>

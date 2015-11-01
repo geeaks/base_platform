@@ -1,0 +1,266 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+
+import com.ucf.customer.ws.enums.EnumFieldType;
+import com.ucf.customer.ws.enums.FieldAccess;
+import com.ucf.customer.ws.enums.FieldName;
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UserInfoBO extends BaseBO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1859848061528609314L;
+
+	/**
+	 * 
+	 */
+	@FieldName("会员id")
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String userId;
+
+	/**
+	 * 会员的真实姓名
+	 */
+	@FieldName("真实姓名")
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String userRealName;
+
+	/**
+	 * 会员的身份证号码
+	 */
+	@FieldName("身份证号码")
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String userCertNo;
+	
+	
+	/**
+	 * 会员的身份证号码
+	 */
+	@FieldName("证件类型")
+	private String userCertType;
+
+	/**
+	 * 商户号
+	 */
+	@FieldName("商户号")
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String merchantId;
+
+	/**
+	 * 卡号
+	 */
+	@FieldName("卡号")
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String cardNo;
+	/**
+	 * 银行编号
+	 */
+	@FieldName("银行编号")
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String bankCode;
+	/**
+	 * 银行名称
+	 */
+	@FieldName("银行名称")
+	private String bankName;
+	/**
+	 * 类型 参考 EnumBankCardType
+	 */
+	@FieldName("银行类型")
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String cardType;
+	
+	/**
+	 * 省
+	 */
+	@FieldName("省")
+	private String province;
+	/**
+	 * 市
+	 */
+	@FieldName("市")
+	private String city;
+	/**
+	 * 联行号
+	 */
+	@FieldName("联行号")
+	@SensitiveInfo(type=SensitiveType.CNAPS_CODE)
+	private String branchBankId;
+	/**
+	 * 联行号名称
+	 */
+	@FieldName("联行号名称")
+	private String branchBankName;
+	
+	
+	
+	/**
+	 * 用户类型 参考枚举 EnumUserType
+	 */
+	private String UserType;
+	
+	
+	
+	@FieldName("银行预留手机号")
+	/**
+	 * 手机号
+	 */
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String cell;
+	
+	/**
+	 * 是否审核过
+	 */
+	private boolean aduit = false;
+	
+	/**
+	 * 绑卡类型 P 预绑卡 ， O 正式绑卡 ， U 修改卡， W 提现银行卡
+	 */
+	private String type;
+
+	
+	
+	
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getUserCertType() {
+		return userCertType;
+	}
+
+	public void setUserCertType(String userCertType) {
+		this.userCertType = userCertType;
+	}
+
+	public String getCell() {
+		return cell;
+	}
+
+	public void setCell(String cell) {
+		this.cell = cell;
+	}
+
+	public String getUserType() {
+		return UserType;
+	}
+
+	public void setUserType(String userType) {
+		UserType = userType;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+	public String getBankCode() {
+		return bankCode;
+	}
+
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+
+	public String getBankName() {
+		return bankName;
+	}
+
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+
+	public String getCardType() {
+		return cardType;
+	}
+
+	public void setCardType(String cardType) {
+		this.cardType = cardType;
+	}
+
+	public String getProvince() {
+		return province;
+	}
+
+	public void setProvince(String province) {
+		this.province = province;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getBranchBankId() {
+		return branchBankId;
+	}
+
+	public void setBranchBankId(String branchBankId) {
+		this.branchBankId = branchBankId;
+	}
+
+	public String getBranchBankName() {
+		return branchBankName;
+	}
+
+	public void setBranchBankName(String branchBankName) {
+		this.branchBankName = branchBankName;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getUserRealName() {
+		return userRealName;
+	}
+
+	public void setUserRealName(String userRealName) {
+		this.userRealName = userRealName;
+	}
+
+	public String getUserCertNo() {
+		return userCertNo;
+	}
+
+	public void setUserCertNo(String userCertNo) {
+		this.userCertNo = userCertNo;
+	}
+
+	public boolean isAduit() {
+		return aduit;
+	}
+
+	public void setAduit(boolean aduit) {
+		this.aduit = aduit;
+	}
+
+}

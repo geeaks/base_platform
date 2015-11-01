@@ -1,0 +1,49 @@
+package com.ucf.customer.api.enums;
+
+public enum EnumCertType {
+	
+	/**
+	 * 身份证
+	 */
+	ID_CARD("IDC","身份证"),
+	/**
+	 * 港澳台
+	 */
+	GAT_NO("GAT","港澳台身份证"),
+	/**
+	 * 军官证
+	 */
+	MILIARY_NO( "MILIARY","军官证"),
+	/**
+	 * 负责
+	 */
+	PASS_PORT_NO( "PASS_PORT","护照"),
+	/**
+	 * 营业执照
+	 */
+	BUSINESS_LICENSE_CRET("BLC","营业执照");
+	
+	private String code;
+	private String desc;
+
+	EnumCertType(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+}

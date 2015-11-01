@@ -1,0 +1,36 @@
+package com.ucf.customer.service.impl;
+
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import org.springframework.stereotype.Service;
+
+import com.ucf.customer.service.WithDrawService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.ws.cxf.WsClientFactory;
+import com.ucf.payment.ws.bo.WithdrawWsParamBo;
+import com.ucf.payment.ws.bo.WithdrawWsReturnValueBo;
+import com.ucf.payment.ws.service.IWithdrawWS;
+
+
+@Service("withDrawService")
+public class WithDrawServiceImpl implements WithDrawService {
+
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(WithDrawServiceImpl.class);
+	
+	@Override
+	public WithdrawWsReturnValueBo withDraw(WithdrawWsParamBo withdrawWsParamBo) {
+		IWithdrawWS impl = null;
+		try {
+			impl = (IWithdrawWS)WsClientFactory.createWsClient(Constants.PAYMENT_WS_URL,"com.ucf.payment.ws.service.IWithdrawWS");
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			throw new RuntimeException(e);
+		}
+		WithdrawWsReturnValueBo bo = null;
+		if(impl != null){
+			 bo = impl.withdrawOderDeal(withdrawWsParamBo);
+		}
+		return bo;
+	}
+
+}

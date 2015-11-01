@@ -1,0 +1,388 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html>
+<jsp:include page="../p2p/commons/resource_meta.jsp"/>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<html>
+<head>
+<title>先锋支付</title>
+<jsp:include page="commons/resource_css.jsp"/>
+<link rel="stylesheet" href="${staticMemberPath}/p2p/css/host_addbank.css">
+<jsp:include page="commons/resource_js.jsp"/>
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/host_add/index.js"></script>
+<script src="${basePath}/passwordControl/index.js"
+	type="text/javascript"></script>
+</head>
+<body>
+<div class="box">
+    	<div class="host_title">资金托管平台<span>新增银行卡</span></div>
+        <div class="main">
+        	<div class="box_title pl20"><em class="f18">我的银行卡</em></div>
+            <div class="w902 mauto">
+                <div class="h_border_b">
+                    <table>
+                    	<colgroup>
+                        	<col width="155">
+                            <col width="745">
+                        </colgroup>
+                        <tbody class="h_open_tab f14">
+                        	<tr>
+                            	<th>姓名：</th>
+                                <td>
+                                	${requestScope.HID_user["realName"] }
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>身份证： </th>
+                                <td>
+                                	${requestScope.HID_user["certNo"] }
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="pt30 pb100">
+                	<p class="f14"><strong class="color-yellow1">请输入您要变更的银行卡号</strong> </p>
+                	<form action="${basePath}/p2p/addBankCard.do" method="get" id="postForm" name="postForm">
+                    <table width="100%">
+                    	<colgroup>
+                        	<col width="155">
+                            <col width="745">
+                        </colgroup>
+                        <tbody class="h_open_tab f14">
+                        	<tr>
+                            	<th>此借记卡用于：</th>
+                                <td>
+                                	<!-- <input type="radio" name="useType" id="usefor_tx" checked="checked" value="0"/><label class="usefor_tx_label pl5 pr20" for="usefor_tx">提现</label> -->
+                                	<input type="hidden" name="useType" id="usefor_kjzf" value="1"/><label class="usefor_kjzf_label pl5 pr20" for="usefor_kjzf">快捷充值</label>
+                                </td>
+                            </tr>
+                        	<tr>
+                            	<th>银行卡号：</th>
+                                <td>
+                                	<input type="text" id="bankCardNo" name="bankCardNo" class="h_open_ipt" placeholder="请输入银行卡号码"/>
+                                    <input type="hidden" id="bankCode" name="bankCode">
+                                    <input type="hidden" id="bankName" name="bankName" >
+                                    <input type="hidden" id="prov" name="prov" >
+                                    <input type="hidden" id="cityna" name="cityna" >
+                                    <input type="hidden" id="branchName" name="branchName" >
+                                    <input type="hidden" id="issure" name="issure" >
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th></th>
+                                <td class="tip_td">
+                                	<span class="show_support_bank">显示支持银行</span>
+                                </td>
+                            </tr>
+                            <tr class="usefor_kjzf_tip">
+                            	<th></th>
+                                <td class="tip_td">
+                                	<div>09:00—16:30时间内交易当日到账，16:30之后交易次日9：00点前充值到账</div>
+                                    <div>预计：30分至2小时内返回扣款结果</div>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>开户行地址：</th>
+                                <td>
+                                	<select class="h_open_sel w120" id="province" name="province">
+													<option>--选择--</option>
+												</select>
+												<label class="h_open_lab" for="province">省</label>
+												<select class="h_open_sel w120" id="city" name="city">
+													<option>--选择--</option>
+												</select>
+												<label class="h_open_lab" for="city">地区</label>
+												<select  id="branchBank" name="branchBank" class="h_open_sel w320">
+			                                    	<option>--支行--</option>
+			                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>手机号码：</th>
+                                <td>
+                                	<label class="h_open_lab">${requestScope.HID_user["cell"] }</label><input id="validPhoneCode" type="button" onclick="sendSMS(null,0,'cellNoP2P_RECHARGE_REQUEST_INF_customer');" class="send_vfycode h_open_ipt h_open_btn h_checkcode_btn ml10" value="发送短信验证码" /><i id="sendSMSTipI"
+													class="formvalidError formvalidError1" style="display: none;"></i><em id="sendSMSTipEm" class="f12"></em>
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>短信验证码：</th>
+                                <td>
+                                	<input type="text" id="vfyCode" maxlength="6" name="vfyCode" class="h_open_ipt" placeholder="请输入短信验证码">
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th>请输入支付密码：</th>
+                                <td>
+                                	<input type="hidden" id="payPassword" name="payPassword" class="h_open_ipt" placeholder="请输入您的密码">
+											<jsp:include page="./passwordControl/resource_pwd.jsp"/>
+											
+                                </td>
+                            </tr>
+                            <tr>
+                            	<th></th>
+                                <td>
+                                	<input type="button" value="提交" onclick="Form_Submit('postForm')" class="but-gray but-yellow w130 mr15">
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="popup_cover"></div>
+<div class="popup_box">
+	<div class="popup_box_inner">
+    	<div class="popup_close_btn"></div>
+        <div class="table_box">
+    	<table width="770">
+        	<colgroup>
+                <col width="70">
+                <col width="110">
+                <col width="110">
+                <col width="480">
+            </colgroup>
+            <tbody class="bank_limit f14">
+            	<tr>
+                	<th>银行</th><th>充值金额</th><th>扣款时效</th><th class="th_tip">特殊提示</th>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                	<td rowspan="3"><span class="bank_name">工商银行</span></td>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+                <tr>
+                    <td>1-10万</td><td>实时</td>
+                    <td><div class="bank_tip">士大夫似的发的说法</div></td>
+                </tr>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+		<script type="text/javascript">
+		
+		/* $('#bankCardNo').change( function() {
+			  // 这里可以写些验证代码
+			 var card = $('#bankCardNo').val();
+		     card = card.replace(/\D/g,'')
+		     var ncard='';
+		     for(var n=0;n<card.length;n=n+4){
+		         ncard += card.substring(n,n+4)+" ";
+		     }
+		     console.log(ncard.replace(/(\s*$)/g,""));
+		     $('#bankCardNo').val(ncard.replace(/(\s*$)/g,"")); 
+			  
+			});
+		 */
+		
+		$(document).ready(function(){//这个就是jQueryready yuchao@ucfgroup.com
+			$("#bankCardNo").blur(function(){
+				getBankCardBIN(); //点击ID为"bankCardNo"的按钮后触发函数 getBankCardBIN();
+			});
+			$("#bankCardNo").blur(function(){
+				getBankCardNo(1);
+			});
+			$("#bankCardNo").keyup(function(){
+				 this.value =this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+			});	
+			
+			$("#bankCardNo").change(function(){
+				 this.value =this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+			});	
+			$("#province").change(function(){
+				var prov = $("#province").find("option:selected").text();
+				$('#prov').val(prov);
+				getBankCardNo(2);
+			});
+			$("#city").change(function(){
+				var cy = $("#city").find("option:selected").text();
+				$('#cityna').val(cy);
+				getBankCardNo(3);
+			});
+			$("#branchBank").change(function(){
+				var bk = $("#branchBank").find("option:selected").text();
+				var issure=$("#branchBank").find("option:selected").val();
+				$('#branchName').val(bk);
+				$('#issure').val(issure);
+			});
+		});
+		 function getBankCardBIN(){ //函数 getBankCardBIN(); 
+				var cardNo = $("#bankCardNo").val();//取框中的卡号 
+				if (cardNo.length<=0)
+					return;
+				$.ajax({ //一个Ajax过程 
+					 type: "post", //以post方式与后台沟通 
+					 url : "${basePath}/bank/getBankCardBIN.do", //与此后台沟通 
+					 dataType:'json',
+					 data: 'bankCardNo='+cardNo,
+					 async:false,
+					 success: function(json){
+						 var obj=json.bankName;
+					// alert(json.bankName+'\n'+json.bankCode);
+					 if(obj.indexOf("不存在")>=0||obj.indexOf("失败")>=0){
+						 $('#BINinfo').html("<em class=\"color-yellow1\">"+obj+"</em>");
+						 $('#BINinfo').addClass("formvalidError formvalidError1");
+					 }else{
+						 $('#BINinfo').html(json.bankName);
+						 $('#bankName').val(json.bankName);
+						 $('#bankCode').val(json.bankCode);
+						 $('#BINinfo').addClass("successValid1"); 
+
+					 };
+					},
+					error: function(json){
+					 $('#BINinfo').html("<em class=\"color-yellow1\">"+json+"</em>");
+					 $('#BINinfo').addClass("formvalidError");
+					}
+				});
+			}
+			///////////////////////////////////////////////////////////////
+			function getBankCardNo(type){
+				var cardNo = $("#bankCardNo").val();//取框中的卡号
+				if (cardNo.length<=0)
+					return;
+				var param = "";
+				if(type == 1){
+					param = 'bankCardNo='+cardNo;
+				}
+				if(type == 2){
+					var provinceCode = $("#province").val();
+					param = 'bankCardNo='+cardNo+"&ProvinceCode="+provinceCode;
+				}
+				if(type == 3){
+					var provinceCode = $("#province").val();
+					var cityCode = $("#city").val();
+					param = 'bankCardNo='+cardNo+"&ProvinceCode="+provinceCode+
+							'&CityCode='+cityCode;
+				}
+				var result = $.ajax({ //一个Ajax过程 
+					 type: "post", //以post方式与后台沟通 
+					 url : "${basePath}/bank/getBankCardNo.do", //与此后台沟通 
+					 dataType:'json',
+					 data: param,
+					 async:false,
+					 success: function(json){
+						 
+					 if(json){
+					 	var json = eval(json);
+						
+						var optionstring = "<option selected='selected'>--选择--</option>";
+						for(var i=0;i<json.length;i++)
+						{
+							if(type == 1){
+								optionstring += "<option value=\""+ json[i].provinceCode +"\" >"+ json[i].provinceName +"</option>";
+								$('#province').html(optionstring);
+							}
+							if(type == 2){
+								optionstring += "<option value=\""+ json[i].cityCode +"\" >"+ json[i].cityName +"</option>";
+								$('#city').html(optionstring);
+							}
+							if(type == 3){
+								optionstring += "<option value=\""+ json[i].subBankIdentity +"\" >"+ json[i].subBankName +"</option>";
+								$('#branchBank').html(optionstring);
+							}
+						}
+						return json;
+					 	//$('#BINinfo').html("");
+					 }else{
+						 $('#BINinfo').html("");
+					 };
+					},
+					error: function(json){
+					 $('#BINinfo').html("");
+					}
+				});
+				
+			}
+		/////////////////////////////////////////////////////////////////
+		
+		
+	        
+		</script>
+</body>
+</html>

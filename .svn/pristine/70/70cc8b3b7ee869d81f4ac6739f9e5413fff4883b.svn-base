@@ -1,0 +1,1500 @@
+package com.ucf.customer.ws.enterprise.impl;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.annotation.Resource;
+import javax.security.auth.login.AccountException;
+
+import org.apache.cxf.common.util.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import com.alibaba.rocketmq.client.producer.SendResult;
+import com.ucf.customer.api.enums.EnumBankCardType;
+import com.ucf.customer.api.enums.EnumBankCardUseType;
+import com.ucf.customer.api.enums.EnumCertType;
+import com.ucf.customer.api.enums.EnumUserType;
+import com.ucf.customer.dao.UcfBankCardDao;
+import com.ucf.customer.dao.UcfOperatorDao;
+import com.ucf.customer.dao.UcfOrgDao;
+import com.ucf.customer.dao.UcfQuestionDao;
+import com.ucf.customer.dao.UcfUserDao;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.pojo.UcfMerchantExtra;
+import com.ucf.customer.pojo.UcfOrg;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.Cryptos;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.UcfMerchantExtraService;
+import com.ucf.customer.service.UserRegService;
+import com.ucf.customer.utils.BeanUtilEx;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.enums.EnumAccountType;
+import com.ucf.customer.utils.enums.EnumBindBankCardStatus;
+import com.ucf.customer.utils.enums.EnumConfirmStatus;
+import com.ucf.customer.utils.enums.EnumUserEnabledStatus;
+import com.ucf.customer.utils.exception.CustomerErrorCode;
+import com.ucf.customer.utils.exception.CustomerException;
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberBankCardBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberSearchReqBo;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseStatusReturnValueBo;
+import com.ucf.customer.ws.bo.enterprise.GroupAccountBo;
+import com.ucf.customer.ws.bo.enterprise.MainAccountListBO;
+import com.ucf.customer.ws.bo.enterprise.MemberRegisterResultBO;
+import com.ucf.customer.ws.bo.enterprise.MemberReviewRequestBO;
+import com.ucf.customer.ws.bo.enterprise.MemberReviewResultBO;
+import com.ucf.customer.ws.bo.enterprise.OuterEnterpriseMemberRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.PageEnterpriseMemberResultBo;
+import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoRequestBO;
+import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.VerifyEmailRequestBO;
+import com.ucf.customer.ws.bo.enterprise.VerifyEmailResultBO;
+import com.ucf.customer.ws.enums.EnumCertFrom;
+import com.ucf.customer.ws.enums.EnumCertStatus;
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.EnumMerchantExtra;
+import com.ucf.customer.ws.enums.EnumRegisterFrom;
+import com.ucf.customer.ws.service.enterprise.EnterpriseMemberService;
+import com.ucf.onlinepay.framework.common.util.DateUtil;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.log.LoggerLevel;
+import com.ucf.platform.framework.log.annotation.DigestLogAnnotated;
+import com.ucf.platform.framework.mq.UcfSendMessage;
+import com.ucf.platform.framework.mq.enums.RocketMQTopicEnum;
+import com.ucf.platform.framework.mq.producer.UcfMQProducer;
+
+public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
+
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(EnterpriseMemberServiceImpl.class);
+	@Autowired
+	private LoginService loginService;
+	@Autowired
+	private UserRegService userRegService;
+	@Autowired
+	UcfBankCardDao ucfBankCardDao;
+	@Autowired
+	UcfOperatorDao ucfOperatorDao;
+	@Autowired
+	UcfQuestionDao ucfQuestionDao;
+	@Autowired
+	UcfOrgDao ucfOrgDao;
+	@Autowired
+	UcfUserDao ucfUserDao;
+	@Resource(name = "sharedTransactionTemplate")
+	private TransactionTemplate transactionTemplate;
+	@Resource(name = "ucfMQProducer")
+	private UcfMQProducer ucfMQProducer;
+	@Autowired
+	private UcfMerchantExtraService ucfMerchantExtraService;
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberRegisterResultBO register(OuterEnterpriseMemberRegRequestBO registerRequestBO) {
+		LOGGER.info("企业会员注册：[" + SensitiveInfoUtils.getJson(registerRequestBO) + "] ");
+		MemberRegisterResultBO memberRegisterResultBO = new MemberRegisterResultBO();
+		try {
+			if (registerRequestBO.getMerchantId() == null || "".equals(registerRequestBO.getMerchantId()) || registerRequestBO.getEndDate() == null || "".equals(registerRequestBO.getEndDate()) || registerRequestBO.getOuterUserId() == null || "".equals(registerRequestBO.getOuterUserId())
+					|| registerRequestBO.getAgentPersonNo() == null || "".equals(registerRequestBO.getAgentPersonNo()) || registerRequestBO.getBusinessLicense() == null || "".equals(registerRequestBO.getBusinessLicense()) || registerRequestBO.getLegalPersonNo() == null
+					|| "".equals(registerRequestBO.getLegalPersonNo())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+				return memberRegisterResultBO;
+			}
+			Pattern endDatePattern = Pattern.compile("^[0-9]{4}(((0[13578]|(10|12))(0[1-9]|[1-2][0-9]|3[0-1]))|(02(0[1-9]|[1-2][0-9]))|((0[469]|11)(0[1-9]|[1-2][0-9]|30)))$");
+			Matcher endDateMatcher = endDatePattern.matcher(registerRequestBO.getEndDate());
+			if (!endDateMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.DATE_PARSE_ERROR.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.DATE_PARSE_ERROR.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.DATE_PARSE_ERROR.getCode());
+				return memberRegisterResultBO;
+			}
+
+			if (registerRequestBO.getAgentPersonPhone() == null || "".equals(registerRequestBO.getAgentPersonPhone())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+			Pattern agentPersonPhonePattern = Pattern.compile("^1[3|4|5|8][0-9]\\d{8}$");
+			Matcher agentPersonPhoneMatcher = agentPersonPhonePattern.matcher(registerRequestBO.getAgentPersonPhone());
+			if (!agentPersonPhoneMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+
+			if (registerRequestBO.getAgentPersonNo() == null || "".equals(registerRequestBO.getAgentPersonNo())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+
+			Pattern agentPersonNoPattern = Pattern.compile("(^\\d{15}$)|(^\\d{17}([0-9]|X)$)");
+			Matcher agentPersonNoMatcher = agentPersonNoPattern.matcher(registerRequestBO.getAgentPersonNo());
+			if (!agentPersonNoMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+			Matcher legalPersonNoMatcher = agentPersonNoPattern.matcher(registerRequestBO.getLegalPersonNo());
+			if (!legalPersonNoMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+			if (registerRequestBO.getEnterpriseFullName() == null || !registerRequestBO.getEnterpriseFullName().equals(registerRequestBO.getBankCardName())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getCode());
+				return memberRegisterResultBO;
+			}
+
+			UcfUser user = new UcfUser();
+			user.setCell(registerRequestBO.getAgentPersonPhone());
+			user.setRefMerchant(registerRequestBO.getMerchantId());
+			List<UcfUser> userList = this.loginService.queryUcfUser(user);
+			if (!userList.isEmpty()) {
+				memberRegisterResultBO.setStatus(EnumMemberCode.CELL_EXIST.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.CELL_EXIST.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.CELL_EXIST.getMsgS());
+				return memberRegisterResultBO;
+			}
+
+			// 生成用户ID
+			String userId = userRegService.queryUcfUserId();
+
+			// 此时生成用户信息
+			final UcfUser ucfUser = new UcfUser();
+			ucfUser.setUserId(userId);
+			ucfUser.setRefUser(registerRequestBO.getOuterUserId());
+			ucfUser.setRefMerchant(registerRequestBO.getMerchantId());
+			ucfUser.setEnabledStatus(EnumUserEnabledStatus.W.getCode());// W：注册未激活
+			ucfUser.setCell(registerRequestBO.getAgentPersonPhone());
+			ucfUser.setPhone(registerRequestBO.getAgentPersonPhone());
+			ucfUser.setCertNo(registerRequestBO.getBusinessLicense());
+			ucfUser.setCertType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+			ucfUser.setRealName(registerRequestBO.getAgentPersonName());
+			ucfUser.setFirmName(registerRequestBO.getEnterpriseShortName());// 企业简称
+			ucfUser.setGmtCreate(new Date());
+			ucfUser.setGmtLastModified(new Date());
+			ucfUser.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.ENTERPRISE.getCode())));
+
+			// 生成卡信息
+			final UcfCard ucfCard = new UcfCard();
+			ucfCard.setCardNo(userId);
+			ucfCard.setUserId(userId);
+			ucfCard.setCardType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+			ucfCard.setGmtCreate(new Date());
+			ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());
+			ucfCard.setCertStatus(EnumCertStatus.NO_CERT.getCode());
+			ucfCard.setRegisterFrom(EnumRegisterFrom.P2P_FROM.getCode());
+
+			// 生成客户信息
+			final UcfCustomer customer = new UcfCustomer();
+			customer.setCertNo(registerRequestBO.getBusinessLicense());// 企业执照号
+			customer.setCertType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+			customer.setName(registerRequestBO.getEnterpriseFullName());// 企业全称
+			customer.setNational("CHA");
+			customer.setType(Constants.CUSTOMER_TYPE_ORG);
+			customer.setGmtCreate(new Date());
+			customer.setExtFlag(Constants.EXT_FLAG_T);
+			customer.setOpenStatus(Constants.OPEN_STATUS_YES);
+			customer.setEnableStatus(Constants.ENABLE_STATUS_T);
+			customer.setCertStatus(Constants.VERIFY_STATUS_T);
+
+			final UcfBankCard ucfBankCard = new UcfBankCard();
+			StringBuffer id = new StringBuffer();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			StringBuffer seq = id.append(sdf.format(new Date())).append(this.ucfBankCardDao.getBankCardSeq());
+			ucfBankCard.setId(seq.toString());
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setBankName(registerRequestBO.getBankName());
+			ucfBankCard.setBankId(registerRequestBO.getBankCode());
+			ucfBankCard.setCardNo(registerRequestBO.getBankCardNo());
+			ucfBankCard.setCardName(registerRequestBO.getEnterpriseFullName());
+			ucfBankCard.setCardType(EnumBankCardType.BUSINESS_ACCOUNT.getCode());
+			ucfBankCard.setCertFrom("system");
+			ucfBankCard.setRegisterFrom("system");
+			ucfBankCard.setGmtCreate(new Date());
+			ucfBankCard.setCertifyInfo("system");// branchName
+			ucfBankCard.setBranchname(registerRequestBO.getIssuerName());
+			ucfBankCard.setIssuer(registerRequestBO.getIssuer());
+			ucfBankCard.setCity(registerRequestBO.getCity());
+			ucfBankCard.setProvince(registerRequestBO.getProvinces());
+			ucfBankCard.setUnionSeq(ucfBankCardDao.getUnionSeq());
+			ucfBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+			// P2P 外部 企业用户为理财卡
+			ucfBankCard.setUseType(EnumBankCardUseType.FINANCIAL.getCode());
+			// ucfBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+
+			String ucfOrgId = userRegService.queryUcfUserId();
+			final UcfOrg ucfOrg = new UcfOrg();
+			ucfOrg.setId(ucfOrgId);
+			// ucfOrg.setCustomerId("");
+			ucfOrg.setRealName(registerRequestBO.getEnterpriseFullName());
+			ucfOrg.setCoperation(registerRequestBO.getLegalPersonName());
+			ucfOrg.setAgentCard(registerRequestBO.getAgentPersonNo());// 代理人证件号码
+			ucfOrg.setAgentName(registerRequestBO.getAgentPersonName());// 代理人姓名
+			ucfOrg.setCoperationCard(registerRequestBO.getLegalPersonNo());
+			ucfOrg.setCountry("CHA");// 国家
+			ucfOrg.setProvince(registerRequestBO.getProvinces());
+			ucfOrg.setCity(registerRequestBO.getCity());
+			ucfOrg.setAddress(registerRequestBO.getEnterpriseAddress());
+			ucfOrg.setCell(registerRequestBO.getEnterprisePhone());
+			ucfOrg.setGmtCreate(new Date());
+			ucfOrg.setGmtModified(new Date());
+			ucfOrg.setUserId(userId);
+			ucfOrg.setCompanyFullName(registerRequestBO.getEnterpriseFullName());
+			ucfOrg.setCompanyName(registerRequestBO.getEnterpriseShortName());
+			ucfOrg.setCharetNo(registerRequestBO.getBusinessLicense());
+			ucfOrg.setCharetExpire(DateUtil.formatStringToDate(registerRequestBO.getEndDate(), "yyyyMMdd"));
+			ucfOrg.setLegalPerson(registerRequestBO.getLegalPersonName());
+			ucfOrg.setLegalIdentity(registerRequestBO.getLegalPersonNo());
+			ucfOrg.setCompanyAdd(registerRequestBO.getEnterpriseAddress());
+			ucfOrg.setSettleBankCode(registerRequestBO.getBankCode());
+			ucfOrg.setSettleBankName(registerRequestBO.getBankName());
+			ucfOrg.setSettleCardNo(registerRequestBO.getBankCardNo());
+			ucfOrg.setBranchName(registerRequestBO.getIssuerName());
+			ucfOrg.setPayeeName(registerRequestBO.getBankCardName());
+
+			String result = loginService.createAcccount(null, EnumAccountType.MERCHANT, ucfCard);
+			if (!result.equals("success")) {
+				memberRegisterResultBO.setStatus(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.OPEN_ACCOUNT_FAIL.getMsgS());
+				return memberRegisterResultBO;
+			}
+
+			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						UcfUser ucfUserInfo = loginService.queryUserInfo(ucfUser.getUserId());
+
+						if (ucfUserInfo != null) {
+							throw new CustomerException(CustomerErrorCode.ERROR_USERINFO_ERR);
+						}
+						// 保存用户信息
+						userRegService.insertUserInfo(ucfUser);
+						UcfCustomer validateCustomer = new UcfCustomer();
+						validateCustomer.setCertNo(customer.getCertNo());
+						UcfCustomer validateCustomerRep = loginService.queryUcfCustomerInfo(validateCustomer);
+						if (validateCustomerRep == null) {
+							loginService.insertCustomer(customer);
+							UcfCustomer customer1 = new UcfCustomer();
+							customer1.setCertNo(customer.getCertNo());// 企业执照号
+							customer1.setCertType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+							ucfOrg.setCustomerId(loginService.queryUcfCustomerInfo(customer1).getCustomerId());
+						} else {
+							ucfOrg.setCustomerId(validateCustomerRep.getCustomerId());
+						}
+						ucfCard.setCustomerId(ucfOrg.getCustomerId());
+						// 保存卡信息
+						loginService.insertCardInfo(ucfCard);
+						loginService.insertBankCardInfo(ucfBankCard);
+						loginService.insertOrganizational(ucfOrg);
+					} catch (final Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						status.setRollbackOnly();
+						return false;
+
+					}
+					return true;
+				}
+			});
+			if (commit) {
+				memberRegisterResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				memberRegisterResultBO.setUserId(userId);
+				return memberRegisterResultBO;
+			} else {
+				memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+				return memberRegisterResultBO;
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return memberRegisterResultBO;
+		}
+
+	}
+
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public UpdateMemberInfoResultBO updateMemberInfo(UpdateMemberInfoRequestBO updateMemberInfoRequestBO) {
+		UpdateMemberInfoResultBO updateMemberInfoResultBO = new UpdateMemberInfoResultBO();
+		if (updateMemberInfoRequestBO.getMerchantId() == null || "".equals(updateMemberInfoRequestBO.getMerchantId())) {
+			updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			return updateMemberInfoResultBO;
+		}
+		if (updateMemberInfoRequestBO.getUserId() == null || "".equals(updateMemberInfoRequestBO.getUserId())) {
+			updateMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
+			updateMemberInfoResultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			return updateMemberInfoResultBO;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(updateMemberInfoRequestBO.getUserId());
+		user.setRefMerchant(updateMemberInfoRequestBO.getMerchantId());
+		try {
+			UcfUser queryUser = new UcfUser();
+			queryUser.setCell(updateMemberInfoRequestBO.getAgentPersonPhone());
+			queryUser.setRefMerchant(updateMemberInfoRequestBO.getMerchantId());
+			List<UcfUser> userList = this.loginService.queryUcfUser(queryUser);
+			if (!userList.isEmpty()) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.CELL_EXIST.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.CELL_EXIST.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.CELL_EXIST.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+			final UcfUser userinfo = this.loginService.queryUcfUserInfo(user);
+			if (userinfo == null) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+			if (updateMemberInfoRequestBO.getAgentPersonPhone() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonPhone().trim())) {
+				userinfo.setCell(updateMemberInfoRequestBO.getAgentPersonPhone());
+			}
+			if (updateMemberInfoRequestBO.getAgentPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonNo().trim())) {
+				userinfo.setCertNo(updateMemberInfoRequestBO.getAgentPersonNo().trim());
+			}
+			if (updateMemberInfoRequestBO.getAgentPersonName() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonName().trim())) {
+				userinfo.setRealName(updateMemberInfoRequestBO.getAgentPersonName().trim());
+			}
+			if (updateMemberInfoRequestBO.getEnterpriseShortName() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseShortName().trim())) {
+				userinfo.setFirmName(updateMemberInfoRequestBO.getEnterpriseShortName().trim());// 企业简称
+			}
+			userinfo.setGmtLastModified(new Date());
+			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(userinfo.getUserId());
+			if (ucfOrg == null) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+			if (updateMemberInfoRequestBO.getLegalPersonName() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonName().trim())) {
+				ucfOrg.setCoperation(updateMemberInfoRequestBO.getLegalPersonName());
+			}
+			if (updateMemberInfoRequestBO.getAgentPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonNo().trim())) {
+				ucfOrg.setAgentCard(updateMemberInfoRequestBO.getAgentPersonNo());// 代理人证件号码
+			}
+			if (updateMemberInfoRequestBO.getAgentPersonName() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonName().trim())) {
+				ucfOrg.setAgentName(updateMemberInfoRequestBO.getAgentPersonName());// 代理人姓名
+			}
+			if (updateMemberInfoRequestBO.getLegalPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonNo().trim())) {
+				ucfOrg.setCoperationCard(updateMemberInfoRequestBO.getLegalPersonNo());
+			}
+			if (updateMemberInfoRequestBO.getEnterpriseAddress() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseAddress().trim())) {
+				ucfOrg.setAddress(updateMemberInfoRequestBO.getEnterpriseAddress());
+			}
+			if (updateMemberInfoRequestBO.getEnterprisePhone() != null && !"".equals(updateMemberInfoRequestBO.getEnterprisePhone().trim())) {
+				ucfOrg.setCell(updateMemberInfoRequestBO.getEnterprisePhone());
+			}
+			if (updateMemberInfoRequestBO.getEnterpriseFullName() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseFullName().trim())) {
+				ucfOrg.setCompanyFullName(updateMemberInfoRequestBO.getEnterpriseFullName());
+			}
+			if (updateMemberInfoRequestBO.getEnterpriseShortName() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseShortName().trim())) {
+				ucfOrg.setCompanyName(updateMemberInfoRequestBO.getEnterpriseShortName());
+			}
+			if (updateMemberInfoRequestBO.getBusinessLicense() != null && !"".equals(updateMemberInfoRequestBO.getBusinessLicense().trim())) {
+				ucfOrg.setCharetNo(updateMemberInfoRequestBO.getBusinessLicense());
+			}
+			if (updateMemberInfoRequestBO.getEndDate() != null && !"".equals(updateMemberInfoRequestBO.getEndDate().trim())) {
+				ucfOrg.setCharetExpire(DateUtil.formatStringToDate(updateMemberInfoRequestBO.getEndDate().trim(), "yyyyMMdd"));
+			}
+			if (updateMemberInfoRequestBO.getLegalPersonName() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonName().trim())) {
+				ucfOrg.setLegalPerson(updateMemberInfoRequestBO.getLegalPersonName());
+			}
+			if (updateMemberInfoRequestBO.getLegalPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonNo().trim())) {
+				ucfOrg.setLegalIdentity(updateMemberInfoRequestBO.getLegalPersonNo());
+			}
+			if (updateMemberInfoRequestBO.getEnterpriseAddress() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseAddress().trim())) {
+				ucfOrg.setCompanyAdd(updateMemberInfoRequestBO.getEnterpriseAddress());
+			}
+			ucfOrg.setGmtModified(new Date());
+			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						loginService.updateUcfUser(userinfo);
+						ucfOrgDao.updateUcfOrg(ucfOrg);
+					} catch (final Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						status.setRollbackOnly();
+						return false;
+					}
+					return true;
+				}
+			});
+			if (commit) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				updateMemberInfoResultBO.setUserId(userinfo.getUserId());
+				return updateMemberInfoResultBO;
+			} else {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return updateMemberInfoResultBO;
+		}
+	}
+
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public MemberRegisterResultBO merchantRegister(EnterpriseMemberRegRequestBO registerRequestBO) {
+		LOGGER.info("商户注册：[" + SensitiveInfoUtils.getJson(registerRequestBO) + "] ");
+		MemberRegisterResultBO memberRegisterResultBO = new MemberRegisterResultBO();
+		try {
+			if (StringUtil.isEmpty(registerRequestBO.getEndDate()) 
+					|| StringUtil.isEmpty(registerRequestBO.getBusinessLicense()) 
+					|| StringUtil.isEmpty(registerRequestBO.getLegalPersonNo()) 
+					|| StringUtil.isEmpty(registerRequestBO.getEmail()) 
+					|| registerRequestBO.getLoginPassword() == null
+					|| registerRequestBO.getLoginPassword().length == 0 
+					|| StringUtil.isEmpty(registerRequestBO.getMerchantType())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+				return memberRegisterResultBO;
+			}
+			Pattern endDatePattern = Pattern.compile("^[0-9]{4}(((0[13578]|(10|12))(0[1-9]|[1-2][0-9]|3[0-1]))|(02(0[1-9]|[1-2][0-9]))|((0[469]|11)(0[1-9]|[1-2][0-9]|30)))$");
+			Matcher endDateMatcher = endDatePattern.matcher(registerRequestBO.getEndDate());
+			if (!endDateMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.DATE_PARSE_ERROR.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.DATE_PARSE_ERROR.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.DATE_PARSE_ERROR.getCode());
+				return memberRegisterResultBO;
+			}
+			if (StringUtils.isEmpty(registerRequestBO.getBankCardNo())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.BANKCARDNO_NOT_NULL.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.BANKCARDNO_NOT_NULL.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.BANKCARDNO_NOT_NULL.getCode());
+				return memberRegisterResultBO;
+			}
+			if (registerRequestBO.getAgentPersonPhone() == null || "".equals(registerRequestBO.getAgentPersonPhone())) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+			Pattern agentPersonPhonePattern = Pattern.compile("^1\\d{10}$");
+			Matcher agentPersonPhoneMatcher = agentPersonPhonePattern.matcher(registerRequestBO.getAgentPersonPhone());
+			if (!agentPersonPhoneMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+
+			if (registerRequestBO.getLegalPersonNo().length() > 30) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+			Pattern emailPattern = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
+			Matcher emailMatcher = emailPattern.matcher(registerRequestBO.getEmail());
+			if (!emailMatcher.matches()) {
+				memberRegisterResultBO.setRespCode(EnumMemberCode.EMAIL_IS_FAIL_RULES.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.EMAIL_IS_FAIL_RULES.getMsgS());
+				memberRegisterResultBO.setStatus(EnumMemberCode.EMAIL_IS_FAIL_RULES.getCode());
+				return memberRegisterResultBO;
+			}
+
+			UcfUser user = new UcfUser();
+			user.setCell(registerRequestBO.getAgentPersonPhone());
+			user.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.ENTERPRISE.getCode())));
+			List<UcfUser> userList = this.loginService.queryUcfUser(user);
+			if (!userList.isEmpty()) {
+				memberRegisterResultBO.setStatus(EnumMemberCode.CELL_EXIST.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.CELL_EXIST.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.CELL_EXIST.getMsgS());
+				return memberRegisterResultBO;
+			}
+
+			// 生成用户ID
+			String userId = userRegService.getEnterpriseMemberNO();
+
+			// 此时生成用户信息
+			final UcfUser ucfUser = new UcfUser();
+			ucfUser.setUserId(userId);
+			ucfUser.setEnabledStatus(EnumUserEnabledStatus.W.getCode());// W：注册未激活
+			ucfUser.setPhone(registerRequestBO.getAgentPersonPhone());//// 手机号处理
+			ucfUser.setCertNo(registerRequestBO.getBusinessLicense());
+			ucfUser.setCertType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+			ucfUser.setRealName(registerRequestBO.getEnterpriseFullName());
+			ucfUser.setFirmName(registerRequestBO.getEnterpriseShortName());// 企业简称
+			ucfUser.setEmail(registerRequestBO.getEmail());
+			ucfUser.setZipCode(registerRequestBO.getZipCode());
+			ucfUser.setReturnUrl(registerRequestBO.getEnterpriseURL());
+			ucfUser.setAddress(registerRequestBO.getEnterpriseAddress());
+			ucfUser.setCertValidEndDate(DateUtil.formatStringToDate(registerRequestBO.getEndDate(), "yyyyMMdd"));
+			ucfUser.setGmtCreate(new Date());
+			ucfUser.setGmtLastModified(new Date());
+			ucfUser.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.ENTERPRISE.getCode())));
+			ucfUser.setLoginId(registerRequestBO.getAgentPersonPhone());
+			ucfUser.setLgnPwd(Cryptos.encrypt(new String(registerRequestBO.getLoginPassword()), userId));
+			ucfUser.setIsSignCustomer("Y");
+			
+			//生成商户登录信息
+			final UcfUserLoginApp userLoginApp = new UcfUserLoginApp();
+			userLoginApp.setLoginId(registerRequestBO.getEmail());
+			userLoginApp.setUserId(userId);
+			userLoginApp.setEmail(registerRequestBO.getEmail());
+			userLoginApp.setFrozenState(Constants.FROZEN_NO);
+			userLoginApp.setLoginPwd(Cryptos.encrypt(new String(registerRequestBO.getLoginPassword()), userId));
+			userLoginApp.setUserType(EnumUserType.ENTERPRISE.getCode());
+			userLoginApp.setLoginType(Constants.LOGIN_TYPE_EMAIL);
+			
+			// 生成卡信息
+			final UcfCard ucfCard = new UcfCard();
+			ucfCard.setCardNo(userId);
+			ucfCard.setUserId(userId);
+			ucfCard.setCardType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+			ucfCard.setGmtCreate(new Date());
+			ucfCard.setCertFrom(EnumCertFrom.WEB_FROM.getCode());
+			ucfCard.setCertStatus(EnumCertStatus.NO_CERT.getCode());
+			ucfCard.setRegisterFrom(EnumRegisterFrom.P2P_FROM.getCode());
+			// add by gaoxiang 如果入参有支付密码 则设置支付密码 否则默认六个8
+			if (registerRequestBO.getPayPassword() != null && registerRequestBO.getPayPassword().length > 0) {
+				ucfCard.setPaymentPassword(Cryptos.encrypt(new String(registerRequestBO.getPayPassword()), userId));
+			} else {
+				ucfCard.setPaymentPassword("888888");
+			}
+			
+			//生成商户补充属性信息
+			final UcfMerchantExtra ucfMerchantExtra = new UcfMerchantExtra();
+			ucfMerchantExtra.setUserId(userId);
+			ucfMerchantExtra.setMerchantType(registerRequestBO.getMerchantType());
+			ucfMerchantExtra.setAccountType(registerRequestBO.getAccountType());
+			ucfMerchantExtra.setParentUserId(registerRequestBO.getParentUserId());
+			ucfMerchantExtra.setFirstBusinessCode(registerRequestBO.getFirstBusinessCode());
+			ucfMerchantExtra.setFirstBusinessName(registerRequestBO.getFirstBusinessName());
+			ucfMerchantExtra.setSecondBusinessCode(registerRequestBO.getSecondBusinessCode());
+			ucfMerchantExtra.setSecondBusinessName(registerRequestBO.getSecondBusinessName());
+			ucfMerchantExtra.setProductCode(registerRequestBO.getProductCode());
+			ucfMerchantExtra.setProductName(registerRequestBO.getProductName());
+			
+			// 生成客户信息
+			final UcfCustomer customer = new UcfCustomer();
+			customer.setCertNo(registerRequestBO.getBusinessLicense());// 企业执照号
+			customer.setCertType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+			customer.setName(registerRequestBO.getEnterpriseFullName());// 企业全称
+			customer.setNational("CHA");
+			customer.setType(Constants.CUSTOMER_TYPE_ORG);
+			customer.setGmtCreate(new Date());
+			customer.setExtFlag(Constants.EXT_FLAG_F);
+			customer.setOpenStatus(Constants.OPEN_STATUS_YES);
+			customer.setEnableStatus(Constants.ENABLE_STATUS_T);
+			customer.setCertStatus(Constants.VERIFY_STATUS_T);
+
+			final UcfBankCard ucfBankCard = new UcfBankCard();
+			StringBuffer id = new StringBuffer();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			StringBuffer seq = id.append(sdf.format(new Date())).append(this.ucfBankCardDao.getBankCardSeq());
+			ucfBankCard.setId(seq.toString());
+			ucfBankCard.setUserId(userId);
+			ucfBankCard.setBankName(registerRequestBO.getBankName());
+			ucfBankCard.setBankId(registerRequestBO.getBankCode());
+			ucfBankCard.setCardNo(registerRequestBO.getBankCardNo());
+			ucfBankCard.setCardName(registerRequestBO.getBankCardName());
+			ucfBankCard.setCardType(EnumBankCardType.BUSINESS_ACCOUNT.getCode());
+			ucfBankCard.setCertFrom("system");
+			ucfBankCard.setRegisterFrom("system");
+			ucfBankCard.setGmtCreate(new Date());
+			ucfBankCard.setCertifyInfo("system");// branchName
+			ucfBankCard.setBranchname(registerRequestBO.getIssuerName());
+			ucfBankCard.setCity(registerRequestBO.getCity());
+			ucfBankCard.setProvince(registerRequestBO.getProvinces());
+			ucfBankCard.setUnionSeq(ucfBankCardDao.getUnionSeq());
+			ucfBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+			ucfBankCard.setIssuer(registerRequestBO.getIssuer());
+
+			// 商户开户 银行卡使用类型为 结算卡
+			ucfBankCard.setUseType(EnumBankCardUseType.SETTLE.getCode());
+			// ucfBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+
+			String ucfOrgId = userRegService.queryUcfUserId();
+			final UcfOrg ucfOrg = new UcfOrg();
+			ucfOrg.setId(ucfOrgId);
+			ucfOrg.setUserId(userId);
+			ucfOrg.setRealName(registerRequestBO.getEnterpriseFullName());
+			ucfOrg.setCoperation(registerRequestBO.getLegalPersonName());
+			ucfOrg.setAgentName(registerRequestBO.getAgentPersonName());// 代理人姓名
+			ucfOrg.setAgentCard(registerRequestBO.getAgentPersonNo()); //代理人号码
+			ucfOrg.setCoperationCard(registerRequestBO.getLegalPersonNo());
+			ucfOrg.setCountry("CHA");// 国家
+			ucfOrg.setProvince(registerRequestBO.getProvinces());
+			ucfOrg.setCity(registerRequestBO.getCity());
+			ucfOrg.setAddress(registerRequestBO.getEnterpriseAddress());
+			ucfOrg.setCell(registerRequestBO.getEnterprisePhone());
+			ucfOrg.setFax(registerRequestBO.getFax());
+			ucfOrg.setZip(registerRequestBO.getZipCode());
+			ucfOrg.setEmail(registerRequestBO.getEmail());
+			ucfOrg.setGmtCreate(new Date());
+			ucfOrg.setGmtModified(new Date());
+			ucfOrg.setCompanyFullName(registerRequestBO.getEnterpriseFullName());
+			ucfOrg.setCompanyName(registerRequestBO.getEnterpriseShortName());
+			ucfOrg.setCharetNo(registerRequestBO.getBusinessLicense());
+			ucfOrg.setCharetExpire(DateUtil.formatStringToDate(registerRequestBO.getEndDate(), "yyyyMMdd"));
+			ucfOrg.setLegalPerson(registerRequestBO.getLegalPersonName());
+
+			ucfOrg.setLegalIdentityType(registerRequestBO.getLegalIdentityType());
+			ucfOrg.setLegalIdentity(registerRequestBO.getLegalPersonNo());
+			ucfOrg.setCompanyAdd(registerRequestBO.getEnterpriseAddress());
+			ucfOrg.setMallUrl(registerRequestBO.getEnterpriseURL());
+			ucfOrg.setPost(registerRequestBO.getZipCode());
+			ucfOrg.setLicenseCopy(registerRequestBO.getLegalIdentityCopy());
+			ucfOrg.setOrgCertificate(registerRequestBO.getOrgCertificate());
+			ucfOrg.setTaxCertificate(registerRequestBO.getTaxCertificate());
+			ucfOrg.setLegalIdentityCop(registerRequestBO.getLegalIdentityCopy());
+			String result = loginService.createAcccount(null, EnumAccountType.MERCHANT, ucfCard);
+			if (!result.equals("success")) {
+				memberRegisterResultBO.setStatus(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.OPEN_ACCOUNT_FAIL.getMsgS());
+				return memberRegisterResultBO;
+			}
+			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						UcfUser ucfUserInfo = loginService.queryUserInfo(ucfUser.getUserId());
+						if (ucfUserInfo != null) {
+							throw new CustomerException(CustomerErrorCode.ERROR_USERINFO_ERR);
+						}
+						// 保存用户信息
+						userRegService.insertUserInfo(ucfUser);
+						UcfCustomer validateCustomer = new UcfCustomer();
+						validateCustomer.setCertNo(customer.getCertNo());
+						UcfCustomer validateCustomerRep = loginService.queryUcfCustomerInfo(validateCustomer);
+						if (validateCustomerRep == null) {
+							loginService.insertCustomer(customer);
+							UcfCustomer customer1 = new UcfCustomer();
+							customer1.setCertNo(customer.getCertNo());// 企业执照号
+							customer1.setCertType(EnumCertType.BUSINESS_LICENSE_CRET.getCode());
+							ucfOrg.setCustomerId(loginService.queryUcfCustomerInfo(customer1).getCustomerId());
+						} else {
+							ucfOrg.setCustomerId(validateCustomerRep.getCustomerId());
+						}
+						ucfCard.setCustomerId(ucfOrg.getCustomerId());
+						loginService.insertCardInfo(ucfCard);
+						loginService.insertLoginAppInfo(userLoginApp);
+						loginService.insertBankCardInfo(ucfBankCard);
+						loginService.insertOrganizational(ucfOrg);
+						ucfMerchantExtraService.insertUcfMerchantExtra(ucfMerchantExtra);
+					} catch (final Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						status.setRollbackOnly();
+						return false;
+					}
+					return true;
+				}
+			});
+			if (commit) {
+				memberRegisterResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				memberRegisterResultBO.setUserId(userId);
+				return memberRegisterResultBO;
+			} else {
+				memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+				memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+				memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+				return memberRegisterResultBO;
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return memberRegisterResultBO;
+		}
+
+	}
+
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public UpdateMemberInfoResultBO updateMerchantMemberInfo(final UpdateMemberInfoRequestBO updateMemberInfoRequestBO) {
+		UpdateMemberInfoResultBO updateMemberInfoResultBO = new UpdateMemberInfoResultBO();
+		if (updateMemberInfoRequestBO.getUserId() == null || "".equals(updateMemberInfoRequestBO.getUserId())) {
+			updateMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
+			updateMemberInfoResultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			return updateMemberInfoResultBO;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(updateMemberInfoRequestBO.getUserId());
+		try {
+			final UcfUser userinfo = this.loginService.queryUcfUserInfo(user);
+			if (userinfo == null) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(userinfo.getUserId());
+			if (ucfOrg == null) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+			UcfCustomer queryCustomer = new UcfCustomer();
+			queryCustomer.setCustomerId(ucfOrg.getCustomerId());
+			final UcfCustomer customer = loginService.queryUcfCustomerInfo(queryCustomer);
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseFullName())) {
+				userinfo.setRealName(updateMemberInfoRequestBO.getEnterpriseFullName());// 企业全称
+				ucfOrg.setRealName(updateMemberInfoRequestBO.getEnterpriseFullName());
+				ucfOrg.setCompanyFullName(updateMemberInfoRequestBO.getEnterpriseFullName());
+				customer.setName(updateMemberInfoRequestBO.getEnterpriseFullName());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBusinessLicense())) {
+				userinfo.setCertNo(updateMemberInfoRequestBO.getBusinessLicense());// 营业执照
+				customer.setCertNo(updateMemberInfoRequestBO.getBusinessLicense());
+				ucfOrg.setCharetNo(updateMemberInfoRequestBO.getBusinessLicense());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseShortName())) {
+				userinfo.setFirmName(updateMemberInfoRequestBO.getEnterpriseShortName().trim());// 企业简称
+				ucfOrg.setCompanyName(updateMemberInfoRequestBO.getEnterpriseShortName());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getAgentPersonPhone())) {
+				userinfo.setPhone(updateMemberInfoRequestBO.getAgentPersonPhone());
+				userinfo.setLoginId(updateMemberInfoRequestBO.getAgentPersonPhone());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnabledStatus())) {
+				userinfo.setEnabledStatus(updateMemberInfoRequestBO.getEnabledStatus().trim());// 开户状态
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getZipCode())) {
+				userinfo.setZipCode(updateMemberInfoRequestBO.getZipCode().trim());
+				ucfOrg.setZip(updateMemberInfoRequestBO.getZipCode());
+				ucfOrg.setPost(updateMemberInfoRequestBO.getZipCode());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseURL())) {
+				userinfo.setReturnUrl(updateMemberInfoRequestBO.getEnterpriseURL().trim());
+				ucfOrg.setMallUrl(updateMemberInfoRequestBO.getEnterpriseURL().trim());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseAddress())) {
+				userinfo.setAddress(updateMemberInfoRequestBO.getEnterpriseAddress().trim());// 企业地址
+				ucfOrg.setAddress(updateMemberInfoRequestBO.getEnterpriseAddress());
+				ucfOrg.setCompanyAdd(updateMemberInfoRequestBO.getEnterpriseAddress());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEndDate())) {
+				userinfo.setCertValidEndDate(DateUtil.formatStringToDate(updateMemberInfoRequestBO.getEndDate(), "yyyyMMdd"));// 证件有效期
+			}
+			// 增加 修改商户登录信息表 登录密码
+			final UcfUserLoginApp loginApp = this.loginService.queryUserAppInfo(userinfo.getEmail());
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLoginPassword())) {
+				String loginPassword = Cryptos.encrypt(updateMemberInfoRequestBO.getLoginPassword().trim(), user.getUserId());
+				userinfo.setLgnPwd(loginPassword);
+				if (loginApp != null) {
+					loginApp.setLoginPwd(loginPassword);
+				}
+			}
+			// 增加 如果入参有支付密码 则设置支付密码
+			final UcfCard ucfCard = loginService.queryUcfCardByUserId(updateMemberInfoRequestBO.getUserId());
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getPayPassword()) && ucfCard != null) {
+				String payPassword = Cryptos.encrypt(updateMemberInfoRequestBO.getPayPassword().trim(), user.getUserId());
+				ucfCard.setPaymentPassword(payPassword);
+			}
+			userinfo.setGmtLastModified(new Date());
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalPersonName())) {
+				ucfOrg.setCoperation(updateMemberInfoRequestBO.getLegalPersonName());
+				ucfOrg.setLegalPerson(updateMemberInfoRequestBO.getLegalPersonName());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getAgentPersonName())) {
+				ucfOrg.setAgentName(updateMemberInfoRequestBO.getAgentPersonName());// 代理人姓名
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getAgentPersonNo())) {
+				ucfOrg.setAgentCard(updateMemberInfoRequestBO.getAgentPersonNo());// 代理人号码
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalPersonNo())) {
+				ucfOrg.setCoperationCard(updateMemberInfoRequestBO.getLegalPersonNo());
+				ucfOrg.setLegalIdentity(updateMemberInfoRequestBO.getLegalPersonNo());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterprisePhone())) {
+				ucfOrg.setCell(updateMemberInfoRequestBO.getEnterprisePhone());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getFax())) {
+				ucfOrg.setFax(updateMemberInfoRequestBO.getFax());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getProvinces())) {
+				ucfOrg.setProvince(updateMemberInfoRequestBO.getProvinces());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getCity())) {
+				ucfOrg.setCity(updateMemberInfoRequestBO.getCity());
+			}
+
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEndDate())) {
+				ucfOrg.setCharetExpire(DateUtil.formatStringToDate(updateMemberInfoRequestBO.getEndDate(), "yyyyMMdd"));
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLicenseCopy())) {
+				ucfOrg.setLicenseCopy(updateMemberInfoRequestBO.getLicenseCopy());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getOrgCertificate())) {
+				ucfOrg.setOrgCertificate(updateMemberInfoRequestBO.getOrgCertificate());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getTaxCertificate())) {
+				ucfOrg.setTaxCertificate(updateMemberInfoRequestBO.getTaxCertificate());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalIdentityCopy())) {
+				ucfOrg.setLegalIdentityCop(updateMemberInfoRequestBO.getLegalIdentityCopy());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalIdentityType())) {
+				ucfOrg.setLegalIdentityType(updateMemberInfoRequestBO.getLegalIdentityType());
+			}
+			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEmail())) {
+				userinfo.setEmail(updateMemberInfoRequestBO.getEmail());
+				if (loginApp != null) {
+					loginApp.setEmail(updateMemberInfoRequestBO.getEmail());
+					loginApp.setLoginId(updateMemberInfoRequestBO.getEmail());
+				}
+				ucfOrg.setEmail(updateMemberInfoRequestBO.getEmail());
+			}
+			ucfOrg.setGmtModified(new Date());
+			//修改商户补充属性信息
+			final UcfMerchantExtra ucfMerchantExtra = ucfMerchantExtraService.queryUcfMerchantExtraById(userinfo.getUserId());
+			if(ucfMerchantExtra!=null){
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getMerchantType())){
+					ucfMerchantExtra.setMerchantType(updateMemberInfoRequestBO.getMerchantType());
+					if(EnumMerchantExtra.ORDINARY_MERCHANT.getCode().equals(updateMemberInfoRequestBO.getMerchantType())){
+						ucfMerchantExtra.setAccountType("");
+						ucfMerchantExtra.setParentUserId("");
+					}
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getAccountType())){
+					ucfMerchantExtra.setAccountType(updateMemberInfoRequestBO.getAccountType());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getParentUserId())){
+					ucfMerchantExtra.setParentUserId(updateMemberInfoRequestBO.getParentUserId());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getFirstBusinessCode())){
+					ucfMerchantExtra.setFirstBusinessCode(updateMemberInfoRequestBO.getFirstBusinessCode());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getFirstBusinessName())){
+					ucfMerchantExtra.setFirstBusinessName(updateMemberInfoRequestBO.getFirstBusinessName());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getSecondBusinessCode())){
+					ucfMerchantExtra.setSecondBusinessCode(updateMemberInfoRequestBO.getSecondBusinessCode());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getSecondBusinessName())){
+					ucfMerchantExtra.setSecondBusinessName(updateMemberInfoRequestBO.getSecondBusinessName());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getProductCode())){
+					ucfMerchantExtra.setProductCode(updateMemberInfoRequestBO.getProductCode());
+				}
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getProductName())){
+					ucfMerchantExtra.setProductName(updateMemberInfoRequestBO.getProductName());
+				}
+			}
+			UcfBankCard queryUcfBankCard = new UcfBankCard();
+			queryUcfBankCard.setUserId(updateMemberInfoRequestBO.getUserId());
+			final UcfBankCard bankCard = ucfBankCardDao.queryUcfBankCard(queryUcfBankCard);
+			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
+				public Object doInTransaction(final TransactionStatus status) {
+					try {
+						loginService.updateUcfUser(userinfo);
+						ucfOrgDao.updateUcfOrg(ucfOrg);
+						loginService.updateUcfCustomer(customer);
+						if (ucfCard != null) {
+							loginService.updateUcfCard(ucfCard);
+						}
+						if (ucfMerchantExtra != null) {
+							ucfMerchantExtraService.updateUcfMerchantExtra(ucfMerchantExtra);
+						}
+						if (loginApp != null) {
+							loginService.updateUcfUserApp(loginApp);
+						}
+						if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCardNo())) {
+							if (bankCard == null) {
+								UcfBankCard add = addBankCard(updateMemberInfoRequestBO);
+								ucfBankCardDao.insertUcfBankCard(add);
+							} else {
+								updateBankCard(bankCard, updateMemberInfoRequestBO);
+								ucfBankCardDao.updateUcfBankCard(bankCard);
+							}
+						}
+					} catch (final Exception e) {
+						LOGGER.error(e.getMessage(), e);
+						status.setRollbackOnly();
+						return false;
+					}
+					return true;
+				}
+			});
+			if (commit) {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				updateMemberInfoResultBO.setUserId(userinfo.getUserId());
+				return updateMemberInfoResultBO;
+			} else {
+				updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+				updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+				return updateMemberInfoResultBO;
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return updateMemberInfoResultBO;
+		}
+	}
+
+	private UcfBankCard addBankCard(UpdateMemberInfoRequestBO updateMemberInfoRequestBO) throws AccountException {
+		final UcfBankCard insertBankCard = new UcfBankCard();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		StringBuffer bankCardId = new StringBuffer();
+		bankCardId.append(sdf.format(new Date()));
+		bankCardId.append(ucfBankCardDao.getBankCardSeq());
+		insertBankCard.setId(bankCardId.toString());
+		insertBankCard.setUserId(updateMemberInfoRequestBO.getUserId());
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankName())) {
+			insertBankCard.setBankName(updateMemberInfoRequestBO.getBankName());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCode())) {
+			insertBankCard.setBankId(updateMemberInfoRequestBO.getBankCode());
+		}
+		insertBankCard.setCardNo(updateMemberInfoRequestBO.getBankCardNo());
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCardName())) {
+			insertBankCard.setCardName(updateMemberInfoRequestBO.getBankCardName());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuerName())) {
+			insertBankCard.setBranchname(updateMemberInfoRequestBO.getIssuerName());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuer())) {
+			insertBankCard.setIssuer(updateMemberInfoRequestBO.getIssuer());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getCity())) {
+			insertBankCard.setCity(updateMemberInfoRequestBO.getCity());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getProvinces())) {
+			insertBankCard.setProvince(updateMemberInfoRequestBO.getProvinces());
+		}
+		insertBankCard.setCardType(EnumBankCardType.BUSINESS_ACCOUNT.getCode());
+		insertBankCard.setCertFrom("system");
+		insertBankCard.setRegisterFrom("system");
+		insertBankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
+		insertBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
+		insertBankCard.setUnionSeq(ucfBankCardDao.getUnionSeq());
+		return insertBankCard;
+	}
+
+	private void updateBankCard(final UcfBankCard updateBankCard, UpdateMemberInfoRequestBO updateMemberInfoRequestBO) {
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankName())) {
+			updateBankCard.setBankName(updateMemberInfoRequestBO.getBankName());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCode())) {
+			updateBankCard.setBankId(updateMemberInfoRequestBO.getBankCode());
+		}
+		updateBankCard.setCardNo(updateMemberInfoRequestBO.getBankCardNo());
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCardName())) {
+			updateBankCard.setCardName(updateMemberInfoRequestBO.getBankCardName());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuerName())) {
+			updateBankCard.setBranchname(updateMemberInfoRequestBO.getIssuerName());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuer())) {
+			updateBankCard.setIssuer(updateMemberInfoRequestBO.getIssuer());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getCity())) {
+			updateBankCard.setCity(updateMemberInfoRequestBO.getCity());
+		}
+		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getProvinces())) {
+			updateBankCard.setProvince(updateMemberInfoRequestBO.getProvinces());
+		}
+	}
+
+	@Override
+	public EnterpriseMemberInfoResultBO queryEnterpriseMember(String merchantId, String userId) {
+		LOGGER.info("查询企业会员审核状态：merchantId[" + merchantId + "] userId[" + userId + "] ");
+		EnterpriseMemberInfoResultBO selectMemberInfoResultBO = new EnterpriseMemberInfoResultBO();
+		if (StringUtil.isEmpty(merchantId)) {
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			return selectMemberInfoResultBO;
+		}
+		if (StringUtil.isEmpty(userId)) {
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
+			return selectMemberInfoResultBO;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(userId);
+		user.setRefMerchant(merchantId);
+		try {
+			user = this.loginService.queryUcfUserInfo(user);
+			if (user == null) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			List<UcfBankCard> bankCardList = loginService.queryUcfBankCardByUserId(user.getUserId());
+			if (bankCardList.isEmpty()) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			UcfBankCard bankCard = bankCardList.get(0);
+			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(user.getUserId());
+			if (ucfOrg == null) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			UcfMerchantExtra ucfMerchantExtra = ucfMerchantExtraService.queryUcfMerchantExtraById(userId);
+			if (ucfMerchantExtra == null) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			selectMemberInfoResultBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
+			selectMemberInfoResultBO.setEnterpriseShortName(ucfOrg.getCompanyName());
+			selectMemberInfoResultBO.setBusinessLicense(ucfOrg.getCharetNo());
+			selectMemberInfoResultBO.setEndDate(DateUtil.formatDateToString(ucfOrg.getCharetExpire(), "yyyyMMdd"));
+			
+			selectMemberInfoResultBO.setLegalPersonName(ucfOrg.getLegalPerson());
+			selectMemberInfoResultBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
+			selectMemberInfoResultBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
+			selectMemberInfoResultBO.setEnterprisePhone(ucfOrg.getCell());
+			
+			selectMemberInfoResultBO.setBankName(bankCard.getBankName());
+			selectMemberInfoResultBO.setBankCode(bankCard.getBankId());
+			selectMemberInfoResultBO.setBankCardNo(bankCard.getCardNo());
+			selectMemberInfoResultBO.setProvinces(ucfOrg.getProvince());
+			
+			selectMemberInfoResultBO.setCity(ucfOrg.getCity());
+			selectMemberInfoResultBO.setIssuerName(ucfOrg.getBranchName());
+			selectMemberInfoResultBO.setIssuer(bankCard.getIssuer());
+			selectMemberInfoResultBO.setBankCardName(bankCard.getCardName());
+			// add by gaoxiang 增加代理人信息
+			selectMemberInfoResultBO.setAgentPersonName(ucfOrg.getAgentName());
+			selectMemberInfoResultBO.setAgentPersonNo(ucfOrg.getAgentCard());
+			selectMemberInfoResultBO.setAgentPersonPhone(user.getCell());
+			selectMemberInfoResultBO.setMerchantType(ucfMerchantExtra.getMerchantType());
+			selectMemberInfoResultBO.setAccountType(ucfMerchantExtra.getAccountType());
+			selectMemberInfoResultBO.setParentUserId(ucfMerchantExtra.getParentUserId());
+			
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			return selectMemberInfoResultBO;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return selectMemberInfoResultBO;
+		}
+	}
+	
+	@Override
+	public EnterpriseMemberInfoResultBO queryMerchantInfo(String userId) {
+		LOGGER.info("查询商户信息 userId[" + userId + "] ");
+		EnterpriseMemberInfoResultBO selectMemberInfoResultBO = new EnterpriseMemberInfoResultBO();
+		if (StringUtil.isEmpty(userId)) {
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
+			return selectMemberInfoResultBO;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(userId);
+		try {
+			user = this.loginService.queryUcfUserInfo(user);
+			if (user == null) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(user.getUserId());
+			if (ucfOrg == null) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			List<UcfBankCard> bankCardList = loginService.queryUcfBankCardByUserId(user.getUserId());
+			if (bankCardList.isEmpty()) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			UcfBankCard bankCard = bankCardList.get(0);
+			UcfMerchantExtra ucfMerchantExtra = ucfMerchantExtraService.queryUcfMerchantExtraById(userId);
+			if (ucfMerchantExtra == null) {
+				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectMemberInfoResultBO;
+			}
+			selectMemberInfoResultBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
+			selectMemberInfoResultBO.setEnterpriseShortName(ucfOrg.getCompanyName());
+			selectMemberInfoResultBO.setOrgId(ucfOrg.getId());
+			selectMemberInfoResultBO.setBusinessLicense(ucfOrg.getCharetNo());
+			selectMemberInfoResultBO.setEndDate(DateUtil.formatDateToString(ucfOrg.getCharetExpire(), "yyyyMMdd"));
+			selectMemberInfoResultBO.setLegalIdentityType(ucfOrg.getLegalIdentityType());
+			selectMemberInfoResultBO.setLegalPersonName(ucfOrg.getLegalPerson());
+			selectMemberInfoResultBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
+			selectMemberInfoResultBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
+			selectMemberInfoResultBO.setEnterprisePhone(ucfOrg.getCell());
+			selectMemberInfoResultBO.setProvinces(ucfOrg.getProvince());
+			selectMemberInfoResultBO.setFax(ucfOrg.getFax());
+			selectMemberInfoResultBO.setCity(ucfOrg.getCity());
+			selectMemberInfoResultBO.setEnterpriseUrl(ucfOrg.getMallUrl());
+			selectMemberInfoResultBO.setIssuerName(bankCard.getBranchname());
+			selectMemberInfoResultBO.setZipCode(ucfOrg.getZip());
+			selectMemberInfoResultBO.setAgentPersonName(ucfOrg.getAgentName());
+			selectMemberInfoResultBO.setAgentPersonNo(ucfOrg.getAgentCard());
+			selectMemberInfoResultBO.setAgentPersonPhone(user.getPhone());
+			selectMemberInfoResultBO.setEmail(user.getEmail());
+			selectMemberInfoResultBO.setEnabledStatus(user.getEnabledStatus());
+			//商户拓展属性
+			selectMemberInfoResultBO.setMerchantType(ucfMerchantExtra.getMerchantType());
+			selectMemberInfoResultBO.setAccountType(ucfMerchantExtra.getAccountType());
+			selectMemberInfoResultBO.setParentUserId(ucfMerchantExtra.getParentUserId());
+			selectMemberInfoResultBO.setFirstBusinessCode(ucfMerchantExtra.getFirstBusinessCode());
+			selectMemberInfoResultBO.setFirstBusinessName(ucfMerchantExtra.getFirstBusinessName());
+			selectMemberInfoResultBO.setSecondBusinessCode(ucfMerchantExtra.getSecondBusinessCode());
+			selectMemberInfoResultBO.setSecondBusinessName(ucfMerchantExtra.getSecondBusinessName());
+			selectMemberInfoResultBO.setProductCode(ucfMerchantExtra.getProductCode());
+			selectMemberInfoResultBO.setProductName(ucfMerchantExtra.getProductName());
+			//银行卡信息
+			selectMemberInfoResultBO.setBankName(bankCard.getBankName());
+			selectMemberInfoResultBO.setBankCode(bankCard.getBankId());
+			selectMemberInfoResultBO.setBankCardNo(bankCard.getCardNo());
+			selectMemberInfoResultBO.setBankCardName(bankCard.getCardName());
+			selectMemberInfoResultBO.setIssuer(bankCard.getIssuer());
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			return selectMemberInfoResultBO;
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			selectMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			return selectMemberInfoResultBO;
+		}
+	}
+
+	@Override
+	public EnterpriseStatusReturnValueBo queryEnterpriseMemberStatus(String merchantId, String userId, String userType) {
+		LOGGER.info("查询企业会员审核状态：merchantId[" + merchantId + "] userId[" + userId + "] userType [" + userType + "]");
+		EnterpriseStatusReturnValueBo resultBO = new EnterpriseStatusReturnValueBo();
+		if (merchantId == null || "".equals(merchantId)) {
+			resultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			resultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			resultBO.setStatus(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			return resultBO;
+		}
+		if (userId == null || "".equals(userId)) {
+			resultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			resultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
+			resultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			return resultBO;
+		}
+		if (userType == null || "".equals(userType)) {
+			resultBO.setRespCode(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
+			resultBO.setRespMsg(EnumMemberCode.USER_TYPE_NO_NULL.getMsgS());
+			resultBO.setStatus(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
+			return resultBO;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(userId);
+		user.setRefMerchant(merchantId);
+		user.setUserType(BigDecimal.valueOf(Integer.valueOf(userType)));
+		try {
+			user = this.loginService.queryUcfUserInfo(user);
+			if (user == null) {
+				resultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				resultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				resultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				return resultBO;
+			}
+			resultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			if (user.getEnabledStatus().equals(EnumUserEnabledStatus.W.getCode()) || user.getEnabledStatus().equals(EnumUserEnabledStatus.Q.getCode())) {
+				resultBO.setStatus("99");
+			} else if (user.getEnabledStatus().equals(EnumUserEnabledStatus.T.getCode())) {
+				resultBO.setStatus("00");
+			} else {
+				resultBO.setStatus("01");
+			}
+			return resultBO;
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			resultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			resultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			resultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			return resultBO;
+		}
+	}
+
+	@Override
+	public MemberReviewResultBO memberReview(MemberReviewRequestBO memberReviewRequestBO) {
+		MemberReviewResultBO memberReviewResultBO = new MemberReviewResultBO();
+
+		if (memberReviewRequestBO.getMerchantId() == null || "".equals(memberReviewRequestBO.getMerchantId())) {
+			memberReviewResultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			memberReviewResultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			memberReviewResultBO.setStatus(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			return memberReviewResultBO;
+		}
+		if (memberReviewRequestBO.getUserId() == null || "".equals(memberReviewRequestBO.getUserId())) {
+			memberReviewResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			memberReviewResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
+			memberReviewResultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			return memberReviewResultBO;
+		}
+		if (memberReviewRequestBO.getUserType() == null || "".equals(memberReviewRequestBO.getUserType())) {
+			memberReviewResultBO.setRespCode(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
+			memberReviewResultBO.setRespMsg(EnumMemberCode.USER_TYPE_NO_NULL.getMsgS());
+			memberReviewResultBO.setStatus(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
+			return memberReviewResultBO;
+		}
+		if (memberReviewRequestBO.getReviewType() == null || "".equals(memberReviewRequestBO.getReviewType())) {
+			memberReviewResultBO.setRespCode(EnumMemberCode.REVIEW_TYPE_NO_NULL.getCode());
+			memberReviewResultBO.setRespMsg(EnumMemberCode.REVIEW_TYPE_NO_NULL.getMsgS());
+			memberReviewResultBO.setStatus(EnumMemberCode.REVIEW_TYPE_NO_NULL.getCode());
+			return memberReviewResultBO;
+		}
+		UcfUser user = new UcfUser();
+		user.setUserId(memberReviewRequestBO.getUserId());
+		user.setRefMerchant(memberReviewRequestBO.getMerchantId());
+		user.setUserType(BigDecimal.valueOf(Integer.valueOf(memberReviewRequestBO.getUserType())));
+		try {
+			user = this.loginService.queryUcfUserInfo(user);
+			if (user == null) {
+				memberReviewResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				memberReviewResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				memberReviewResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				return memberReviewResultBO;
+			}
+			user.setEnabledStatus("T");// T：正常
+			userRegService.updateUserInfo(user);
+			memberReviewResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			memberReviewResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			memberReviewResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+			return memberReviewResultBO;
+
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(), e);
+			memberReviewResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			memberReviewResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			memberReviewResultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			return memberReviewResultBO;
+		}
+	}
+
+	@Override
+	public VerifyEmailResultBO VerifyEmail(VerifyEmailRequestBO verifyEmailRequestBO) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public BaseBO auditEnterpriseMember(String userId, String status) {
+		BaseBO bo = new BaseBO();
+		try {
+			UcfUser ucfUser = new UcfUser();
+			ucfUser.setUserId(userId);
+			ucfUser.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.ENTERPRISE.getCode())));
+			List<UcfUser> users = ucfUserDao.queryUcfUserListByWhere(ucfUser);
+			if (users == null || users.size() == 0) {
+				bo.setRespCode(EnumMemberCode.NO_EXIST_USER.getCode());
+				bo.setStatus(EnumMemberCode.NO_EXIST_USER.getCode());
+				bo.setRespMsg(EnumMemberCode.NO_EXIST_USER.getMsgS());
+				return bo;
+			}
+			UcfUser user = users.get(0);
+			if (Constants.STATUS_SUC.equals(status)) {
+				user.setEnabledStatus(EnumUserEnabledStatus.T.getCode());
+				user.setRealnameStatus(Constants.REALNAME_STATUS_YES);
+				ucfUserDao.updateUcfUser(user);
+			}
+			// 发送mq消息通知p2p
+			HashMap<String, String> params = new HashMap<String, String>();
+			params.put("merchantId", user.getRefMerchant());
+			params.put("p2pUserId", user.getRefUser());
+			params.put("userId", user.getUserId());
+			params.put("status", status);
+			params.put("callBackUrl", "");
+
+			UcfSendMessage mqmsg = new UcfSendMessage();
+			mqmsg.setBizValue(params);
+			SendResult rocketResult = ucfMQProducer.sendMessage(RocketMQTopicEnum.ROCKETMQ_MEMBER_CORP_P2P_TOPICANDTAG.getTopic(), RocketMQTopicEnum.ROCKETMQ_MEMBER_CORP_P2P_TOPICANDTAG.getTag(), mqmsg);
+			LOGGER.info("【企业会员审核】发送RocketMQ消息成功：" + rocketResult.toString());
+			bo.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			bo.setStatus(EnumMemberCode.SUCCESS.getCode());
+			bo.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+		} catch (Exception e) {
+			LOGGER.error("【企业会员审核】:", e);
+			bo.setRespCode(EnumMemberCode.ERROR.getCode());
+			bo.setStatus(EnumMemberCode.ERROR.getCode());
+			bo.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+		}
+		return bo;
+	}
+
+	@Override
+	public PageEnterpriseMemberResultBo searchEnterpriseMembers(EnterpriseMemberSearchReqBo searchBo) {
+
+		return null;
+	}
+
+	@Override
+	public EnterpriseMemberBankCardBO queryEnterpriseMemberBankCard(String merchantId, String userId) {
+		EnterpriseMemberBankCardBO enterpriseMemberBankCardBO = new EnterpriseMemberBankCardBO();
+		try {
+			if (userId == null || "".equals(userId) || merchantId == null || "".equals(merchantId)) {
+				enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+				enterpriseMemberBankCardBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+				return enterpriseMemberBankCardBO;
+			}
+			UcfUser user = new UcfUser();
+			user.setUserId(userId);
+			user = this.loginService.queryUcfUserInfo(user);
+			if (user == null) {
+				enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
+				return enterpriseMemberBankCardBO;
+			}
+
+			List<UcfBankCard> bankCardList = this.loginService.queryUcfBankCardByUserId(userId);
+			if (bankCardList.isEmpty()) {
+				enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.MEMBER_NOT_HAVE_BANKCARD.getCode());
+				enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.MEMBER_NOT_HAVE_BANKCARD.getMsgS());
+				return enterpriseMemberBankCardBO;
+			}
+			UcfBankCard bankCard = bankCardList.get(0);
+			enterpriseMemberBankCardBO.setBankCardNo(bankCard.getCardNo());
+			enterpriseMemberBankCardBO.setBankCardName(bankCard.getCardName());
+			enterpriseMemberBankCardBO.setBankName(bankCard.getBankName());
+			enterpriseMemberBankCardBO.setBankCode(bankCard.getBankId());
+			enterpriseMemberBankCardBO.setCartType(bankCard.getCardType());
+			enterpriseMemberBankCardBO.setBranchName(bankCard.getBranchname());
+			enterpriseMemberBankCardBO.setIssuer(bankCard.getIssuer());
+			enterpriseMemberBankCardBO.setCity(bankCard.getCity());
+			enterpriseMemberBankCardBO.setProvince(bankCard.getProvince());
+			enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			enterpriseMemberBankCardBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+			enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			return enterpriseMemberBankCardBO;
+		} catch (Exception e) {
+			LOGGER.error("【查询企业会员银行卡信息】:", e);
+			enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			enterpriseMemberBankCardBO.setStatus(EnumMemberCode.ERROR.getCode());
+			enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+		}
+		return enterpriseMemberBankCardBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	public MainAccountListBO queryMainAccountList(){
+		MainAccountListBO mainAccountListBO = new MainAccountListBO();
+		List<UcfUser> userList = null;
+		try {
+			userList = ucfMerchantExtraService.queryMainAccountList();
+			if(userList!=null && userList.size()>0){
+				List<com.ucf.customer.ws.bo.UcfUser> mainAccountList = new ArrayList<com.ucf.customer.ws.bo.UcfUser>();
+				for(UcfUser ucfUser : userList){
+					com.ucf.customer.ws.bo.UcfUser mainAccount = new com.ucf.customer.ws.bo.UcfUser();
+					BeanUtilEx.copyProperties(mainAccount, ucfUser);
+					mainAccountList.add(mainAccount);
+				}
+				mainAccountListBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				mainAccountListBO.setRespMsg("成功");
+				mainAccountListBO.setUserlist(mainAccountList);
+			}else{
+				mainAccountListBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				mainAccountListBO.setRespMsg("未找到主账户");
+			}
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			mainAccountListBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			mainAccountListBO.setRespMsg("系统异常");
+		}
+		return mainAccountListBO;
+	}
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
+	public GroupAccountBo queryGroupAccount(String childUserId) {
+		GroupAccountBo groupAccountBo = new GroupAccountBo();
+		if(StringUtils.isEmpty(childUserId)){
+			groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+			groupAccountBo.setRespMsg("子商户ID为空");
+		}else{
+			try {
+				UcfMerchantExtra ucfMerchantExtraChild = ucfMerchantExtraService.queryUcfMerchantExtraById(childUserId);
+				if(ucfMerchantExtraChild!=null){
+					UcfUser ucfUserParent = loginService.queryUserInfo(ucfMerchantExtraChild.getParentUserId());
+					UcfCard ucfCardParent = loginService.queryUcfCardByUserId(ucfMerchantExtraChild.getParentUserId());
+					if(ucfUserParent!=null){
+						//查询子商户、账户信息
+						UcfUser ucfUserChild = loginService.queryUserInfo(childUserId);
+						UcfCard ucfCardChild = loginService.queryUcfCardByUserId(childUserId);
+						
+						groupAccountBo.setChildMerchantId(ucfUserChild.getUserId());
+						groupAccountBo.setChildMerchantName(ucfUserChild.getRealName());
+						groupAccountBo.setChildAccountNo(ucfCardChild.getAccountId());
+						
+						groupAccountBo.setParentMerchantId(ucfUserParent.getUserId());
+						groupAccountBo.setParentMerchantName(ucfUserParent.getRealName());
+						groupAccountBo.setParentAccountNo(ucfCardParent.getAccountId());
+						
+						groupAccountBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
+						groupAccountBo.setRespMsg("成功");
+					}else{
+						groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+						groupAccountBo.setRespMsg("未找到用户["+childUserId+"]的集团主商户");
+					}
+				}else{
+					groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+					groupAccountBo.setRespMsg("用户["+childUserId+"]不存在");
+				}
+			} catch (Exception e) {
+				LOGGER.error("查询商户["+childUserId+"]信息异常",e);
+				groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+				groupAccountBo.setRespMsg("系统异常");
+			}
+		}
+		return groupAccountBo;
+	}
+	
+}

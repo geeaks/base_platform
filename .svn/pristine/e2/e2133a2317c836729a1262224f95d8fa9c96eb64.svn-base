@@ -1,0 +1,93 @@
+package com.ucf.customer.utils.enums;
+
+/**
+ * 
+ * 
+ * 项目名称：member <br/>
+ * 类名称：EnumRedisKey <br/>
+ * 类描述： reids key 管理枚举 <br/>
+ * 创建人：张磊<br/>
+ * 创建时间：2014-8-21 下午2:29:22 <br/>
+ * 
+ * @version <br/>
+ * 
+ */
+public enum EnumRedisKey {
+	
+	PAY_PWD_ERROR_TIME_KEY("MEMBER_PAY_PWD_ERROR_TIMES_", "支付密码错误次数",60*60*24,5),
+	LGN_PWD_ERROR_TIME_KEY("MEMBER_LGN_PWD_ERROR_TIMES_", "登录密码错误次数",60*60*24,5),	
+	QUES_ASW_ERROR_TIME_KEY("MEMBER_QUES_ASW_ERROR_TIMES_", "密保问题",60*60*24,5),
+	
+	FIND_PAY_PWD_ERROR_TIME_KEY("MEMBER_FIND_PAY_PWD_ERROR_TIMES_", "支付密码找回错误次数",60*60*24,5),
+	FIND_LGN_PWD_ERROR_TIME_KEY("MEMBER_FIND_LGN_PWD_ERROR_TIMES_", "登录密码找回错误次数",60*60*24,5),	
+	
+	VERIFY_CODE_KEY("MEMBER_SMS_CODE_","短信验证码",60*5),
+	VERIFY_CODE_CHECK_KEY("MEMBER_SMS_CODE_CHECK_","短信验证码校验次数",60*5),
+	WITHDRAW_TIMES_KEY("MEMBER_WITHDRAW_TIMES_", "提现次数",60*60*24,5),
+	
+	P2P_REG_AUTH_TIME_KEY("MEMBER_P2P_REG_AUTH_ERROR_TIMES_", "P2P用户注册认证错误次数",60*60*24*2,3),
+	
+	WITHDRAW_AMOUNT_KEY("MEMBER_WITHDRAW_AMOUNT_", "提现金额(单位:分)",60*60*24,10000000),
+	
+	REMIT_CERT_USER_BANKCARD_KEY("MEMBER_REMIT_CERT_USER_BANKCARD_", "小额打款认证银行卡",60*60*24*30,1),
+	
+	//缓存Key
+	UCF_CARD_QUERY_BY_USERId("MEMBER_UCF_CARD_BY_USERId_", "查询用户card", 60 * 60 * 24 * 14, 0),
+	UCF_USER_QUERY_BY_USERId("MEMBER_UCF_USER_BY_USERId_", "查询用户", 60 * 60 * 24 * 14, 0),
+	ANONYNOUS_UCF_USER_LIST_QUERY("MEMBER_ANONYNOUS_UCF_USER_LIST_", "查询匿名用户集合", 60 * 60 * 24 * 14, 0);
+	
+	
+	private EnumRedisKey(String key, String name,int timeout) {
+		this.key = key;
+		this.name = name;
+		this.timeout = timeout;
+	}
+
+	private EnumRedisKey(String key, String name,int timeout,int number) {
+		this.key = key;
+		this.name = name;
+		this.timeout = timeout;
+		this.number = number;
+	}
+
+	/** reids key */
+	private String key;
+	/** 名称 */
+	private String name;
+	/** 失效时间(单位秒)	 */
+	private int timeout;
+	/** 最大次数（用于key存放的是次数情况,默认 1） */
+	private int number = 1;
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public int getTimeout() {
+		return timeout;
+	}
+
+	public void setTimeout(int timeout) {
+		this.timeout = timeout;
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+}

@@ -1,0 +1,189 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <c:set var="basePath" value="${pageContext.request.contextPath }" scope="application"/>
+    <title>先锋支付</title>
+
+	  <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+     <jsp:include page="/jsp/common/common.jsp"/>
+    <!-- Bootstrap -->
+  
+    <script type="text/javascript">
+	$(document).ready(function() {
+		$('#loginForm').validator({
+			 timely: true,
+			 stopOnError: true,
+			 msgMaker: false,     //不要自动生成消息  
+			 rules: {
+				 tel: [/^1\d{10}$/, '请输入正确的手机号']
+			},
+			fields: {
+				'username':'手机号:required;length[11];tel;remote[${basePath}/login/checkUserExists.do, username];',
+					 'pwd':'登录密码:required;length[6~20]',
+			   'checkCode':'验证码:required;length[4];remote[${basePath}/checkIdcode.do, checkCode];'
+			}
+			,
+			 invalid: function(form, errors){
+			         var html = '';
+			         if (null!=errors&&errors.length>0) {
+			        	html += '<span class="msg-box n-right" style="" ><span class="msg-wrap n-error" role="alert"><span class="n-icon"></span><span class="n-msg">'+errors[0]+'</span></span></span>'
+			        }
+			       $('#msg_holder').html(html);
+			    }
+			
+		});
+		$('#checkCode').keyup(function(){
+			
+			var v = $(this).val();
+			if(v!=null && v.length==4){
+				$(this).trigger("validate");
+			}
+		});
+		
+		
+		
+	});
+	
+	function myReload(){
+		document.getElementById("J-checkcode-img").src=document.getElementById("J-checkcode-img").src + "?nocache="+new Date().getTime();
+	}
+	</script>
+  </head>
+  <body>
+    
+
+    <c:import url="/jsp/common/loginHeader.jsp"></c:import>
+
+	<!--login
+	===================================================-->
+	<div class="login-all">
+		<div class="login-title">
+			登录先锋支付
+		</div>
+		
+	                         
+							 
+		<form action="${basePath}/login/login.htm" id="loginForm" name="loginForm" method="post">
+			<div class="login-body">
+				<div id="msg_holder">
+				<span class="msg-box" for="username"></span>
+				<c:if test="${msg!=null}">
+				<div>
+						<p class="red"><span>${msg }</span></p>
+					</div>
+				</c:if>
+				<c:if test="${ usg!=null }">
+				<div>
+						<p class="red"><span>${usg }</span></p>
+					</div>
+				</c:if>
+					<c:if test="${lsg!=null}">
+				<div>
+						<p class="red"><span>${lsg }</span></p>
+					</div>
+				</c:if>
+				</div>
+				
+				<span class="name-img"><img src="../images/user.jpg"></img></span>
+				<input type="text" value="${user.cell}" id="" name="username" class="input-block-level " maxlength="11" placeholder="用户名">
+				
+				<span class="pass-word-img add-mgt10"><img src="${basePath}/images/password.jpg"></img></span>
+	        	<input type="password" id="pwd" name="pwd" class="input-block-level add-mgt10" maxlength="20" placeholder="密码" onpaste="return false;">
+	        	                  
+	       		
+	            <span class="pass-word-img add-mgt10"><img src="${basePath}/images/text.jpg"></img>
+	            
+	            </span>
+	        	<input type="password" id="checkCode" name="checkCode"   maxlength="4"  class="input-block-level wx add-mgt10" placeholder="验证码">
+	        	                  
+	            <span class="text">
+	             <img id="J-checkcode-img" title="点击图片刷新验证码"	onclick="myReload()" class="checkcode-img add-mgt10" complete="complete" 
+	             src="${basePath}/idcode.do" alt="输入验证码" style="cursor: pointer;"	seed="JIndexForm-J-checkcode-img" smartracker="on"> 
+	          </span>
+	        	<button class="btn btn-large btn-primary sign-in-btn" type="submit">登 录</button>
+	            <span class="sign-in"><a href="${basePath}/reg/index.htm">免费注册</a></span>
+	            <span class="forget"><a href="${basePath}/jsp/login/findPwdByPhone.jsp">忘记密码？</a></span>
+			</div>
+		</form>
+	</div>
+	                        
+	<!--end login
+	====================================================-->
+	
+	
+    <!-- Carousel
+    ================================================== -->
+    <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+    <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner">
+    <div class="item active add-image1">
+      <div class="carousel-caption">
+      </div>
+    </div>
+    <div class="item add-image2">
+      <!--img src="images/banner2.png" alt="..."-->
+      <div class="carousel-caption">
+      </div>
+    </div>
+    <div class="item add-image3">
+      <!--img src="images/banner.png" alt="..."-->
+      <div class="carousel-caption">
+      </div>
+    </div>
+  </div>
+  
+  
+
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+
+
+
+    <!-- Marketing messaging and featurettes
+    ================================================== -->
+    <!-- Wrap the rest of the page in another container to center all the content. -->
+
+    <div class="container marketing">
+
+      <!-- Three columns of text below the carousel -->
+      <div class="row mgt">
+        <div class="col-lg-4 center">
+          <h2 class="safe">更安全方便的支付平台</h2>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 center">
+          <h2 class="quick">便捷的个人金融服务</h2>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 center">
+          <h2 class="unin">统一的账户管理体系</h2>
+        </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+    </div><!-- /.container -->
+	
+	<c:import url="/jsp/common/newfooter.jsp"></c:import>
+  
+	
+
+
+
+
+  </body>
+</html>

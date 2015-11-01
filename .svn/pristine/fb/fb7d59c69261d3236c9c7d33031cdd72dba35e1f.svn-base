@@ -1,0 +1,80 @@
+package com.ucf.customer.service.impl;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ucf.customer.bo.RealAuthBO;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.service.RealAuthService;
+import com.ucf.customer.utils.BizProduct;
+import com.ucf.customer.utils.BusinessType;
+import com.ucf.customer.utils.Constants;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.trade.ws.bo.TradeUcfWsParamBo;
+import com.ucf.trade.ws.bo.TradeUcfWsReturnValueBo;
+import com.ucf.trade.ws.service.TradeUcfRealNameServiceWs;
+
+
+@Service("realAuthService")
+public class RealAuthServiceImpl implements RealAuthService {
+	
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(RealAuthServiceImpl.class);
+	
+	/**
+	 * 身份证类型
+	 */
+	private static String ID_TYPE = "0";
+	
+	@Autowired
+	private TradeUcfRealNameServiceWs tradeUcfRealNameServiceWsClient;
+	
+	@Autowired
+	private LoginService loginService;
+	
+	@Override
+	public boolean realAuth(String userId, String mobile, RealAuthBO realAuthBO) throws Exception {
+		TradeUcfWsParamBo influx = new TradeUcfWsParamBo();
+		Map<Object, Object> mapo = new HashMap<Object, Object>();
+		mapo = loginService.queryUcfUserCell(userId);
+		String cell = (String) mapo.get("cell");
+		String certNo = realAuthBO.getCertNo();
+		String userName = realAuthBO.getUserName();
+		influx.setUserId(userId);
+		influx.setAccountName(userName);// 户名
+		influx.setAccountNo(realAuthBO.getBankCardNo());// 账户
+		influx.setAccountType(Constants.ACCOUNT_TYPE_STRING);// 账户类型 1
+		influx.setCertificateNo(certNo);// 证件号码
+		influx.setMobileNo(cell);
+		influx.setBankNo(realAuthBO.getBankId().toUpperCase());
+		influx.setCardType(Constants.CARD_TYPE_STRING);// 银行卡类型 ( 类型也没有，这个有校验)
+		influx.setCertificateType(ID_TYPE);
+		influx.setBusinessType(BusinessType.REALNAME.getCode());
+		influx.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+		LOGGER.info("TradeUcfRealNameServiceWs:[cell~" + SensitiveInfoUtils.mobilePhone(cell) + ",userId~" + userId + ",userName~"
+				+ SensitiveInfoUtils.chineseName(userName) + ",certNo~" + SensitiveInfoUtils.idCardNum(certNo) + ",BankCardNo~"
+				+ SensitiveInfoUtils.bankCard(realAuthBO.getBankCardNo()) + ",AccountType~" + influx.getAccountType() + ",Amount~"
+				+ influx.getAmount() + ",Issuer~" + SensitiveInfoUtils.cnapsCode(influx.getIssuer()) + ",BankNo~" + influx.getBankNo() + ",CardType~"
+				+ influx.getCardType() + ",CertificateType~" + influx.getCertificateType() + ",BusinessType~" + influx.getBusinessType()
+				+ ",BizProduct~" + influx.getBizProduct());
+		TradeUcfWsReturnValueBo returnBo = new TradeUcfWsReturnValueBo();
+		try {
+			returnBo = tradeUcfRealNameServiceWsClient.recharge(influx);
+		} catch (Exception e) {
+			LOGGER.error("实名认证接口错误信息返回：" + e.getMessage());
+			return false;
+		}
+		LOGGER.info("实名认证接口返回：" + SensitiveInfoUtils.getJson(returnBo));// 交易系统修改
+		Map<Object, Object> map = returnBo.getReturnValueMap();
+		String result = (String) map.get("result");
+		if (result != null && result.equals(Constants.SUCCESS)) {
+			return true;
+		}
+		LOGGER.error("exceptionMessage" + (String) map.get("exceptionMessage"));
+		return false;
+	}
+}

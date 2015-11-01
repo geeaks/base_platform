@@ -1,0 +1,106 @@
+package com.ucf.customer.ws.service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+public class StringObjectMapAdapter extends XmlAdapter<StringObjectMapAdapter.Data, Map<String, String>> {
+
+    @Override
+
+    public Map<String, String> unmarshal(Data data) throws Exception {
+
+        Map<String, String> map = new HashMap<String, String>();
+
+        for (Data.Entry entry : data.getList()) {
+
+            map.put(entry.getKey(), entry.getValue());
+
+        }
+
+        return map;
+
+    }
+
+    @Override
+
+    public Data marshal(Map<String, String> map) throws Exception {
+
+        Data data = new Data();
+
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+
+            data.addEntry(entry.getKey(), entry.getValue());
+
+        }
+
+        return data;
+
+    }
+
+    public static class Data {
+
+        private List<Entry> list = new ArrayList<Entry>();
+
+        public void addEntry(String fieldName, String fieldValue) {
+
+            Entry entry = new Entry();
+
+            entry.setKey(fieldName);
+
+            entry.setValue(fieldValue);
+
+            list.add(entry);
+
+        }
+
+        public List<Entry> getList() {
+
+            return list;
+
+        }
+
+        public void setList(List<Entry> list) {
+
+            this.list = list;
+
+        }
+
+        public static class Entry {
+
+            private String key;
+
+            private String value;
+
+            public String getKey() {
+
+                return key;
+
+            }
+
+            public void setKey(String key) {
+
+                this.key = key;
+
+            }
+
+            public String getValue() {
+
+                return value;
+
+            }
+
+            public void setValue(String value) {
+
+                this.value = value;
+
+            }
+
+        }
+
+    }
+
+}

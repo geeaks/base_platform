@@ -1,0 +1,60 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+
+import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.EnumUserRegisterStatus;
+
+public class UserCheckResultBO implements Serializable{
+	
+		/**
+	 * 
+	 */
+	private static final long serialVersionUID = -456357864961713066L;
+
+		/**
+		 * dubbo调用成功标示
+		 */
+		private EnumMemberCode enumMemberCode; 
+	
+		/**
+		 * 会员是否注册枚举
+		 */
+		private EnumUserRegisterStatus  enumUserRegisterStatus;
+		
+		/**
+		 * 存在则返回登录url
+			不存在则返回注册url
+		 */
+		private String returnUrl;
+
+		public EnumUserRegisterStatus getEnumUserRegisterStatus() {
+			return enumUserRegisterStatus;
+		}
+
+		public void setEnumUserRegisterStatus(
+				EnumUserRegisterStatus enumUserRegisterStatus) {
+			this.enumUserRegisterStatus = enumUserRegisterStatus;
+		}
+
+		public String getReturnUrl() {
+			return returnUrl;
+		}
+
+		public void setReturnUrl(String returnUrl) {
+			this.returnUrl = returnUrl;
+		}
+
+		public EnumMemberCode getEnumMemberCode() {
+			return enumMemberCode;
+		}
+
+		public void setEnumMemberCode(EnumMemberCode enumMemberCode) {
+			this.enumMemberCode = enumMemberCode;
+		}
+		
+		
+		
+		
+
+}

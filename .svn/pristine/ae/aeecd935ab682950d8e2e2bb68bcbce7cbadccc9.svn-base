@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+<!-- insert UcfPerson -->
+<insert id="insertUcfPerson" parameterType="ucfPerson" keyProperty="id" useGeneratedKeys="true">
+	<![CDATA[
+		INSERT INTO UCF_PERSON (
+	ID,CUSTOMER_ID,REAL_NAME,GENDER,BRITHDAY,COUNTRY,PROVINCE,CITY,ADDRESS,PHONE,CELL,ZIP,EMAIL,IM,PROFESSION,EDUCATION,GMT_CREATE,GMT_MODIFIED,MEMO
+		)VALUES(
+		UCF_PERSON_SEQ.nextval,#{customerId,jdbcType=VARCHAR},#{realName,jdbcType=VARCHAR},#{gender,jdbcType=VARCHAR},#{brithday,jdbcType=VARCHAR},#{country,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{cell,jdbcType=VARCHAR},#{zip,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{im,jdbcType=VARCHAR},#{profession,jdbcType=VARCHAR},#{education,jdbcType=VARCHAR},sysdate,sysdate,#{memo,jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<!-- update UcfPerson -->
+<update id="updateUcfPerson" parameterType="ucfPerson">
+	<![CDATA[
+		UPDATE 
+		UCF_PERSON 
+		SET 
+		 ID=ID
+	]]>
+			<if test="null != customerId">
+	<![CDATA[
+,CUSTOMER_ID = #{customerId}
+	]]>
+	</if>
+	<if test="null != realName">
+	<![CDATA[
+,REAL_NAME = #{realName}
+	]]>
+	</if>
+	<if test="null != gender">
+	<![CDATA[
+,GENDER = #{gender}
+	]]>
+	</if>
+	<if test="null != brithday">
+	<![CDATA[
+,BRITHDAY = #{brithday}
+	]]>
+	</if>
+	<if test="null != country">
+	<![CDATA[
+,COUNTRY = #{country}
+	]]>
+	</if>
+	<if test="null != province">
+	<![CDATA[
+,PROVINCE = #{province}
+	]]>
+	</if>
+	<if test="null != city">
+	<![CDATA[
+,CITY = #{city}
+	]]>
+	</if>
+	<if test="null != address">
+	<![CDATA[
+,ADDRESS = #{address}
+	]]>
+	</if>
+	<if test="null != phone">
+	<![CDATA[
+,PHONE = #{phone}
+	]]>
+	</if>
+	<if test="null != cell">
+	<![CDATA[
+,CELL = #{cell}
+	]]>
+	</if>
+	<if test="null != zip">
+	<![CDATA[
+,ZIP = #{zip}
+	]]>
+	</if>
+	<if test="null != email">
+	<![CDATA[
+,EMAIL = #{email}
+	]]>
+	</if>
+	<if test="null != im">
+	<![CDATA[
+,IM = #{im}
+	]]>
+	</if>
+	<if test="null != profession">
+	<![CDATA[
+,PROFESSION = #{profession}
+	]]>
+	</if>
+	<if test="null != education">
+	<![CDATA[
+,EDUCATION = #{education}
+	]]>
+	</if>
+	<![CDATA[
+,GMT_MODIFIED = sysdate
+	]]>
+	<if test="null != memo">
+	<![CDATA[
+,MEMO = #{memo}
+	]]>
+	</if>
+	<![CDATA[
+
+		WHERE  ID = #{id} 
+	]]>
+</update>
+
+<!-- delete UcfPerson -->
+<delete id="deleteUcfPerson" parameterType="string">
+	<![CDATA[
+		DELETE FROM UCF_PERSON WHERE id = #{id}
+	]]>
+</delete>
+
+<!-- select UcfPerson -->
+<select id="queryUcfPersonByWhere" resultType="ucfPerson" parameterType="ucfPerson" >
+<![CDATA[
+SELECT 
+ID as id,CUSTOMER_ID as customerId,REAL_NAME as realName,GENDER as gender,BRITHDAY as brithday,COUNTRY as country,PROVINCE as province,CITY as city,ADDRESS as address,PHONE as phone,CELL as cell,ZIP as zip,EMAIL as email,IM as im,PROFESSION as profession,EDUCATION as education,GMT_CREATE as gmtCreate,GMT_MODIFIED as gmtModified,MEMO as memo FROM UCF_PERSON WHERE ROWNUM <= 10 
+]]>
+<if test="null != id and '' != id">
+<![CDATA[
+AND ID = #{id}
+]]>
+</if>
+<if test="null != customerId and '' != customerId">
+<![CDATA[
+AND CUSTOMER_ID = #{customerId}
+]]>
+</if>
+<if test="null != realName and '' != realName">
+<![CDATA[
+AND REAL_NAME = #{realName}
+]]>
+</if>
+<if test="null != gender and '' != gender">
+<![CDATA[
+AND GENDER = #{gender}
+]]>
+</if>
+<if test="null != brithday and '' != brithday">
+<![CDATA[
+AND BRITHDAY = #{brithday}
+]]>
+</if>
+<if test="null != country and '' != country">
+<![CDATA[
+AND COUNTRY = #{country}
+]]>
+</if>
+<if test="null != province and '' != province">
+<![CDATA[
+AND PROVINCE = #{province}
+]]>
+</if>
+<if test="null != city and '' != city">
+<![CDATA[
+AND CITY = #{city}
+]]>
+</if>
+<if test="null != address and '' != address">
+<![CDATA[
+AND ADDRESS = #{address}
+]]>
+</if>
+<if test="null != phone and '' != phone">
+<![CDATA[
+AND PHONE = #{phone}
+]]>
+</if>
+<if test="null != cell and '' != cell">
+<![CDATA[
+AND CELL = #{cell}
+]]>
+</if>
+<if test="null != zip and '' != zip">
+<![CDATA[
+AND ZIP = #{zip}
+]]>
+</if>
+<if test="null != email and '' != email">
+<![CDATA[
+AND EMAIL = #{email}
+]]>
+</if>
+<if test="null != im and '' != im">
+<![CDATA[
+AND IM = #{im}
+]]>
+</if>
+<if test="null != profession and '' != profession">
+<![CDATA[
+AND PROFESSION = #{profession}
+]]>
+</if>
+<if test="null != education and '' != education">
+<![CDATA[
+AND EDUCATION = #{education}
+]]>
+</if>
+<if test="null != gmtCreate">
+<![CDATA[
+AND GMT_CREATE = #{gmtCreate}
+]]>
+</if>
+<if test="null != gmtModified">
+<![CDATA[
+AND GMT_MODIFIED = #{gmtModified}
+]]>
+</if>
+<if test="null != memo and '' != memo">
+<![CDATA[
+AND MEMO = #{memo}
+]]>
+</if>
+</select>
+</mapper>

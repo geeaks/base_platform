@@ -1,0 +1,282 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UcfRealnamePhotoApplyBO implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2608247948268536494L;
+
+	/**
+     * pk
+     */
+    private String id;
+
+    /**
+     * 用户Id
+     */
+    private String userId;
+
+    /**
+     * 图片路径
+     */
+    private String imgPath;
+
+    /**
+     * N 新建  S 通过  F 失败
+     */
+    private String status;
+
+    /**
+     * 审核备注
+     */
+    private String memo;
+
+    /**
+     * 记录创建时间
+     */
+    private Date gmtCreate;
+
+    /**
+     * 记录修改时间
+     */
+    private Date gmtModify;
+
+    /**
+     * 创建人
+     */
+    private String createor;
+
+    /**
+     * 修改人、审核人
+     */
+    private String modifyer;
+    
+    
+    /**
+     * 审核人
+     */
+    private String verifyer;
+
+    
+    /**
+     * 手机号
+     */
+    @SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+    private String cell;
+    
+    
+    /**
+     *真实姓名 
+     */
+    @SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+    private String realName;
+    
+    /**
+     * 身份证号码
+     */
+    @SensitiveInfo(type=SensitiveType.ID_CARD)
+    private String certNo;
+    
+    /**
+     * 审核时间
+     */
+    private Date gmtVerify;
+    
+    /**
+     * @Fields type : 类型
+     */ 
+    private String type;
+    
+    public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+    
+    public String getVerifyer() {
+		return verifyer;
+	}
+
+	public void setVerifyer(String verifyer) {
+		this.verifyer = verifyer;
+	}
+
+	public Date getGmtVerify() {
+		return gmtVerify;
+	}
+
+	public void setGmtVerify(Date gmtVerify) {
+		this.gmtVerify = gmtVerify;
+	}
+
+	public String getCell() {
+		return cell;
+	}
+
+	public void setCell(String cell) {
+		this.cell = cell;
+	}
+
+	public String getRealName() {
+		return realName;
+	}
+
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+
+	public String getCertNo() {
+		return certNo;
+	}
+
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
+	}
+
+	/**
+     * 获取  pk
+     */
+    public String getId() {
+        return id;
+    }
+
+    /**
+     * 设置 pk
+     */
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    /**
+     * 获取  用户Id
+     */
+    public String getUserId() {
+        return userId;
+    }
+
+    /**
+     * 设置 用户Id
+     */
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    /**
+     * 获取  图片路径
+     */
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    /**
+     * 设置 图片路径
+     */
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
+    /**
+     * 获取  N 新建  S 通过  F 失败
+     */
+    public String getStatus() {
+        return status;
+    }
+
+    /**
+     * 设置 N 新建  S 通过  F 失败
+     */
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    /**
+     * 获取  审核备注
+     */
+    public String getMemo() {
+        return memo;
+    }
+
+    /**
+     * 设置 审核备注
+     */
+    public void setMemo(String memo) {
+        this.memo = memo;
+    }
+
+    /**
+     * 获取  记录创建时间
+     */
+    public Date getGmtCreate() {
+        return gmtCreate;
+    }
+
+    /**
+     * 设置 记录创建时间
+     */
+    public void setGmtCreate(Date gmtCreate) {
+        this.gmtCreate = gmtCreate;
+    }
+
+  
+
+    public Date getGmtModify() {
+		return gmtModify;
+	}
+
+	public void setGmtModify(Date gmtModify) {
+		this.gmtModify = gmtModify;
+	}
+
+	/**
+     * 获取  创建人
+     */
+    public String getCreateor() {
+        return createor;
+    }
+
+    /**
+     * 设置 创建人
+     */
+    public void setCreateor(String createor) {
+        this.createor = createor;
+    }
+
+    /**
+     * 获取  修改人、审核人
+     */
+    public String getModifyer() {
+        return modifyer;
+    }
+
+    /**
+     * 设置 修改人、审核人
+     */
+    public void setModifyer(String modifyer) {
+        this.modifyer = modifyer;
+    }
+    /**
+     * 解析图片路径集合
+     * @author yuzengjia
+     * @date 2014-6-18 下午4:38:28
+     * @return
+     */
+    public List<String> getImgPathList(){
+    	if(imgPath==null||"".equals(imgPath))return null;
+    	String[] imgArr = imgPath.split("\\|");
+    	List<String> imgList = new ArrayList<String>(imgArr.length);
+    	for(String path:imgArr){
+    		imgList.add(path);
+    	}
+    	return imgList;
+    }
+}

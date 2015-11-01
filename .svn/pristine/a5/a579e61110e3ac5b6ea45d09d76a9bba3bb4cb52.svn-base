@@ -1,0 +1,63 @@
+package com.ucf.customer.test;
+
+import javax.servlet.http.Cookie;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.web.servlet.ModelAndView;
+
+public class MemberActionTest extends BaseTest{
+	MockHttpServletRequest request = new MockHttpServletRequest();    
+    MockHttpServletResponse response = new MockHttpServletResponse();
+	
+    String REDIS_SESSIONID = "";
+	
+    
+    @Before
+    public void loginStatus() throws Exception{
+    	testLogin();
+    }
+    
+	@Test
+	public void testLoginInit() throws Exception{
+        request.setRequestURI("/login/index.htm");    
+        request.setMethod("GET");    
+        // 执行URI对应的action    
+        final ModelAndView mav = this.excuteAction(request, response);    
+        Assert.assertEquals(200, response.getStatus());    
+        Assert.assertEquals("login/login", mav.getViewName());    
+		
+	}
+	
+	@Test
+	public void testLogin() throws Exception{
+		    
+        request.setRequestURI("/login/login.htm");    
+        request.addParameter("username", "13757100001");    
+        request.addParameter("pwd", "123456c");  
+        request.addParameter("checkCode", "111111");
+        request.setMethod("POST");    
+        // 执行URI对应的action    
+        final ModelAndView mav = this.excuteAction(request, response);    
+        Assert.assertEquals(200, response.getStatus());    
+        REDIS_SESSIONID = response.getCookies()[1].getValue();
+        Assert.assertEquals("redirect:/user/overview.htm", mav.getViewName());    
+	}
+	
+	@Test
+	public void testoverView() throws Exception{
+        request.setRequestURI("/user/overview.htm");    
+        request.setMethod("GET");  
+        Cookie cookie = new Cookie("redis_sessionId",REDIS_SESSIONID);
+	    cookie.setPath("/");
+        request.setCookies(cookie);
+        // 执行URI对应的action    
+        final ModelAndView mav = this.excuteAction(request, response);    
+        Assert.assertEquals(200, response.getStatus());    
+        Assert.assertEquals("user/user_overview", mav.getViewName());    
+		
+	}
+}

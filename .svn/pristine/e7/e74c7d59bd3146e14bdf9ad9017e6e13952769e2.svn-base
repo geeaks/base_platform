@@ -1,0 +1,46 @@
+package com.ucf.customer.pojo;
+
+import java.io.Serializable;
+
+/**
+ * 省市级联#市
+ * Description: 
+ * All Rights Reserved.
+ * @version 1.0  2014-3-14 下午1:22:46  by WangYanCheng（wangyancheng@ucfgroup.com）创建
+ */
+public class UcfCity implements Serializable{
+	
+	private static final long serialVersionUID = -3742985895155434680L;
+	/**主键*/
+	private String id;
+	/**城市编码*/
+	private String cityCode;
+	/**城市名称*/
+	private String cityName;
+	/**关联省Id*/
+	private String provinceId;
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
+	}
+	public String getCityCode() {
+		return cityCode;
+	}
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
+	public String getCityName() {
+		return cityName;
+	}
+	public void setCityName(String cityName) {
+		this.cityName = cityName;
+	}
+	public String getProvinceId() {
+		return provinceId;
+	}
+	public void setProvinceId(String provinceId) {
+		this.provinceId = provinceId;
+	}
+}

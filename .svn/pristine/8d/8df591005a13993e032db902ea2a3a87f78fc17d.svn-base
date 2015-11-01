@@ -1,0 +1,39 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+
+import com.ucf.customer.ws.enums.EnumFieldType;
+import com.ucf.customer.ws.enums.FieldAccess;
+/**
+ * 
+ * Description: P2P用户信息查询
+ * All Rights Reserved.
+ * @version 1.0  2014-5-20 上午11:37:51  by xuhao@ucfgroup.com创建
+ */
+public class P2PQueryUserinfoParamBo implements Serializable{
+
+	
+	private static final long serialVersionUID = 7101535443193452929L;
+	
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String merchantId;
+	
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String userId;
+	
+	public String getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	
+	
+
+}

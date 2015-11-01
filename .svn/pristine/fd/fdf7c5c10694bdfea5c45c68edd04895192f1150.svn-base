@@ -1,0 +1,45 @@
+package com.ucf.customer.utils.enums;
+
+/**
+ * 
+*    
+* 项目名称：member   
+* 类名称：RealnamePhotoApplyStatus   
+* 类描述： 实名认证申请状态  
+* 创建人：李文静  
+* 创建时间：2014-5-20 下午5:17:27   
+* 修改人：lenovo   
+* 修改时间：2014-5-20 下午5:17:27   
+* 修改备注：   
+* @version    
+*
+ */
+public enum RealnamePhotoApplyStatus {
+	NEW("N", "新建"), SUCCESS("S", "成功"),FAILUE("F","失败");
+	private String code;
+	private String desc;
+
+	RealnamePhotoApplyStatus(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	
+	
+
+}

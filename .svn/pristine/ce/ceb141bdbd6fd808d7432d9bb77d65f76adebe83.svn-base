@@ -1,0 +1,40 @@
+package com.ucf.customer.dao.impl;
+
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.ucf.customer.dao.UcfTradeLogDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+import com.ucf.customer.pojo.UcfTradeLog;
+import com.ucf.onlinepay.framework.common.bean.Money;
+
+@Repository
+public class UcfTradeLogDaoImpl extends BaseCustomerDao  implements UcfTradeLogDao{
+
+	private static final long serialVersionUID = 8000008550754798855L;
+
+	@Override
+	public void insertUcfTradeLog(UcfTradeLog tradeLog) throws Exception {
+		this.insert("com.ucf.customer.insertUcfTradeLog", tradeLog);
+	}
+
+	@Override
+	public Money queryUserSumAmount(String userId) throws Exception {
+		List<UcfTradeLog> list = this.queryForList("com.ucf.customer.queryTradeSumAmount", userId);
+		if(list!=null && list.size()==1){
+			return list.get(0).getAmount();
+		}
+		return null;
+	}
+
+	@Override
+	public boolean isExist(String orderId) throws Exception {
+		List<UcfTradeLog> list = this.queryForList("com.ucf.customer.queryTradeLog", orderId);
+		if(list!=null && list.size()>0){
+			return true;
+		}
+		return false;
+	}
+}

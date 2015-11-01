@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+<!-- insert UcfUserHabit -->
+<insert id="insertUcfUserHabit" parameterType="ucfUserHabit" keyProperty="id" useGeneratedKeys="true">
+	<![CDATA[
+		INSERT INTO UCF_USER_HABIT (
+	USER_ID,BANK_ID,PRODUCT_TYPE,USE_TIME,STATUS,TRADE_TYPE,BANK_CARD_ID
+		)VALUES(
+		#{userId,jdbcType=VARCHAR},#{bankId,jdbcType=VARCHAR},#{productType,jdbcType=VARCHAR},#{useTime,jdbcType=TIMESTAMP},#{status,jdbcType=CHAR},#{tradeType,jdbcType=CHAR},#{bankCardId,jdbcType=VARCHAR})
+	]]>
+</insert>
+
+<!-- update UcfUserHabit -->
+<update id="updateUcfUserHabit" parameterType="ucfUserHabit">
+	<![CDATA[
+		UPDATE 
+		UCF_USER_HABIT 
+		SET 
+		 USER_ID=USER_ID
+	]]>
+			<if test="null != bankId">
+	<![CDATA[
+,BANK_ID = #{bankId}
+	]]>
+	</if>
+	<if test="null != productType">
+	<![CDATA[
+,PRODUCT_TYPE = #{productType}
+	]]>
+	</if>
+	<if test="null != useTime">
+	<![CDATA[
+,USE_TIME = #{useTime}
+	]]>
+	</if>
+	<if test="null != status">
+	<![CDATA[
+,STATUS = #{status}
+	]]>
+	</if>
+	<if test="null != tradeType">
+	<![CDATA[
+,TRADE_TYPE = #{tradeType}
+	]]>
+	</if>
+	<if test="null != bankCardId">
+	<![CDATA[
+,BANK_CARD_ID = #{bankCardId}
+	]]>
+	</if>
+	<![CDATA[
+
+		WHERE  USER_ID = #{userId} AND BANK_ID = #{bankId}
+	]]>
+</update>
+
+<!-- delete UcfUserHabit -->
+<delete id="deleteUcfUserHabit" parameterType="string">
+	<![CDATA[
+		DELETE FROM UCF_USER_HABIT WHERE id = #{id}
+	]]>
+</delete>
+
+<!-- select UcfUserHabit -->
+<select id="queryUcfUserHabitByWhere" resultType="ucfUserHabit" parameterType="ucfUserHabit" >
+<![CDATA[
+SELECT 
+USER_ID as userId,BANK_ID as bankId,PRODUCT_TYPE as productType,USE_TIME as useTime,STATUS as status,TRADE_TYPE as tradeType,BANK_CARD_ID as bankCardId FROM UCF_USER_HABIT WHERE ROWNUM <= 10 
+]]>
+<if test="null != userId and '' != userId">
+<![CDATA[
+AND USER_ID = #{userId}
+]]>
+</if>
+<if test="null != bankId and '' != bankId">
+<![CDATA[
+AND BANK_ID = #{bankId}
+]]>
+</if>
+<if test="null != productType and '' != productType">
+<![CDATA[
+AND PRODUCT_TYPE = #{productType}
+]]>
+</if>
+<if test="null != useTime">
+<![CDATA[
+AND USE_TIME = #{useTime}
+]]>
+</if>
+<if test="null != status and '' != status">
+<![CDATA[
+AND STATUS = #{status}
+]]>
+</if>
+<if test="null != tradeType and '' != tradeType">
+<![CDATA[
+AND TRADE_TYPE = #{tradeType}
+]]>
+</if>
+<if test="null != bankCardId and '' != bankCardId">
+<![CDATA[
+AND BANK_CARD_ID = #{bankCardId}
+]]>
+</if>
+ORDER BY USE_TIME DESC
+</select>
+</mapper>

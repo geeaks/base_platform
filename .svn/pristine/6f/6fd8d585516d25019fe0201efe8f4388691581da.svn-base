@@ -1,0 +1,48 @@
+package com.ucf.customer.dao.impl;
+
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import com.ucf.customer.pojo.UcfCustomer;
+import com.ucf.customer.dao.UcfCustomerDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+
+
+@Repository
+public class UcfCustomerDaoImpl extends BaseCustomerDao implements UcfCustomerDao {
+
+private static final long serialVersionUID = -1L;
+
+	public void insertUcfCustomer(UcfCustomer ucfCustomer)throws Exception{
+		this.insert("com.ucf.customer.insertUcfCustomer", ucfCustomer);
+	}
+
+	public void updateUcfCustomer(UcfCustomer ucfCustomer)throws Exception{
+		this.update("com.ucf.customer.updateUcfCustomer", ucfCustomer);
+	}
+
+	public void deleteUcfCustomer(String customerId)throws Exception{
+		this.delete("com.ucf.customer.deleteUcfCustomer", customerId);
+	}
+
+	public List<UcfCustomer> queryUcfCustomerListByWhere(UcfCustomer ucfCustomer)throws Exception{
+		return this.queryForList("com.ucf.customer.queryUcfCustomerByWhere", ucfCustomer);
+	}
+
+	@Override
+	public UcfCustomer getUcfCustomerById(String useId) {
+		try {
+			return this.getOne("com.ucf.customer.getUcfCustomerById", useId);
+		} catch (Exception e) {
+			logger.error(e);
+			return null;
+		}
+	}
+
+	@Override
+	public String queryUcfCustomerId() throws Exception {
+		return this.getOne("com.ucf.customer.getUcfCustomerId",null);
+	}
+
+}

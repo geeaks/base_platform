@@ -1,0 +1,180 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<title>找回支付密码</title>
+<link rel="stylesheet" type="text/css"
+	href="${staticMemberPath}/css/commons/index.css" />
+<link rel="stylesheet" type="text/css"
+	href="${staticMemberPath}/new/css/common.css" />
+<script type="text/javascript" src="${staticMemberPath}/js/v1.js"></script>
+<script type="text/javascript">
+        var APP_ROOT = '';
+        var ERROR_IMG = '/static/v1/images/common/image_err.gif';
+        var send_span = 60000;
+    </script>
+<!--public js&css end -->
+<!--private js&css start-->
+<jsp:include page="../common/resource_css.jsp"/>
+<link rel="stylesheet" type="text/css"
+	href="${staticMemberPath}/new/css/host_findpassword.css"/>
+<script type="text/javascript"
+	src="${staticMemberPath}/new/js/host_findpassword.js"></script>
+<link href="${staticMemberPath}/new/css/find-pay-password.css" rel="stylesheet"
+	type="text/css" />
+<!--private js&css end-->
+
+<style type="text/css">
+p.tip span {
+	font-weight: 130px;
+	background-color: yellow;
+	color: red;
+}
+
+p.tipp span {
+	font-weight: 130px;
+	background-color: yellow;
+	color: red;
+}
+
+p.tippp span {
+	font-weight: 130px;
+	background-color: yellow;
+	color: red;
+}
+
+p.tipp span {
+	font-weight: 130px;
+	background-color: yellow;
+	color: red;
+}
+</style>
+<link href="../css/bootstrap.css" rel="stylesheet">
+</head>
+<body>
+<c:set var="tab" value="4" scope="application"/>
+	<c:import url="/common/head.htm"></c:import>
+	<section class="bgc-gray">
+		
+		<div class="fd-main">
+			<div class="fd-center">
+
+				<div class="fd-layout">
+                	<div class="color-yellow1 mgtb30">找回支付密码</div>
+
+					<div class="fd-center-title">
+						<i></i>
+						<div class="fdt_mian">
+							您正在使用<span>"手机验证码+安全问题"</span>验证身份，请填写以下信息
+						</div>
+					</div>
+					<form action="${basePath}/pwd/findPayPwdVerify.htm" method="post" id ="findPasswdPro">
+						<div class="fd-tab">
+							<table>
+								<colgroup>
+									<col width="130" />
+									<col width="355" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<th>账户名：</th>
+										<td>${loginId }</td>
+									</tr>
+									<tr>
+										<th>手机号码：</th>
+										<td><label class="h_open_lab">${mobilePhone }</label>
+										</td>
+									</tr>
+									<tr>
+										<th>短信验证码：</th>
+										<td>
+										<input type="text" class="idbox w123 send_sms" placeholder="请输入手机验证码"  id="vercode" name="vercode" maxlength="6" />
+										 <input id="validPhoneCode" type="button" onclick="sendSMSNew(${cell},1);"  value="获取手机验证码" />
+                             			<span class="msg-box red" for="vercode"></span>
+										</td>
+									</tr>
+									<tr>
+										<th>安全保护问题：</th>
+										<td><select name="quesInfo" class="h_open_sel">
+												<option value="">请选择密保问题</option>
+												<option value="1">1.我的宠物是</option>
+												<option value="2">2.我的老公或妻子出生地是</option>
+												<option value="3">3.我的老公或妻子生日是</option>
+												<option value="4">4.我的小学校名是</option>
+										</select></td>
+									</tr>
+									<tr>
+										<th>答案：</th>
+										<td><input type="text" id="res" name="res"
+											class="idbox w228" placeholder="请输入保护问题答案" />
+										</td>
+									</tr>
+									<tr>
+										<td>
+										</td>
+										<td>
+											<p class="tip">
+												<span>${msg}</span>
+											</p>
+											<input type="submit" value="提交审核"
+											class="but-gray but-yellow w130 mr15"> <a
+											href="${basePath}/pwd/gotoPassword.htm"
+											class="but-gray but-blue w100 ml20" style="width: 132px">取消</a>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</form>
+				</div>
+			</div>
+			
+			
+			<div class="main-body background-wite">
+				<div class="info-lock">请输入您需要找回支付密码的账户名</div>
+			    <form action="/path/to/script" id="thisform" method="post">
+			        <p><label for="name">账户名 :</label>
+			            <input type="text" id="name" name="name" tabindex="1" /> <!-- <a href="#">忘记账户名？</a> --></p>
+			        <p><label for="name">验证码 :</label>
+			                                <input class="w80" type="text" id="name" name="name" tabindex="1" /><img src="images/.png" class="input-code" /> <a href="#"> 看不清？换一张</a></p>
+			        </br>
+			        <a class="btn mt20 mgl113" href="#">提交</a>
+			    </form>
+			</div>
+			
+			
+		</div>
+	</section>
+	<c:import url="/WEB-INF/views/jsp/common/newfooter.jsp"></c:import>
+
+	<jsp:include page="../common/resource_js.jsp" />
+</body>
+<script type="text/javascript">
+$(function(){
+	$('#findPasswdPro').validator({
+		stopOnError: false,
+		 timely: true,
+		 rules: {
+			 requiredCode: function(element) {
+		            // 返回true，则验证必填
+		            return !(element.value==''||element.value=='请输入手机验证码')||'不能为空';
+		        },
+		        requiredQues: function(element) {
+		            // 返回true，则验证必填
+		            return !(element.value==''||element.value=='请输入保护问题答案')||'不能为空';
+		        }
+		    },
+		fields: {
+		   'quesInfo':{
+				   rule: "required",
+				   msg: {required: "请选择密保问题!"}
+		   },
+		   'vercode':'requiredCode;' ,
+		   'res':'requiredQues;length[0~64];'
+		}
+	});
+});
+
+</script>
+</html>

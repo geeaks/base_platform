@@ -1,0 +1,90 @@
+package com.ucf.customer.ws.service.enterprise;
+
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberBankCardBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberSearchReqBo;
+import com.ucf.customer.ws.bo.enterprise.EnterpriseStatusReturnValueBo;
+import com.ucf.customer.ws.bo.enterprise.GroupAccountBo;
+import com.ucf.customer.ws.bo.enterprise.MainAccountListBO;
+import com.ucf.customer.ws.bo.enterprise.MemberRegisterResultBO;
+import com.ucf.customer.ws.bo.enterprise.MemberReviewRequestBO;
+import com.ucf.customer.ws.bo.enterprise.MemberReviewResultBO;
+import com.ucf.customer.ws.bo.enterprise.OuterEnterpriseMemberRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.PageEnterpriseMemberResultBo;
+import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoRequestBO;
+import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.VerifyEmailRequestBO;
+import com.ucf.customer.ws.bo.enterprise.VerifyEmailResultBO;
+
+
+
+public interface EnterpriseMemberService {
+	
+	//外部商户企业会员开户
+	MemberRegisterResultBO register(OuterEnterpriseMemberRegRequestBO registerRequestBO);
+	
+	//外部商户会员开户
+	MemberRegisterResultBO merchantRegister(EnterpriseMemberRegRequestBO registerRequestBO);
+	//修改商户会员信息
+	UpdateMemberInfoResultBO updateMerchantMemberInfo(UpdateMemberInfoRequestBO updateMemberInfoRequestBO);
+	//企业会员开户审核
+	MemberReviewResultBO memberReview(MemberReviewRequestBO memberReviewRequestBO);
+	
+	VerifyEmailResultBO VerifyEmail(VerifyEmailRequestBO verifyEmailRequestBO);
+	
+	//修改企业会员信息
+	UpdateMemberInfoResultBO updateMemberInfo(UpdateMemberInfoRequestBO updateMemberInfoRequestBO);
+	
+	//查询企业会员信息
+	public EnterpriseMemberInfoResultBO queryEnterpriseMember(String merchantId,String userId);
+		
+	//企业认证审核查询(查询审核信息)
+	EnterpriseStatusReturnValueBo queryEnterpriseMemberStatus(String merchantId,String userId,String userType);
+	
+	//查询企业会员提现银行卡卡号
+	EnterpriseMemberBankCardBO queryEnterpriseMemberBankCard(String merchantId,String userId);
+	
+	/**
+	 * 企业会员审核
+	 * @param userId  企业会员ID
+	 * @param status  审核状态(S 成功  F 失败)
+	 * @return
+	 */
+	BaseBO  auditEnterpriseMember(String userId,String status);
+	
+	/**
+	 * 企业会员查询
+	 * @param searchBo
+	 * @return
+	 */
+	PageEnterpriseMemberResultBo  searchEnterpriseMembers(EnterpriseMemberSearchReqBo searchBo);
+	
+	/**
+	 * @Description: 查询集团商户 主账户列表
+	 * @return MainAccountListBO 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-26 上午10:56:03
+	 */
+	MainAccountListBO queryMainAccountList();
+	
+	/**
+	 * @Description: 根据子商户号查询集团商户主子商户号、账务号
+	 * @param childernUserId
+	 * @return GroupAccountBo 返回类型
+	 * @author gaoxiang
+	 * @date 2015-3-26 上午11:00:26
+	 */
+	GroupAccountBo queryGroupAccount(String childUserId);
+	
+	/**
+	 * @Description: 根据商户ID查询商户信息
+	 * @param userId
+	 * @return EnterpriseMemberInfoResultBO 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-10 下午12:48:33
+	 */
+	EnterpriseMemberInfoResultBO queryMerchantInfo(String userId);
+	
+}

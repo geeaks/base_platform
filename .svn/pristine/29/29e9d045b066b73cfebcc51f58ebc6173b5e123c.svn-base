@@ -1,0 +1,142 @@
+package com.ucf.customer.pojo;
+
+import java.io.Serializable;
+
+public class UcfMerchantExtra implements Serializable {
+
+	/**
+	 * @Fields serialVersionUID : 序列号
+	 */ 
+	private static final long serialVersionUID = 6252107752338346289L;
+	
+	/**
+	 * @Fields userId : 商户号
+	 */ 
+	private String userId;
+	
+	/**
+	 * @Fields merchantType : 商户类型
+	 */ 
+	private String merchantType;
+	
+	/**
+	 * @Fields accountType : 账户类型
+	 */ 
+	private String accountType;
+	
+	/**
+	 * @Fields parentUserId : 父商户ID
+	 */ 
+	private String parentUserId;
+	
+	/**
+	 * @Fields firstBusinessCode : 一级行业类别编码
+	 */ 
+	private String firstBusinessCode;
+	
+	/**
+	 * @Fields firstBusinessName : 一级行业类别名称
+	 */ 
+	private String firstBusinessName;
+	
+	/**
+	 * @Fields secondBusinessCode : 二级行业类别编码
+	 */ 
+	private String secondBusinessCode;
+	
+	/**
+	 * @Fields secondBusinessName : 二级行业类别名称
+	 */ 
+	private String secondBusinessName;
+	
+	/**
+	 * @Fields productCode : 商品类别编码
+	 */ 
+	private String productCode;
+	
+	/**
+	 * @Fields productName : 商品类别名称
+	 */ 
+	private String productName;
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getMerchantType() {
+		return merchantType;
+	}
+
+	public void setMerchantType(String merchantType) {
+		this.merchantType = merchantType;
+	}
+
+	public String getAccountType() {
+		return accountType;
+	}
+
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+
+	public String getParentUserId() {
+		return parentUserId;
+	}
+
+	public void setParentUserId(String parentUserId) {
+		this.parentUserId = parentUserId;
+	}
+
+	public String getFirstBusinessCode() {
+		return firstBusinessCode;
+	}
+
+	public void setFirstBusinessCode(String firstBusinessCode) {
+		this.firstBusinessCode = firstBusinessCode;
+	}
+
+	public String getFirstBusinessName() {
+		return firstBusinessName;
+	}
+
+	public void setFirstBusinessName(String firstBusinessName) {
+		this.firstBusinessName = firstBusinessName;
+	}
+
+	public String getSecondBusinessCode() {
+		return secondBusinessCode;
+	}
+
+	public void setSecondBusinessCode(String secondBusinessCode) {
+		this.secondBusinessCode = secondBusinessCode;
+	}
+
+	public String getSecondBusinessName() {
+		return secondBusinessName;
+	}
+
+	public void setSecondBusinessName(String secondBusinessName) {
+		this.secondBusinessName = secondBusinessName;
+	}
+
+	public String getProductCode() {
+		return productCode;
+	}
+
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+
+	public String getProductName() {
+		return productName;
+	}
+
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	
+}

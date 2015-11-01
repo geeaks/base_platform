@@ -1,0 +1,37 @@
+package com.ucf.customer.dao.impl;
+
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+import com.ucf.customer.pojo.UcfSubCard;
+import com.ucf.customer.dao.UcfSubCardDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+
+@Repository
+public class UcfSubCardDaoImpl extends BaseCustomerDao implements UcfSubCardDao {
+
+private static final long serialVersionUID = -1L;
+
+	public void insertUcfSubCard(UcfSubCard ucfSubCard)throws Exception{
+		this.insert("com.ucf.customer.insertUcfSubCard", ucfSubCard);
+	}
+
+	public void updateUcfSubCard(UcfSubCard ucfSubCard)throws Exception{
+		this.update("com.ucf.customer.updateUcfSubCard", ucfSubCard);
+	}
+
+	public void deleteUcfSubCard(String subCardNo)throws Exception{
+		this.delete("com.ucf.customer.deleteUcfSubCard", subCardNo);
+	}
+
+	public List<UcfSubCard> queryUcfSubCardListByWhere(UcfSubCard ucfSubCard)throws Exception{
+		return this.queryForList("com.ucf.customer.queryUcfSubCardByWhere", ucfSubCard);
+	}
+
+	@Override
+	public String getSubCardNo() {
+		return this.getOne("com.ucf.customer.getSubCardNo", null);
+	}
+
+}

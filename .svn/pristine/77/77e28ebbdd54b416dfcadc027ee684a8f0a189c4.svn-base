@@ -1,0 +1,27 @@
+package com.ucf.customer.api.bo;
+
+import com.ucf.customer.api.enums.EnumRespStatusCode;
+import com.ucf.platform.framework.core.runtime.CommonResult;
+/**
+ * 
+ * @author 
+ *
+ */
+public class MemberCommonResult<T> extends CommonResult<T> {
+
+	private static final long serialVersionUID = -6076276477397685907L;
+
+	public MemberCommonResult(String resultCode, T businessObject) {
+		super(resultCode, businessObject);
+	}
+	
+	 public MemberCommonResult(String resultCode, String resultCodeMsg, T businessObject) {
+		  this(resultCode, businessObject);
+	      this.resultCodeMsg = resultCodeMsg;
+	 }
+
+	@Override
+	public boolean isSuccess() {
+		 return this.getResultCode().equals(EnumRespStatusCode.SUCCESS.getCode());
+	}
+}

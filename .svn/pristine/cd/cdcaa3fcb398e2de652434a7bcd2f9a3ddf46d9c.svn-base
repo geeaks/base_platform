@@ -1,0 +1,28 @@
+package com.ucf.customer.dao;
+
+import java.io.Serializable;
+import java.util.List;
+import com.ucf.customer.pojo.UcfCard;
+
+public interface UcfCardDao extends Serializable {
+
+	void insertUcfCard(UcfCard ucfCard)throws Exception;
+	
+	void updateUcfCard(UcfCard ucfCard)throws Exception;
+	
+	void deleteUcfCard(String cardNo)throws Exception;
+	
+	List<UcfCard> queryUcfCardListByWhere(UcfCard ucfCard)throws Exception;
+	
+	/**
+	 * @Description: 刷新指定用户Card信息
+	 * @param userId
+	 * @param timeout 缓存超时时间
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-16 上午11:28:40
+	 */
+	public void refreshCardInfo(String userId,int timeout)throws Exception;
+
+}

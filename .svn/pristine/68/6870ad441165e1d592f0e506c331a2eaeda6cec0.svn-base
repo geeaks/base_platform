@@ -1,0 +1,145 @@
+package com.ucf.customer.ws.bo;
+
+import java.util.Date;
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UcfSubCard implements Serializable{
+
+	
+	private static final long serialVersionUID = -7034825220015858626L;
+
+	private String subCardNo;
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	 private String cardNo;
+
+	 private String accountNo;
+
+	 private String cardType;
+
+	 private String status;
+
+	 private String memo;
+
+	 private Date gmtCreate;
+
+	 private Date gmtModified;
+
+	 private String cardAlias;
+
+	 private String subCardPwd;
+
+	 private BigDecimal pwdErrorTimes;
+
+	 private Date lastPayFailDt;
+
+	 private String bizFlag;
+
+		public void setSubCardNo (String subCardNo) {
+			this.subCardNo = subCardNo;
+		}
+
+		public String getSubCardNo () {
+			return subCardNo;
+		}
+
+		public void setCardNo (String cardNo) {
+			this.cardNo = cardNo;
+		}
+
+		public String getCardNo () {
+			return cardNo;
+		}
+
+		public void setAccountNo (String accountNo) {
+			this.accountNo = accountNo;
+		}
+
+		public String getAccountNo () {
+			return accountNo;
+		}
+
+		public void setCardType (String cardType) {
+			this.cardType = cardType;
+		}
+
+		public String getCardType () {
+			return cardType;
+		}
+
+		public void setStatus (String status) {
+			this.status = status;
+		}
+
+		public String getStatus () {
+			return status;
+		}
+
+		public void setMemo (String memo) {
+			this.memo = memo;
+		}
+
+		public String getMemo () {
+			return memo;
+		}
+
+		public void setGmtCreate (Date gmtCreate) {
+			this.gmtCreate = gmtCreate;
+		}
+
+		public Date getGmtCreate () {
+			return gmtCreate;
+		}
+
+		public void setGmtModified (Date gmtModified) {
+			this.gmtModified = gmtModified;
+		}
+
+		public Date getGmtModified () {
+			return gmtModified;
+		}
+
+		public void setCardAlias (String cardAlias) {
+			this.cardAlias = cardAlias;
+		}
+
+		public String getCardAlias () {
+			return cardAlias;
+		}
+
+		public void setSubCardPwd (String subCardPwd) {
+			this.subCardPwd = subCardPwd;
+		}
+
+		public String getSubCardPwd () {
+			return subCardPwd;
+		}
+
+		public void setPwdErrorTimes (BigDecimal pwdErrorTimes) {
+			this.pwdErrorTimes = pwdErrorTimes;
+		}
+
+		public BigDecimal getPwdErrorTimes () {
+			return pwdErrorTimes;
+		}
+
+		public void setLastPayFailDt (Date lastPayFailDt) {
+			this.lastPayFailDt = lastPayFailDt;
+		}
+
+		public Date getLastPayFailDt () {
+			return lastPayFailDt;
+		}
+
+		public void setBizFlag (String bizFlag) {
+			this.bizFlag = bizFlag;
+		}
+
+		public String getBizFlag () {
+			return bizFlag;
+		}
+
+}

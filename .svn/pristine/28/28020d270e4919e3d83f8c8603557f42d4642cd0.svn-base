@@ -1,0 +1,161 @@
+package com.ucf.customer.api.bo;
+
+import java.io.Serializable;
+
+import com.ucf.customer.api.enums.EnumAuthType;
+import com.ucf.customer.ws.enums.EnumFieldType;
+import com.ucf.customer.ws.enums.FieldAccess;
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * 银行鉴权接口
+ * 
+ * 项目名称：member-client 类名称：UserAuthParamBO 类描述： 创建人：李文静 创建时间：2014-6-18 上午10:40:23
+ * 修改人：lenovo 修改时间：2014-6-18 上午10:40:23 修改备注：
+ * 
+ * @version
+ * 
+ */
+public class UserAuthParamBO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -8641903371121227047L;
+	
+	//商户号
+	private String merchantId;
+	
+	//交易来源1：PC端（默认值） 2：移动端
+	private String Source;
+	
+	//卡类型： 1借记卡，2贷记卡
+	private String CardType;
+	
+	//cvn2
+	@SensitiveInfo(type=SensitiveType.ALL)
+	private String cvn2;
+	
+	//信用卡有效期 YYMM
+	@SensitiveInfo(type=SensitiveType.ALL)
+	private String validDate;
+	
+	//银行编号
+	@SensitiveInfo(type=SensitiveType.CNAPS_CODE)
+	private String bankId;
+
+	/**
+	 * 01（姓名、身份证 校验） 02 （银行卡、银行预留手机号 校验） 03 （姓名、身份证、银行卡、银行预留手机号 校验） 参考 EnumAuthType
+	 */
+	private EnumAuthType type;
+
+	/**
+	 * user id
+	 */
+	@FieldAccess(EnumFieldType.NOT_NULL)
+	private String userId;
+
+	/**
+	 * 银行卡号
+	 */
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+
+	/**
+	 * 银行预留手机号
+	 */
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String phone;
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+	public EnumAuthType getType() {
+		return type;
+	}
+
+	public void setType(EnumAuthType type) {
+		this.type = type;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+	public String getSource() {
+		return Source;
+	}
+
+	public void setSource(String source) {
+		Source = source;
+	}
+
+	public String getCardType() {
+		return CardType;
+	}
+
+	public void setCardType(String cardType) {
+		CardType = cardType;
+	}
+
+	public String getCvn2() {
+		return cvn2;
+	}
+
+	public void setCvn2(String cvn2) {
+		this.cvn2 = cvn2;
+	}
+
+	public String getValidDate() {
+		return validDate;
+	}
+
+	public void setValidDate(String validDate) {
+		this.validDate = validDate;
+	}
+
+	public String getBankId() {
+		return bankId;
+	}
+
+	public void setBankId(String bankId) {
+		this.bankId = bankId;
+	}
+
+	@Override
+	public String toString() {
+		return "UserAuthParamBO [merchantId=" + merchantId + ", Source="
+				+ Source + ", CardType=" + CardType + ", cvn2=" + cvn2
+				+ ", validDate=" + validDate + ", bankId=" + bankId + ", type="
+				+ type + ", userId=" + userId + ", bankCardNo=" + bankCardNo
+				+ ", phone=" + phone + "]";
+	}
+	
+}

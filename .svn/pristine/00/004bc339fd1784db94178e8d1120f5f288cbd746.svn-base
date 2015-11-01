@@ -1,0 +1,237 @@
+package com.ucf.customer.ws.service.impl;
+
+import java.lang.reflect.Method;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.ws.business.BusinessService;
+import com.ucf.customer.ws.model.AddBankCard;
+import com.ucf.customer.ws.model.Common;
+import com.ucf.customer.ws.model.ModifyPhone;
+import com.ucf.customer.ws.model.QueryBindBankCardGroup;
+import com.ucf.customer.ws.model.QueryHabit;
+import com.ucf.customer.ws.model.QueryUserInfo;
+import com.ucf.customer.ws.model.Register;
+import com.ucf.customer.ws.model.SaveUserHabit;
+import com.ucf.customer.ws.model.ServiceInterfaceModel;
+import com.ucf.customer.ws.service.ServiceInterfaceWS;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.platform.framework.log.LoggerLevel;
+import com.ucf.platform.framework.log.annotation.DigestLogAnnotated;
+
+public class ServiceInterfaceWSImpl implements ServiceInterfaceWS {
+	
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(ServiceInterfaceWSImpl.class);
+	
+	@Autowired
+	private BusinessService businessService;
+	
+	@Autowired
+	private LoginService loginService;
+	
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	public Map<String, String> service(Map<String, String> param) {
+		LOGGER.info("serviceCode : " + param.get("serviceCode") + ",接收参数：" + param);
+		Map<String, String> returnMap = new HashMap<String, String>();
+		returnMap.put("respCode", "01");
+		returnMap.put("respMsg", "接口不存在");
+		if (null == param || param.size() == 0 || !param.containsKey("serviceCode")) {
+			return returnMap;
+		}
+		ServiceInterfaceModel model = new ServiceInterfaceModel();
+		setValue(param, model);
+//		if (null != model.getMerchantId() && !"P2P".equals(model.getRegFrom())) {
+//			returnMap.put("respCode", "04");
+//			returnMap.put("respMsg", "用户类型错误");
+//			LOGGER.info("返回参数：" + returnMap);
+//			return returnMap;
+//		}
+		if (null != model.getUserId() && !"".equals(model.getUserId())) {
+			try {
+				UcfUser user = loginService.queryUserInfo(model.getUserId(), model.getMerchantId());
+				if(user == null){
+					returnMap.put("respCode", "04");
+					returnMap.put("respMsg", "用户不存在");
+					return returnMap;
+				}
+				if ("B".equals(user.getEnabledStatus())) {
+					user.getGmtLastModified();
+					Date lastdate = user.getGmtLastModified();
+					Date currentDate = new Date();
+					Calendar lsdate = Calendar.getInstance();
+					Calendar currDate = Calendar.getInstance();
+					lsdate.setTime(null == lastdate ? new Date() : lastdate);
+					currDate.setTime(currentDate);
+					lsdate.add(Calendar.DATE, 1);
+					if (lsdate.equals(currDate) || lsdate.before(currDate)) {
+						user.setEnabledStatus("T");// 冻结用户
+						user.setGmtLastModified(new Date());
+						loginService.updateUcfUser(user);
+					} else {
+						returnMap.put("respCode", "04");
+						returnMap.put("respMsg", "用户类型错误");
+						LOGGER.info("返回参数：" + returnMap);
+						return returnMap;
+					}
+				}
+			} catch (Exception e) {
+				LOGGER.debug("查询用户失败", e);
+				returnMap.put("respCode", "04");
+				returnMap.put("respMsg", "用户类型错误");
+				LOGGER.info("返回参数：" + returnMap);
+				return returnMap;
+			}
+		}
+		if (model.getServiceCode().equals("UMPC0001")) {
+			String msg = model.valid(model, Common.class);
+			if (null != msg) {
+				LOGGER.debug("<---传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.queryBanlance(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPC0002")) {
+			String msg = model.valid(model, Common.class, QueryBindBankCardGroup.class);
+			if (null != msg) {
+				LOGGER.debug("<---传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.queryUserStatus(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPC0005")) {
+			String msg = model.valid(model, Common.class, QueryUserInfo.class);
+			if (null != msg) {
+				LOGGER.debug("<---查询用户信息,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.queryUserInfo(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPC0004")) {
+			String msg = model.valid(model, Common.class, QueryBindBankCardGroup.class);
+			if (null != msg) {
+				LOGGER.debug("<---账户已绑定银行卡查询,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.queryBindBankCards(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPS0001")) {
+			String msg = model.valid(model, Common.class, SaveUserHabit.class);
+			if (null != msg) {
+				LOGGER.debug("<---保存用户交易成功时使用的银行,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.saveUserHabitBank(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPC0006")) {
+			String msg = model.valid(model, Common.class, QueryHabit.class);
+			if (null != msg) {
+				LOGGER.debug("<---查询用户最近使用银行,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.queryUserHabitBanks(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPS0002")) {
+			String msg = model.valid(model, Common.class);
+			if (null != msg) {
+				LOGGER.debug("<---更新银行卡,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.deleteUcfBankCard(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPS0003")) {
+			String msg = model.valid(model, Common.class, AddBankCard.class);
+			if (null != msg) {
+				LOGGER.debug("<---新增银行卡,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.addUcfBankCard(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPS0004")) {
+			String msg = model.valid(model, Common.class, Register.class);
+			if (null != msg) {
+				LOGGER.debug("<---注册,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.reg(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPS0005")) {
+			String msg = model.valid(model, Common.class, ModifyPhone.class);
+			if (null != msg) {
+				LOGGER.debug("<---修改手机号,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.modigyPhoneNo(model, returnMap);
+		} else if (model.getServiceCode().equals("UMPS0006")) {
+			String msg = model.valid(model, Common.class);
+			if (null != msg) {
+				LOGGER.debug("<---冻结账户,传入参数校验错误--->");
+				returnMap.put("respCode", "02");
+				returnMap.put("respMsg", msg);
+				return returnMap;
+			}
+			returnMap = businessService.freezeCard(model, returnMap);
+		}
+		if (returnMap.get("newPhoneNo") != null) {
+			Map<String, String> printMap = new HashMap<String, String>(returnMap);
+			printMap.put("newPhoneNo", SensitiveInfoUtils.mobilePhone(returnMap.get("newPhoneNo")));
+			LOGGER.info("返回参数：" + printMap);
+		} else {
+			LOGGER.info("返回参数：" + returnMap);
+		}
+		return returnMap;
+	}
+	
+	private void setValue(Map<String, String> map, Object thisObj) {
+		Set<String> set = map.keySet();
+		Iterator<String> iterator = set.iterator();
+		while (iterator.hasNext()) {
+			Object obj = iterator.next();
+			Object val = map.get(obj);
+			setMethod(obj, val, thisObj);
+		}
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void setMethod(Object method, Object value, Object thisObj) {
+		Class c;
+		try {
+			c = Class.forName(thisObj.getClass().getName());
+			String met = (String) method;
+			met = met.trim();
+			if (!met.substring(0, 1).equals(met.substring(0, 1).toUpperCase())) {
+				met = met.substring(0, 1).toUpperCase() + met.substring(1);
+			}
+			if (!String.valueOf(method).startsWith("set")) {
+				met = "set" + met;
+			}
+			Class types[] = new Class[1];
+			types[0] = Class.forName("java.lang.String");
+			Method m = c.getMethod(met, types);
+			m.invoke(thisObj, value);
+		} catch (Exception e) {
+			LOGGER.debug("from ServiceInterfaceWSImpl's setMethod err", e);
+		}
+	}
+}

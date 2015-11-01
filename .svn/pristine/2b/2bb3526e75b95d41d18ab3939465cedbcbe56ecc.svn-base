@@ -1,0 +1,16 @@
+package com.ucf.customer.service.impl;
+
+import com.ucf.customer.service.CashierService;
+
+public class CashierServiceImpl implements CashierService {
+
+	private String cashierUrl;
+	public void setCashierUrl(String cashierUrl) {
+		this.cashierUrl = cashierUrl;
+	}
+	@Override
+	public String getCashierUrl() {
+		return cashierUrl;
+	}
+
+}

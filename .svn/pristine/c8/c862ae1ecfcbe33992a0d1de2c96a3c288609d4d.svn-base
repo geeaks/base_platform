@@ -1,0 +1,394 @@
+package com.ucf.customer.ws.bo.enterprise;
+
+import java.io.Serializable;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UpdateMemberInfoRequestBO implements Serializable{
+
+	private static final long serialVersionUID = -4648119691519952588L;
+	//平台商id
+	private String merchantId;
+	//企业用户ID	
+	private String userId;
+	//登录密码
+	@SensitiveInfo(type=SensitiveType.ALL)
+	private String loginPassword;
+	/**
+	 * @Fields payPassword : 支付密码
+	 */ 
+	@SensitiveInfo(type=SensitiveType.ALL)
+	private String payPassword;
+	//用户状态
+	private String enabledStatus;
+	//代理人名称	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String agentPersonName;
+	//代理人身份证号码	
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String agentPersonNo;
+	//代理人手机号码	
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String agentPersonPhone;
+	//公司网址
+	private String enterpriseURL;
+	//企业全称	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String enterpriseFullName;
+	//企业简称	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String enterpriseShortName;
+	//营业执照号	
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String businessLicense;
+	//证件到期时间	
+	private String endDate;
+	//法人姓名	
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String legalPersonName;
+	//法人身份证号	
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String legalPersonNo;
+	//企业地址	
+	@SensitiveInfo(type=SensitiveType.ADDRESS)
+	private String enterpriseAddress;
+	//邮政编码
+	private String zipCode;
+	//联系电话	
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String enterprisePhone;
+	//传真
+	private String fax;
+	//电子邮箱
+	private String email;
+	//企业账户开户行名称
+	private String bankName;
+	private String bankCode;
+	//对公账号
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+	private String provinces;
+	private String city;
+	//开户行支行名称
+	private String issuerName;
+	//联行号	
+	@SensitiveInfo(type=SensitiveType.CNAPS_CODE)
+	private String issuer;
+	//账户名称
+	private String bankCardName;
+	//营业执照副本
+	private String licenseCopy;
+	//组织机构代码证
+	private String orgCertificate;
+	//税务登记证明
+	private String taxCertificate;
+	//法人身份证复印件
+	private String legalIdentityCopy;
+	
+	/**
+	 * @Fields legalIdentityType : 法人证件类型
+	 */ 
+	private String legalIdentityType;
+	
+	/**
+	 * @Fields merchantType : 商户类型
+	 */ 
+	private String merchantType;
+	
+	/**
+	 * @Fields accountType : 账户类型
+	 */ 
+	private String accountType;
+	
+	/**
+	 * @Fields parentUserId : 父商户ID
+	 */ 
+	private String parentUserId;
+	
+	/**
+	 * @Fields firstBusinessCode : 一级行业类别编码
+	 */ 
+	private String firstBusinessCode;
+	
+	/**
+	 * @Fields firstBusinessName : 一级行业类别名称
+	 */ 
+	private String firstBusinessName;
+	
+	/**
+	 * @Fields secondBusinessCode : 二级行业类别编码
+	 */ 
+	private String secondBusinessCode;
+	
+	/**
+	 * @Fields secondBusinessName : 二级行业类别名称
+	 */ 
+	private String secondBusinessName;
+	
+	/**
+	 * @Fields productCode : 商品类别编码
+	 */ 
+	private String productCode;
+	
+	/**
+	 * @Fields productName : 商品类别名称
+	 */ 
+	private String productName;
+	
+	public String getFirstBusinessCode() {
+		return firstBusinessCode;
+	}
+	public void setFirstBusinessCode(String firstBusinessCode) {
+		this.firstBusinessCode = firstBusinessCode;
+	}
+	public String getFirstBusinessName() {
+		return firstBusinessName;
+	}
+	public void setFirstBusinessName(String firstBusinessName) {
+		this.firstBusinessName = firstBusinessName;
+	}
+	public String getSecondBusinessCode() {
+		return secondBusinessCode;
+	}
+	public void setSecondBusinessCode(String secondBusinessCode) {
+		this.secondBusinessCode = secondBusinessCode;
+	}
+	public String getSecondBusinessName() {
+		return secondBusinessName;
+	}
+	public void setSecondBusinessName(String secondBusinessName) {
+		this.secondBusinessName = secondBusinessName;
+	}
+	public String getProductCode() {
+		return productCode;
+	}
+	public void setProductCode(String productCode) {
+		this.productCode = productCode;
+	}
+	public String getProductName() {
+		return productName;
+	}
+	public void setProductName(String productName) {
+		this.productName = productName;
+	}
+	public String getMerchantType() {
+		return merchantType;
+	}
+	public void setMerchantType(String merchantType) {
+		this.merchantType = merchantType;
+	}
+	public String getAccountType() {
+		return accountType;
+	}
+	public void setAccountType(String accountType) {
+		this.accountType = accountType;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getParentUserId() {
+		return parentUserId;
+	}
+	public void setParentUserId(String parentUserId) {
+		this.parentUserId = parentUserId;
+	}
+	
+	public String getLegalIdentityType() {
+		return legalIdentityType;
+	}
+	public void setLegalIdentityType(String legalIdentityType) {
+		this.legalIdentityType = legalIdentityType;
+	}
+	
+	public String getPayPassword() {
+		return payPassword;
+	}
+	public void setPayPassword(String payPassword) {
+		this.payPassword = payPassword;
+	}
+	public String getMerchantId() {
+		return merchantId;
+	}
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getLoginPassword() {
+		return loginPassword;
+	}
+	public void setLoginPassword(String loginPassword) {
+		this.loginPassword = loginPassword;
+	}
+	public String getEnabledStatus() {
+		return enabledStatus;
+	}
+	public void setEnabledStatus(String enabledStatus) {
+		this.enabledStatus = enabledStatus;
+	}
+	public String getAgentPersonName() {
+		return agentPersonName;
+	}
+	public void setAgentPersonName(String agentPersonName) {
+		this.agentPersonName = agentPersonName;
+	}
+	public String getAgentPersonNo() {
+		return agentPersonNo;
+	}
+	public void setAgentPersonNo(String agentPersonNo) {
+		this.agentPersonNo = agentPersonNo;
+	}
+	public String getAgentPersonPhone() {
+		return agentPersonPhone;
+	}
+	public void setAgentPersonPhone(String agentPersonPhone) {
+		this.agentPersonPhone = agentPersonPhone;
+	}
+	public String getEnterpriseURL() {
+		return enterpriseURL;
+	}
+	public void setEnterpriseURL(String enterpriseURL) {
+		this.enterpriseURL = enterpriseURL;
+	}
+	public String getEnterpriseFullName() {
+		return enterpriseFullName;
+	}
+	public void setEnterpriseFullName(String enterpriseFullName) {
+		this.enterpriseFullName = enterpriseFullName;
+	}
+	public String getEnterpriseShortName() {
+		return enterpriseShortName;
+	}
+	public void setEnterpriseShortName(String enterpriseShortName) {
+		this.enterpriseShortName = enterpriseShortName;
+	}
+	public String getBusinessLicense() {
+		return businessLicense;
+	}
+	public void setBusinessLicense(String businessLicense) {
+		this.businessLicense = businessLicense;
+	}
+	public String getEndDate() {
+		return endDate;
+	}
+	public void setEndDate(String endDate) {
+		this.endDate = endDate;
+	}
+	public String getLegalPersonName() {
+		return legalPersonName;
+	}
+	public void setLegalPersonName(String legalPersonName) {
+		this.legalPersonName = legalPersonName;
+	}
+	public String getLegalPersonNo() {
+		return legalPersonNo;
+	}
+	public void setLegalPersonNo(String legalPersonNo) {
+		this.legalPersonNo = legalPersonNo;
+	}
+	public String getEnterpriseAddress() {
+		return enterpriseAddress;
+	}
+	public void setEnterpriseAddress(String enterpriseAddress) {
+		this.enterpriseAddress = enterpriseAddress;
+	}
+	public String getZipCode() {
+		return zipCode;
+	}
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+	public String getEnterprisePhone() {
+		return enterprisePhone;
+	}
+	public void setEnterprisePhone(String enterprisePhone) {
+		this.enterprisePhone = enterprisePhone;
+	}
+	public String getFax() {
+		return fax;
+	}
+	public void setFax(String fax) {
+		this.fax = fax;
+	}
+	public String getBankName() {
+		return bankName;
+	}
+	public void setBankName(String bankName) {
+		this.bankName = bankName;
+	}
+	public String getBankCode() {
+		return bankCode;
+	}
+	public void setBankCode(String bankCode) {
+		this.bankCode = bankCode;
+	}
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+	public String getProvinces() {
+		return provinces;
+	}
+	public void setProvinces(String provinces) {
+		this.provinces = provinces;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getIssuerName() {
+		return issuerName;
+	}
+	public void setIssuerName(String issuerName) {
+		this.issuerName = issuerName;
+	}
+	public String getIssuer() {
+		return issuer;
+	}
+	public void setIssuer(String issuer) {
+		this.issuer = issuer;
+	}
+	public String getBankCardName() {
+		return bankCardName;
+	}
+	public void setBankCardName(String bankCardName) {
+		this.bankCardName = bankCardName;
+	}
+	public String getLicenseCopy() {
+		return licenseCopy;
+	}
+	public void setLicenseCopy(String licenseCopy) {
+		this.licenseCopy = licenseCopy;
+	}
+	public String getOrgCertificate() {
+		return orgCertificate;
+	}
+	public void setOrgCertificate(String orgCertificate) {
+		this.orgCertificate = orgCertificate;
+	}
+	public String getTaxCertificate() {
+		return taxCertificate;
+	}
+	public void setTaxCertificate(String taxCertificate) {
+		this.taxCertificate = taxCertificate;
+	}
+	public String getLegalIdentityCopy() {
+		return legalIdentityCopy;
+	}
+	public void setLegalIdentityCopy(String legalIdentityCopy) {
+		this.legalIdentityCopy = legalIdentityCopy;
+	}
+	
+}

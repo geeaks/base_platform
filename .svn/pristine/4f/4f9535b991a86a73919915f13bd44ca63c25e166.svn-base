@@ -1,0 +1,5 @@
+package com.ucf.customer.ws.model;
+
+public interface SaveUserHabit {
+
+}

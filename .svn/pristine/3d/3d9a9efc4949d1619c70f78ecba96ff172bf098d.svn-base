@@ -1,0 +1,440 @@
+package com.ucf.customer.controller;
+
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.ucf.customer.api.enums.EnumBankCardType;
+import com.ucf.customer.bo.ResultBo;
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfUserLoginApp;
+import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.service.SMSService;
+import com.ucf.customer.service.UserService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.utils.IdentifyingCode;
+import com.ucf.customer.utils.enums.EnumResultCode;
+import com.ucf.customer.utils.enums.EnumSMSTemplate;
+import com.ucf.customer.utils.enums.EnumSessionKey;
+import com.ucf.gateway.ws.bo.BankNumParamBo;
+import com.ucf.gateway.ws.bo.BankNumResultBo;
+import com.ucf.gateway.ws.bo.CityResultBo;
+import com.ucf.gateway.ws.bo.ProvinceResultBo;
+import com.ucf.gateway.ws.bo.SubBankIdentityResultBo;
+import com.ucf.gateway.ws.service.SearchTransactionWS;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
+import com.ucf.trade.ws.bo.TradeUcfWsParamBo;
+import com.ucf.trade.ws.bo.TradeUcfWsReturnValueBo;
+import com.ucf.trade.ws.service.TradeUcfSearchCardBINServiceWs;
+
+
+/**
+ * 类描述：通用控制器 <br>
+ * 创建人：gaoxiang <br>
+ * 创建时间：2014-09-12 上午9:37:58 <br>
+ * 修改人：gaoxiang <br>
+ * 修改时间：2014-09-12 上午9:37:58 <br>
+ * 修改备注： <br>
+ * @version 1.0
+ */
+@RequestMapping({ "/common" })
+@Controller
+public class CommonController extends BaseController {
+	
+	public static UcfLogger LOGGER = UcfLoggerFactory.getLogger(CommonController.class);
+	
+	@Autowired
+	private SearchTransactionWS searchTransactionWS;
+	@Autowired
+	private TradeUcfSearchCardBINServiceWs tradeUcfSearchCardBINServicews;
+	@Autowired
+	private UserService userService;
+	@Autowired
+	private SMSService smsService;
+	
+	@RequestMapping({ "/head.htm" })
+	public String head(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws Exception {
+		MemberAgent memberAgent = getMemberAgent(request);
+		if (memberAgent!=null) {
+			model.addAttribute("userName", memberAgent.getRealName());
+		}
+		return "common/head";
+	}
+	
+	@RequestMapping({ "/footer.htm" })
+	public String footer(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws Exception {
+		return "common/footer";
+	}
+	
+	@RequestMapping({ "/left.htm" })
+	public String left(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws Exception {
+		String index = request.getParameter("index");
+		if (StringUtil.isEmpty(index)) {
+			index = "1";
+		}
+		model.addAttribute("index", index);
+		return "common/left";
+	}
+	
+	@RequestMapping({ "/success.htm" })
+	public String success(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("flag", request.getParameter("flag"));
+		model.addAttribute("msg", request.getParameter("msg"));
+		return "common/success";
+	}
+	
+	@RequestMapping({ "/error.htm" })
+	public String error(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws Exception {
+		model.addAttribute("msg", request.getParameter("msg"));
+		return "common/error";
+	}
+	
+	/**
+	 * 校验验证码
+	 * @param request
+	 * @param response
+	 * @param cellNo
+	 * @param vfyCode
+	 * @return
+	 */
+	public boolean checkMobileCode(HttpServletRequest request, HttpServletResponse response, String cellNo,String vfyCode){
+		HttpSession session  = request.getSession();
+		String code = (String) session.getAttribute("vfyCode|"+cellNo);
+		if (StringUtil.isEmpty(vfyCode) || !vfyCode.equals(code)) {
+			return false;
+		}
+		return true;
+	}
+
+	/**
+	 * 获取银行卡卡BIN信息
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @author yuchao@ucfgroup.com
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping({ "/getBankCardNo.do" })
+	public void getBankCardNo(@RequestParam("bankCardNo") String bankCardNo, HttpServletRequest request, HttpServletResponse response,Model model) throws Exception {
+		Map parameterMap = new HashMap();
+		parameterMap.putAll(request.getParameterMap());
+		parameterMap.put("bankCardNo", SensitiveInfoUtils.bankCard(request.getParameter("bankCardNo")));
+		LOGGER.info("查询联行号："+JSON.toJSONString(parameterMap));
+		bankCardNo = bankCardNo.replaceAll(" ", "");
+		
+		String provinceCode = request.getParameter("ProvinceCode");
+		String cityCode = request.getParameter("CityCode");
+		String bankCode = request.getParameter("BankCode");
+		
+		LOGGER.debug("provcode="+provinceCode);
+		LOGGER.debug("citycode="+cityCode);
+		LOGGER.debug("bankcode="+bankCode);
+
+		BankNumParamBo bankNumParamBo = new BankNumParamBo();
+		bankNumParamBo.setAccountNo(bankCardNo);
+		if(!("").equals(provinceCode)&&provinceCode!=null){
+			bankNumParamBo.setProvinceCode(provinceCode);
+		}
+		if(!("").equals(cityCode)&&cityCode!=null){
+			bankNumParamBo.setCityCode(cityCode);
+		}
+		if(!("").equals(bankCode)&&bankCode!=null){
+			bankNumParamBo.setBankCode(bankCode);
+		}
+		bankNumParamBo.setPlateNo(Constants.NEWPLATFORM);//01：老平台  02: 新平台
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("调用查询卡bin传入参数：" + SensitiveInfoUtils.getJson(bankNumParamBo));//金融网关系统修改
+		}
+		BankNumResultBo bo = searchTransactionWS.serchBankNum(bankNumParamBo);
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("调用查询卡bin返回参数：" + SensitiveInfoUtils.getJson(bo));//金融网关系统修改
+		}
+		String errorMsg = "";
+		String errorCode = "";
+		String jsonArray2 = "";
+		LOGGER.debug("=====>"+bo.getExceptionCode());
+		if (bo.getExceptionCode()==null) {
+			if(!("").equals(provinceCode)&&provinceCode!=null){
+				List<CityResultBo> city = bo.getCityResultBolist();
+				jsonArray2 = JSON.toJSONString(city);
+
+			}
+			if(!("").equals(cityCode)&&cityCode!=null){
+				List<SubBankIdentityResultBo> bankId = bo.getSubBankIdentityResultBolist();
+				jsonArray2 = JSON.toJSONString(bankId);
+			}
+			
+			if(("").equals(provinceCode)||provinceCode == null){
+				List<ProvinceResultBo> prov = bo.getProvinceResultBolist();
+				jsonArray2 = JSON.toJSONString(prov);
+			}
+			
+		}else{
+			String info = "获取银行号信息失败";
+			errorMsg = bo.getMessage();
+			errorCode = bo.getResult();
+			LOGGER.debug("getBankCardBIN ERROR:"+errorCode+errorMsg);
+			jsonArray2 = JSON.toJSONString(info);
+		}
+		try {
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("application/json;charset=UTF-8");
+			response.getOutputStream().write(jsonArray2.toString().getBytes("UTF-8"));
+			response.getOutputStream().flush();
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.error(e.getMessage(),e);
+		} catch (IOException e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+	}
+	
+	/**
+	 * 卡bin校验
+	 * @param bankCardNo
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping({ "/checkCardBIN.do" })
+	@ResponseBody
+	public String checkCardBIN(@RequestParam("bankCardNo") String bankCardNo, @RequestParam(value="cardType",required=false) String cardTypeStr,
+			HttpServletRequest request,HttpServletResponse response,Model model) throws Exception {
+		Map parameterMap = new HashMap();
+		parameterMap.putAll(request.getParameterMap());
+		parameterMap.put("bankCardNo", SensitiveInfoUtils.bankCard(request.getParameter("bankCardNo")));
+		LOGGER.info("检查银行卡bin："+JSON.toJSONString(parameterMap));
+		try {
+			LOGGER.debug("getBankCardBIN  entry !");
+			String cardNo = bankCardNo.replaceAll(" ", "");
+			Map<String,String> resultMap =  new HashMap<String,String>();
+			UcfBankCard ucfBankCard = new UcfBankCard();
+			ucfBankCard.setCardNo(cardNo);
+			ucfBankCard.setCardType("1");
+			TradeUcfWsParamBo tradeBo = new TradeUcfWsParamBo();
+			tradeBo.setBankCardNo(cardNo);
+			tradeBo.setPlateNo(Constants.NEWPLATFORM);//01：老平台  02: 新平台
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("调用卡bin校验传入参数：" + SensitiveInfoUtils.getJson(tradeBo));//交易系统修改
+			}
+			TradeUcfWsReturnValueBo bo = tradeUcfSearchCardBINServicews.searchCardBIN(tradeBo);
+			if(LOGGER.isDebugEnabled()){
+				LOGGER.debug("调用卡bin校验返回参数：" + SensitiveInfoUtils.getJson(bo));//交易系统修改
+			}
+			Map<Object, Object> returnMap =  bo.getReturnValueMap();
+			String result = (String)returnMap.get("result");
+			if (Constants.SUCCESS.equals(result)) {
+				String bankName = (String)returnMap.get("bankName");
+				String cardType =  (String)returnMap.get("cardType");
+				String bankCode =  (String)returnMap.get("bankCode");
+				
+				resultMap.put("bankName", bankName);
+				resultMap.put("cardType", cardType);
+				resultMap.put("bankCode", bankCode);
+				// 查询卡支持情况
+				// 将卡类型封装飞枚举 1 借记卡
+				if ("1".equals(cardTypeStr) && !EnumBankCardType.DEBIT_CARD.getFcode().equals(cardType)) {
+					resultMap.put("error", "只能注册借记卡/储蓄卡");
+				}else {
+					resultMap.put("ok", bankName == null ? "" : bankName);
+				}
+			}else{
+				String errorMsg = (String)returnMap.get("errorMsg");
+				String errorCode = (String)returnMap.get("errorCode");
+				resultMap.put("error", errorMsg);
+				LOGGER.debug("getBankCardBIN ERROR:"+errorCode+errorMsg);
+			}
+			return JSON.toJSONString(resultMap);
+		} catch (Exception e) {
+			LOGGER.error("from getBankCardBIN :"+e.getMessage(),e);
+		}
+		return cardTypeStr;
+	}
+	
+	/**
+	 * 获取银行卡卡BIN信息
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @author yuchao@ucfgroup.com
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping({ "/queryBranchInfo.do" })
+	@ResponseBody
+	public String queryBranchInfo(
+			@RequestParam("bankCardNo") String bankCardNo,
+			@RequestParam("type") String type,
+			@RequestParam(value="provinceCode",required=false) String provinceCode,
+			@RequestParam(value="cityCode",required=false) String cityCode,
+			@RequestParam(value="bankCode",required=false) String bankCode,
+			HttpServletRequest request,
+			HttpServletResponse response,Model model) throws Exception {
+		Map parameterMap = new HashMap();
+		parameterMap.putAll(request.getParameterMap());
+		parameterMap.put("bankCardNo", SensitiveInfoUtils.bankCard(request.getParameter("bankCardNo")));
+		LOGGER.info("查询银行卡bin："+JSON.toJSONString(parameterMap));
+		String cardNo = bankCardNo.replaceAll(" ", "");
+		BankNumParamBo bankNumParamBo = new BankNumParamBo();
+		bankNumParamBo.setPlateNo(Constants.NEWPLATFORM);//01：老平台  02: 新平台
+		bankNumParamBo.setAccountNo(cardNo);
+		bankNumParamBo.setProvinceCode(provinceCode);
+		bankNumParamBo.setCityCode(cityCode);
+		bankNumParamBo.setBankCode(bankCode);
+		//
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("调用联行号查询传入参数：" + SensitiveInfoUtils.getJson(bankNumParamBo));//金融网关系统修改
+		}
+		BankNumResultBo bo = searchTransactionWS.serchBankNum(bankNumParamBo);		
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("调用联行号查询返回参数：" + SensitiveInfoUtils.getJson(bo));//金融网关系统修改
+		}
+		LOGGER.debug("=====>"+bo.getExceptionCode());
+		Map<String,Object> map = new HashMap<String,Object>();
+		if (bo.getExceptionCode()==null) {
+			map.put("status", Constants.SUCCESS);
+			if(type.equals("P")){
+				map.put("data",  bo.getProvinceResultBolist());
+			}
+			if(type.equals("C")){
+				map.put("data",  bo.getCityResultBolist());
+			}
+			if(type.equals("B")){
+				map.put("data",  bo.getSubBankIdentityResultBolist());
+			}
+		}else{
+			map.put("status", Constants.FAILE);
+			map.put("msg",  bo.getMessage());
+		}
+		return JSON.toJSONString(map);
+	}
+	
+	@RequestMapping(value= "/checkUserExists")
+	@ResponseBody
+	public String checkUserExists(
+			@RequestParam("username") String username,
+			HttpServletRequest request, HttpServletResponse response) throws Exception {
+		UcfUserLoginApp user = userService.queryUcfUserLoginApp(username);
+		Map<String,String> map = new HashMap<String,String>();
+		if(user==null){
+			map.put("result", "F");
+			map.put("msg", "该用户不存在，请先注册");
+		}else{
+			map.put("result", "S");
+			map.put("msg", "该用户已存在");
+		}
+		return JSON.toJSONString(map);
+	}
+	
+	@RequestMapping(value = "/imgCode")
+	public void genImgCode(HttpServletRequest request,
+			HttpServletResponse response) throws IOException {
+		// 设置不缓存图片
+		response.setHeader("Pragma", "No-cache");
+		response.setHeader("Cache-Control", "No-cache");
+		response.setDateHeader("Expires", 0);
+		// 指定生成的相应图片
+		response.setContentType("image/jpeg");
+		IdentifyingCode idCode = new IdentifyingCode();
+		BufferedImage image = new BufferedImage(idCode.getWidth(), idCode.getHeight(), BufferedImage.TYPE_INT_BGR);
+		Graphics2D g = image.createGraphics();
+		// 定义字体样式
+		Font myFont = new Font("黑体", Font.BOLD, 16);
+		// 设置字体
+		g.setFont(myFont);
+
+		g.setColor(idCode.getRandomColor(200, 250));
+		// 绘制背景
+		g.fillRect(0, 0, idCode.getWidth(), idCode.getHeight());
+
+		g.setColor(idCode.getRandomColor(180, 200));
+		idCode.drawRandomLines(g, 160);
+		String idcodeStr = idCode.drawRandomString(4, g);
+		HttpSession session  = request.getSession();
+		session.setAttribute(EnumSessionKey.IMG_CODE_KEY.getKey(), idcodeStr);
+		g.dispose();
+		ImageIO.write(image, "JPEG", response.getOutputStream());
+	}
+	
+	@RequestMapping(value= "/checkImgCode")
+	@ResponseBody
+	public  String checkCode(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam("checkCode") String checkCode) throws Exception {
+		HttpSession session  = request.getSession();
+		String idCode = (String) session.getAttribute(EnumSessionKey.IMG_CODE_KEY.getKey());
+		if(checkCode!=null && !checkCode.trim().equals("")){
+			if(idCode==null){
+				return "验证码过期";
+			}else if(!idCode.equalsIgnoreCase(checkCode.trim())){
+				return "请输入正确的验证码";
+			}else{
+				return "";
+			}
+		}else{
+			return "验证码不可为空";
+		}
+	}
+	
+	@RequestMapping({ "/vfycode/send" })
+	@ResponseBody
+	public String sendVfycode(
+			@RequestParam(value = "smsType",required=false) String smsType,
+			HttpServletRequest request, HttpServletResponse response, Model model){
+		Map<String,String> map = new HashMap<String,String>();
+		try {
+			//如果类型为user 则 使用session中的用户手机号
+			HttpSession session  = request.getSession();
+			String cellNo = null;
+			if("User".equals(smsType)){
+				MemberAgent memberAgent = (MemberAgent) session.getAttribute("MemberAgent");
+				cellNo = memberAgent.getMobile();
+			}else{
+				cellNo = (String)session.getAttribute(EnumSessionKey.SMS_PHONE.getKey());
+			}
+			ResultBo bo =  smsService.sendVfyCodeSMS("M100",cellNo, EnumSMSTemplate.MemberVfyCode.getContent());
+			if(EnumResultCode.SUCCESS.getCode().equals(bo.getResult())){
+				map.put("result", "S");
+				map.put("msg", "短信已发送");
+			}else{
+				map.put("result", "F");
+				map.put("msg", bo.getMsg());
+			}
+		} catch (Exception e) {
+			map.put("result", "F");
+			map.put("msg", "系统异常");
+			LOGGER.error("短信发送异常", e);
+		}
+		return JSON.toJSONString(map);
+	}
+}

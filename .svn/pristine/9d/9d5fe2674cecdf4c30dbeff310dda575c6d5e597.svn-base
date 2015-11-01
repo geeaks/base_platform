@@ -1,0 +1,59 @@
+package com.ucf.customer.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.ucf.customer.dao.UcfCustomerDao;
+import com.ucf.customer.dao.UcfUserDao;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.UserRegService;
+
+@Service("userRegService")
+public class UserRegServiceImp implements UserRegService {
+
+	@Autowired
+	private UcfUserDao userDao;
+	@Autowired
+	private UcfCustomerDao customerDao;
+
+	@Override
+	public void insertUserInfo(UcfUser userInfo) throws Exception {
+		this.userDao.insertUcfUser(userInfo);
+	}
+	/**
+	 * yuchao@ucfgroup.com
+	 * add the code for update and query userinfo
+	 * 
+	 */
+	@Override
+	public void updateUserInfo(UcfUser ucfUser) throws Exception{
+		this.userDao.updateUcfUser(ucfUser);
+	}
+	@Override
+	public List<UcfUser> queryUserInfo(UcfUser ucfUser) throws Exception{
+		return this.userDao.queryUcfUserListByWhere(ucfUser);
+	}
+	
+	/**
+	 * 用户id生成
+	 * @return
+	 * @throws Exception 
+	 */
+	public String  queryUcfUserId() throws Exception{
+		return this.userDao.queryUcfUserId();
+	}
+	@Override
+	public String queryUcfCustomerId() throws Exception {
+		return this.customerDao.queryUcfCustomerId();
+	}
+	
+	@Override
+	public String getEnterpriseMemberNO() throws Exception {
+		String enterpriseMemberNO_SEQ = this.userDao.getEnterpriseMemberNO_SEQ();
+		return "M" + enterpriseMemberNO_SEQ;
+	}
+
+
+}

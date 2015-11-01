@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ucf.customer">
+<!-- insert UcfUserLoginApp -->
+<insert id="insertUcfUserLoginApp" parameterType="ucfUserLoginApp" >
+	<![CDATA[
+		INSERT INTO UCF_USER_LOGIN_APP (
+	USER_ID,LOGIN_ID,LOGIN_PWD,PHONE,EMAIL,LOGIN_TYPE,GMT_LAST_MODIFIED,LAST_LOGIN_TIME,MEMO,FROZEN_STATE,USER_TYPE
+		)VALUES(
+		#{userId,jdbcType=VARCHAR},#{loginId,jdbcType=VARCHAR},#{loginPwd,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{loginType,jdbcType=VARCHAR},
+		#{gmtLastModified,jdbcType=TIMESTAMP},#{lastLoginTime,jdbcType=TIMESTAMP},#{memo,jdbcType=VARCHAR},
+		#{frozenState,jdbcType=VARCHAR},#{userType,jdbcType=CHAR})
+	]]>
+</insert>
+
+<!-- update UcfUserLoginApp -->
+<update id="updateUcfUserLoginApp" parameterType="ucfUserLoginApp">
+	<![CDATA[
+		UPDATE 
+		UCF_USER_LOGIN_APP 
+		SET 
+		 USER_ID=USER_ID
+	]]>
+			<if test="null != loginId">
+	<![CDATA[
+,LOGIN_ID = #{loginId}
+	]]>
+	</if>
+	<if test="null != loginPwd">
+	<![CDATA[
+,LOGIN_PWD = #{loginPwd}
+	]]>
+	</if>
+	<if test="null != phone">
+	<![CDATA[
+,PHONE = #{phone}
+	]]>
+	</if>
+	<if test="null != email">
+	<![CDATA[
+,EMAIL = #{email}
+	]]>
+	</if>
+	<if test="null != loginType">
+	<![CDATA[
+,LOGIN_TYPE = #{loginType}
+	]]>
+	</if>
+	<if test="null != gmtLastModified">
+	<![CDATA[
+,GMT_LAST_MODIFIED = #{gmtLastModified}
+	]]>
+	</if>
+	<if test="null != lastLoginTime">
+	<![CDATA[
+,LAST_LOGIN_TIME = #{lastLoginTime}
+	]]>
+	</if>
+	<if test="null != memo">
+	<![CDATA[
+,MEMO = #{memo}
+	]]>
+	</if>
+	<if test="null != frozenState">
+	<![CDATA[
+,FROZEN_STATE = #{frozenState}
+	]]>
+	</if>
+	<if test="null != userType and '' != userType">
+		<![CDATA[
+			,USER_TYPE = #{userType}
+		]]>
+	</if>
+	<![CDATA[
+		WHERE USER_ID = #{userId} 
+	]]>
+	<if test="null != loginId and '' != loginId">
+		<![CDATA[
+			AND LOGIN_ID = #{loginId}
+		]]>
+	</if>
+	<if test="null != userType and '' != userType">
+		<![CDATA[
+			AND USER_TYPE = #{userType}
+		]]>
+	</if>
+</update>
+
+<!-- delete UcfUserLoginApp -->
+<delete id="deleteUcfUserLoginApp" parameterType="string">
+	<![CDATA[
+		DELETE FROM UCF_USER_LOGIN_APP WHERE id = #{id}
+	]]>
+</delete>
+
+<!-- select UcfUserLoginApp -->
+<select id="queryUcfUserLoginAppByWhere" resultType="ucfUserLoginApp" parameterType="ucfUserLoginApp" >
+<![CDATA[
+SELECT 
+USER_ID as userId,LOGIN_ID as loginId,LOGIN_PWD as loginPwd,PHONE as phone,EMAIL as email,LOGIN_TYPE as loginType,GMT_LAST_MODIFIED as gmtLastModified,LAST_LOGIN_TIME as lastLoginTime,MEMO as memo,FROZEN_STATE as frozenState,USER_TYPE as userType FROM UCF_USER_LOGIN_APP WHERE ROWNUM <= 10 
+]]>
+<if test="null != userId and '' != userId">
+<![CDATA[
+AND USER_ID = #{userId}
+]]>
+</if>
+<if test="null != loginId and '' != loginId">
+<![CDATA[
+AND LOGIN_ID = #{loginId}
+]]>
+</if>
+<if test="null != loginPwd and '' != loginPwd">
+<![CDATA[
+AND LOGIN_PWD = #{loginPwd}
+]]>
+</if>
+<if test="null != phone and '' != phone">
+<![CDATA[
+AND PHONE = #{phone}
+]]>
+</if>
+<if test="null != email and '' != email">
+<![CDATA[
+AND EMAIL = #{email}
+]]>
+</if>
+<if test="null != loginType and '' != loginType">
+<![CDATA[
+AND LOGIN_TYPE = #{loginType}
+]]>
+</if>
+<if test="null != gmtLastModified">
+<![CDATA[
+AND GMT_LAST_MODIFIED = #{gmtLastModified}
+]]>
+</if>
+<if test="null != lastLoginTime">
+<![CDATA[
+AND LAST_LOGIN_TIME = #{lastLoginTime}
+]]>
+</if>
+<if test="null != memo and '' != memo">
+<![CDATA[
+AND MEMO = #{memo}
+]]>
+</if>
+<if test="null != frozenState and '' != frozenState">
+<![CDATA[
+AND FROZEN_STATE = #{frozenState}
+]]>
+</if>
+<if test="null != userType and '' != userType">
+<![CDATA[
+AND USER_TYPE = #{userType}
+]]>
+</if>
+</select>
+</mapper>

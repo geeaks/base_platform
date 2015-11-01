@@ -1,0 +1,76 @@
+package com.ucf.customer.ws.service.impl;
+
+/**
+ * 
+ * @desc 	 调用webService接口获取用户余额
+ * @version		1.0
+ * @date		2014-3-25 14:01:06
+ * @author 		yuchao@ucfgroup.com
+ * @return
+ * @throws Exception
+ */
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfSubCard;
+import com.ucf.customer.service.CardService;
+import com.ucf.customer.ws.bo.AccBalanceParamBO;
+import com.ucf.customer.ws.bo.AccBalanceReturnValueBO;
+import com.ucf.customer.ws.service.SearchAccBalanceWS;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+import com.ucf.platform.framework.log.LoggerLevel;
+import com.ucf.platform.framework.log.annotation.DigestLogAnnotated;
+
+
+public class SearchAccBalanceWSImpl implements SearchAccBalanceWS {
+
+	private static final UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(SearchAccBalanceWSImpl.class);
+	
+	@Autowired
+	private CardService cardService;
+
+	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "1006",
+	logFileName = "DEFAULT.DIG",
+    loggerLevel = LoggerLevel.INFO)
+	public AccBalanceReturnValueBO queryAccountNo(
+			AccBalanceParamBO accBalanceParamBO) {
+		AccBalanceReturnValueBO bo = new AccBalanceReturnValueBO();
+		UcfCard card = null;
+		try {
+			card = cardService.queryCardInfo(accBalanceParamBO.getAccountNo());
+			bo.setBalance(card.getAccountId());
+			LOGGER.debug("the Balance is:", bo.getBalance());
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+		}
+		if (null == accBalanceParamBO.getAccountNo()
+				|| "".equals(accBalanceParamBO.getAccountNo())) {
+			return bo;
+		} else {
+			if ("0".equals(card.getSubCardFlag())) {// 0存在子卡
+
+				UcfSubCard ucfSubCard = new UcfSubCard();
+				ucfSubCard.setCardNo(card.getCardNo());
+				ucfSubCard.setCardType(accBalanceParamBO.getAccountNo());
+				try {
+					List<UcfSubCard> list = cardService
+							.queryUcfSubCard(ucfSubCard);
+					if (null != list && 0 < list.size()) {
+						bo.setBalance(list.get(0).getAccountNo());
+						return bo;
+					}
+				} catch (Exception e) {
+					LOGGER.error(e.getMessage(),e);
+				}
+
+			}
+		}
+		return null;
+	}
+
+}

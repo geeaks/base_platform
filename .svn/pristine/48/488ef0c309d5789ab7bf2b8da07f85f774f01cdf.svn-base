@@ -1,0 +1,26 @@
+package com.ucf.customer.ws.service;
+
+import javax.jws.WebService;
+
+import com.ucf.customer.ws.bo.WebServiceParamBO;
+import com.ucf.customer.ws.bo.WebServiceReturnValueBO;
+
+
+@WebService
+public interface SearchTransactionWS {
+	
+	WebServiceReturnValueBO searchTransaction(WebServiceParamBO webServiceParamBO);
+	
+	WebServiceReturnValueBO authRealNamePre(WebServiceParamBO webServiceParamBO);
+	
+	WebServiceReturnValueBO authRealNamePro(WebServiceParamBO webServiceParamBO);
+
+	
+	
+	public WebServiceReturnValueBO freezeUser(WebServiceParamBO webServiceParamBO);
+	
+	public  WebServiceReturnValueBO queryUserInfo(String paramString);
+	
+//	public  WebServiceReturnValueBO queryBankCards(WebServiceParamBO webServiceParamBO);
+
+}

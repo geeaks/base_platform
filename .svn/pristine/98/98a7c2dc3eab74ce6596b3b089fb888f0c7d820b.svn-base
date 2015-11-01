@@ -1,0 +1,157 @@
+package com.ucf.customer.pojo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UcfCustomer implements Serializable{
+
+	private static final long serialVersionUID = 8655472519833160042L;
+
+	private String customerId;
+	
+	 @SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	 private String name;
+
+	 private String national;
+
+	 private String certType;
+	 
+	 @SensitiveInfo(type=SensitiveType.ID_CARD)
+	 private String certNo;
+
+	 private String type;
+
+	 private String certStatus;
+
+	 private String openStatus;
+
+	 private String enableStatus;
+
+	 private Date gmtCreate;
+
+	 private Date gmtModified;
+
+	 private String memo;
+
+	 private String extFlag;
+	 
+	 private String cardNo;
+	 
+	 
+
+		public String getCardNo() {
+		return cardNo;
+	}
+
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+
+		public void setCustomerId (String customerId) {
+			this.customerId = customerId;
+		}
+
+		public String getCustomerId () {
+			return customerId;
+		}
+
+		public void setName (String name) {
+			this.name = name;
+		}
+
+		public String getName () {
+			return name;
+		}
+
+		public void setNational (String national) {
+			this.national = national;
+		}
+
+		public String getNational () {
+			return national;
+		}
+
+		public void setCertType (String certType) {
+			this.certType = certType;
+		}
+
+		public String getCertType () {
+			return certType;
+		}
+
+		public void setCertNo (String certNo) {
+			this.certNo = certNo;
+		}
+
+		public String getCertNo () {
+			return certNo;
+		}
+
+		public void setType (String type) {
+			this.type = type;
+		}
+
+		public String getType () {
+			return type;
+		}
+
+		public void setCertStatus (String certStatus) {
+			this.certStatus = certStatus;
+		}
+
+		public String getCertStatus () {
+			return certStatus;
+		}
+
+		public void setOpenStatus (String openStatus) {
+			this.openStatus = openStatus;
+		}
+
+		public String getOpenStatus () {
+			return openStatus;
+		}
+
+		public void setEnableStatus (String enableStatus) {
+			this.enableStatus = enableStatus;
+		}
+
+		public String getEnableStatus () {
+			return enableStatus;
+		}
+
+		public void setGmtCreate (Date gmtCreate) {
+			this.gmtCreate = gmtCreate;
+		}
+
+		public Date getGmtCreate () {
+			return gmtCreate;
+		}
+
+		public void setGmtModified (Date gmtModified) {
+			this.gmtModified = gmtModified;
+		}
+
+		public Date getGmtModified () {
+			return gmtModified;
+		}
+
+		public void setMemo (String memo) {
+			this.memo = memo;
+		}
+
+		public String getMemo () {
+			return memo;
+		}
+
+		public void setExtFlag (String extFlag) {
+			this.extFlag = extFlag;
+		}
+
+		public String getExtFlag () {
+			return extFlag;
+		}
+
+}

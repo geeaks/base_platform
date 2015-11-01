@@ -1,0 +1,344 @@
+package com.ucf.customer.api.bo;
+
+import java.util.Date;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+/**
+ * 用户信息
+ * @author 张磊 
+ *
+ */
+public class UserInfoRsBO extends BaseResultBO{
+
+	private static final long serialVersionUID = -758112177680748983L;
+	
+	/**
+	 * 用户ID
+	 */
+	private String userId;
+	/**
+	 * 真实名称
+	 */
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String realName;
+	/**
+	 * 性别
+	 */
+	private String gender;
+	/**
+	 * 证据类型
+	 */
+	private String certType;
+	/**
+	 * 证据号
+	 */
+	@SensitiveInfo(type=SensitiveType.ID_CARD)
+	private String certNo;
+	/**
+	 * 用户类型
+	 */
+	private int userType;
+	/**
+	 * 邮箱
+	 */
+	@SensitiveInfo(type=SensitiveType.EMAIL)
+	private String email;
+	private String zipCode;
+	private String city;
+	private String province;
+	@SensitiveInfo(type=SensitiveType.ADDRESS)
+	private String address;
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String phone;
+	/**
+	 * 手机号
+	 */
+	@SensitiveInfo(type=SensitiveType.MOBILE_PHONE)
+	private String cell;
+	/**
+	 * 可用状态
+	 */
+	private String enabledStatus;
+	/**
+	 * 备注
+	 */
+	private String memo;
+	/**
+	 * 公司名称
+	 */
+	@SensitiveInfo(type=SensitiveType.CHINESE_NAME)
+	private String firmName;
+	private String securityCode;
+	private String returnUrl;
+	private String isSignCustomer;
+	private String supplyStage;
+	private String verifyStatus;
+	private Date certValidBeginDate;
+	private Date certValidEndDate;
+	private Date gmtCreate;
+	private String country;
+	private String area;
+	private String profession;
+	/**
+	 * 实名认证状态 
+	 * {@link com.ucf.customer.api.enums.EnumRealnameStatus}
+	 */
+	private String realnameStatus;
+	/**
+	 * 账号
+	 */
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String cardNo;
+	/**
+	 * 冻结状态
+	 */
+	private String frozenState;
+	/**
+	 * 关联用户
+	 */
+	private String refUser;
+	/**
+	 * 关联商户
+	 */
+	private String refMerchant;
+	
+	/**
+	 * 是否设置支付密码
+	 */
+	private boolean setPayPwd;
+	
+	/**
+	 * 代扣累计金额
+	 */
+	private Long amount;
+	
+	
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+	public String getRealName() {
+		return realName;
+	}
+	public void setRealName(String realName) {
+		this.realName = realName;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	public String getCertType() {
+		return certType;
+	}
+	public void setCertType(String certType) {
+		this.certType = certType;
+	}
+	public String getCertNo() {
+		return certNo;
+	}
+	
+	public Date getGmtCreate() {
+		return gmtCreate;
+	}
+	public void setGmtCreate(Date gmtCreate) {
+		this.gmtCreate = gmtCreate;
+	}
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
+	}
+	public int getUserType() {
+		return userType;
+	}
+	public void setUserType(int userType) {
+		this.userType = userType;
+	}
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getZipCode() {
+		return zipCode;
+	}
+	public void setZipCode(String zipCode) {
+		this.zipCode = zipCode;
+	}
+	public String getCity() {
+		return city;
+	}
+	public void setCity(String city) {
+		this.city = city;
+	}
+	public String getProvince() {
+		return province;
+	}
+	public void setProvince(String province) {
+		this.province = province;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public String getPhone() {
+		return phone;
+	}
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+	public String getCell() {
+		return cell;
+	}
+	public void setCell(String cell) {
+		this.cell = cell;
+	}
+	public String getEnabledStatus() {
+		return enabledStatus;
+	}
+	public void setEnabledStatus(String enabledStatus) {
+		this.enabledStatus = enabledStatus;
+	}
+	public String getMemo() {
+		return memo;
+	}
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+	public String getFirmName() {
+		return firmName;
+	}
+	public void setFirmName(String firmName) {
+		this.firmName = firmName;
+	}
+	public String getSecurityCode() {
+		return securityCode;
+	}
+	public void setSecurityCode(String securityCode) {
+		this.securityCode = securityCode;
+	}
+	public String getReturnUrl() {
+		return returnUrl;
+	}
+	public void setReturnUrl(String returnUrl) {
+		this.returnUrl = returnUrl;
+	}
+	public String getIsSignCustomer() {
+		return isSignCustomer;
+	}
+	public void setIsSignCustomer(String isSignCustomer) {
+		this.isSignCustomer = isSignCustomer;
+	}
+	public String getSupplyStage() {
+		return supplyStage;
+	}
+	public void setSupplyStage(String supplyStage) {
+		this.supplyStage = supplyStage;
+	}
+	public String getVerifyStatus() {
+		return verifyStatus;
+	}
+	public void setVerifyStatus(String verifyStatus) {
+		this.verifyStatus = verifyStatus;
+	}
+	public Date getCertValidBeginDate() {
+		return certValidBeginDate;
+	}
+	public void setCertValidBeginDate(Date certValidBeginDate) {
+		this.certValidBeginDate = certValidBeginDate;
+	}
+	public Date getCertValidEndDate() {
+		return certValidEndDate;
+	}
+	public void setCertValidEndDate(Date certValidEndDate) {
+		this.certValidEndDate = certValidEndDate;
+	}
+	public String getCountry() {
+		return country;
+	}
+	public void setCountry(String country) {
+		this.country = country;
+	}
+	public String getArea() {
+		return area;
+	}
+	public void setArea(String area) {
+		this.area = area;
+	}
+	public String getProfession() {
+		return profession;
+	}
+	public void setProfession(String profession) {
+		this.profession = profession;
+	}
+	public String getRealnameStatus() {
+		return realnameStatus;
+	}
+	public void setRealnameStatus(String realnameStatus) {
+		this.realnameStatus = realnameStatus;
+	}
+	public String getCardNo() {
+		return cardNo;
+	}
+	public void setCardNo(String cardNo) {
+		this.cardNo = cardNo;
+	}
+	public String getFrozenState() {
+		return frozenState;
+	}
+	public void setFrozenState(String frozenState) {
+		this.frozenState = frozenState;
+	}
+	public String getRefUser() {
+		return refUser;
+	}
+	public void setRefUser(String refUser) {
+		this.refUser = refUser;
+	}
+	public String getRefMerchant() {
+		return refMerchant;
+	}
+	public void setRefMerchant(String refMerchant) {
+		this.refMerchant = refMerchant;
+	}
+	public boolean isSetPayPwd() {
+		return setPayPwd;
+	}
+	public void setSetPayPwd(boolean setPayPwd) {
+		this.setPayPwd = setPayPwd;
+	}
+	public Long getAmount() {
+		return amount;
+	}
+	public void setAmount(Long amount) {
+		this.amount = amount;
+	}
+	@Override
+	public String toString() {
+		return "UserInfoRsBO [ userId=" + userId + ", realName="
+				+ realName + ", gender=" + gender + ", certType=" + certType
+				+ ", certNo=" + certNo + ", userType=" + userType + ", email="
+				+ email + ", zipCode=" + zipCode + ", city=" + city
+				+ ", province=" + province + ", address=" + address
+				+ ", phone=" + phone + ", cell=" + cell + ", enabledStatus="
+				+ enabledStatus + ", memo=" + memo + ", firmName=" + firmName
+				+ ", securityCode=" + securityCode + ", returnUrl=" + returnUrl
+				+ ", isSignCustomer=" + isSignCustomer + ", supplyStage="
+				+ supplyStage + ", verifyStatus=" + verifyStatus
+				+ ", certValidBeginDate=" + certValidBeginDate
+				+ ", certValidEndDate=" + certValidEndDate + ", country="
+				+ country + ", area=" + area + ", profession=" + profession
+				+ ", realnameStatus=" + realnameStatus + ", cardNo=" + cardNo
+				+ ", frozenState=" + frozenState + ", refUser=" + refUser
+				+ ", refMerchant=" + refMerchant + "]";
+	}
+
+	
+}

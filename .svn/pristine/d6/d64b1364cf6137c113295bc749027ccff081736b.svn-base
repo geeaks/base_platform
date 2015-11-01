@@ -1,0 +1,77 @@
+package com.ucf.customer.api.bo;
+
+import java.io.Serializable;
+
+public class BaseResultBO implements Serializable {
+
+	
+	private static final long serialVersionUID = 5373737252317563501L;
+
+	/**
+	 * 返回码
+	 */
+	private String respCode;
+
+	/**
+	 * 返回消息
+	 */
+	private String respMsg;
+	
+	/**
+	 * 状态码
+	 */
+	private String status;
+	
+	
+	private String userId;
+	
+	private int errorTimes;
+	
+	
+	public String getRespCode() {
+		return respCode;
+	}
+
+	public void setRespCode(String respCode) {
+		this.respCode = respCode;
+	}
+
+	public String getRespMsg() {
+		return respMsg;
+	}
+
+	public void setRespMsg(String respMsg) {
+		this.respMsg = respMsg;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public int getErrorTimes() {
+		return errorTimes;
+	}
+
+	public void setErrorTimes(int errorTimes) {
+		this.errorTimes = errorTimes;
+	}
+
+	@Override
+	public String toString() {
+		return "BaseResultBO [respCode=" + respCode + ", respMsg=" + respMsg
+				+ ", status=" + status + ", userId=" + userId + ", errorTimes=" + errorTimes + "]";
+	}
+
+}

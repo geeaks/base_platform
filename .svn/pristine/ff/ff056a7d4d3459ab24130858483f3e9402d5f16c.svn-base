@@ -1,0 +1,180 @@
+package com.ucf.customer.api.bo;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class PhotoAuthApplyBo implements Serializable {
+
+	private static final long serialVersionUID = 1012731384234447126L;
+
+	private String id;
+
+	/**
+	 * 用户Id
+	 */
+	private String userId;
+
+	/**
+	 * 银行卡号
+	 */
+	@SensitiveInfo(type=SensitiveType.BANK_CARD)
+	private String bankCardNo;
+
+	/**
+	 * 图片路径
+	 */
+	private String imgPath;
+
+	/**
+	 * N 新建 S 通过 F 失败
+	 */
+	private String status;
+
+	/**
+	 * 审核备注
+	 */
+	private String memo;
+
+	/**
+	 * 记录创建时间
+	 */
+	private Date gmtCreate;
+
+	/**
+	 * 记录修改时间
+	 */
+	private Date gmtModify;
+
+	/**
+	 * 创建人
+	 */
+	private String createor;
+
+	/**
+	 * 审核人
+	 */
+	private String verifyer;
+
+	/**
+	 * 修改人、审核人
+	 */
+	private String modifyer;
+
+	/**
+	 * 审核时间
+	 */
+	private Date gmtVerify;
+	
+	/**
+	 * 类型
+	 */
+	private String type;
+	
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getUserId() {
+		return userId;
+	}
+
+	public void setUserId(String userId) {
+		this.userId = userId;
+	}
+
+	public String getBankCardNo() {
+		return bankCardNo;
+	}
+
+	public void setBankCardNo(String bankCardNo) {
+		this.bankCardNo = bankCardNo;
+	}
+
+	public String getImgPath() {
+		return imgPath;
+	}
+
+	public void setImgPath(String imgPath) {
+		this.imgPath = imgPath;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getMemo() {
+		return memo;
+	}
+
+	public void setMemo(String memo) {
+		this.memo = memo;
+	}
+
+	public Date getGmtCreate() {
+		return gmtCreate;
+	}
+
+	public void setGmtCreate(Date gmtCreate) {
+		this.gmtCreate = gmtCreate;
+	}
+
+	public Date getGmtModify() {
+		return gmtModify;
+	}
+
+	public void setGmtModify(Date gmtModify) {
+		this.gmtModify = gmtModify;
+	}
+
+	public String getCreateor() {
+		return createor;
+	}
+
+	public void setCreateor(String createor) {
+		this.createor = createor;
+	}
+
+	public String getVerifyer() {
+		return verifyer;
+	}
+
+	public void setVerifyer(String verifyer) {
+		this.verifyer = verifyer;
+	}
+
+	public String getModifyer() {
+		return modifyer;
+	}
+
+	public void setModifyer(String modifyer) {
+		this.modifyer = modifyer;
+	}
+
+	public Date getGmtVerify() {
+		return gmtVerify;
+	}
+
+	public void setGmtVerify(Date gmtVerify) {
+		this.gmtVerify = gmtVerify;
+	}
+
+}

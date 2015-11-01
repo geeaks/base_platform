@@ -1,0 +1,45 @@
+package com.ucf.customer.utils.enums;
+
+/**
+ * 
+*    
+* 项目名称：member   
+* 类名称：EnumCustomerCertStatus   
+* 类描述：   客户实名状态
+* 创建人：李文静  
+* 创建时间：2014-5-20 下午2:03:54   
+* 修改人：lenovo   
+* 修改时间：2014-5-20 下午2:03:54   
+* 修改备注：   
+* @version    
+*
+ */
+public enum EnumCustomerCertStatus {
+	T("T", "实名通过"),
+	N("N", "实名未通过");
+	private String code;
+	private String desc;
+
+	EnumCustomerCertStatus(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+	
+	
+}

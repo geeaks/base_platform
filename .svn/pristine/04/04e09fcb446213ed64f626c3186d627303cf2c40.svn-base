@@ -1,0 +1,151 @@
+﻿<!DOCTYPE>
+<%@ page contentType="text/html;charset=UTF-8" %>
+<html>
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>先锋支付--用户中心 </title>
+<link href="${staticMemberPath}/new/css/host_bank.css" rel="stylesheet" type="text/css"/>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<style type="text/css">
+	p.tip span {
+		font-weight:130px;
+		background-color: yellow;
+		color:red;}
+	p.tipp span {
+		font-weight:130px;
+		background-color: yellow;
+		color:red;}
+	p.tippp span {
+		font-weight:130px;
+		background-color: yellow;
+		color:red;}
+	p.tipp span {
+		font-weight:130px;
+		background-color: yellow;
+		color:red;
+	}
+	.add-card {
+		background: url('${staticMemberPath}/images/add-card.png') no-repeat scroll 50px 115px transparent;
+		padding-left: 20px;
+		width: 200px;
+		color: #999;
+	}
+	.card-all {
+		text-align: center;
+		line-height: 250px;
+	}
+	.card-all:hover {
+		background-color: #F6F6F6;
+	}
+	.card-all {
+		line-height: 250px;
+		text-align: center;
+		text-decoration: none;
+		border: 1px dotted #EBEBEB;
+		height: 250px;
+		width: 250px;
+		display: inline-block;
+	}
+</style>
+</head>
+<body>
+<c:import url="/common/head.htm"></c:import>
+<div class="person-navigation">
+	<ul class="container">
+		<li ><a href="${basePath}/user/basicinfo.htm">信息管理</a></li>
+		<li class="person-navigation-active"><a href="${basePath}/bank/index.htm" >银行卡管理</a></li>
+	</ul>
+	<div class="clear"></div>
+</div>
+<section class="bgc-gray">
+	<div class="box">
+		<div class="main">
+			<div class="box_title pl20"><em class="f18">我的银行卡</em></div>
+			<div style="margin-left:10px;margin-bottom:20px">
+				<p <c:if test="${msg != ''}">class="info-lock"</c:if>>
+					<span>${msg}</span>
+				</p>
+			</div>
+			<div class="h_bank clearfix" style="padding-bottom:30px;padding-left:0px;">
+				<!-- 展示银行卡 -->
+				<c:forEach var="a" items="${list}" varStatus="xh" >
+					<div class="bank_list" style="width: 300px;margin:21px 0 0 21px;">
+						<table width="100%">
+							<colgroup>
+								<col width="33%"/>
+								<col width="33%"/>
+								<col width="33%"/>
+							</colgroup>
+							<thead>
+								<tr>
+									<td colspan="3" ><div class="pl15 pr15 pt5 pb5" style="background:#f7f7f7;">
+									<img class="fr" src="${staticMemberPath}/images/cxk.png" />
+									<img src="${staticMemberPath}/new/images/logo/${a.bankId }_1301.png" /></div></td>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td colspan="3">
+										<div class="tc f22" style="color:#666666;text-align:center;padding:9px 0;background:#fbfbfb">
+										<c:out value="${a.cardNo }"></c:out></div>
+									</td>
+								</tr>
+								<tr style="background:#fbfbfb;height:96px;">
+									<td colspan="3" style="background:#fbfbfb;height:96px;">
+										<!--div class="pl15 pr15 pt10 pb10" >开户行：
+											<em class="color-gray1">
+												<c:out value="${a.bankName }"></c:out>
+											</em>
+										</div-->
+										<!-- <div class="pl15 pr15 pt10" style="margin-top:30px;font-size:14px;margin-bottom:10px;">
+											快捷支付 <span class="color-gray1 pdl30 fr">已开通</span>
+										</div> -->
+										<div class="pl15 pr15 pb10" style="font-size:14px;">提现设置<span class="color-gray1 pdl30 fr">已开通</span></div>
+									</td>
+								</tr>
+								<tr>
+									<td colspan="3" style="background:#f7f7f7;height:100%;width:100%;">
+										<c:if test="${freeze!='0'}">
+											<a style="height:35px;line-height:35px;display:block;margin-right:16px;float:right;"
+											 href="${basePath}/bank/modify.htm?id=${a.id}&displayBankId=${a.bankId }&displayCardNo=${a.cardNo }">管理</a>
+										</c:if>
+										<%-- <c:if test="${del!='0' && freeze!='0' && a.certStatus!='0'}"> --%>
+										<c:if test="${del!='0' && freeze!='0'}">
+											<a href="${basePath}/bank/delete.htm?id=${a.id}" style="height:35px;line-height:35px;width:50px;display:block;margin-left:16px;">删除</a>
+										</c:if>
+										<%-- <c:if test="${a.certStatus!='0' && freeze!='0'}"> --%>
+										<%-- <c:if test="${freeze!='0'}">
+											<a href="${staticMemberPath}/bank/remakeWithDrawCard.htm?id=${a.id}">设置为默认提现卡</a>
+										</c:if> --%>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</c:forEach>
+				<!-- 增加银行卡 -->
+				<c:if test="${full ne '0'}">
+					<div class="bank_list" style="width: 300px; margin-top: 0px;">
+						<c:if test="${full eq '0'}">
+							<a href="javascript:alert('取现卡最多可绑定5张！');" class="card-all" style="width: 300px;">
+								<div class="add-card">添加银行卡</div>
+							</a>
+						</c:if>
+						<c:if test="${freeze ne '0' && full ne '0'}">
+							<a href="${basePath}/bank/add.htm" class="card-all" style="width: 300px;">
+								<div class="add-card">添加银行卡</div>
+							</a>
+						</c:if>
+					</div>
+				</c:if>
+			</div>
+			<!--div align="center" style="height: 80px;">
+				<a href="${basePath}/user/index.htm" class="but-gray but-blue w100 ml20">返回</a>
+			</div-->
+		</div>
+	</div>
+</section>
+<c:import url="/WEB-INF/views/jsp/common/newfooter.jsp"></c:import>
+<jsp:include page="../common/resource_js.jsp"/>
+</body>
+</html>

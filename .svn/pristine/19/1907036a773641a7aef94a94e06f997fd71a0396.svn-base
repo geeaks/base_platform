@@ -1,0 +1,87 @@
+package com.ucf.customer.utils;
+
+import java.io.Serializable;
+/**
+ * 
+ * Description: redis session All Rights Reserved.
+ * 
+ * @version 1.0 2014-3-13 下午2:10:16 by 李晓明（lixiaoming@ucfgroup.com）创建
+ */
+public class RedisSession {
+
+	private String sessionId;
+
+
+	public RedisSession(String sessionId) {
+		this.sessionId = sessionId;
+	}
+
+	/**
+	 * 
+	 * Description: 获取属性
+	 * 
+	 * @Version1.0 2014-3-13 下午2:27:41 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param key
+	 * @return
+	 */
+	public Serializable getAttribute(String key) {
+		return RedisUtils.hashGet(sessionId, key);
+	}
+	
+	/**
+	 * 
+	 * Description: 判断指定属性是否存在
+	 * @Version1.0 2014-3-18 下午4:58:09 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param key
+	 * @return
+	 */
+	public boolean hasAttribute(String key){
+		return RedisUtils.hashExsit(sessionId, key);
+	}
+
+	/**
+	 * 
+	 * Description: 添加属性
+	 * 
+	 * @Version1.0 2014-3-13 下午2:27:45 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param key
+	 * @param value
+	 */
+	public void setAttribute(String key, Serializable value) {
+		RedisUtils.hashPut(sessionId, key, value);
+	}
+
+//	/**
+//	 * 
+//	 * Description: 添加属性
+//	 * 
+//	 * @Version1.0 2014-3-13 下午2:27:45 by 李晓明（lixiaoming@ucfgroup.com）创建
+//	 * @param key
+//	 * @param value
+//	 */
+//	public void setAttribute(String key, String value) {
+//		RedisUtils.hashPut(sessionId, key, value);
+//	}
+	
+	/**
+	 * 
+	 * Description: 移除属性
+	 * 
+	 * @Version1.0 2014-3-13 下午2:57:49 by 李晓明（lixiaoming@ucfgroup.com）创建
+	 * @param key
+	 */
+	public void removeAttribute(String key) {
+		RedisUtils.hashDelete(sessionId, key);
+	}
+	
+	public void setExpir(String redisKey,int seconds){
+		RedisUtils.setExpire(redisKey, seconds);
+	}
+	
+
+	public void destroy() {
+		RedisUtils.deleteKey(this.sessionId);
+	}
+
+	
+}

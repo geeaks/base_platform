@@ -1,0 +1,42 @@
+package com.ucf.customer.utils.enums;
+/**
+ * 
+*    
+* 项目名称：member  <br>
+* 类名称：EnumConfirmStatus      <br>
+* 类描述： 银行卡实名认证状态  				  <br>
+* 创建人：许浩				  <br>
+* 创建时间：2014-5-12 下午5:47:56  <br>   
+* 修改人：许浩				  <br>
+* 修改时间：2014-5-12 下午5:47:56  <br>  	
+* 修改备注：   				  <br>
+* @version    
+*
+ */
+public enum EnumConfirmStatus {
+	CONFIRM_YES("T", "已经实名认证"), CONFIRM_NO("W", "未实名认证");
+	private String code;
+	private String desc;
+
+	EnumConfirmStatus(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+}

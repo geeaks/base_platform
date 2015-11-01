@@ -1,0 +1,25 @@
+package com.ucf.customer.test.dao;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+
+import com.ucf.customer.dao.UcfOrgDao;
+import com.ucf.customer.pojo.UcfOrg;
+import com.ucf.customer.test.BaseTest;
+
+public class UcfORGDAOTest extends BaseTest {
+	@Autowired
+	private UcfOrgDao ucfOrgDao;
+
+	@Test
+	@Rollback(false)
+	public void testGET() {
+		UcfOrg ucfOrg = ucfOrgDao.quertUcfById("M100000003");
+		System.out.println(ucfOrg);
+	}
+
+	
+	
+
+}

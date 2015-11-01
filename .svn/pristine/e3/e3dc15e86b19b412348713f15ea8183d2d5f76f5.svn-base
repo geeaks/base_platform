@@ -1,0 +1,29 @@
+package com.ucf.customer.dao.impl;
+
+import org.springframework.stereotype.Repository;
+import com.ucf.customer.dao.UcfOperatorDao;
+import com.ucf.customer.dao.base.BaseCustomerDao;
+import com.ucf.customer.pojo.UcfOperator;
+
+@Repository
+public class UcfOperatorDaoImpl extends BaseCustomerDao implements UcfOperatorDao {
+
+	/**
+	 * @Fields serialVersionUID : 序列号
+	 */ 
+	private static final long serialVersionUID = 8287613761996613038L;
+
+	public void insertUcfOperator(UcfOperator ucfOperator)throws Exception{
+		this.insert("com.ucf.customer.insertUcfOperator", ucfOperator);
+	}
+
+	public void updateUcfOperator(UcfOperator ucfOperator)throws Exception{
+		this.update("com.ucf.customer.updateUcfOperator", ucfOperator);
+	}
+
+	@Override
+	public String queryUcfOperatorId() throws Exception {
+		return this.getOne("com.ucf.customer.getUcfOperatorId",null);
+	}
+
+}

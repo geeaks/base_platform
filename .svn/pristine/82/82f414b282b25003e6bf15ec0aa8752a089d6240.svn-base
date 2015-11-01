@@ -1,0 +1,17 @@
+package com.ucf.customer.dao;
+
+import java.io.Serializable;
+import java.util.List;
+import com.ucf.customer.pojo.UcfPerson;
+
+public interface UcfPersonDao extends Serializable {
+
+	void insertUcfPerson(UcfPerson ucfPerson)throws Exception;
+
+	void updateUcfPerson(UcfPerson ucfPerson)throws Exception;
+
+	void deleteUcfPerson(String id)throws Exception;
+
+	List<UcfPerson> queryUcfPersonListByWhere(UcfPerson ucfPerson)throws Exception;
+
+}

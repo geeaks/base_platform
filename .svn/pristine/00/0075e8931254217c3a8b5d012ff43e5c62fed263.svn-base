@@ -1,0 +1,39 @@
+package com.ucf.customer.utils.enums;
+
+/**
+ * @Description: 用户实名认证级别
+ * @ClassName: EnumVerifyLevle
+ * @author gaoxiang
+ * @date 2015-3-10 下午3:37:46
+ */ 
+public enum EnumVerifyLevle {
+
+	REGISTER("0","注册实名认证"),
+	ORDINARY("1","普通实名认证"),
+	SENIOR("2","高级实名认证");
+	
+	private String msg;
+	private String code;
+	
+	private EnumVerifyLevle(String code, String msg) {
+		this.code = code;
+		this.msg = msg;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	public String getMsg() {
+		return msg;
+	}
+	
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	
+}

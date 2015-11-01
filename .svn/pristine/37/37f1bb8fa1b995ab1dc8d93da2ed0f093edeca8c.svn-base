@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<jsp:include page="../p2p/commons/resource_meta.jsp"/>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:set var="basePath" value="${pageContext.request.contextPath }" />
+<html>
+<head>
+<title>先锋支付</title>
+<jsp:include page="commons/resource_css.jsp"/>
+<jsp:include page="commons/resource_js.jsp"/>
+<c:if test="${'common' == p2p_type }">
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/set-pay-telephone/index_common.js"></script>
+<script type="text/javascript" src="${basePath}/passwordControl/individual_index.js"></script>
+<script type="text/javascript" src="${basePath}/passwordControl/individual_index1.js"></script>
+</c:if>
+<c:if test="${'common' != p2p_type }">
+<script type="text/javascript" src="${staticMemberPath}/p2p/js/set-pay-telephone/index.js"></script>  
+<script type="text/javascript" src="${basePath}/passwordControl/findpaypwd_index.js"></script>
+<script type="text/javascript" src="${basePath}/passwordControl/findpaypwd_index1.js"></script>
+</c:if>
+<script type="text/javascript">
+	function submitForm(){
+		if(confirmPwd()){
+			Form_Submit1("postForm");
+		}
+	}
+</script>
+</head>
+<body>
+<section>
+	<div class="box">
+		<div class="host_title">资金托管平台<span>找回支付密码</span></div>
+		<div class="fd-main">
+			<div class="fd-center">
+				<div class="h_steps">
+					<div class="h_steps_base">
+						<div class="h_steps_green w380"></div>
+					</div>
+					<div class="h_steps1 h_steps_cur">
+						<span>1</span>
+						<p>验证身份</p>
+					</div>
+					<div class="h_steps2 h_steps_cur">
+						<span>2</span>
+						<p>重置支付密码</p>
+					</div>
+					<div class="h_steps3 w60">
+						<span>3</span>
+						<p>找回成功</p>
+					</div>
+				</div>
+				<div class="fd-layout">
+					<form action="${basePath}/p2p/setPayPwd.do" method="post" id="postForm" name="postForm">
+						<input type="hidden" name="p2p_type" value="${p2p_type}" />
+						<table width="100%">
+							<colgroup>
+								<col width="145" />
+								<col width="755" />
+							</colgroup>
+							<tbody>
+								<tr>
+									<th>账户名：</th>
+									<td>
+										<span class="color-yellow1">${requestScope.HID_user["realName"] }</span>
+									</td>
+								</tr>
+								<tr>
+								<th>新支付密码：</th>
+									<td>
+										<!-- <input id="payPassword" name="payPassword" type="password" maxlength="20" class="idbox w228" placeholder="请输入您的支付密码" /> -->
+										<%-- <jsp:include page="../p2p/passwordControl/resource_pwd.jsp" /> --%>
+										<div style="height:50px;line-height:50px">
+											<jsp:include page="/WEB-INF/views/jsp/p2p/passwordControl/individual_pwd.jsp" />
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th>确认新支付密码：</th>
+									<td>
+										<!-- <input id="conPayPassword" name="conPayPassword" type="password" maxlength="20" class="idbox w228" placeholder="请再次输入支付密码" /> -->
+										<%-- <jsp:include page="../p2p/passwordControl/resource_pwd1.jsp" /> --%>
+										<div style="height:50px;line-height:50px">
+											<jsp:include page="/WEB-INF/views/jsp/p2p/passwordControl/individual_pwd1.jsp" />
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<th></th>
+									<td>
+										<input type="hidden" name="userId" value="${userId}"/>
+										<input type="hidden" name="merchantId" value="${merchantId}"/>
+										<input id="submitBtn" onclick="javascript:submitForm();" href="javascript:void(0)" type="button" value="下一步" class="but-yellow but-gray " />
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+</body>
+</html>

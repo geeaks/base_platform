@@ -1,0 +1,640 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8" contentType="text/html; charset=utf-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<c:set var="basePath" value="${pageContext.request.contextPath }" scope="application" />
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+<title>账户设置</title>
+<meta name="description" content="">
+<meta name="author" content="">
+<link href="${staticMemberPath}/css/select2.css" rel="stylesheet">
+<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
+<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css" />
+<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="${staticMemberPath}/css/commons/jquery.validator.css">
+<script type="text/javascript" src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/bootstrap.js"></script>
+<script type="text/javascript" type="text/javascript" src="${staticMemberPath}/js/commons/jquery.validator.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/commons/local/zh_CN.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/select2.min.js"></script>
+<script type="text/javascript" src="${staticMemberPath}/js/select2_locale_zh-CN.js"></script>
+<style>
+<!--[if lt IE 8]>
+.select2-search INPUT{padding:0}
+<![endif]-->
+div.select2-container{margin-top:5px;}
+#myObj span.msg-box,#myObj1 span.msg-box{margin-top:12px !important;}
+
+</style>
+<script>
+	$(function() {
+		jQuery(".tip").hide();
+		jQuery("#bankType").change(function(){
+			var bankCardNo=jQuery("#bankCardNo").val();
+			if(bankCardNo){
+				jQuery("#bankCardNo").trigger("validate");
+			}
+		});
+		$("#province").select2();
+		$("#city").select2();
+		$("#branchBank").select2();
+		$('#individualAccountForm').validator({
+			msgShow: function($msgbox, type){
+				if(type=="ok"){
+					$msgbox.css({"background-color": "#ffffff"});
+				}
+			},
+			stopOnError: false,
+			timely: true,
+			rules: {
+				realNameReq: function(element, params){
+					if("请输入真实姓名"==element.value)
+					return '不能为空';
+					return true;
+				},
+				cardNo: function(element, params){
+					//内部的this指向的是当前实例，可以直接调用所有方法，这里调用了test方法
+					return idCardValidate() || '请输入有效的身份证号';
+				},
+				nameCheck: function(element) {
+					var reg = /[!@#$%^&*\(\)\-\+\=\_~\|,\?\{\}\[\].]+/;
+					if (reg.test(element.value)){
+						return '名字不可包含特殊字符';
+					}
+					obj= element.value.replace(/\s+/g,"");
+					$("#realName").val(obj);
+					return /^(?:[\u4E00-\u9FFF]{2,5})$/.test(element.value) || '请输入中文姓名';
+				},
+				card: function(element, params){
+					var card = element.value.replace(/\s/g,'');
+					if(/\D/g.test(card)){
+						return '无法识别您的卡号，请填写正确的银行卡卡号';
+					}
+				},
+				checkCard: function(element, params){
+					var card = element.value.replace(/\s/g,'');
+					if(!/^\d{12,19}$/g.test(card)){
+						return "银行卡号是12－19位数字";
+					}
+					$('#cardNo').val(card);
+					return true;
+				},
+				branchBankRequired: function(element, params){
+					var b = $("#branchBank ").val();
+					if(b==null || b=='' || b=='No'){
+						return '请选择开户支行';
+					}
+					return true;
+				},
+				checkCardBIN: function(element){
+						var cardType=$("#bankType").val();
+						$.ajax({
+									async:false,
+									url: '${basePath}/bank/checkCardBIN.do',
+									type: 'post',
+									data: element.name +'='+ element.value+"&cardType="+cardType,
+									dataType: 'json',
+									success: function(d){
+										$('#bankCode').val(d.bankCode);
+										$('#bankName').val(d.bankName);
+									}
+								});
+				},
+				checkCardBIN2: function(element){
+					var bankcode =  $('#bankCode').val();
+					var bankType = $('#bankType').val();
+					if(bankcode!=null && bankcode!='' && bankcode == bankType){
+						return true;
+					}
+					return '选择银行与输入卡号必须相符!';
+				},
+				bankVali: function(element, params){
+					var bankcode =  $('#bankCode').val();
+					if(bankcode == 'CMBC'||bankcode == 'CMB'){
+						return '不支持该行！';
+					}
+					return true;
+				},
+				pwdCheck: function(element) {
+					return (!(/^[A-Za-z]*$/.test(element.value)) && !(/^[0-9]*$/.test(element.value)) 
+							&& /^[A-Za-z0-9-+_!@#$%^&*()]*$/.test(element.value)) || '密码不符合要求';
+				}
+			},
+			
+			fields: {
+				'payPassword':'required;length[6~20];pwdCheck;',
+				'payPassword1':{
+					rule: "required;match(payPassword)",
+					msg: {match: "请确保两次输入支付密码相同!"}
+				},
+				'realName':'required;realNameReq;nameCheck;',
+				'certNo':{
+					rule:'required;cardNo;',
+					msg:{required: "请输入有效的身份证号"}
+				},
+				'bankCardNo':{
+					rule:'required;card;checkCard;checkCardBIN;bankVali;',
+					msg:{required: "请填写银行卡号"}
+				},
+				'branchBank':'required;branchBankRequired;',
+				'remember':{
+					rule: "checked",
+					msg: {checked: "请选择同意!"}
+				}
+			}
+		});
+		var bankcardNo = '';
+		$('#bankCardNo').on("valid.field", function(e, result, me){
+			var cardNo = $('#bankCardNo').val();
+			if(bankcardNo == cardNo){
+				return;
+			}else{
+				bankcardNo = cardNo;
+			}
+			$.ajax({ //一个Ajax过程 
+				 type: "post", //以post方式与后台沟通 
+				 url : "${basePath}/bank/queryBranchInfo.do", //与此后台沟通 
+				 dataType:'json',
+				 data: 'type=P&bankCardNo=' + cardNo,
+				 async:false,
+				 success: function(result){
+					 if(result.status == 'S'){
+						 if(result.data!=null){
+							 $("#province").empty();
+							 $('#province').append('<option value="No" selected="selected">--选择--</option>');
+							 for(var i=0;i<result.data.length;i++)
+							 {
+							 	$("#province").append("<option value=\""+ result.data[i].provinceCode +"\" >"+ result.data[i].provinceName +"</option>");
+							 }
+							 changeProvince();
+							 $("#province").select2();
+						 }
+						 //console.log(result);
+					 }else{
+						alert('联行号查询错误！'); 
+					 }
+				},
+				error: function(result){
+					alert('联行号查询错误！'); 
+				}
+			});
+		});
+		$('#province').change(function(){
+			var prov = $("#province").find("option:selected").text();
+			$('#prov').val(prov);
+			changeProvince();
+		});
+		$('#city').change(function(){
+			var cy = $("#city").find("option:selected").text();
+			$('#cityna').val(cy);
+			changeCity();
+		});	
+		$("#branchBank").change(function(){
+			var bk = $("#branchBank").find("option:selected").text();
+			var issure=$("#branchBank").find("option:selected").val();
+			$('#branchName').val(bk);
+			$('#issure').val(issure);
+		});
+		$('#bankCardNo').keyup(function(){
+			 this.value =this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+		});	
+		
+		$('#bankCardNo').change(function(){
+			 this.value =this.value.replace(/\s/g,'').replace(/(\d{4})(?=\d)/g,"$1 ");
+		});
+	});
+	
+	/**
+	 * 身份证15位编码规则：dddddd yymmdd xx p
+	 * dddddd：地区码   
+	 * yymmdd: 出生年月日   
+	 * xx: 顺序类编码，无法确定   
+	 * p: 性别，奇数为男，偶数为女  
+	 * <p />  
+	 * 身份证18位编码规则：dddddd yyyymmdd xxx y   
+	 * dddddd：地区码   
+	 * yyyymmdd: 出生年月日   
+	 * xxx:顺序类编码，无法确定，奇数为男，偶数为女   
+	 * y: 验证码，该位数值可通过前17位计算获得  
+	 * <p />  
+	 * 18位号码加权因子为(从右到左) Wi = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2,1 ]  
+	 * 验证位 Y = [ 1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2 ]   
+	 * 校验位计算公式：Y_P = mod( ∑(Ai×Wi),11 )   
+	 * i为身份证号码从右往左数的 2...18 位; Y_P为脚丫验证码所在验证码数组位置  
+	 *   
+	 */  
+	var Wi = [ 7, 9, 10, 5, 8, 4, 2, 1, 6, 3, 7, 9, 10, 5, 8, 4, 2, 1 ];// 加权因子
+	var ValideCode = [ 1, 0, 10, 9, 8, 7, 6, 5, 4, 3, 2 ];// 身份证验证位值.10代表X
+	function idCardValidate() {   
+		var idCard = document.getElementById("certNo").value;
+		idCard = trim(idCard.replace(/ /g, ""));
+		if (idCard.length == 15) {
+			return isValidityBrithBy15IdCard(idCard);
+		} else if (idCard.length == 18) {
+			var a_idCard = idCard.split("");// 得到身份证数组
+			if(isValidityBrithBy18IdCard(idCard)&&isTrueValidateCodeBy18IdCard(a_idCard)){
+				return true;
+			}else {
+				return false;
+			}
+		} else {
+			return false;
+		};
+	}
+	/**  
+	 * 判断身份证号码为18位时最后的验证位是否正确  
+	 * @param a_idCard 身份证号码数组  
+	 * @return  
+	 */
+	function isTrueValidateCodeBy18IdCard(a_idCard) {   
+		var sum = 0; // 声明加权求和变量   
+		if (a_idCard[17].toLowerCase() == 'x') {   
+			a_idCard[17] = 10;// 将最后位为x的验证码替换为10方便后续操作   
+		}
+		for ( var i = 0; i < 17; i++) {   
+			sum += Wi[i] * a_idCard[i];// 加权求和   
+		}
+		valCodePosition = sum % 11;// 得到验证码所位置   
+		if (a_idCard[17] == ValideCode[valCodePosition]) { 
+			return true;
+		} else {
+			return false;
+		};
+	}
+
+	/**  
+	  * 验证18位数身份证号码中的生日是否是有效生日  
+	  * @param idCard 18位书身份证字符串  
+	  * @return  
+	  */  
+	function isValidityBrithBy18IdCard(idCard18){   
+	    var year =  idCard18.substring(6,10);   
+	    var month = idCard18.substring(10,12);   
+	    var day = idCard18.substring(12,14);   
+	    var temp_date = new Date(year,parseFloat(month)-1,parseFloat(day));   
+	    // 这里用getFullYear()获取年份，避免千年虫问题   
+	    if(temp_date.getFullYear()!=parseFloat(year)   
+	          ||temp_date.getMonth()!=parseFloat(month)-1   
+	          ||temp_date.getDate()!=parseFloat(day)){ 
+	            return false;   
+	    }else{  
+	        return true;   
+	    }   
+	}   
+	  /**  
+	   * 验证15位数身份证号码中的生日是否是有效生日  
+	   * @param idCard15 15位书身份证字符串  
+	   * @return  
+	   */  
+	  function isValidityBrithBy15IdCard(idCard15){
+	      var year =  idCard15.substring(6,8);
+	      var month = idCard15.substring(8,10);
+	      var day = idCard15.substring(10,12);
+	      var temp_date = new Date(year,parseFloat(month)-1,parseFloat(day));
+	      // 对于老身份证中的你年龄则不需考虑千年虫问题而使用getYear()方法
+	      if(temp_date.getYear()!=parseFloat(year)
+	              ||temp_date.getMonth()!=parseFloat(month)-1
+	              ||temp_date.getDate()!=parseFloat(day)){
+	                return false;
+	        }else{
+	            return true;
+	        }
+	  }   
+	//去掉字符串头尾空格
+	function trim(str) {
+		return str.replace(/(^\s*)|(\s*$)/g, "");
+	}
+	
+	function changeProvince(){
+		var provinceCode = $('#province').val();
+		if(provinceCode == null || provinceCode=='' || provinceCode=='No'){
+			$("#city").empty();
+			$('#city').append('<option value="No" selected="selected">--选择--</option>');	
+			changeCity();
+			return;
+		}
+		$.ajax({ //一个Ajax过程 
+			 type: "post", //以post方式与后台沟通 
+			 url : "${basePath}/bank/queryBranchInfo.do", //与此后台沟通 
+			 dataType:'json',
+			 data: 'type=C&bankCardNo=' + $('#bankCardNo').val() + "&provinceCode=" + provinceCode,
+			 async:false,
+			 success: function(result){
+				 if(result.status == 'S'){
+					 if(result.data!=null){
+						 $("#city").empty();
+						 $('#city').append('<option value="No" selected="selected">--选择--</option>');
+						 for(var i=0;i<result.data.length;i++)
+						 {
+						 	$("#city").append("<option value=\""+ result.data[i].cityCode +"\" >"+ result.data[i].cityName +"</option>");
+						 }
+						 changeCity();
+						 $("#city").select2();
+					 };
+					 //console.log(result);
+				 }else{
+					alert('联行号查询错误！'); 
+				 };
+			},
+			error: function(result){
+				alert('联行号查询错误！'); 
+			}
+		});
+	}
+	
+	function changeCity(){
+		var provinceCode = $('#province').val();
+		var cityCode = $('#city').val();
+		if(provinceCode == null || provinceCode=='' || provinceCode=='No' 
+				|| cityCode == null || cityCode=='' || cityCode=='No'){
+			$("#branchBank").empty();
+			$('#branchBank').append('<option value="No" selected="selected">--支行--</option>');	
+			return;
+		}
+		$.ajax({ //一个Ajax过程 
+			 type: "post", //以post方式与后台沟通 
+			 url : "${basePath}/bank/queryBranchInfo.do", //与此后台沟通 
+			 dataType:'json',
+			 data: 'type=B&bankCardNo=' + $('#bankCardNo').val()+ "&provinceCode=" + provinceCode + "&cityCode=" + cityCode,
+			 async:false,
+			 success: function(result){
+				 
+				 if(result.status == 'S'){
+					if(result.data!=null){
+						$("#branchBank").empty();
+						$('#branchBank').append('<option value="No" value="No" selected="selected">--选择--</option>');
+						for(var i=0;i<result.data.length;i++)
+						{
+							$("#branchBank").append("<option value=\""+ result.data[i].subBankIdentity +"\" >"+ result.data[i].subBankName +"</option>");
+						};
+					};
+					$("#branchBank").select2().on("change",function(){jQuery("#branchBank").trigger("validate");});
+					// console.log(result);
+				}else{
+					alert('联行号查询错误！'); 
+				};
+			},
+			error: function(result){
+				alert('联行号查询错误！'); 
+			}
+		});
+	}
+	//防止重复提交
+	var submited=true;
+	function submitForm(){
+		$('#individualAccountForm').trigger("validate");
+		var flag=$('#individualAccountForm').isValid();
+		if(flag){
+			if(submited){
+				submited=false;
+				var form = document.individualAccountForm;
+				form.submit();
+			}
+		}
+	}
+	
+</script>
+</head>
+<body>
+	<div class="head">
+		<div class="container">
+			<img src="${staticMemberPath}/images/logo-zhsz.png" alt="...">
+		</div>
+	</div>
+	<div class="container">
+		<form id="individualAccountForm" name="individualAccountForm" action="${basePath}/openAccount/openIndividualAccount.do" method="post">
+			<input id="p2pUserId" name="p2pUserId" value="${individualAccountBo.p2pUserId}" type="hidden" />
+			<input id="phoneNo" name="phoneNo" value="${individualAccountBo.phoneNo}" type="hidden" />
+			<input id="merchantId" name="merchantId" value="${individualAccountBo.merchantId}" type="hidden" />
+			<input id="reqReserved" name="reqReserved" value="${individualAccountBo.reqReserved}" type="hidden" />
+			<input id="callBackUrl" name="callBackUrl" value="${individualAccountBo.callBackUrl}" type="hidden" />
+			<input id="formID" name="formID" value="${individualAccountBo.formID}" type="hidden" />
+			<div class="main-top border-yellow">
+				<div class="warning">为了保护你的账户的安全，请先设置您的支付密码！</div>
+				<div class="account-name">先锋支付专属账户名: <span class="term">${individualAccountBo.phoneNo}</span></div>
+				<div class="zh-line"></div>
+				<div class="term">设置支付密码</div>
+				<div class="main-body background-wite">
+					<p>
+						<label for="pwd" >支付密码 :</label>
+						<%-- <jsp:include page="/jsp/p2p/passwordControl/individual_pwd.jsp" /> --%>
+						<input type="password" id="payPassword" name="payPassword"/>
+						<span class="tip" for="pwd" >请设置您的支付密码</span>
+					</p>
+					<div class="tip-margin">
+						必须是6-20个英文字母、数字或符号，不能是纯数字 
+					</div>
+					<p>
+						<label for="pwd1" >再输入一次 :</label>
+						<%-- <jsp:include page="/jsp/p2p/passwordControl/individual_pwd1.jsp" /> --%>
+						<input type="password" id="payPassword1"  name="payPassword1"/>
+						<span class="tip" for="pwd1">必须与上面保持一致</span>
+					</p>
+				</div>
+
+				<div class="zh-line"></div>
+				<div class="term">实名认证</div>
+				<div class="warning">
+					请务必准确填写本人的身份信息，注册后不能更改，隐私信息未经本人许可严格保密<br/> <span class="red">若您的身份信息和提现银行卡信息不一致，将自动关闭提现功能。</span>
+				</div>
+				<div class="main-body background-wite">
+					<p>
+						<label for="realName">姓名 :</label>
+						<input id="realName" name="realName" type="text" tabindex="1" />
+						<span class="tip">请输入您的真实姓名</span>
+					</p>
+					<p style="display:none;">
+						<label for="certType">证件类型 :</label>
+						<select id="certType" name="certType" class="select-style w250">
+							<option value="1">身份证</option>
+						</select>
+						<span class="tip">请选择您的证件类型</span>
+					</p>
+					<p>
+						<label for="certNo">身份证号 :</label>
+						<input id="certNo" name="certNo" type="text" tabindex="1" />
+						<span class="tip" for="certNo">请输入您的身份证号</span>
+					</p>
+				</div>
+				<div class="zh-line"></div>
+				<div class="term">设置提现银行卡</div>
+
+				<div class="main-body background-wite pdt0">
+					<p>
+						<label for="bankType">选择银行 :</label>
+						<select id="bankType" name="bankType" class="select-style w250" style="border:1px solid #ccc">
+							<option value="ICBC">工商银行</option>
+							<option value="ABC">农业银行</option>
+							<option value="BOC">中国银行</option>
+							<option value="CCB">建设银行</option>
+							<option value="BCCB">北京银行</option>
+							<option value="CNCB">中信银行</option>
+							<option value="CEB">光大银行</option>
+							<option value="CIB">兴业银行</option>
+							
+						</select>
+					</p>
+					<p>
+						<label for="bankCardNo">银行卡卡号 :</label>
+						<input id="bankCardNo" name="bankCardNo" type="text" tabindex="1" />
+						<input type="hidden" id="bankCode" name="bankCode">
+						<input type="hidden" id="bankName" name="bankName">
+						<input type="hidden" id="prov" name="prov">
+						<input type="hidden" id="cityna" name="cityna">
+						<input type="hidden" id="branchName" name="branchName">
+						<input type="hidden" id="issure" name="issure">
+					</p>
+					<p class="m_p_dis">
+						<label for="province">开户行 :</label>
+						<select id="province" name="province" class="select-style province-width" style="width:250px">
+							<option value="No">--选择--</option>
+						</select> 省
+					</p>
+					<p style="position:relative">
+						<select id="city" name="city" class="select-style bank-width" style="width:250px">
+							<option value="No">--选择--</option>
+						</select> 地区
+					</p>
+					<p style="position:relative">
+						<select id="branchBank" name="branchBank" class="select-style bank-width" style="width:250px">
+							<option value="No">--选择--</option>
+						</select> 支行
+					</p>
+					<p class="float_p">
+						<input id="remember" name="remember" type="checkbox" class="checkbox d-inline" checked tabindex="3" checked="false" />
+						<span class="deal d-inline" for="" >我同意开通
+							<a href="#" data-toggle="modal" data-target="#myModal">
+								《先锋支付账户注册协议》
+							</a>服务条款
+						</span>
+					</p>
+					<div class="d-class">
+						<a id="submitBtn" class="btn mt20 mgl113" onclick="javascript:submitForm();" href="javascript:void(0)">完 成</a>
+					<div>
+					<!-- <input type="submit" class="btn mt20 mgl113" value="完 成"/> -->
+				</div>
+			</div>
+
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" role="dialog"
+				aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog w780">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal"
+								aria-hidden="true">&times;</button>
+						</div>
+						<div class="modal-body h750">
+							<h3 class="deal-title">用户协议</h3>
+							<p>
+								&nbsp;&nbsp;&nbsp;&nbsp;大连先锋商务服务有限公司（以下简称“先锋支付”），同意按照本协议的规定及其不时发布的操作规则提供基于互联网的相关服务（以下称“网络服务”），服务使用人（以下称“用户”）应当同意本协议的全部条款并按照页面上的提示完成全部的注册程序。用户在进行注册程序过程中点“同意”按钮即表示个人完全接受本协议项下的全部条款。
+							</p>
+							<h4>服务内容</h4>
+							<p>
+								先锋支付网络服务的具体内容由先锋支付根据实际情况提供，例如：网上支付、短信支付等。先锋支付保留随时变更、中断或终止部分或全部网络服务的权利。
+							</p>
+							<h4>使用规则</h4>
+							<p>
+								用户在申请使用先锋支付网络服务时，必须向先锋支付准确提供必要的资料。如资料有任何变动，请在先锋支付产品网站上（www.ucfpay.com）及时更新。
+							</p>
+							<p>
+								用户注册成功后，先锋支付将为其开通一个账户，该账户的登录名和密码由用户负责保管；用户应当对以其账户进行的所有活动和事件负法律责任。
+							</p>
+							<p>用户必须同意接受先锋支付通过电子邮件或其他方式向其发送的产品促销或其他相关商业信息。
+								用户在使用先锋支付网络服务过程中，必须遵循以下原则：</p>
+							<ul>
+								<li>(a) 遵守中国有关的法律和法规；</li>
+								<li>(b) 不得为任何非法目的而使用网络服务系统；</li>
+								<li>(c) 遵守所有与网络服务有关的网络协议、规定和程序；</li>
+								<li>(d) 不得利用先锋支付网络服务系统进行任何可能对互联网的正常运转造成不利影响的行为；</li>
+								<li>(e)
+									不得利用先锋支付网络服务系统传输任何骚扰性的、中伤他人的、辱骂性的、恐吓性的、庸俗淫秽的或其他任何非法的信息资料；</li>
+								<li>(f) 不得利用先锋支付网络服务系统进行任何不利于先锋支付的行为；</li>
+								<li>(g) 如发现任何非法使用用户账户或账户出现安全漏洞的情况，应立即通告先锋支付。</li>
+							</ul>
+							<p>
+								如个人在使用网络服务时违反任何上述规定，先锋支付或及其授权的人有权要求个人改正或直接采取一切必要的措施（包括但不限于更改或删除个人张贴的内容等、暂停或终止个人使用网络服务的权利）以减轻个人不当行为造成的影响。
+							</p>
+							<h4>资费</h4>
+							<p>
+								先锋支付在提供网络服务时，可能会对部分网络服务的用户收取一定的费用。在此情况下，先锋支付会在相关页面上做明确的提示。如用户拒绝支付该笔费用，则不能使用相关的网络服务。
+							</p>
+							<p>
+								先锋支付仅提供相关的网络服务，除此之外与相关网络服务有关的设备（如电脑、调制解调器及其他与接入互联网有关的装置）及所需的费用（如为接入互联网而支付的电话费及上网费）均应由用户自行负担。
+							</p>
+							<h4>内容所有权</h4>
+							<p>
+								先锋支付提供的网络服务内容可能包括：文字、软件、声音、图片、录像、图表等。所有这些内容受版权、商标和其它财产所有权法律的保护。</p>
+							<p>
+								用户只有在获得先锋支付或其他相关权利人的授权之后才能使用这些内容，而不能擅自复制这些内容、或制造与内容有关的派生产品。</p>
+							<h4>隐私保护</h4>
+							<p>
+								保护个人隐私是先锋支付的一项基本政策，先锋支付保证不对外公开或向第三方提供用户注册资料及用户在使用网络服务时存储在先锋支付的非公开内容，但下列情况除外：
+							</p>
+							<ul>
+								<li>(a) 事先获得用户的明确授权</li>
+								<li>(b) 根据有关的法律法规要求；</li>
+								<li>(c) 按照相关政府主管部门的要求；</li>
+								<li>(d) 为维护社会公众的利益；</li>
+								<li>(e) 为维护先锋支付的合法权益。</li>
+							</ul>
+							<p>
+								先锋支付可能会与第三方合作向用户提供相关的网络服务，在此情况下，如该第三方同意承担与先锋支付同等的保护用户隐私的责任，则先锋支付可将用户的注册资料等信息提供给该第三方。
+							</p>
+							<p>在不透露单个用户隐私资料的前提下，先锋支付有权对整个用户数据库进行分析并对用户数据库进行商业上的利用。</p>
+							<h4>免责声明</h4>
+							<p>
+								用户明确同意其使用先锋支付网络服务所存在的风险将完全由其自己承担；因其使用先锋支付网络服务而产生的一切后果也由其自行承担，先锋支付对用户及其网上交易行为的影响不承担任何责任。
+							</p>
+							<p>
+								先锋支付不担保网络服务一定能满足用户的要求，也不担保网络服务不会中断，对网络服务的及时性、安全性、准确性也都不作担保。</p>
+							<p>
+								先锋支付不保证为向用户提供便利而设置的外部链接的准确性和完整性，同时，对于该外部链接指向的不由先锋支付实际控制的任何网页上的内容，先锋支付不承担任何责任。
+							</p>
+							<h4>服务变更、中断或终止</h4>
+							<p>如因系统维护或升级的需要而需暂停网络服务，先锋支付将尽可能事先进行通告。</p>
+							<p>如发生下列任何一种情形，先锋支付有权随时中断或终止向用户提供本协议项下的网络服务而无需通知用户：</p>
+							<ul>
+								<li>用户提供的个人资料不真实；</li>
+								<li>用户违反本协议中规定的使用规则。</li>
+							</ul>
+							<p>
+								除前款所述情形外，先锋支付同时保留在不事先通知用户的情况下随时中断或终止部分或全部网络服务的权利，对于所有服务的中断或终止而造成的任何损失，先锋支付无需对用户或任何第三方承担任何责任。
+							</p>
+							<h4>违约赔偿</h4>
+							<p>
+								用户同意保障和维护先锋支付及其他用户的利益，如因用户违反有关法律、法规或本协议项下的任何条款而给先锋支付或任何其他第三方造成损失，用户同意承担由此造成的损害赔偿责任。
+							</p>
+							<h4>协议修改</h4>
+							<p>先锋支付将有权随时修改本协议的有关条款，一旦本协议的内容发生变动，先锋支付将会通过适当方式向用户提示修改内容。</p>
+							<p>如果不同意先锋支付对本协议相关条款所做的修改，用户有权停止使用网络服务。如果用户继续使用网络服务，则视为用户接受先锋支付对本协议相关条款所做的修改。
+							</p>
+							<h4>法律管辖</h4>
+							<p>本协议的订立、执行和解释及争议的解决均应适用中国法律。
+								如双方就本协议内容或其执行发生任何争议，双方应尽量友好协商解决；协商不成时，任何一方均可向先锋支付所在地的人民法院提起诉讼。</p>
+							<h4>通知和送达</h4>
+							<p>本协议项下所有的通知均可通过重要页面公告、电子邮件或常规的信件传送等方式进行；该等通知于发送之日视为已送达收件人。</p>
+							<h4>其他规定</h4>
+							<p>本协议构成双方对本协议之约定事项及其他有关事宜的完整协议，除本协议规定的之外，未赋予本协议各方其他权利。</p>
+							<p>如本协议中的任何条款无论因何种原因完全或部分无效或不具有执行力，本协议的其余条款仍应有效并且有约束力。</p>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn-normal mt20"
+								data-dismiss="modal">返回</button>
+							<div class="clear"></div>
+						</div>
+					</div>
+					<!-- /.modal-content -->
+				</div>
+				<!-- /.modal-dialog -->
+			</div>
+			<!-- /.modal -->
+			<footer class="container foot">
+				<p>先锋支付版所有 2005-2013 ICP证：辽ICP备13000797号</p>
+			</footer>
+		</form>
+	</div>
+</body>
+</html>

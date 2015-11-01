@@ -1,0 +1,199 @@
+/**
+ * 银行卡解绑和修改状态
+ * @copyright @余超 in 先锋支付公司
+ */
+package com.ucf.customer.service;
+
+import java.util.List;
+import java.util.Map;
+
+import javax.security.auth.login.AccountException;
+
+import com.ucf.customer.pojo.UcfBankCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.pojo.UcfUserHabit;
+
+/**
+ * @Description: 银行卡服务
+ * @ClassName: BankCardService
+ * @author gaoxiang
+ * @date 2014年10月13日 下午1:19:40
+ */ 
+public interface BankCardService {
+	
+	/**
+	 * @Description: 新增银行卡
+	 * @param ucfBankCard
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:14:52
+	 */
+	public void insertUcfBankCard(UcfBankCard ucfBankCard) throws Exception;
+
+	/**
+	 * @Description: 更新银行卡信息
+	 * @param ucfBankCard
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:15:10
+	 */
+	public void updateUcfBankCard(UcfBankCard ucfBankCard) throws Exception;
+	
+	/**
+	 * @Description: 通过用户id和银行卡号删除银行卡信息
+	 * @param userId
+	 * @param bankCardNo
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:15:23
+	 */
+	public void deleteUcfBankCard(String userId,String bankCardNo) throws Exception;
+	
+	/**
+	 * @Description: 通过银行卡主键删除银行卡
+	 * @param id
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:15:35
+	 */
+	public void deleteUcfBankCard(String id) throws Exception;
+	
+	/**
+	 * @Description: 查询用户绑定的银行卡类别
+	 * @param id
+	 * @return UcfBankCard 返回类型
+	 * @author gaoxiang
+	 * @date 2014年9月23日 下午3:10:01
+	 */
+	public UcfBankCard queryUserBankInfoById(String id) throws Exception;
+	
+	/**
+	 * @Description: 通过用户id和卡类型查询用户的银行卡
+	 * @param userId
+	 * @param cardType
+	 * @return List<UcfBankCard> 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:16:44
+	 */
+	public List<UcfBankCard> queryBankCards(String userId,String cardType);
+	
+	/**
+	 * @Description: 通过用户id和银行卡号查询用户的银行卡
+	 * @param userId
+	 * @param bankCardNo
+	 * @return UcfBankCard 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:17:09
+	 */
+	public UcfBankCard queryUserBankInfo(String userId,String bankCardNo);
+	
+	/**
+	 * @Description: 通过用户id和银行卡号 和 卡状态 查询用户的银行卡
+	 * @param userId
+	 * @param bankCardNo
+	 * @param status
+	 * @return UcfBankCard 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:17:42
+	 */
+	public UcfBankCard queryUserBankInfo(String userId,String bankCardNo,String status);
+	
+	/**
+	 * @Description: 通过用户id查询用户的银行卡
+	 * @param userId
+	 * @return List<UcfBankCard> 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:16:22
+	 */
+	public List<UcfBankCard> queryUserBankInfos(String userId);
+	
+	/**
+	 * @Description: 根据使用类型查询用户银行卡
+	 * @param userId
+	 * @return List<UcfBankCard> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-1-19 下午2:00:41
+	 */
+	public List<UcfBankCard> queryUserBankInfosByUseType(String userId,String useType);
+	
+	/**
+	 * @Description: 查询用户绑定的银行卡，状态为S
+	 * @param userId
+	 * @param status
+	 * @return List<UcfBankCard> 返回类型
+	 * @author gaoxiang
+	 * @date 2014年9月23日 下午3:10:10
+	 */
+	public List<UcfBankCard> queryUserBankInfos(String userId,String status);
+	
+	/**
+	 * @Description: 校验会员是否绑定超过5张卡
+	 * @param ucfUser
+	 * @return boolean 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:18:18
+	 */
+	public boolean checkCardNum(UcfUser ucfUser);
+
+	/**
+	 * @Description: 获取银行卡序列
+	 * @throws AccountException
+	 * @return String 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:18:28
+	 */
+	public String getBankCardSeq() throws AccountException;
+
+	/**
+	 * @Description: 获取银行卡主键序列
+	 * @return long 返回类型
+	 * @author gaoxiang
+	 * @date 2014年10月13日 下午1:18:52
+	 */
+	public long getUnionSeq();
+	
+	/**
+	 * @Description: 保存用户习惯
+	 * @param habit
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @throws
+	 */
+	public void saveUserHabit(UcfUserHabit habit) throws Exception;
+	
+	/**
+	 * @Description: 修改用户习惯
+	 * @param habit
+	 * @throws Exception
+	 * @return void 返回类型
+	 * @author gaoxiang
+	 * @date 2014年9月23日 下午3:02:48
+	 */
+	public void modifyUserHabit(UcfUserHabit habit) throws Exception;
+	
+	/**
+	 * @Description: 查询用户习惯
+	 * @param habit
+	 * @throws Exception
+	 * @return List<UcfUserHabit> 返回类型
+	 * @author gaoxiang
+	 * @date 2014年9月23日 下午3:02:09
+	 */
+	public List<UcfUserHabit> queryUserHabit(UcfUserHabit habit) throws Exception;
+
+	/**
+	 * @Description: 某一商户下的用户是否绑定过该银行卡
+	 * @param map 入参map
+	 * @throws Exception
+	 * @return List<UcfBankCard> 返回类型
+	 * @author gaoxiang
+	 * @date 2015-4-1 下午2:50:10
+	 */
+	public List<UcfBankCard> isBankCardBound(Map<String, String> map) throws Exception;
+
+}

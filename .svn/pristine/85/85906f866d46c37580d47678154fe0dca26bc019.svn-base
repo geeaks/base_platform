@@ -1,0 +1,93 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+
+public class WebServiceReturnValueBO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 655482094442643664L;
+	/**
+	 * KEY
+	 * 1.result 执行结果 1.成功 0.失败
+	 * 2.message 执行结果信息
+	 * 3.exceptionCode 异常Code
+	 * 4.exceptionMessage 异常提示信息
+	 * 6.paymentId 统一支付ID
+	 * 5.returnViewHTML 返回HTML页面
+	 */
+	private Map<Object,Object> returnValueMap;
+	private String accountId;
+	private List<UcfBankCard> returnBankCards;
+	
+	
+	public List<UcfBankCard> getReturnBankCards() {
+		return returnBankCards;
+	}
+
+	public void setReturnBankCards(List<UcfBankCard> returnBankCards) {
+		this.returnBankCards = returnBankCards;
+	}
+
+	public String getAccountId() {
+		return accountId;
+	}
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public Map<Object, Object> getReturnValueMap() {
+		return returnValueMap;
+	}
+
+	public void setReturnValueMap(Map<Object, Object> returnValueMap) {
+		this.returnValueMap = returnValueMap;
+	}
+	
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((accountId == null) ? 0 : accountId.hashCode());
+		result = prime * result
+				+ ((returnValueMap == null) ? 0 : returnValueMap.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WebServiceReturnValueBO other = (WebServiceReturnValueBO) obj;
+		if (accountId == null) {
+			if (other.accountId != null)
+				return false;
+		} else if (!accountId.equals(other.accountId))
+			return false;
+		if (returnValueMap == null) {
+			if (other.returnValueMap != null)
+				return false;
+		} else if (!returnValueMap.equals(other.returnValueMap))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "WebServiceReturnValueBO [returnValueMap=" + returnValueMap
+				+ ", accountId=" + accountId + "]";
+	}
+
+}

@@ -1,0 +1,57 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<div style="display:inline">
+	<div id="myTip1"
+		style="width:228px;height:30px;border:1px solid #888888;background:#FFFFFF;display:none"
+		align="center" valign="top">
+		<a id='downLink1'
+			href="${staticMemberPath}/${myexe}" class="mylink">
+			<font face="宋体" size="-1">点此下载控件</font>
+		</a>
+	</div>
+	<div id="myObj1" style="display:inline;" align="left">
+		<!-- windows版本密码控件  -->
+		<% if(request.getHeader("User-Agent").contains("Mac OS")==false){ 
+													//如果是mac系统页面不加载windows版本插件 %>
+		<object id="userpasswd1"
+			classid="CLSID:598BD8F9-CE1C-4b52-9C0E-6EA55E2371A7" tabIndex="2"
+			width="250px" height="30px" onblur="loseFocus1()"
+			codebase="${staticMemberPath}/${mycab}#Version=${myVersion}">
+			<param name="width" value="250">
+			<param name="height" value="30">
+			<param name="textsize" value="16">
+			<param name="color" value="#000000">
+			<param name="bgcolor" value="#FFFFFF">
+			<param name="bordercolor" value="#96C2F1">
+			<param name="MyTime" value="${serverTime}">
+			<embed id="userpasswdNP1"
+				type="application/598BD8F9-CE1C-4b52-9C0E-6EA55E2371A7"
+				color="#000000" bgcolor="#FFFFFF" bordercolor="#96C2F1"
+				width="250px" height="30px" textsize="16" MyTime="${serverTime}"
+				tabIndex="2" onblur="loseFocus1()"></embed>
+		</object>
+		<%} %>
+		<!-- <span class="msg-box n-right" for="pwd" style="">
+												<span class="msg-wrap n-error" role="alert">
+												<span class="n-icon"></span>
+												<span class="n-msg">不能为空</span>
+												</span>
+												</span> -->
+	</div>
+	<div id="mac1" style="display:none" align="left">
+		<!-- MAC版本密码控件  -->
+		<% if(request.getHeader("User-Agent").contains("Mac OS")){ 
+													//如果是mac系统,页面才加载mac版本插件 %>
+		<embed id="macPasswd1" width="250" height="30"
+			type="application/598BD8F9-CE1C-4b52-9C0E-6EA55E2371A7"
+			onblur="loseFocus1()"></embed>
+
+		<% } %>
+	</div>
+</div>
+
+
+<input id="pwd1" name="pwd1" type="hidden" />
+<input id="len1" name="len1" type="hidden" />
+<input id="pcData1" name="pcData1" type="hidden" />
+<input id="isMac1" name="isMac1" type="hidden" />

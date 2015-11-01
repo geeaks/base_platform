@@ -1,0 +1,91 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html>
+<jsp:include page="../p2p/commons/resource_meta.jsp"/>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+<html>
+<head>
+<title>先锋支付</title>
+<jsp:include page="commons/resource_css.jsp"/>
+<jsp:include page="commons/resource_js.jsp"/>
+</head>
+<body>
+	<section>
+		<div class="box">
+			<div class="host_title">资金托管平台<span>修改手机号</span></div>
+			<div class="fd-main">
+				<div class="fd-center">
+					<div class="h_steps">
+						<div class="h_steps_base">
+							<div class="h_steps_green w380"></div>
+						</div>
+						<div class="h_steps1 h_steps_cur">
+							<span>1</span>
+							<p>验证身份</p>
+						</div>
+						<div class="h_steps2 h_steps_cur">
+							<span>2</span>
+							<p>修改手机</p>
+						</div>
+						<div class="h_steps3 w60">
+							<span>3</span>
+							<p>修改成功</p>
+						</div>
+					</div>
+					<div class="fd-layout">
+						<form action="" id="postForm" method="post">
+							<table width="100%">
+								<colgroup>
+									<col width="145" />
+									<col width="755" />
+								</colgroup>
+								<tbody>
+									<tr>
+										<th>国家/地区：</th>
+										<td>
+											<select class="h_open_sel" name="country" id="country">
+												<option>中国大陆</option>
+												<option>中国香港</option>
+												<option>中国澳门</option>
+												<option>中国台湾</option>
+												<option>美国</option>
+											</select>
+										</td>
+									</tr>
+									<tr>
+										<th> 新手机号：</th>
+										<td>
+											<span class="area_code">+86</span>
+											<input type="text" id="phoneNo" name="phoneNo" class="idbox w228"  placeholder="请输入您的新手机号码" maxlength="22" />
+										</td>
+									</tr>
+									<tr>
+										<th>短信验证码：</th>
+										<td>
+											<input type="text" class="idbox w228" placeholder="请输入短信验证码" maxlength="6" id="vfyCode" name="vfyCode" />
+											<input id="validPhoneCode" type="button" onclick="sendSMS($('#phoneNo').val(),0,'cellNoP2P_RECHARGE_REQUEST_INF_customer');" class="send_vfycode fd-btn-code" value="发送短信验证码" /><i id="sendSMSTipI"
+													class="formvalidError formvalidError1" style="display: none;"></i><em id="sendSMSTipEm" class="f12"></em>
+											<span class="msg-box" for="vfyCode"></span>
+										</td>
+									</tr>
+									<tr>
+										<th>支付密码：</th>
+										<td>
+											<input id="payPassword" name="payPassword" type="text" class="idbox w228" placeholder="请输入支付密码" />
+										</td>
+									</tr>
+									<tr>
+										<th></th>
+										<td>
+											<input type="submit" value="确定" class="but-yellow but-gray " />
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+    </section>
+</body>
+</html>

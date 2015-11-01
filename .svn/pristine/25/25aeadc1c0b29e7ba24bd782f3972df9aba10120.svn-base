@@ -1,0 +1,15 @@
+package com.ucf.customer.service.impl;
+
+import org.springframework.stereotype.Service;
+
+import com.ucf.customer.service.HiddenService;
+
+@Service
+public class HiddenServiceImpl implements HiddenService {
+
+	@Override
+	public Object hidden(Object o) {
+		return o;
+	}
+
+}

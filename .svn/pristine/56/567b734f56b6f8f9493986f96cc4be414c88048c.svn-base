@@ -1,0 +1,53 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+
+public class BaseBO implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4694992396931892936L;
+
+	/**
+	 * 返回码
+	 */
+	private String respCode;
+
+	/**
+	 * 返回消息
+	 */
+	private String respMsg;
+	
+	/**
+	 * 状态
+	 */
+	private String status;
+	
+	
+
+	public String getRespCode() {
+		return respCode;
+	}
+
+	public void setRespCode(String respCode) {
+		this.respCode = respCode;
+	}
+
+	public String getRespMsg() {
+		return respMsg;
+	}
+
+	public void setRespMsg(String respMsg) {
+		this.respMsg = respMsg;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+	
+}

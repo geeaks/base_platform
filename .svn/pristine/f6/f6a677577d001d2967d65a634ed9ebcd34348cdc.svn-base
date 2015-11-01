@@ -1,0 +1,48 @@
+package com.ucf.customer.test;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Test;
+
+import com.ucf.customer.vo.PageServiceInterface;
+import com.ucf.customer.vo.PageToolBean;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+public class PageToolBeanTest {
+
+	private static UcfLogger LOGGER = UcfLoggerFactory
+			.getLogger(PageToolBeanTest.class);
+
+	@Test
+	public void test() {
+		// 使用说明
+		PageToolBean<String, String> page = new PageToolBean<String, String>();
+		page.setPageSize(3);
+		page.setCurrentPage(5);
+		page.loadData(new PageServiceInterface<String, String>() {
+			@Override
+			public List<String> selectDataByPage(String param, int startIndex,
+					int limit) {
+				List<String> list = new ArrayList<String>();
+				for (int i = 0; i < 3; i++) {
+					list.add(i + "");
+				}
+				return list;
+			}
+
+			@Override
+			public int getDataTotal(String param) {
+				return 14;
+			}
+		});
+		LOGGER.info("下一页:" + page.getNextPage());
+		LOGGER.info("上一页:" + page.getLastPage());
+		LOGGER.info("总记录数：" + page.getTotalItem());
+		LOGGER.info("总页数:" + page.getTotalPage());
+		for (String s : page.getDataList()) {
+			LOGGER.info(s);
+		}
+	}
+}

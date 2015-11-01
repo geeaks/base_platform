@@ -1,0 +1,31 @@
+package com.ucf.customer.utils.enums;
+
+public enum EnumUserEnabledStatus {
+	
+	T("T", "正常"), W("W", "注册未激活"),Q("Q", "快速注册"),C("C", "注销");
+	
+	private String code;
+	private String desc;
+
+	EnumUserEnabledStatus(String code, String desc) {
+		this.code = code;
+		this.desc = desc;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+	public String getDesc() {
+		return desc;
+	}
+
+	public void setDesc(String desc) {
+		this.desc = desc;
+	}
+
+}

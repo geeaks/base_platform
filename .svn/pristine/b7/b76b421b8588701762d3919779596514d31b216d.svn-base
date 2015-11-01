@@ -1,0 +1,41 @@
+package com.ucf.customer.test.ws;
+
+import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
+
+import com.alibaba.fastjson.JSON;
+import com.ucf.customer.test.BaseTest;
+import com.ucf.customer.ws.bo.BaseBO;
+import com.ucf.customer.ws.bo.UserInfoBO;
+import com.ucf.customer.ws.enums.EnumBankCardType;
+import com.ucf.customer.ws.enums.EnumBindCardType;
+import com.ucf.customer.ws.service.UserServiceWS;
+
+
+/**
+ * @Description: UserServiceWS单元测试类
+ * @ClassName: UserServiceWSTest
+ * @author gaoxiang
+ * @date 2015-6-8 下午2:16:41
+ */
+public class UserServiceWSTest extends BaseTest {
+	
+	@Autowired
+	private UserServiceWS userService;
+	
+	@Test
+	@Rollback(false)
+	public void bindBankCardTest(){
+		UserInfoBO userInfoBO = new UserInfoBO();
+		userInfoBO.setUserId("M0000000601");
+		userInfoBO.setMerchantId("MT100004");
+		userInfoBO.setCardNo("6212260200042280039");
+		userInfoBO.setBankCode("ICBC");
+		userInfoBO.setCardType(EnumBankCardType.CREDIT_CARD.getCode());
+		userInfoBO.setType(EnumBindCardType.P.getCode());
+		BaseBO baseBO = userService.bindBankCard(userInfoBO);
+		System.err.println(JSON.toJSONString(baseBO));
+	}
+	
+}

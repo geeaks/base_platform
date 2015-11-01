@@ -1,0 +1,12 @@
+package com.ucf.customer.service;
+
+import java.util.List;
+
+import com.ucf.customer.pojo.UcfUserHabit;
+
+public interface UserHabitService {
+
+	public void save(UcfUserHabit habit) throws Exception;
+	public void modify(UcfUserHabit habit) throws Exception;
+	public List<UcfUserHabit> query(UcfUserHabit habit) throws Exception;
+}

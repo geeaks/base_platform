@@ -1,0 +1,6 @@
+package com.ucf.customer.service;
+
+public interface HiddenService {
+
+	public Object hidden(Object o);
+}

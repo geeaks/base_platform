@@ -1,0 +1,267 @@
+package com.ucf.customer.ws.bo;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+
+import com.ucf.platform.framework.core.annotation.SensitiveInfo;
+import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
+
+public class UcfCard implements Serializable{
+
+	 
+	private static final long serialVersionUID = 5982187763172265737L;
+
+	private String cardNo;
+
+	 private String customerId;
+
+	 private String cardType;
+	 @SensitiveInfo(type=SensitiveType.ALL)
+	 private String paymentPassword;
+
+	 private String accountId;
+
+	 private BigDecimal repeatPaypasswordErrorTimes;
+
+	 private Date lastPayFailDt;
+
+	 private String registerFrom;
+
+	 private String certFrom;
+
+	 private String certStatus;
+
+	 private String forbidPaymentTrans;
+
+	 private String runtimeStatus;
+
+	 private Date gmtCreate;
+
+	 private Date gmtModified;
+
+	 private String memo;
+
+	 private Date lastPayDt;
+
+	 private String certifyInfo;
+
+	 private String userProfile;
+
+	 private String displayAlias;
+
+	 private String controlFlag;
+
+	 private String subCardFlag;
+
+	 private String outerAlias;
+	 
+	 @SensitiveInfo(type=SensitiveType.ALL)
+	 private String gesturePassword;
+	 
+	 @SensitiveInfo(type=SensitiveType.ALL)
+	 private String simplePassword;
+
+	 private String userId;
+
+		public void setCardNo (String cardNo) {
+			this.cardNo = cardNo;
+		}
+
+		public String getCardNo () {
+			return cardNo;
+		}
+
+		public void setCustomerId (String customerId) {
+			this.customerId = customerId;
+		}
+
+		public String getCustomerId () {
+			return customerId;
+		}
+
+		public void setCardType (String cardType) {
+			this.cardType = cardType;
+		}
+
+		public String getCardType () {
+			return cardType;
+		}
+
+		public void setPaymentPassword (String paymentPassword) {
+			this.paymentPassword = paymentPassword;
+		}
+
+		public String getPaymentPassword () {
+			return paymentPassword;
+		}
+
+		public void setAccountId (String accountId) {
+			this.accountId = accountId;
+		}
+
+		public String getAccountId () {
+			return accountId;
+		}
+
+		public void setRepeatPaypasswordErrorTimes (BigDecimal repeatPaypasswordErrorTimes) {
+			this.repeatPaypasswordErrorTimes = repeatPaypasswordErrorTimes;
+		}
+
+		public BigDecimal getRepeatPaypasswordErrorTimes () {
+			return repeatPaypasswordErrorTimes;
+		}
+
+		public void setLastPayFailDt (Date lastPayFailDt) {
+			this.lastPayFailDt = lastPayFailDt;
+		}
+
+		public Date getLastPayFailDt () {
+			return lastPayFailDt;
+		}
+
+		public void setRegisterFrom (String registerFrom) {
+			this.registerFrom = registerFrom;
+		}
+
+		public String getRegisterFrom () {
+			return registerFrom;
+		}
+
+		public void setCertFrom (String certFrom) {
+			this.certFrom = certFrom;
+		}
+
+		public String getCertFrom () {
+			return certFrom;
+		}
+
+		public void setCertStatus (String certStatus) {
+			this.certStatus = certStatus;
+		}
+
+		public String getCertStatus () {
+			return certStatus;
+		}
+
+		public void setForbidPaymentTrans (String forbidPaymentTrans) {
+			this.forbidPaymentTrans = forbidPaymentTrans;
+		}
+
+		public String getForbidPaymentTrans () {
+			return forbidPaymentTrans;
+		}
+
+		public void setRuntimeStatus (String runtimeStatus) {
+			this.runtimeStatus = runtimeStatus;
+		}
+
+		public String getRuntimeStatus () {
+			return runtimeStatus;
+		}
+
+		public void setGmtCreate (Date gmtCreate) {
+			this.gmtCreate = gmtCreate;
+		}
+
+		public Date getGmtCreate () {
+			return gmtCreate;
+		}
+
+		public void setGmtModified (Date gmtModified) {
+			this.gmtModified = gmtModified;
+		}
+
+		public Date getGmtModified () {
+			return gmtModified;
+		}
+
+		public void setMemo (String memo) {
+			this.memo = memo;
+		}
+
+		public String getMemo () {
+			return memo;
+		}
+
+		public void setLastPayDt (Date lastPayDt) {
+			this.lastPayDt = lastPayDt;
+		}
+
+		public Date getLastPayDt () {
+			return lastPayDt;
+		}
+
+		public void setCertifyInfo (String certifyInfo) {
+			this.certifyInfo = certifyInfo;
+		}
+
+		public String getCertifyInfo () {
+			return certifyInfo;
+		}
+
+		public void setUserProfile (String userProfile) {
+			this.userProfile = userProfile;
+		}
+
+		public String getUserProfile () {
+			return userProfile;
+		}
+
+		public void setDisplayAlias (String displayAlias) {
+			this.displayAlias = displayAlias;
+		}
+
+		public String getDisplayAlias () {
+			return displayAlias;
+		}
+
+		public void setControlFlag (String controlFlag) {
+			this.controlFlag = controlFlag;
+		}
+
+		public String getControlFlag () {
+			return controlFlag;
+		}
+
+		public void setSubCardFlag (String subCardFlag) {
+			this.subCardFlag = subCardFlag;
+		}
+
+		public String getSubCardFlag () {
+			return subCardFlag;
+		}
+
+		public void setOuterAlias (String outerAlias) {
+			this.outerAlias = outerAlias;
+		}
+
+		public String getOuterAlias () {
+			return outerAlias;
+		}
+
+		public void setGesturePassword (String gesturePassword) {
+			this.gesturePassword = gesturePassword;
+		}
+
+		public String getGesturePassword () {
+			return gesturePassword;
+		}
+
+		public void setSimplePassword (String simplePassword) {
+			this.simplePassword = simplePassword;
+		}
+
+		public String getSimplePassword () {
+			return simplePassword;
+		}
+
+		public void setUserId (String userId) {
+			this.userId = userId;
+		}
+
+		public String getUserId () {
+			return userId;
+		}
+
+}

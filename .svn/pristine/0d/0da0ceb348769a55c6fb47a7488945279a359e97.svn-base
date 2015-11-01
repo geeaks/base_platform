@@ -1,0 +1,317 @@
+﻿<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>先锋支付</title>
+	<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+	<script src="${basePath}/jsp/p2p/passwordControl/index.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	$(document).ready(function() {
+		$('#loginForm').validator({
+			 timely: true,
+			 stopOnError: false,
+			 rules: {
+				 tel: [/^1\d{10}$/, '请输入正确的手机号']
+			},
+			fields: {
+				'username':'手机号:required;length[11];tel;',
+				'pwdVali':'登录密码:required;',
+				'checkCode':'验证码:required;length[4];remote[${bathPath}/checkIdcode.do, checkCode];'
+			}
+			,
+			 invalid: function(form, errors){
+			         var html = '';
+			         if (null!=errors&&errors.length>0) {
+			        	html += '<span class="msg-box n-right" ><div><p class="msg_holder_red">'+errors[0]+'</p></div></span>'
+			        }
+			       $('#log-title').html(html);
+			    }
+			
+		});
+		$('#checkCode').keyup(function(event){
+			var v = $(this).val();
+			if(v!=null && v.length==4){
+				$(this).trigger("validate");
+			}
+			if(event.keyCode == 13){
+				Form_Submit('loginForm');
+			}
+		});
+	});
+	
+	function myReload(){
+		document.getElementById("J-checkcode-img").src=document.getElementById("J-checkcode-img").src + "?nocache="+new Date().getTime();
+	}
+	</script>
+	<style type="text/css">
+	.msg-wrap {
+		display: none;
+	}
+	</style>
+  </head>
+  <body>
+    
+	<c:set var="tab" value="9" scope="application"/>
+	<c:set var="tab1" value="9" scope="application"/>
+
+    <%@ page contentType="text/html;charset=UTF-8" %>
+<div class="navbar-wrapper navbar-wrapper_background height111">
+    
+     <div class="head-top">
+			<div class="container">
+	          <ul class="">
+			    <li class="margin-left0"><a href="${staticMemberPath}/help/bangzhuzhongxin.html">帮助中心</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line2.png"></li>
+	            <li class=""><a href="${staticMemberPath}/reg/index.htm">注册</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line2.png"></li>
+	            <li class=""><a href="${staticMemberPath}/login/index.htm">登录</a></li>
+	          </ul>
+			</div>
+        </div>
+      <div class="container">
+         <div class="navbar navbar-inverse navbar-static-top" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a href="${staticMemberPath}/login/index.htm"><img src="${staticMemberPath}/images/logo.png" alt="..."></a>
+            </div>
+            <div class="navbar-collapse collapse">
+              <ul class="nav navbar-nav">
+               <li class="dropdown  "><a href="${staticMemberPath}/" class="dropdown-toggle g-index " id="g-color" >首页</a></li>
+                <li class="dropdown">
+                  <a href="${staticMemberPath}/securityCenter/zhuce.html" class="dropdown-toggle g-gr" >个人服务 <!--b class="caret"></b--></a>
+                  <!--ul class="dropdown-menu">
+                    <li><a href="#">转账付款</a></li>
+                    <li><a href="#">水电煤缴费</a></li>
+                    <li><a href="#">返利商家</a></li>
+                    <li><a href="#">账户管理</a></li>
+                    <li class="divider"></li>
+                  </ul-->
+                </li>
+               <li class="dropdown"><a href="${staticMemberPath}/securityCenter/anquanzhongxin.html" class="dropdown-toggle g-aq" >安全中心</a></li>
+<li class="dropdown"><a href="${staticMemberPath}/securityCenter/kuaijiezhifu.html" class="dropdown-toggle g-yy">付款方式</a></li>
+                <li class="dropdown dropdown_li">
+                  <a href="https://b.ucfpay.com" class="dropdown-toggle g-sj pdr0">商家服务 <b class="caret"></b></a>
+                  <!--ul class="dropdown-menu">
+                    <li><a href="#">担保交易</a></li>
+                    <li><a href="#">商户自助集成</a></li>
+                    <li><a href="#">营销工具</a></li>
+                  </ul-->
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div> 
+
+      </div>
+    </div>
+     <script type="text/javascript">
+$(document).ready(function(){
+	$(".dropdown_li").mouseover(function(){
+		$(this).attr("class","dropdown_li  open");
+	});
+	
+	$(".dropdown_li").mouseout(function(){
+		$(this).attr("class"," dropdown_li");
+	});
+})
+</script>
+<!--==================login=================================-->
+<div class="container">
+	<div class="login-all">
+	<form action="${basePath}/login/login.htm" id="loginForm" name="loginForm" method="post">
+		<div class="login-body">
+			<input type="hidden" name="backUrl" value="${backUrl }" />
+			<input type="hidden" name="redirectUrl" value="${redirectUrl }" />
+			<div id="log-title" class="login-title row">
+				登录先锋支付
+			</div>
+			<div id="msg_holder" style="margin-left:-8px;color: #000;">
+				<span class="msg-box n-right">
+					<c:if test="${msg!=null}">
+						<div>
+							<p class="msg_holder_red">
+								${msg}
+							</p>
+						</div>
+					</c:if>
+					<c:if test="${usg!=null}">
+						<div>
+							<p class="msg_holder_red">
+								${usg}
+							</p>
+						</div>
+					</c:if>
+					<c:if test="${lsg!=null}">
+						<div>
+							<p class="msg_holder_red">
+								${lsg}
+							</p>
+						</div>
+					</c:if>
+				</span>
+			</div>
+			<div style="height:40px;" >
+				<span class="name-img"><img src="${staticMemberPath}/images/user.jpg"></img></span>
+				<input type="text" value="${user.cell}" id="username" name="username" class="input-block-level " maxlength="11" placeholder=" 用户名">
+			</div>
+			<div style="height: 40px;">
+				<span class="pass-word-img add-mgt10"><img src="${staticMemberPath}/images/password.jpg"></img></span>
+				<jsp:include page="../p2p/passwordControl/resource_pwd_login.jsp" />
+			</div>
+               
+                    <div class="row" style="height: 40px;">
+                    	<div class="col-md-6" style="padding:0">
+		                    <span class="pass-word-img add-mgt10">
+		                    	<img src="${staticMemberPath}/images/text.jpg"/>
+		                    </span>
+		                    <input type="text" id="checkCode" name="checkCode"   maxlength="4"  class="input-block-level wx add-mgt10" placeholder=" 验证码">
+	                    </div>
+	                    <div class="col-md-6" style="padding:0;margin-bottom:15px">
+	                     	<img id="J-checkcode-img" title="点击图片刷新验证码"	onclick="myReload()" class="checkcode-img add-mgt10" complete="complete" src="${basePath}/idcode.do" alt="输入验证码" style="cursor: pointer;height:38px;width:105px;float:right;"	seed="JIndexForm-J-checkcode-img" smartracker="on"/> 
+	                  	</div>
+                    </div>
+                    <div class="row" style="padding:0;">
+	        			<button  style="height: 40px; margin-top:0" type="button" onclick="Form_Submit('loginForm')" class="btn btn-large btn-primary sign-in-btn" >登 录</button>
+                    </div>
+                    <span class="sign-in"><a href="${basePath}/reg/index.htm">免费注册</a></span>
+                    <span class="forget"><a href="${basePath}/lgnpwd/findPwd.htm">忘记密码？</a></span>
+                </div>
+            </form>
+        </div>
+	</div> <!--end container-->                      
+	<!--end login
+	====================================================-->
+	
+	
+        <!-- Carousel
+        ================================================== -->
+        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+      <!-- Indicators -->
+      <ol class="carousel-indicators">
+        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+        <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+      </ol>
+    
+      <!-- Wrapper for slides -->
+      <div class="carousel-inner">
+        <div class="item active add-image1">
+          <div class="carousel-caption">
+          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          </div>
+        </div>
+        <div class="item add-image2">
+          <!--img src="images/banner2.png" alt="..."-->
+          <div class="carousel-caption">
+          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          </div>
+        </div>
+        <div class="item add-image3">
+          <!--img src="images/banner.png" alt="..."-->
+          <div class="carousel-caption">
+          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          </div>
+        </div>
+        <div class="item add-image4">
+          <!--img src="images/banner.png" alt="..."-->
+          <div class="carousel-caption">
+          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          </div>
+        </div>
+      </div>
+      <!-- Controls -->
+      <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+       <!--  <span class="glyphicon glyphicon-chevron-left"></span> -->
+      </a>
+      <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+        <!-- <span class="glyphicon glyphicon-chevron-right"></span> -->
+      </a>
+    </div>
+
+
+    <!-- Marketing messaging and featurettes
+    ================================================== -->
+    <!-- Wrap the rest of the page in another container to center all the content. -->
+
+    <div class="container marketing">
+
+      <!-- Three columns of text below the carousel -->
+      <div class="row mgt">
+        <div class="col-lg-4">
+              <img src="${staticMemberPath}/images/index-title.png">
+              <ul class="index-bottom-list">
+                <li><a href="${staticMemberPath}/company/guanyuwomen.html">关于我们</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/company/yewutixi.html">公司业务体系</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/company/gongsiyuanjing.html">公司愿景</a></li>
+              </ul></br>
+              <div class="index-bottom-list2"><a class="color666" href="${staticMemberPath}/company/gongsigonggao.html" >集团领导莅临我公司视察指导工作</a></div>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+              <img src="${staticMemberPath}/images/index-title2.png">
+              <ul class="index-bottom-list">
+                <li><a href="${staticMemberPath}/help/zhanghuliushui.html">账户服务</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/help/chongzhi.html">充值</a> · <a href="${staticMemberPath}/help/tixian.html">提现</a> · <a href="${staticMemberPath}/help/zhanghuliushui.html">交易</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${basePath}/login/gotoSafeBase.htm">安全服务</a></li>
+              </ul></br>
+              <div class="index-bottom-list3"><a class="color666" href="${staticMemberPath}/company/gerengonggao.html" >先锋支付个人平台新版门户上线啦</a></div>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4">
+          	<img src="${staticMemberPath}/images/index-title3.png">
+              <ul class="index-bottom-list">
+                <li><a href="${staticMemberPath}/merchant/wangyinzhifu.html">网银支付</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/merchant/kuaijiezhifu.html">快捷支付</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/merchant/zijintuoguan.html">资金托管平台</a></li>
+              </ul></br>
+              <div class="index-bottom-list4"><a class="color666" href="${staticMemberPath}/company/qiyegonggao.html" class="color999">先锋支付企业平台新版门户上线啦</a></div>
+        </div><!-- /.col-lg-4 -->
+      </div><!-- /.row -->
+      <div class="row mgt g-border-top mgb30">
+        <div class="col-lg-4 rs-bg">
+              <img src="${staticMemberPath}/images/rs.png">
+              <ul class="index-bottom-list">
+                <li><a href="${staticMemberPath}/company/jiaruwomen.html">加入我们</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/company/tuanduijianshe.html">团队建设</a></li>
+                 <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/company/lianxiwomen.html">联系我们</a></li>
+              </ul>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 rs-bg2">
+              <img src="${staticMemberPath}/images/rs2.png">
+              <ul class="index-bottom-list">
+                <li><a href="${staticMemberPath}/help/bangzhuzhongxin.html">新手教学</a></li>
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/help/zizhufuwu.html">个人支付服务实操</a></li>
+              </ul>
+        </div><!-- /.col-lg-4 -->
+        <div class="col-lg-4 rs-bg3">
+              <img src="${staticMemberPath}/images/rs3.png">
+              <ul class="index-bottom-list">
+                <li><a href="${staticMemberPath}/merchant/fuwutixi.html">服务体系</a></li> 
+                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/merchant/fuwutuandui.html">服务团队</a></li>
+                 <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticMemberPath}/merchant/fuwukaitong.html">服务开通</a></li>
+              </ul>
+				</div><!-- /.col-lg-4 -->
+			<div class="clear"></div>
+		</div>
+	</div><!-- /.container -->
+	<c:import url="/WEB-INF/views/jsp/common/footer_old.jsp"></c:import>
+</body>
+</html>

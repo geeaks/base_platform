@@ -1,0 +1,188 @@
+package com.ucf.customer.controller;
+
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.ucf.customer.action.BaseAction;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.security.EnumMemberUserType;
+import com.ucf.customer.security.MemberAccess;
+import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.utils.Constants;
+import com.ucf.customer.vo.DisplayOrder;
+import com.ucf.customer.ws.business.TradeCallService;
+import com.ucf.onlinepay.framework.common.util.StringUtil;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+@Controller
+@RequestMapping({ "/trade" })
+    public class TradeAction extends BaseAction{
+	
+
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(TradeAction.class);
+	
+	@Autowired
+	private TradeCallService tradeCallServiceImpl;
+	@Autowired
+	private LoginService loginService;
+	
+	/**
+	 * 查询交易记录 post 处理
+	 * @param startDate 开始时间
+	 * @param endDate 结束时间
+	 * @param tradeStatus 交易状态
+	 * @param tradeType 交易类型
+	 * @param request 请求对象
+	 * @param response 返回对象
+	 * @param model 
+	 * @author yuchao@ucfgroup.com
+	 * @return view
+	 * @throws Exception 
+	 */
+	@RequestMapping({ "/tradeList.htm" })
+	@MemberAccess(EnumMemberUserType.Logined)
+	public String tradeList(
+			@RequestParam(value="startDate",required=false) String startDate,
+			@RequestParam(value="endDate",required=false) String endDate,
+			@RequestParam(value="tradeStatus",required=false) String tradeStatus,
+			@RequestParam(value="tradeType",required=false) String tradeType,
+			@RequestParam(value="queryType",required=false) String queryType,
+			@RequestParam(value="limit",required=false) Integer limit,
+			@RequestParam(value="page",required=false) Integer page,
+			HttpServletRequest request, HttpServletResponse response,
+			Model model) throws Exception {
+		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		
+		loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		String userId = user.getUserId();
+		if(LOGGER.isDebugEnabled()){
+			LOGGER.debug("userid+tradeType" + userId + startDate + endDate + tradeStatus + tradeType);
+		}
+		
+		
+		
+		//默认银行
+		if (StringUtil.isEmpty(endDate)) {
+			Date date = new Date();//当前日期
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");//格式化对象
+			Calendar calendar = Calendar.getInstance();//日历对象
+			calendar.setTime(date);//设置当前日期
+			calendar.add(Calendar.MONTH, -1);//月份减一
+			endDate = sdf.format(date);
+			startDate = sdf.format(calendar.getTime());
+		}
+		
+		
+		try {
+			Map<String, Object> resultMap = tradeCallServiceImpl.queryOrdersByUserId(userId, tradeType, tradeStatus, startDate, endDate, limit, page);
+			model.addAttribute("orders", resultMap.get("orders"));
+			model.addAttribute("startDate", resultMap.get("startDate"));
+			model.addAttribute("endDate",resultMap.get("endDate"));
+			model.addAttribute("tradeType", resultMap.get("tradeType"));
+			model.addAttribute("tradeStatus", resultMap.get("tradeStatus"));
+			model.addAttribute("pre", resultMap.get("pre"));
+			model.addAttribute("page", resultMap.get("page"));
+			model.addAttribute("next", resultMap.get("next"));
+			model.addAttribute("count", resultMap.get("count"));
+			model.addAttribute("limit", resultMap.get("limit"));
+			model.addAttribute("pageSize", resultMap.get("pageSize"));
+			model.addAttribute("userName", user.getRealName());
+			model.addAttribute("queryType", queryType);
+		} catch (Exception e) {
+			model.addAttribute("neter", "0");
+			LOGGER.error(e.getMessage(),e);
+		}
+		
+		return "trade/index";
+	}
+	
+//	@RequestMapping( method = RequestMethod.POST)
+//	@MemberAccess(EnumMemberUserType.Logined)
+//	public String tradeListBywhere(HttpServletRequest request, HttpServletResponse response,Model model) throws Exception{
+//		
+//	}
+	@RequestMapping(value = "/tradeListBywhere.htm",method = RequestMethod.POST)
+	@ResponseBody
+	public void tradeListBywhere(HttpServletRequest request,HttpServletResponse response) throws Exception {
+		MemberAgent memberAgent = getMemberAgent(request, response);
+		response.setContentType("text/html;charset=utf-8");
+		response.setCharacterEncoding("UTF-8");
+		response.setHeader("Cache-Control", "no-cache");
+		PrintWriter out = response.getWriter();
+//		out.print("<table class=\"table table-bordered table-striped\">");
+		Map<String, Object> resultMap;
+		try {
+			resultMap = tradeCallServiceImpl.queryOrdersByUserId(memberAgent.getId(), request.getParameter("tradeType"),Constants.CHAR_ORDER_SUCC, null, null, 10, 1);
+			@SuppressWarnings("unchecked")
+			List<DisplayOrder> orderList = (List<DisplayOrder>)resultMap.get("orders");
+			out.print("<tbody>");
+			if(orderList.size()<=0){
+				out.print("<tr>");
+				out.print("<td>交易记录为空!</td>");
+				out.print("</tr>");
+			}else{
+				for(int i=0 ; i<orderList.size() ; i++){
+					DisplayOrder order =orderList.get(i);
+					out.print("<tr>");
+					out.print("<td width=\"210px\">"+ order.getDate()+"</td>");
+					out.print("<td width=\"100px\">"+ order.getTypeName()+"</td>");
+					if("充值".equals(order.getTypeName())){
+						out.print("<td align=\"right\" class=\"sm-mgr\" width=\"210px\">");
+						out.print("<a href=\"#\"  class=\"color-green\" >"+order.getAmount()+"</a>");
+						out.print("</td>");
+					}
+					if("提现".equals(order.getTypeName()) || "支付".equals(order.getTypeName())){
+						out.print("<td  align=\"right\" class=\"no-mgr\" width=\"210px\" onmousemove=\"showDetail("+i+");\" onmouseout=\"hideDetail("+i+");\">");
+						out.print("<a href=\"#\"  class=\"red\">"+order.getAmount());
+						out.print("<span class=\"jt2\">");
+						out.print("<div class=\"tan2\" id=\"detail"+i+"\" style=\"display: none;\">点击查看明细<div class=\"tri2\"></div></div>");
+						out.print("<img src=\""+request.getContextPath()+"/images/jt2.jpg\" class=\"no-mgl\">");
+						out.print("</span>");
+						out.print("</a>");
+						out.print("</td>");
+					}
+					out.print("<td align=\"center\" width=\"250px\">"+order.getOrderStatus()+"</td>");
+					out.print("<td onmousemove=\"showDetails("+i+");\" onmouseout=\"hideDetails("+i+");\" align=\"right\" width=\"80px\">");
+					out.print("<a href=\"#\">详情");
+					out.print("<span class=\"jt3\">");
+					out.print("<div class=\"tan3\" id=\"details"+i+"\" style=\"display: none;\">");
+					out.print("<ul>");
+					out.print("<li class=\"bg-color-red\">详情</li>");
+					out.print("<li>删除</li>");
+					out.print("</ul>");
+					out.print("</div>");
+					out.print("<img src=\""+request.getContextPath()+"/images/jt3.jpg\">");
+					out.print("</span>");
+					out.print("</a>");
+					out.print("</td>");
+					out.print("</tr>");
+				}
+			}
+			out.print("</tbody>");
+		} catch (Exception e) {
+			out.print("通讯异常。。。。");
+		}
+//		out.print("</table>");
+		out.flush();
+		out.close();
+	} 
+
+	
+}

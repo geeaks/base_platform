@@ -1,0 +1,102 @@
+/**
+ *
+ * @author gavin
+ * @date 2014-4-18 下午2:29:35
+ */
+package com.ucf.customer.interceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.ucf.customer.pojo.UcfCard;
+import com.ucf.customer.pojo.UcfUser;
+import com.ucf.customer.service.LoginService;
+import com.ucf.customer.utils.exception.P2PCustomerException;
+import com.ucf.platform.framework.core.log.UcfLogger;
+import com.ucf.platform.framework.core.log.UcfLoggerFactory;
+
+@Repository
+public class CheckPasswordInterceptor extends HandlerInterceptorAdapter {
+	private static UcfLogger LOGGER = UcfLoggerFactory.getLogger(CheckPasswordInterceptor.class);
+	@Autowired
+	private LoginService loginService;
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response, Object handler) throws P2PCustomerException {
+		try {
+			String backUrl = request.getParameter("backUrl");
+			request.setAttribute("backUrl", backUrl);
+			String uri = request.getRequestURI();
+			/*String key = "p2p_flag_user_password";
+			RedisSession session = redisSessionFactory.getSession(request, response);
+			Boolean p2p_flag_user_password = (Boolean)session.getAttribute(key);*/
+			
+			String[] noFilters = new String[] {"/member/p2p/setFirstPayPwd","/member/p2p/pwd/check.do","/member/bank/checkCardBIN.do","/member/p2p/addBankCard.do","/member/p2p/sendSms.htm"};
+			String[] isFilters = new String[] {"/member/p2p/setFirstPayPwd","/member/p2p/toSetFirstPayPwd"};
+			boolean beFilter = true;
+			
+			for (String s : noFilters) {
+				if ((uri).equals(s)) {
+					beFilter = false;
+					break;
+				}
+			}
+			
+			if (beFilter) {
+				if (uri.indexOf("p2p")>0) {
+	//			if (null==p2p_flag_user_password) {
+					
+						String userId = request.getParameter("userId");
+						String merchantId = request.getParameter("merchantId");
+						
+						UcfUser user = loginService.queryUserInfo(userId, merchantId);
+						if (null==user || !merchantId.equals(user.getRefMerchant())) {
+							request.setAttribute("msg", "用户查询失败");
+							throw new P2PCustomerException();
+						}
+						UcfCard card = loginService.queryUcfCardByUserId(user.getUserId());
+						if (null==card || !"P2P".equals(card.getRegisterFrom())) {
+							request.setAttribute("msg", "账户查询失败");
+							throw new P2PCustomerException();
+						}
+						String password = card.getPaymentPassword();
+						if ((null==password || "".equals(password))) {
+							/*Map<String,String> m = new HashMap<String,String>();
+							m.put("userId", userId);
+							m.put("returnUrl", request.getRequestURL().toString());
+							m.put("backUrl", backUrl);
+							HttpUtils.URLPost(customerServiceImpl.getCustomerRegUrl()+"/p2p/toSetFirstPayPwd", m);*/
+//							if (!uri.equals("/member/p2p/toSetFirstPayPwd")&&!uri.equals("/member/p2p/setFirstPayPwd")) {
+//								response.sendRedirect(customerService.getCustomerRegUrl()+"/p2p/toSetFirstPayPwd?merchantId="+merchantId+"&userId="+userId+"&returnUrl="+request.getRequestURL()+"&backUrl="+backUrl);
+//								return false;
+//							}
+							request.setAttribute("msg", "未设置支付密码，请在充值时设置支付密码");
+							throw new P2PCustomerException();
+						} else {
+							for (String s : isFilters) {
+								if ((uri).equals(s)) {
+									request.setAttribute("msg", "已设置支付密码");
+									throw new P2PCustomerException();
+								}
+							}
+							
+						}
+//					}
+				}
+			}
+
+			
+		} catch (Exception e) {
+			LOGGER.error(e.getMessage(),e);
+			if (e instanceof P2PCustomerException)
+				throw (P2PCustomerException)e;
+			request.setAttribute("msg", "操作失败");
+			throw new P2PCustomerException();
+		}
+		return true;
+	}
+
+}

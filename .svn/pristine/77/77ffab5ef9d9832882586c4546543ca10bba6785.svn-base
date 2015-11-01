@@ -1,0 +1,59 @@
+package com.ucf.customer.bo;
+
+/**
+ * 返回结果对象
+ * @author zhanglei
+ *
+ */
+public class ResultBo implements java.io.Serializable{
+
+	private static final long serialVersionUID = -1045970027030513456L;
+
+	private String result;
+	
+	private String msg;
+	
+	private int errorTimes;
+	
+	private Object resultObject;
+
+	public String getResult() {
+		return result;
+	}
+
+	public void setResult(String result) {
+		this.result = result;
+	}
+
+	public String getMsg() {
+		return msg;
+	}
+
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+	
+	public int getErrorTimes() {
+		return errorTimes;
+	}
+
+	public void setErrorTimes(int errorTimes) {
+		this.errorTimes = errorTimes;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <T> T  getResultObject() {
+		return (T)resultObject;
+	}
+
+	public void setResultObject(Object resultObject) {
+		this.resultObject = resultObject;
+	}
+
+	@Override
+	public String toString() {
+		return "ResultBo [result=" + result + ", msg=" + msg + ", errorTimes="
+				+ errorTimes + ", resultObject=" + resultObject + "]";
+	}
+	
+}

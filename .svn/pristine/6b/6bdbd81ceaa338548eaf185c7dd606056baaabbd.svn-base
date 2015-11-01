@@ -1,0 +1,78 @@
+<%@ page contentType="text/html;charset=UTF-8" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>先锋支付--安全中心</title>
+<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
+</head>
+<body>
+     <c:import url="/WEB-INF/views/jsp/common/loginHeader.jsp"></c:import>
+<section class="bgc-gray">
+	
+	
+	 
+    
+    
+    <form id="formValid" action="">
+	<div class="user_right">
+        <div class="user_right_box ">
+        	<div class="user_title"><h1><i class="ico_yonghu"></i>安全中心</h1></div>
+            <div class="w1170 mauto pb20">
+            	<ul class="bulletin-list">
+                        <li>
+                            <span class="pub-date">2014-05-26</span>
+                            <i class="icon-arrow"></i>
+                            <a href="${basePath}/login/gotoSafe.htm">通信安全防范</a>
+                        </li>                     
+                  </ul>
+
+			<div align="center" style="height: 80px;"><a href="${basePath}/user/index.htm" class="but-gray but-blue w100 ml20">返回</a></div>
+        </div>
+            </div>
+        </div>
+    
+    </form>    
+
+<div class="clear"></div>
+</section>
+
+
+ 
+
+<div class="foot">
+		
+		
+		<div class="shodow "></div>
+		<div class="container">
+			<div class="teamwork">
+				合作金融机构
+			</div>
+			<div class="sponsors">
+				商户合作
+			</div>
+			<div class="aptitude">
+				先锋支付资质
+			</div>
+			<div class="notice">
+				公告<br><br>
+                先锋支付个人平台上线。2014-05-30
+                
+			</div>
+		</div>
+		<div class="container foot-text">
+			<ul class="about">
+				<li>关于先锋支付</li>
+				<li><a href="http://weibo.com/ucfpay">官方博客</a></li>
+				<li>诚征英才</li>
+				<li>联系我们</li>
+			</ul>
+			<br>
+			<ul class="copyright">
+				<li class="no-line">版权为©2005-2013 大连先锋商务服务有限公司所有   辽ICP备13000797号</li>
+			</ul>
+		</div>
+	</div>
+	
+
+
+</body></html>

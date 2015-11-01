@@ -1,0 +1,82 @@
+package com.ucf.customer.ws.bo;
+
+/**
+ * 
+ * @desc 	 调用webService接口获取卡信息
+ * @version		1.0
+ * @date		2014-4-1 14:01:06
+ * @author 		yuchao@ucfgroup.com
+ * @return
+ * @throws Exception
+ */
+import java.io.Serializable;
+import java.util.List;
+
+
+public class CardInfoReturnValueBO implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3153764566604472222L;
+	/**
+	 * KEY 1.result 执行结果 1.成功 0.失败 
+	 * 2.message 执行结果信息 
+	 * 3.exceptionCode 异常Code
+	 * 4.exceptionMessage 异常提示信息 
+	 *
+	 */
+	private UcfCard returnValueUcfCard;
+	private List<UcfSubCard> returnValueUcfSubCard;
+
+	private String resultcode;
+	private String message;
+
+	/**
+	 * result 执行结果 1.成功 0.失败 
+	 * @return
+	 */
+	public String getResultCode() {
+		return resultcode;
+	}
+
+	public void setResultCode(String resultcode) {
+		this.resultcode = resultcode;
+	}
+	
+
+	/**
+	 * message 执行结果信息 
+	 * @return
+	 */
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	/**
+	 * 主卡信息
+	 * @return
+	 */
+	public UcfCard getReturnValueUcfCard() {
+		return returnValueUcfCard;
+	}
+
+	public void setReturnValueCard(UcfCard returnValueUcfCard) {
+		this.returnValueUcfCard = returnValueUcfCard;
+	}
+	/**
+	 * 子卡信息
+	 * @return
+	 */
+	public List<UcfSubCard> getReturnValueUcfSubCard() {
+		return returnValueUcfSubCard;
+	}
+
+	public void setReturnValueUcfSubCard(List<UcfSubCard> returnValueUcfSubCard) {
+		this.returnValueUcfSubCard = returnValueUcfSubCard;
+	}
+
+}

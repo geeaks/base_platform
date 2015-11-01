@@ -1,0 +1,41 @@
+package com.ucf.customer.controller;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.ucf.customer.action.BaseAction;
+
+/**
+ * 
+*    
+* 项目名称：member  <br>
+* 类名称：IndexController      <br>
+* 类描述：页面共用的请求类 页头，页尾等   				  <br>
+* 创建人：李文静 				  <br>
+* 创建时间：2014-5-7 下午2:21:44  <br>   
+* 修改人：李文静 				  <br>
+* 修改时间：2014-5-7 下午2:21:44  <br>  	
+* 修改备注：   				  <br>
+* @version    
+*
+ */
+@Controller
+public class IndexController extends BaseAction{
+	
+	@RequestMapping({ "/" })
+	public String index(HttpServletRequest request,HttpServletResponse response,Model model) {
+		// 已经登录的情况下，不允许再次登录
+		if (isLogin(request, response)) {
+			return "redirect:/user/index.htm";
+		}
+		model.addAttribute("redirectUrl", request.getParameter("redirectUrl"));
+		return "user/login";
+	}
+
+
+	
+}
