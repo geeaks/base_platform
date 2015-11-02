@@ -7,7 +7,7 @@
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-			classpath*:spring/applicationContext.xml,
+			classpath:spring/applicationContext.xml,
 		</param-value>
 	</context-param>
 
@@ -75,14 +75,9 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>spring-mvc-servlet</servlet-name>
-		<url-pattern>/</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</servlet-mapping>
-
-	<!-- 添加欢迎页的配置 -->
-	<welcome-file-list>
-		<welcome-file>/</welcome-file>
-	</welcome-file-list>
-
+	
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
 		<location>/WEB-INF/views/jsp/common/500.jsp</location>
@@ -91,50 +86,9 @@
 		<error-code>404</error-code>
 		<location>/WEB-INF/views/jsp/common/404.jsp</location>
 	</error-page>
-
+	
 	<session-config>
 		<session-timeout>20</session-timeout>
 	</session-config>
-
-	<jsp-config>
-		<jsp-property-group>
-			<description>使每个jsp页面都不用显示的引用jstl标记</description>
-			<url-pattern>*.jsp</url-pattern>
-			<include-prelude>/WEB-INF/views/jsp/common/include_jstl.jsp</include-prelude>
-		</jsp-property-group>
-	</jsp-config>
-
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.html</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.js</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.css</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.jpg</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.png</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.gif</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.swf</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>default</servlet-name>
-		<url-pattern>*.bak</url-pattern>
-	</servlet-mapping>
 	
 </web-app>

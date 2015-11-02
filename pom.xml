@@ -5,13 +5,41 @@
 	<artifactId>platform-parent</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
-
+	
+	<!-- 属性 -->
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<platform.version>0.0.1-SNAPSHOT</platform.version>
 		<spring.version>3.2.3.RELEASE</spring.version>
 		<module.war.name>platform</module.war.name>
 	</properties>
+	
+	<!-- 环境 -->
+	<profiles>
+		<profile>
+			<!-- 开发环境 -->
+			<id>dev</id>
+			<properties>
+				<profile.file.name>/profile/dev.properties</profile.file.name>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 测试环境 -->
+			<id>test</id>
+			<properties>
+				<profile.file.name>/profile/test.properties</profile.file.name>
+			</properties>
+		</profile>
+		<profile>
+			<!-- 生产环境 -->
+			<id>pro</id>
+			<properties>
+				<profile.file.name>/profile/pro.properties</profile.file.name>
+			</properties>
+		</profile>
+	</profiles>
+	
+	<!-- 依赖管理 -->
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -388,6 +416,7 @@
 		</dependencies>
 	</dependencyManagement>
 	
+	<!-- 依赖仓库 -->
 	<repositories>
 		<repository>
 			<id>central</id>
@@ -401,6 +430,8 @@
 			</snapshots>
 		</repository>
 	</repositories>
+	
+	<!-- maven插件仓库 -->
 	<pluginRepositories>
 		<pluginRepository>
 			<id>central</id>
@@ -488,6 +519,8 @@
 			</plugin>
 		</plugins>
 	</build>
+	
+	<!-- 模块 -->
 	<modules>
 		<module>platform</module>
 		<module>platform-resources</module>

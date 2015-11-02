@@ -138,6 +138,7 @@ public class PagePlugin implements Interceptor {
 	 * @param parameterObject
 	 * @throws SQLException
 	 */
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private void setParameters(PreparedStatement ps,MappedStatement mappedStatement,BoundSql boundSql,Object parameterObject) throws SQLException {
 		ErrorContext.instance().activity("setting parameters").object(mappedStatement.getParameterMap().getId());
 		List<ParameterMapping> parameterMappings = boundSql.getParameterMappings();

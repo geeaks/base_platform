@@ -29,12 +29,14 @@ public class TestDaoTest extends BaseTest {
 			e.printStackTrace();
 		}
 	}
-	
+	 
 	@Test
 	public void listPageTest(){
 		Page page = new Page();
+		
 		page.setCurrentPage(1);
 		page.setShowCount(3);
+		
 		Test_table test = new Test_table();
 		test.setName("SDD");
 		test.setPage(page);
