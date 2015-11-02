@@ -2,7 +2,7 @@ package com.ucf.customer.ws.bo.enterprise;
 
 import java.io.Serializable;
 
-public class QueryMemberReviewInfoResultBO  implements Serializable{
+public class Querybase_platformReviewInfoResultBO  implements Serializable{
 
 	private static final long serialVersionUID = -506462507110089997L;
 	

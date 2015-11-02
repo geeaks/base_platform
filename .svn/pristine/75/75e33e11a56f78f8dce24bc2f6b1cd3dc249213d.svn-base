@@ -3,10 +3,10 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>先锋支付--新增银行卡</title>
-<link href="${staticMemberPath}/css/local.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/css/local.css" rel="stylesheet">
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
-<link href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
+<link href="${staticbase_platformPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet">
 
 <style type="text/css">
 p.tip span {font-weight:130px;
@@ -312,8 +312,8 @@ p.tipp span {font-weight:130px;
 		document.getElementById("J-checkcode-img").src=document.getElementById("J-checkcode-img").src + "?nocache="+new Date().getTime();
 	}
 </script>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/zh_CN.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/zh_CN.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
 </body>
 </html>

@@ -3,7 +3,7 @@ package com.ucf.customer.utils;
 /**
  * 
 *    
-* 项目名称：member   
+* 项目名称：base_platform   
 * 类名称：BankCardUtil   
 * 类描述：  银行卡工具类
 * 创建人：李文静 

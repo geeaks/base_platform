@@ -4,7 +4,7 @@
 <head>
 <title>先锋支付--安全中心</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 <c:set var="tab" value="4" scope="application"/>

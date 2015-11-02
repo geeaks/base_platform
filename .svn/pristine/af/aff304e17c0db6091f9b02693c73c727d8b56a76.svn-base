@@ -10,7 +10,7 @@
 <c:set var="basePath" value="${pageContext.request.contextPath }" />
 <jsp:include page="../common/resource_css.jsp"/>
 <!--private js&css start-->
-<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css">
+<link href="${staticbase_platformPath}/new/css/user.css" rel="stylesheet" type="text/css">
 <!--private js&css end-->
 </head>
 <body>
@@ -47,7 +47,7 @@
                         <c:if test="${error ne '0'}">
                         <em class="color-yellow1">
                         	<c:if test="${empty(money)}">0.00 元</c:if>
-                        	<c:if test="${!empty(money) }">${money}元</c:if></em> <a href="${basePath}/deposit" class="button_cz">充值</a> <a href="${staticMemberPath}/withdraw" class="button_tx">提现</a>
+                        	<c:if test="${!empty(money) }">${money}元</c:if></em> <a href="${basePath}/deposit" class="button_cz">充值</a> <a href="${staticbase_platformPath}/withdraw" class="button_tx">提现</a>
                         	</c:if>
                         	
                         </td>

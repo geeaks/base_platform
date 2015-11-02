@@ -6,7 +6,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@taglib prefix="c"    uri="http://java.sun.com/jsp/jstl/core"  %>
 <!-- Bootstrap -->
-<link rel="stylesheet" href="${staticMemberPath}/css/commons/bootstrap.min.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/css/commons/bootstrap.min.css">
  <style type="text/css">
 
 /* body {background-color: yellow}
@@ -78,8 +78,8 @@ p.tip span {font-weight:130px;
 	<!-- /.container -->
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="${staticMemberPath}/js/commons/jquery.min.js"></script>
+	<script src="${staticbase_platformPath}/js/commons/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script	 src="${staticMemberPath}/js/commons/bootstrap.min.js"></script>
+	<script	 src="${staticbase_platformPath}/js/commons/bootstrap.min.js"></script>
 </body>
 </html>

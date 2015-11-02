@@ -3,7 +3,7 @@ package com.ucf.customer.utils.enums;
 /**
  * 
 *    
-* 项目名称：member   
+* 项目名称：base_platform   
 * 类名称：EnumAuthority   
 * 类描述：会员系统登录权限   
 * 创建人：李文静 
@@ -16,7 +16,7 @@ package com.ucf.customer.utils.enums;
  */
 public enum EnumAuthority {
 	
-	MEMBER_LOGIN("登录权限",1);
+	base_platform_LOGIN("登录权限",1);
 	
 	private String name;
 	private int code;

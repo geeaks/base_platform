@@ -7,7 +7,7 @@
 <head>
 <title>先锋支付</title>
 <jsp:include page="commons/resource_css.jsp"/>
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/frist-register.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/frist-register.css">
 <jsp:include page="commons/resource_js.jsp"/>
 </head>
 <body>

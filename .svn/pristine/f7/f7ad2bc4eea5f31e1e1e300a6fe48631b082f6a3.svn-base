@@ -107,8 +107,8 @@ public class UcfUserDaoImpl extends BaseCustomerDao implements UcfUserDao {
 	}
 
 	@Override
-	public String getEnterpriseMemberNO_SEQ() throws Exception {
-		return this.getOne("com.ucf.customer.getEnterpriseMemberNO", null);
+	public String getEnterprisebase_platformNO_SEQ() throws Exception {
+		return this.getOne("com.ucf.customer.getEnterprisebase_platformNO", null);
 	}
 
 	@Override

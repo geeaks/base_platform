@@ -4,7 +4,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.ucf.customer.mq.MemberMQConsumerService;
+import com.ucf.customer.mq.base_platformMQConsumerService;
 import com.ucf.platform.framework.core.log.UcfLogger;
 import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 
@@ -12,9 +12,9 @@ import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 @ContextConfiguration(locations = { "classpath:/spring/applicationContext.xml",
 		"classpath*:/spring-mvc.xml",
 		"classpath*:/com/ucf/framework/rocketmq/config/spring/framework-rocketmq-context.xml"})
-public class MemberMQConsumerServiceTest {
+public class base_platformMQConsumerServiceTest {
      
-private static final UcfLogger logger = UcfLoggerFactory.getLogger(MemberMQConsumerService.class);
+private static final UcfLogger logger = UcfLoggerFactory.getLogger(base_platformMQConsumerService.class);
 	
 //	@Resource(name = "rocketMQMsgService")
 //	private RocketMQMsgService msgService;

@@ -49,21 +49,21 @@ public class ProtectionSystemInterceptor extends HandlerInterceptorAdapter {
 		response.setCharacterEncoding("UTF-8");
 		response.setContentType("text/html;charset=UTF-8");
 		// 后台session控制
-		String[] isFilters = new String[] {"/member/cashier/login.htm","/member/p2p/addBankCard.do","/member/valiPwd/validatePwd.htm","/member/login/login.htm",
-				"/member/bank/firstAddBankCardPro.htm","/member/bank/add.htm","/member/bank/modify.htm","/member/pwd/modifypaypwd.htm","/member/pwd/findPayPwdSet.htm","/member/p2p/setPayPwd.do",
-				"/member/pwd/modifylgnPwd.htm","/member/bank/modify.htm","/member/p2p/modifyPayPwd","/member/p2p/setPayPwd","/member/bank/delete.htm","/member/withdraw/withdraw.htm"};
-		String[] isBeforeFilters = new String[] {"/member/bank/firstAddBankCardPro.htm","/member/","/member/cashier/toLogin.htm","/member/p2p/toAddBankCard","/member","/member/","/member/login/index.htm","/member/reg/active.htm","/member/bank/firstaddbank.htm",
-				"/member/bank/add.htm","/member/bank/modify.htm","/member/pwd/index.htm","/member/pwd/pwdmodify.htm","/member/pwd/paypwdmodify.htm","/member/pwd/findPayPwdCheck.htm","/member/bank/modify.htm","/member/p2p/toReturnModifyPayPwd",
-				"/member/p2p/toModifyPayPwd","/member/p2p/toSetPayPwd","/member/bank/delete.htm","/member/withdraw/index.htm","/member/p2p/toSetPayPwd.do"};
+		String[] isFilters = new String[] {"/base_platform/cashier/login.htm","/base_platform/p2p/addBankCard.do","/base_platform/valiPwd/validatePwd.htm","/base_platform/login/login.htm",
+				"/base_platform/bank/firstAddBankCardPro.htm","/base_platform/bank/add.htm","/base_platform/bank/modify.htm","/base_platform/pwd/modifypaypwd.htm","/base_platform/pwd/findPayPwdSet.htm","/base_platform/p2p/setPayPwd.do",
+				"/base_platform/pwd/modifylgnPwd.htm","/base_platform/bank/modify.htm","/base_platform/p2p/modifyPayPwd","/base_platform/p2p/setPayPwd","/base_platform/bank/delete.htm","/base_platform/withdraw/withdraw.htm"};
+		String[] isBeforeFilters = new String[] {"/base_platform/bank/firstAddBankCardPro.htm","/base_platform/","/base_platform/cashier/toLogin.htm","/base_platform/p2p/toAddBankCard","/base_platform","/base_platform/","/base_platform/login/index.htm","/base_platform/reg/active.htm","/base_platform/bank/firstaddbank.htm",
+				"/base_platform/bank/add.htm","/base_platform/bank/modify.htm","/base_platform/pwd/index.htm","/base_platform/pwd/pwdmodify.htm","/base_platform/pwd/paypwdmodify.htm","/base_platform/pwd/findPayPwdCheck.htm","/base_platform/bank/modify.htm","/base_platform/p2p/toReturnModifyPayPwd",
+				"/base_platform/p2p/toModifyPayPwd","/base_platform/p2p/toSetPayPwd","/base_platform/bank/delete.htm","/base_platform/withdraw/index.htm","/base_platform/p2p/toSetPayPwd.do"};
 		String uri = request.getRequestURI();
-		if ("/member/".equals(uri) ||uri.indexOf("p2p")>0|| uri.indexOf("withdraw")>0||uri.indexOf("valiPwd")>0||uri.indexOf("login")>0||uri.indexOf("bank")>0
+		if ("/base_platform/".equals(uri) ||uri.indexOf("p2p")>0|| uri.indexOf("withdraw")>0||uri.indexOf("valiPwd")>0||uri.indexOf("login")>0||uri.indexOf("bank")>0
 				||uri.indexOf("pwdmodify")>0 ||uri.indexOf("modifylgnPwd")>0  ||uri.indexOf("cashier")>0||uri.indexOf("paypwd")>0) {
 			//if(request.getSession().getAttribute("isVal")==null||isFilters[1].equals(uri)){
 				request.getSession().removeAttribute("isVal");
 				for (String s : isFilters) {
 					if ((uri).equals(s)) {
-						if(("/member/bank/add.htm".equals(uri)||"/member/bank/modify.htm".equals(uri)
-								||"/member/bank/modify.htm".equals(uri)||"/member/bank/delete.htm".equals(uri))&&"GET".equals(request.getMethod())){
+						if(("/base_platform/bank/add.htm".equals(uri)||"/base_platform/bank/modify.htm".equals(uri)
+								||"/base_platform/bank/modify.htm".equals(uri)||"/base_platform/bank/delete.htm".equals(uri))&&"GET".equals(request.getMethod())){
 							continue;
 						}
 						//第1个 密码控件
@@ -135,8 +135,8 @@ public class ProtectionSystemInterceptor extends HandlerInterceptorAdapter {
 			//在加载页面之前 渲染页面的密码控件
 			for (String s : isBeforeFilters) {
 				if ((uri).equals(s)) {
-					if(("/member/bank/add.htm".equals(uri)||"/member/bank/modify.htm".equals(uri)
-							||"/member/bank/modify.htm".equals(uri)||"/member/bank/delete.htm".equals(uri))&&"POST".equals(request.getMethod())){
+					if(("/base_platform/bank/add.htm".equals(uri)||"/base_platform/bank/modify.htm".equals(uri)
+							||"/base_platform/bank/modify.htm".equals(uri)||"/base_platform/bank/delete.htm".equals(uri))&&"POST".equals(request.getMethod())){
 						continue;
 					}
 					//清页面缓存，否则页面经常会从缓存读取serverTime

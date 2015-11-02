@@ -12,7 +12,7 @@ import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
 /**
  * 银行鉴权接口
  * 
- * 项目名称：member-client 类名称：UserAuthParamBO 类描述： 创建人：李文静 创建时间：2014-6-18 上午10:40:23
+ * 项目名称：base_platform-client 类名称：UserAuthParamBO 类描述： 创建人：李文静 创建时间：2014-6-18 上午10:40:23
  * 修改人：lenovo 修改时间：2014-6-18 上午10:40:23 修改备注：
  * 
  * @version

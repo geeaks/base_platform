@@ -6,21 +6,21 @@ import org.springframework.test.annotation.Rollback;
 
 import com.alibaba.fastjson.JSON;
 import com.ucf.customer.test.BaseTest;
-import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberInfoResultBO;
-import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformRegRequestBO;
 import com.ucf.customer.ws.bo.enterprise.GroupAccountBo;
 import com.ucf.customer.ws.bo.enterprise.MainAccountListBO;
-import com.ucf.customer.ws.bo.enterprise.MemberRegisterResultBO;
-import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoRequestBO;
-import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.base_platformRegisterResultBO;
+import com.ucf.customer.ws.bo.enterprise.Updatebase_platformInfoRequestBO;
+import com.ucf.customer.ws.bo.enterprise.Updatebase_platformInfoResultBO;
 import com.ucf.customer.ws.enums.EnumIdCardType;
 import com.ucf.customer.ws.enums.EnumMerchantExtra;
-import com.ucf.customer.ws.service.enterprise.EnterpriseMemberService;
+import com.ucf.customer.ws.service.enterprise.Enterprisebase_platformService;
 
 public class EnterpriseServiceTest extends BaseTest {
 	
 	@Autowired
-	private EnterpriseMemberService enterpriseMemberService;
+	private Enterprisebase_platformService enterprisebase_platformService;
 	
 	/**
 	 * @Description: 商户开户
@@ -31,7 +31,7 @@ public class EnterpriseServiceTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void testMerchantRegister(){
-		EnterpriseMemberRegRequestBO registerRequestBO = new EnterpriseMemberRegRequestBO();
+		Enterprisebase_platformRegRequestBO registerRequestBO = new Enterprisebase_platformRegRequestBO();
 		registerRequestBO.setEndDate("19911105");
 		registerRequestBO.setBusinessLicense("1324567489");
 		registerRequestBO.setLegalPersonNo("130406199105200915");
@@ -43,8 +43,8 @@ public class EnterpriseServiceTest extends BaseTest {
 		registerRequestBO.setLegalIdentityType(EnumIdCardType.CERT_NO.getCode());
 		registerRequestBO.setAccountType(EnumMerchantExtra.CHILD_ACCOUNT.getCode());
 		registerRequestBO.setParentUserId("M200000026");
-		MemberRegisterResultBO merchantRegister = 
-				enterpriseMemberService.merchantRegister(registerRequestBO);
+		base_platformRegisterResultBO merchantRegister = 
+				enterprisebase_platformService.merchantRegister(registerRequestBO);
 		System.err.println(JSON.toJSONString(merchantRegister));
 	}
 	
@@ -56,13 +56,13 @@ public class EnterpriseServiceTest extends BaseTest {
 	 */
 	@Test
 	@Rollback(false)
-	public void testUpdateMerchantMemberInfo(){
-		UpdateMemberInfoRequestBO updateMemberInfoRequestBO = new UpdateMemberInfoRequestBO();
-		updateMemberInfoRequestBO.setUserId("M200000236");//必传
-		updateMemberInfoRequestBO.setBusinessLicense("1324567489");
-		UpdateMemberInfoResultBO updateMerchantMemberInfo = 
-				enterpriseMemberService.updateMerchantMemberInfo(updateMemberInfoRequestBO);
-		System.err.println(JSON.toJSONString(updateMerchantMemberInfo));
+	public void testUpdateMerchantbase_platformInfo(){
+		Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO = new Updatebase_platformInfoRequestBO();
+		updatebase_platformInfoRequestBO.setUserId("M200000236");//必传
+		updatebase_platformInfoRequestBO.setBusinessLicense("1324567489");
+		Updatebase_platformInfoResultBO updateMerchantbase_platformInfo = 
+				enterprisebase_platformService.updateMerchantbase_platformInfo(updatebase_platformInfoRequestBO);
+		System.err.println(JSON.toJSONString(updateMerchantbase_platformInfo));
 	}
 	
 	/**
@@ -73,8 +73,8 @@ public class EnterpriseServiceTest extends BaseTest {
 	 */
 	@Test
 	public void queryMerchantInfo() {
-		EnterpriseMemberInfoResultBO resultBo = 
-				enterpriseMemberService.queryMerchantInfo("M200000236");
+		Enterprisebase_platformInfoResultBO resultBo = 
+				enterprisebase_platformService.queryMerchantInfo("M200000236");
 		System.err.println(JSON.toJSONString(resultBo));
 	}
 	
@@ -86,7 +86,7 @@ public class EnterpriseServiceTest extends BaseTest {
 	 */
 	@Test
 	public void testQueryMainAccountList() {
-		MainAccountListBO resultBo = enterpriseMemberService.queryMainAccountList();
+		MainAccountListBO resultBo = enterprisebase_platformService.queryMainAccountList();
 		System.err.println(JSON.toJSONString(resultBo));
 	}
 	
@@ -99,7 +99,7 @@ public class EnterpriseServiceTest extends BaseTest {
 	@Test
 	public void testQueryGroupAccount() {
 		GroupAccountBo resultBo = 
-				enterpriseMemberService.queryGroupAccount("M0000000601");
+				enterprisebase_platformService.queryGroupAccount("M0000000601");
 		System.err.println(JSON.toJSONString(resultBo));
 	}
 	

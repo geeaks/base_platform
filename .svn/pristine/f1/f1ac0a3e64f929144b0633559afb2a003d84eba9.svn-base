@@ -36,7 +36,7 @@ import com.ucf.customer.utils.exception.CustomerException;
 import com.ucf.customer.ws.bo.BaseBO;
 import com.ucf.customer.ws.bo.UserAuthParamBO;
 import com.ucf.customer.ws.enums.EnumAuthType;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.service.UserServiceWS;
 import com.ucf.onlinepay.framework.common.bean.Money;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -320,7 +320,7 @@ public class UserServiceImpl implements UserService {
 					userAuthParamBO.setUserId(userId);
 					userAuthParamBO.setType(EnumAuthType.NAME_CERT_BANK_CELL);
 					BaseBO baseBO = userServiceWS.userAuth(userAuthParamBO);
-					return baseBO.getRespCode().equals(EnumMemberCode.SUCCESS.getCode());
+					return baseBO.getRespCode().equals(Enumbase_platformCode.SUCCESS.getCode());
 				} else {
 					return false;
 				}
@@ -410,9 +410,9 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	@Override
-	public String getEnterpriseMemberNO() throws Exception {
-		String enterpriseMemberNO_SEQ = this.userDao.getEnterpriseMemberNO_SEQ();
-		return "M" + enterpriseMemberNO_SEQ;
+	public String getEnterprisebase_platformNO() throws Exception {
+		String enterprisebase_platformNO_SEQ = this.userDao.getEnterprisebase_platformNO_SEQ();
+		return "M" + enterprisebase_platformNO_SEQ;
 	}
 	
 	@Override

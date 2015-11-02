@@ -6,8 +6,8 @@
 <title>先锋支付--用户login</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
 
-<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
 <script type="text/javascript">
 	function myReload(){
 		document.getElementById("J-checkcode-img").src=document.getElementById("J-checkcode-img").src + "?nocache="+new Date().getTime();
@@ -32,7 +32,7 @@ p.tippp span {font-weight:130px;
     background-color: yellow;
 	color:red;}	
 </style>
-<link href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet"/>
+<link href="${staticbase_platformPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet"/>
 <script src="${basePath}/passwordControl/index.js" type="text/javascript"></script>
 </head>
 <body>
@@ -60,7 +60,7 @@ p.tippp span {font-weight:130px;
 							<thead>
 								<tr>
 									<td colspan="3" ><div class="pl15 pr15 pt5 pb5">
-									<img src="${staticMemberPath}/new/images/logo/${displayBankId}_1301.png" /></div></td>
+									<img src="${staticbase_platformPath}/new/images/logo/${displayBankId}_1301.png" /></div></td>
 								</tr>
 							</thead>
 							<tbody>
@@ -155,9 +155,9 @@ p.tippp span {font-weight:130px;
 </section>
 <c:import url="/WEB-INF/views/jsp/common/newfooter.jsp"></c:import>
 <jsp:include page="../common/resource_js.jsp"/>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/zh_CN.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/zh_CN.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
 <script type="text/javascript">
 	function tijiao(){
 		initParam();

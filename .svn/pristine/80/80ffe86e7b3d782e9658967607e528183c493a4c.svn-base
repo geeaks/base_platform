@@ -10,7 +10,7 @@ import com.ucf.customer.bo.ResultBo;
 import com.ucf.customer.service.out.PaymentService;
 import com.ucf.customer.ws.bo.BaseBO;
 import com.ucf.customer.ws.bo.IDCardBo;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.service.UserRealNameService;
 import com.ucf.platform.framework.core.log.UcfLogger;
 import com.ucf.platform.framework.core.log.UcfLoggerFactory;
@@ -43,12 +43,12 @@ public class UserRealNameServiceImpl implements UserRealNameService {
 		
 		BaseBO rsbo = new BaseBO();
 		if(EnumRespStatusCode.SUCCESS.getCode().equals(bo.getResult())){
-			rsbo.setStatus(EnumMemberCode.SUCCESS.getCode());
-			rsbo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			rsbo.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			rsbo.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			rsbo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			rsbo.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 		}else {
-			rsbo.setStatus(EnumMemberCode.ERROR.getCode());
-			rsbo.setRespCode(EnumMemberCode.ERROR.getCode());
+			rsbo.setStatus(Enumbase_platformCode.ERROR.getCode());
+			rsbo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 			rsbo.setRespMsg("该身份证未通过实名认证");
 		}
 		return rsbo;

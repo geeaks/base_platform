@@ -4,7 +4,7 @@
 	<div id="myTip2"
 		style="width:228px;height:30px;border:1px solid #888888;background:#FFFFFF;display:none"
 		align="center" valign="top">
-		<a id='downLink2' href="${staticMemberPath}/${myexe}" class="mylink">
+		<a id='downLink2' href="${staticbase_platformPath}/${myexe}" class="mylink">
 			<font face="宋体" size="-1">点此下载控件</font>
 		</a>
 	</div>
@@ -15,7 +15,7 @@
 		<object id="userpasswd2"
 			classid="CLSID:598BD8F9-CE1C-4b52-9C0E-6EA55E2371A7" tabIndex="2"
 			width="250px" height="30px" onblur="loseFocus2()"
-			codebase="${staticMemberPath}/${mycab}#Version=${myVersion}">
+			codebase="${staticbase_platformPath}/${mycab}#Version=${myVersion}">
 			<param name="width" value="250">
 			<param name="height" value="30">
 			<param name="textsize" value="16">

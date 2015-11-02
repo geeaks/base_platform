@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.ucf.platform.framework.core.annotation.SensitiveInfo;
 import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
 
-public class EnterpriseMemberBO  implements Serializable{
+public class Enterprisebase_platformBO  implements Serializable{
 	
 		private static final long serialVersionUID = 2260690535181040556L;
 		

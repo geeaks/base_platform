@@ -21,7 +21,7 @@ import com.ucf.customer.service.SMSService;
 import com.ucf.customer.utils.Constants;
 import com.ucf.customer.utils.enums.EnumSessionKey;
 import com.ucf.customer.ws.bo.SmsBO;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.service.UserServiceWS;
 import com.ucf.platform.framework.core.log.UcfLogger;
 import com.ucf.platform.framework.core.log.UcfLoggerFactory;
@@ -95,8 +95,8 @@ public class SMSAction extends BaseAction {
 		try {
 			HttpSession session = request.getSession();
 			String cellNo = (String) session.getAttribute(EnumSessionKey.SMS_PHONE.getKey());
-			SmsBO vfyCode = userServiceWS.sendSms("member", cellNo);
-			if (!vfyCode.getRespCode().equals(EnumMemberCode.SUCCESS.getCode())) {
+			SmsBO vfyCode = userServiceWS.sendSms("base_platform", cellNo);
+			if (!vfyCode.getRespCode().equals(Enumbase_platformCode.SUCCESS.getCode())) {
 				printWriter.write(vfyCode.getRespMsg());
 			} else {
 				session.setAttribute("vfyCode|" + cellNo, vfyCode.getCode());

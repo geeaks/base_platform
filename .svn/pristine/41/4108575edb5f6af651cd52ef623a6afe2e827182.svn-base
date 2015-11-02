@@ -1,6 +1,6 @@
 package com.ucf.customer.service;
 
-import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.base_platformCommonResult;
 import com.ucf.customer.api.enums.EnumsUserCardType;
 import com.ucf.customer.bo.EnterpriseParamBO;
 import com.ucf.customer.bo.RegisterParamBO;
@@ -80,10 +80,10 @@ public interface UserInfoService {
 	
 	/**
 	 * 注册个人托管用户
-	 * @param memberBo
+	 * @param base_platformBo
 	 * @return
 	 */
-	public MemberCommonResult<String> registerManagedUser(RegisterParamBO memberBo);
+	public base_platformCommonResult<String> registerManagedUser(RegisterParamBO base_platformBo);
 	
 	/**
 	 * @Description: 第三方商户注册开户 判断是否已经注册过

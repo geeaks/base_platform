@@ -12,7 +12,7 @@ import com.ucf.customer.action.BaseAction;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：IndexController      <br>
 * 类描述：页面共用的请求类 页头，页尾等   				  <br>
 * 创建人：李文静 				  <br>

@@ -48,8 +48,8 @@ public class DKStatisticsMQConsumerService extends AbstractUcfMQSyncConsumerConc
 	@Override
 	public UcfTopicTagAssemble getTopicAndTagExpress() {
 		UcfTopicTagAssemble assemble = new UcfTopicTagAssemble();
-		assemble.setTopic(RocketMQTopicEnum.ROCKETMQ_MEMBER_TRADE_DKLOG_TOPICANDTAG.getTopic());
-		assemble.setTag(RocketMQTopicEnum.ROCKETMQ_MEMBER_TRADE_DKLOG_TOPICANDTAG.getTag());
+		assemble.setTopic(RocketMQTopicEnum.ROCKETMQ_base_platform_TRADE_DKLOG_TOPICANDTAG.getTopic());
+		assemble.setTag(RocketMQTopicEnum.ROCKETMQ_base_platform_TRADE_DKLOG_TOPICANDTAG.getTag());
 		return assemble;
 	}
 
@@ -61,7 +61,7 @@ public class DKStatisticsMQConsumerService extends AbstractUcfMQSyncConsumerConc
 		String orderId = (String)mqReturnMap.get("orderId");
 		String amount = (String)mqReturnMap.get("amount");
 		LOGGER.info("记录交易日志MQ接收参数:" + JSON.toJSONString(mqReturnMap));
-		Lock lock = LockHolder.createLock("MEMBER_DK_STATISTICS", "DK_ORDERID_" + orderId,10*1000,30*1000);
+		Lock lock = LockHolder.createLock("base_platform_DK_STATISTICS", "DK_ORDERID_" + orderId,10*1000,30*1000);
 		try {
 			if (lock.tryLock() && !tradeLogDao.isExist(orderId)) {
 				final UcfTradeLog tradeLog = new UcfTradeLog();

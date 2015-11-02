@@ -5,7 +5,7 @@ import com.ucf.customer.ws.bo.BaseBO;
 /**
  * 
 *    
-* 项目名称：member-client   
+* 项目名称：base_platform-client   
 * 类名称：UserRealNameService   
 * 类描述：   用户实名认证相关服务接口
 * 创建人：李文静  

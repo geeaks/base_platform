@@ -4,7 +4,7 @@ public enum EnumSessionKey {
 	
 	
 
-	MEMBER_AGENT_KEY("session_memberAgent","登录用户验证信息"),
+	base_platform_AGENT_KEY("session_base_platformAgent","登录用户验证信息"),
 	USER_KEY("session_user","登录用户信息"),
 	IMG_CODE_KEY("session_img_code","图片验证码"),
 	SMS_PHONE("session_sms_phone","短信发送手机号"),

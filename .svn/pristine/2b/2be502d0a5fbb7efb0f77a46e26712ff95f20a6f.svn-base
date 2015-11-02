@@ -2,7 +2,7 @@ package com.ucf.customer.ws.bo;
 
 import java.io.Serializable;
 
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.enums.EnumUserRegisterStatus;
 
 public class UserCheckResultBO implements Serializable{
@@ -15,7 +15,7 @@ public class UserCheckResultBO implements Serializable{
 		/**
 		 * dubbo调用成功标示
 		 */
-		private EnumMemberCode enumMemberCode; 
+		private Enumbase_platformCode enumbase_platformCode; 
 	
 		/**
 		 * 会员是否注册枚举
@@ -45,12 +45,12 @@ public class UserCheckResultBO implements Serializable{
 			this.returnUrl = returnUrl;
 		}
 
-		public EnumMemberCode getEnumMemberCode() {
-			return enumMemberCode;
+		public Enumbase_platformCode getEnumbase_platformCode() {
+			return enumbase_platformCode;
 		}
 
-		public void setEnumMemberCode(EnumMemberCode enumMemberCode) {
-			this.enumMemberCode = enumMemberCode;
+		public void setEnumbase_platformCode(Enumbase_platformCode enumbase_platformCode) {
+			this.enumbase_platformCode = enumbase_platformCode;
 		}
 		
 		

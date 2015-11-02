@@ -10,21 +10,21 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<META http-equiv="X-UA-Compatible" content="IE=9" >
-	<link href="${staticMemberPath}/css/bootstrap.min.css" rel="stylesheet">
-	<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
-	<script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
+	<link href="${staticbase_platformPath}/css/bootstrap.min.css" rel="stylesheet">
+	<link href="${staticbase_platformPath}/css/shouyintai.css" rel="stylesheet">
+	<script src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
 	<jsp:include page="../common/resource_js.jsp"/>
 </head>
 <body>
 	<div class="head">
 		<div class="container">
-			<img src="${staticMemberPath}/images/findpaypwd_logo.png" alt="...">
+			<img src="${staticbase_platformPath}/images/findpaypwd_logo.png" alt="...">
 		</div>
 	</div>
 	<div class="container">
 		<div class="main-top border-yellow find">
 			<div class="guide">
-				<img src="${staticMemberPath}/images/find_paypwd2.png"></img>
+				<img src="${staticbase_platformPath}/images/find_paypwd2.png"></img>
 			</div>
 			<div class="main-body" style="margin-left: 150px">
 				<form id="setPasswdForm" name="setPasswdForm" action="${basePath}/p2p/setPasswd.do" class="form-horizontal" method="post" data-validator-option="{theme:'ucfgroup_effect',timely:2}" style="margin-top: 40px;">
@@ -46,9 +46,9 @@
 		</footer>
 	</div>
 	</div>
-<link href="${staticMemberPath}/css/ucfgroup-pwd-nicevalidator-extends.css" rel="stylesheet"></link>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/ucfgroup-paypwd-nicevalidator-extends.js" type="text/javascript"></script>
+<link href="${staticbase_platformPath}/css/ucfgroup-pwd-nicevalidator-extends.css" rel="stylesheet"></link>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/ucfgroup-paypwd-nicevalidator-extends.js" type="text/javascript"></script>
 <script language="javascript">
 function subForm(){
 	var flag=document.getElementById("payPassword").GetLength()==6 && document.getElementById("payPassword1").GetLength()==6;

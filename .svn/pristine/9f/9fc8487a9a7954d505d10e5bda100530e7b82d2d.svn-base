@@ -9,20 +9,20 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<META http-equiv="X-UA-Compatible" content="IE=9" >
-	<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
-	<script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
+	<link href="${staticbase_platformPath}/css/shouyintai.css" rel="stylesheet">
+	<script src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
 	<jsp:include page="../common/resource_js.jsp"/>
 </head>
 <body>
 	<div class="head">
 		<div class="container">
-			<img src="${staticMemberPath}/images/findpaypwd_logo.png" alt="...">
+			<img src="${staticbase_platformPath}/images/findpaypwd_logo.png" alt="...">
 		</div>
 	</div>
 	<div class="container">
 		<div class="main-top border-yellow find">
 			<div class="guide">
-				<img src="${staticMemberPath}/images/find_paypwd1.png"></img>
+				<img src="${staticbase_platformPath}/images/find_paypwd1.png"></img>
 			</div>
 			<c:set var="cardLength" value="${fn:length(bankCard.cardNo)}" />
 			<div class="find-inf-yj"><span class="red">请输入您尾号为（ ${fn:substring(bankCard.cardNo, cardLength-4, cardLength)} ）的${bankCard.bankName}的卡信息</span></div>
@@ -68,7 +68,7 @@
 		</footer>
 	</div>
 </div>
-<link href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet">
 <script language="javascript">
 	function subForm(){
 		var form=document.identityForm;
@@ -215,7 +215,7 @@
 		sendSMSNew('','0');
 	};
 </script>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
 </body>
 </html>

@@ -9,16 +9,16 @@
 <head>
 <title>先锋支付--用户注册</title>
 <jsp:include page="/WEB-INF/views/jsp/common/oldcommon.jsp" />
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/host_findpassword.css" />
-<link href="${staticMemberPath}/new/css/person_login.css" rel="stylesheet" type="text/css" />
-<link href="${staticMemberPath}/new/css/frist-register.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/host_findpassword.css" />
+<link href="${staticbase_platformPath}/new/css/person_login.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/new/css/frist-register.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
 	<c:import url="headforregister.jsp"></c:import>
 	<section class="bgc-gray">
 	<div class="gs-center register">
-		<img src="${staticMemberPath}/images/fund/asd_04.png">
+		<img src="${staticbase_platformPath}/images/fund/asd_04.png">
 		<div class="tab-content help-tab-content border-none">
 			<div class="tab-pane active">
 				<div class="background-wite">

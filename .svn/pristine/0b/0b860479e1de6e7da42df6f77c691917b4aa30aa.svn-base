@@ -10,7 +10,7 @@ import com.ucf.customer.pojo.UcfUserLoginApp;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：UserService      <br>
 * 类描述：用户内部使用服务类   				  <br>
 * 创建人：李文静 				  <br>
@@ -141,7 +141,7 @@ public interface UserService {
 	 * @author gaoxiang
 	 * @date 2014年9月23日 下午5:11:23
 	 */
-	public String getEnterpriseMemberNO() throws Exception;
+	public String getEnterprisebase_platformNO() throws Exception;
 	
 	public String monitorValidConnent() throws Exception;
 	

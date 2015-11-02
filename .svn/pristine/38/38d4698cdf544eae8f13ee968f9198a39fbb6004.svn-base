@@ -22,7 +22,7 @@ public interface UcfUserDao extends Serializable {
 	
 	Map<Object, Object>  queryUcfUserCell(String userId)throws Exception;
 	//获取企业会员编号
-	String getEnterpriseMemberNO_SEQ() throws Exception;
+	String getEnterprisebase_platformNO_SEQ() throws Exception;
 	/**
 	 * 用户id生成
 	 * @return

@@ -4,8 +4,8 @@ package com.ucf.customer.security;
 /**
  * 
 *    
-* 项目名称：member   
-* 类名称：EnumMemberUserType   
+* 项目名称：base_platform   
+* 类名称：Enumbase_platformUserType   
 * 类描述：  默认url 不需要访问权限。 普通登录用户需要 配置 ；logined登录权限 
 * 创建人：李文静 
 * 创建时间：2014-4-28 上午9:28:13   
@@ -15,13 +15,13 @@ package com.ucf.customer.security;
 * @version    
 *
  */
-public enum EnumMemberUserType {
+public enum Enumbase_platformUserType {
 	Visitor("无权限控制", 1), Logined("登录用户有权", 2), Merchant("商户用户有权", 3);
 
 	private String name;
 	private int code;
 
-	EnumMemberUserType(String name, int code) {
+	Enumbase_platformUserType(String name, int code) {
 		this.name = name;
 		this.code = code;
 	}
@@ -42,11 +42,11 @@ public enum EnumMemberUserType {
 		this.code = code;
 	}
 
-	public static EnumMemberUserType getByCode(int code) {
-		for (EnumMemberUserType enunEnumMemberUserType : EnumMemberUserType
+	public static Enumbase_platformUserType getByCode(int code) {
+		for (Enumbase_platformUserType enunEnumbase_platformUserType : Enumbase_platformUserType
 				.values()) {
-			if (enunEnumMemberUserType.code == code) {
-				return enunEnumMemberUserType;
+			if (enunEnumbase_platformUserType.code == code) {
+				return enunEnumbase_platformUserType;
 			}
 		}
 		return null;

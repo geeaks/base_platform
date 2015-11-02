@@ -9,9 +9,9 @@
 <title></title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
 <!--public js&css start-->
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/css/commons/index.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/common.css">
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/host_findpassword.css">
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/css/commons/index.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/common.css">
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/host_findpassword.css">
 <link href="../css/bootstrap.css" rel="stylesheet">
 </head>
 <body>

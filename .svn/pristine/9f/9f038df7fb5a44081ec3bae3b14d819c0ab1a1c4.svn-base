@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.ucf.customer.action.BaseAction;
 import com.ucf.customer.pojo.UcfUser;
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAccess;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAccess;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.service.LoginService;
 import com.ucf.customer.utils.Constants;
 import com.ucf.customer.vo.DisplayOrder;
@@ -57,7 +57,7 @@ import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 	 * @throws Exception 
 	 */
 	@RequestMapping({ "/tradeList.htm" })
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	public String tradeList(
 			@RequestParam(value="startDate",required=false) String startDate,
 			@RequestParam(value="endDate",required=false) String endDate,
@@ -68,9 +68,9 @@ import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 			@RequestParam(value="page",required=false) Integer page,
 			HttpServletRequest request, HttpServletResponse response,
 			Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		
-		loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		String userId = user.getUserId();
 		if(LOGGER.isDebugEnabled()){
 			LOGGER.debug("userid+tradeType" + userId + startDate + endDate + tradeStatus + tradeType);
@@ -114,14 +114,14 @@ import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 	}
 	
 //	@RequestMapping( method = RequestMethod.POST)
-//	@MemberAccess(EnumMemberUserType.Logined)
+//	@base_platformAccess(Enumbase_platformUserType.Logined)
 //	public String tradeListBywhere(HttpServletRequest request, HttpServletResponse response,Model model) throws Exception{
 //		
 //	}
 	@RequestMapping(value = "/tradeListBywhere.htm",method = RequestMethod.POST)
 	@ResponseBody
 	public void tradeListBywhere(HttpServletRequest request,HttpServletResponse response) throws Exception {
-		MemberAgent memberAgent = getMemberAgent(request, response);
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
 		response.setContentType("text/html;charset=utf-8");
 		response.setCharacterEncoding("UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
@@ -129,7 +129,7 @@ import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 //		out.print("<table class=\"table table-bordered table-striped\">");
 		Map<String, Object> resultMap;
 		try {
-			resultMap = tradeCallServiceImpl.queryOrdersByUserId(memberAgent.getId(), request.getParameter("tradeType"),Constants.CHAR_ORDER_SUCC, null, null, 10, 1);
+			resultMap = tradeCallServiceImpl.queryOrdersByUserId(base_platformAgent.getId(), request.getParameter("tradeType"),Constants.CHAR_ORDER_SUCC, null, null, 10, 1);
 			@SuppressWarnings("unchecked")
 			List<DisplayOrder> orderList = (List<DisplayOrder>)resultMap.get("orders");
 			out.print("<tbody>");

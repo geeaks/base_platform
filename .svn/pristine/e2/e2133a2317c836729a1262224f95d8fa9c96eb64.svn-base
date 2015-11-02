@@ -3,7 +3,7 @@ package com.ucf.customer.utils.enums;
 /**
  * 
  * 
- * 项目名称：member <br/>
+ * 项目名称：base_platform <br/>
  * 类名称：EnumRedisKey <br/>
  * 类描述： reids key 管理枚举 <br/>
  * 创建人：张磊<br/>
@@ -14,27 +14,27 @@ package com.ucf.customer.utils.enums;
  */
 public enum EnumRedisKey {
 	
-	PAY_PWD_ERROR_TIME_KEY("MEMBER_PAY_PWD_ERROR_TIMES_", "支付密码错误次数",60*60*24,5),
-	LGN_PWD_ERROR_TIME_KEY("MEMBER_LGN_PWD_ERROR_TIMES_", "登录密码错误次数",60*60*24,5),	
-	QUES_ASW_ERROR_TIME_KEY("MEMBER_QUES_ASW_ERROR_TIMES_", "密保问题",60*60*24,5),
+	PAY_PWD_ERROR_TIME_KEY("base_platform_PAY_PWD_ERROR_TIMES_", "支付密码错误次数",60*60*24,5),
+	LGN_PWD_ERROR_TIME_KEY("base_platform_LGN_PWD_ERROR_TIMES_", "登录密码错误次数",60*60*24,5),	
+	QUES_ASW_ERROR_TIME_KEY("base_platform_QUES_ASW_ERROR_TIMES_", "密保问题",60*60*24,5),
 	
-	FIND_PAY_PWD_ERROR_TIME_KEY("MEMBER_FIND_PAY_PWD_ERROR_TIMES_", "支付密码找回错误次数",60*60*24,5),
-	FIND_LGN_PWD_ERROR_TIME_KEY("MEMBER_FIND_LGN_PWD_ERROR_TIMES_", "登录密码找回错误次数",60*60*24,5),	
+	FIND_PAY_PWD_ERROR_TIME_KEY("base_platform_FIND_PAY_PWD_ERROR_TIMES_", "支付密码找回错误次数",60*60*24,5),
+	FIND_LGN_PWD_ERROR_TIME_KEY("base_platform_FIND_LGN_PWD_ERROR_TIMES_", "登录密码找回错误次数",60*60*24,5),	
 	
-	VERIFY_CODE_KEY("MEMBER_SMS_CODE_","短信验证码",60*5),
-	VERIFY_CODE_CHECK_KEY("MEMBER_SMS_CODE_CHECK_","短信验证码校验次数",60*5),
-	WITHDRAW_TIMES_KEY("MEMBER_WITHDRAW_TIMES_", "提现次数",60*60*24,5),
+	VERIFY_CODE_KEY("base_platform_SMS_CODE_","短信验证码",60*5),
+	VERIFY_CODE_CHECK_KEY("base_platform_SMS_CODE_CHECK_","短信验证码校验次数",60*5),
+	WITHDRAW_TIMES_KEY("base_platform_WITHDRAW_TIMES_", "提现次数",60*60*24,5),
 	
-	P2P_REG_AUTH_TIME_KEY("MEMBER_P2P_REG_AUTH_ERROR_TIMES_", "P2P用户注册认证错误次数",60*60*24*2,3),
+	P2P_REG_AUTH_TIME_KEY("base_platform_P2P_REG_AUTH_ERROR_TIMES_", "P2P用户注册认证错误次数",60*60*24*2,3),
 	
-	WITHDRAW_AMOUNT_KEY("MEMBER_WITHDRAW_AMOUNT_", "提现金额(单位:分)",60*60*24,10000000),
+	WITHDRAW_AMOUNT_KEY("base_platform_WITHDRAW_AMOUNT_", "提现金额(单位:分)",60*60*24,10000000),
 	
-	REMIT_CERT_USER_BANKCARD_KEY("MEMBER_REMIT_CERT_USER_BANKCARD_", "小额打款认证银行卡",60*60*24*30,1),
+	REMIT_CERT_USER_BANKCARD_KEY("base_platform_REMIT_CERT_USER_BANKCARD_", "小额打款认证银行卡",60*60*24*30,1),
 	
 	//缓存Key
-	UCF_CARD_QUERY_BY_USERId("MEMBER_UCF_CARD_BY_USERId_", "查询用户card", 60 * 60 * 24 * 14, 0),
-	UCF_USER_QUERY_BY_USERId("MEMBER_UCF_USER_BY_USERId_", "查询用户", 60 * 60 * 24 * 14, 0),
-	ANONYNOUS_UCF_USER_LIST_QUERY("MEMBER_ANONYNOUS_UCF_USER_LIST_", "查询匿名用户集合", 60 * 60 * 24 * 14, 0);
+	UCF_CARD_QUERY_BY_USERId("base_platform_UCF_CARD_BY_USERId_", "查询用户card", 60 * 60 * 24 * 14, 0),
+	UCF_USER_QUERY_BY_USERId("base_platform_UCF_USER_BY_USERId_", "查询用户", 60 * 60 * 24 * 14, 0),
+	ANONYNOUS_UCF_USER_LIST_QUERY("base_platform_ANONYNOUS_UCF_USER_LIST_", "查询匿名用户集合", 60 * 60 * 24 * 14, 0);
 	
 	
 	private EnumRedisKey(String key, String name,int timeout) {

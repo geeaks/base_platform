@@ -35,7 +35,7 @@ public interface UserRegService {
 	public String  queryUcfCustomerId() throws Exception;
 	
 	//获取企业会员用户编号
-	public String  getEnterpriseMemberNO() throws Exception;
+	public String  getEnterprisebase_platformNO() throws Exception;
 
 
 }

@@ -1,8 +1,8 @@
 ﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.ucf.member</groupId>
-	<artifactId>member-parent</artifactId>
+	<groupId>com.ucf.base_platform</groupId>
+	<artifactId>base_platform-parent</artifactId>
 	<version>1.5.5-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -14,11 +14,11 @@
 		<jsp.version>2.2</jsp.version>
 		<jstl.version>1.2</jstl.version>
 		<servlet.version>2.5</servlet.version>
-		<member.version>1.5.5-SNAPSHOT</member.version>
-		<member-client.version>1.5.5-SNAPSHOT</member-client.version>
+		<base_platform.version>1.5.5-SNAPSHOT</base_platform.version>
+		<base_platform-client.version>1.5.5-SNAPSHOT</base_platform-client.version>
 		<!-- Spring -->
 		<spring-framework.version>3.2.3.RELEASE</spring-framework.version>
-		<module.war.name>member</module.war.name>
+		<module.war.name>base_platform</module.war.name>
 		<rocketmq.version>1.0.1-SNAPSHOT</rocketmq.version>
 		<!-- framework ucf -->
 		<!-- framework ucf -->
@@ -73,14 +73,14 @@
 		<dependencies>
 			<!-- private dependencies start -->
 			<dependency>
-				<groupId>com.ucf.member</groupId>
-				<artifactId>member</artifactId>
-				<version>${member.version}</version>
+				<groupId>com.ucf.base_platform</groupId>
+				<artifactId>base_platform</artifactId>
+				<version>${base_platform.version}</version>
 			</dependency>
 			<dependency>
-				<groupId>com.ucf.member</groupId>
-				<artifactId>member-client</artifactId>
-				<version>${member-client.version}</version>
+				<groupId>com.ucf.base_platform</groupId>
+				<artifactId>base_platform-client</artifactId>
+				<version>${base_platform-client.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.ucf.framework</groupId>
@@ -88,9 +88,9 @@
 				<version>1.0.0-SNAPSHOT</version>
 			</dependency>
 			<dependency>
-				<groupId>com.ucf.member</groupId>
-				<artifactId>member-resources</artifactId>
-				<version>${member.version}</version>
+				<groupId>com.ucf.base_platform</groupId>
+				<artifactId>base_platform-resources</artifactId>
+				<version>${base_platform.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.dp</groupId>
@@ -600,8 +600,8 @@
 		</plugins>
 	</build>
 	<modules>
-		<module>member</module>
-		<module>member-client</module>
-		<module>member-resources</module>
+		<module>base_platform</module>
+		<module>base_platform-client</module>
+		<module>base_platform-resources</module>
 	</modules>
 </project>

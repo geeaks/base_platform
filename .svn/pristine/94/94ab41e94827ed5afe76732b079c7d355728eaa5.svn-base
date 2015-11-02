@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 
 import com.alibaba.fastjson.JSON;
-import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.base_platformService;
 import com.ucf.customer.api.bo.BaseResultBO;
-import com.ucf.customer.api.bo.MemberCommonResult;
-import com.ucf.customer.api.bo.MemberRegisterBO;
+import com.ucf.customer.api.bo.base_platformCommonResult;
+import com.ucf.customer.api.bo.base_platformRegisterBO;
 import com.ucf.customer.api.bo.RealNameParamBO;
 import com.ucf.customer.api.enums.EnumCertStatus;
 import com.ucf.customer.api.enums.EnumStatus;
@@ -26,14 +26,14 @@ import com.ucf.platform.framework.mq.UcfReceiveMessage;
 
 /**
  * @Description: 1.会员安全等级 2.白名单认证 3.快捷认证
- * @ClassName: MemberSecurityLevelTest
+ * @ClassName: base_platformSecurityLevelTest
  * @author gaoxiang
  * @date 2015-3-13 上午11:34:58
  */ 
-public class MemberSecurityLevelTest extends BaseTest {
+public class base_platformSecurityLevelTest extends BaseTest {
 	
 	@Autowired
-	private MemberService memberService;
+	private base_platformService base_platformService;
 	@Autowired
 	private ServiceInterfaceWS serviceInterfaceWSImpl;
 	@Autowired
@@ -53,7 +53,7 @@ public class MemberSecurityLevelTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void 工资宝用户(){
-		MemberRegisterBO userBo = new MemberRegisterBO();
+		base_platformRegisterBO userBo = new base_platformRegisterBO();
 		userBo.setMerchantId("M26011112121");
 		userBo.setRefUserId("T260235687");
 		userBo.setBankCardNo("6212260200024937523");
@@ -70,7 +70,7 @@ public class MemberSecurityLevelTest extends BaseTest {
 		userBo.setEmail("vsgaoxiang@126.com");
 		userBo.setName("毕云涛");
 		userBo.setPhone("18811511066");
-		MemberCommonResult<String> rs = memberService.registerGZBUser(userBo);
+		base_platformCommonResult<String> rs = base_platformService.registerGZBUser(userBo);
 		System.err.println(JSON.toJSONString(rs));
 	}
 	
@@ -78,15 +78,15 @@ public class MemberSecurityLevelTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void H5托管用户(){
-		MemberRegisterBO memberBo = new MemberRegisterBO();
-		memberBo.setRefUserId("10000000000");
-		memberBo.setMerchantId("testmerchantId");
-		memberBo.setCertType("IDC");
-		memberBo.setCertNo("130406199105200915");
-		memberBo.setPhone("10000000000");
-		memberBo.setEmail("vsflyhigh@qq.com");
-		MemberCommonResult<String> registerManagedUser = 
-				memberService.registerManagedUser(memberBo);
+		base_platformRegisterBO base_platformBo = new base_platformRegisterBO();
+		base_platformBo.setRefUserId("10000000000");
+		base_platformBo.setMerchantId("testmerchantId");
+		base_platformBo.setCertType("IDC");
+		base_platformBo.setCertNo("130406199105200915");
+		base_platformBo.setPhone("10000000000");
+		base_platformBo.setEmail("vsflyhigh@qq.com");
+		base_platformCommonResult<String> registerManagedUser = 
+				base_platformService.registerManagedUser(base_platformBo);
 		System.err.println(JSON.toJSON(registerManagedUser));
 	}
 	
@@ -139,7 +139,7 @@ public class MemberSecurityLevelTest extends BaseTest {
 		paramBo.setCity("北京");
 		paramBo.setBranchBankId("110454543");
 		paramBo.setBranchBankName("工商xx银行3");
-		BaseResultBO  returnBo = memberService.realName(paramBo);
+		BaseResultBO  returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -160,7 +160,7 @@ public class MemberSecurityLevelTest extends BaseTest {
 		paramBo.setCity("北京");
 		paramBo.setBranchBankId("110454543");
 		paramBo.setBranchBankName("工商xx银行3");
-		BaseResultBO  returnBo = memberService.realName(paramBo);
+		BaseResultBO  returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -182,7 +182,7 @@ public class MemberSecurityLevelTest extends BaseTest {
 		paramBo.setCity("北京");
 		paramBo.setBranchBankId("110454543");
 		paramBo.setBranchBankName("工商xx银行3");
-		BaseResultBO  returnBo = memberService.realName(paramBo);
+		BaseResultBO  returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -190,7 +190,7 @@ public class MemberSecurityLevelTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void 照片审核(){
-		MemberCommonResult<String> rs = memberService.auditPhotoAuth("201411111000000000","S","xxxx","geeaks");
+		base_platformCommonResult<String> rs = base_platformService.auditPhotoAuth("201411111000000000","S","xxxx","geeaks");
 		System.err.println(JSON.toJSON(rs));
 	}
 	

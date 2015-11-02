@@ -23,7 +23,7 @@ import com.ucf.customer.utils.enums.EnumResultCode;
 import com.ucf.customer.utils.enums.EnumSMSTemplate;
 import com.ucf.customer.utils.enums.EnumSessionKey;
 import com.ucf.customer.ws.bo.SmsBO;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.service.UserServiceWS;
 import com.ucf.platform.framework.core.log.UcfLogger;
 import com.ucf.platform.framework.core.log.UcfLoggerFactory;
@@ -76,7 +76,7 @@ public class SMSAction extends BaseAction {
 	}
 
 	private String sendActiveSMS(String userMobile, String smsType) {
-		ResultBo checkVfbo = smsService.sendVfyCodeSMS("M100",userMobile, EnumSMSTemplate.MemberVfyCode.getContent());
+		ResultBo checkVfbo = smsService.sendVfyCodeSMS("M100",userMobile, EnumSMSTemplate.base_platformVfyCode.getContent());
 		if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
 			return checkVfbo.getResultObject().toString();
 		}else{
@@ -97,7 +97,7 @@ public class SMSAction extends BaseAction {
 		try {
 			HttpSession session = request.getSession();
 			String cellNo = (String) session.getAttribute(EnumSessionKey.SMS_PHONE.getKey());
-			ResultBo checkVfbo = smsService.sendVfyCodeSMS("M100",cellNo, EnumSMSTemplate.MemberVfyCode.getContent());
+			ResultBo checkVfbo = smsService.sendVfyCodeSMS("M100",cellNo, EnumSMSTemplate.base_platformVfyCode.getContent());
 			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
 				session.setAttribute("vfyCode|" + cellNo, checkVfbo.getResultObject().toString());
 				LOGGER.info("发送的短信,手机号：" + SensitiveInfoUtils.mobilePhone(cellNo) + "|短信vfyCode：" + JSONObject.toJSONString(checkVfbo));

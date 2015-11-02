@@ -55,7 +55,7 @@ public class LoginServiceImpl implements LoginService {
 	@Resource(name="redisKVManager")
 	private ICache<String> cache = null;
 	
-	private static final String USER_QUES_ASW_KEY = "member_check_ques_answ";
+	private static final String USER_QUES_ASW_KEY = "base_platform_check_ques_answ";
 	private static final int USER_QUES_ASW_TIME_OUT = 60*60*24; 
 	@Autowired
 	private UcfUserDao userDao;

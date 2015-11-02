@@ -16,12 +16,12 @@
 select UCF_USER_SEQ.nextval from dual
 </select>
 
-<select id="getEnterpriseMemberNO"  resultType="java.lang.String">
+<select id="getEnterprisebase_platformNO"  resultType="java.lang.String">
 select UCF_ENTERPRISE_MERCHANT_SEQ.nextval from dual
 </select>
 
 <select id="monitorValidConnent"  resultType="java.lang.String">
-	select MONITOR_MEMBER_CONNENT_SEQ.nextval from dual
+	select MONITOR_base_platform_CONNENT_SEQ.nextval from dual
   </select>
 
 <select id="getUcfUserByUserId"  parameterType="java.lang.String" resultType="ucfUser" >

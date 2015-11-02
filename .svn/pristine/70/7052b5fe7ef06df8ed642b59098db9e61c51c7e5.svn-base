@@ -2,11 +2,11 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.ucf.member</groupId>
-		<artifactId>member-parent</artifactId>
+		<groupId>com.ucf.base_platform</groupId>
+		<artifactId>base_platform-parent</artifactId>
 		<version>1.5.5-SNAPSHOT</version>
 	</parent>
-	<artifactId>member</artifactId>
+	<artifactId>base_platform</artifactId>
 	<packaging>jar</packaging>
 
 	<dependencies>
@@ -152,8 +152,8 @@
 			<artifactId>ojdbc14</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.ucf.member</groupId>
-			<artifactId>member-client</artifactId>
+			<groupId>com.ucf.base_platform</groupId>
+			<artifactId>base_platform-client</artifactId>
 		</dependency>
 		<!-- 账务 -->
 		<dependency>

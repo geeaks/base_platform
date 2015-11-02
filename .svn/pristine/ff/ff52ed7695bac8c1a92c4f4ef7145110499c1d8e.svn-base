@@ -26,9 +26,9 @@ public class TokenInterceptor extends HandlerInterceptorAdapter {
 
 		String uri = request.getRequestURI();
 		
-		String[] token = new String[] {"/member/withdraw","/member/firstaddbank.htm","/member/reg/saveUserinfo.htm"};
+		String[] token = new String[] {"/base_platform/withdraw","/base_platform/firstaddbank.htm","/base_platform/reg/saveUserinfo.htm"};
 		
-		String[] tokenValid = new String[] {"/member/withdraw/submit","/member/bank/firstAddBankCardPro.htm","/member/reg/realNameAuth.htm"};
+		String[] tokenValid = new String[] {"/base_platform/withdraw/submit","/base_platform/bank/firstAddBankCardPro.htm","/base_platform/reg/realNameAuth.htm"};
 		
 		HttpSession session  = request.getSession();
 		boolean valid = true;

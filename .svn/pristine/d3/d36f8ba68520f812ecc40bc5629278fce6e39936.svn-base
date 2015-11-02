@@ -1,38 +1,38 @@
 ﻿﻿<%@ page contentType="text/html;charset=UTF-8" %>
- <link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
+ <link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
 <div class="foot">
 		<div class="add-index-foot foot-bg"></div> 
 		<div class="container foot-color">
 			<div>
-				合作金融机构<a href="${staticMemberPath}/company/hezuojigou.html" class="more">更多 >></a>
-                <a href="${staticMemberPath}/company/hezuojigou.html" class="teamwork"></a>
+				合作金融机构<a href="${staticbase_platformPath}/company/hezuojigou.html" class="more">更多 >></a>
+                <a href="${staticbase_platformPath}/company/hezuojigou.html" class="teamwork"></a>
 			</div>
 			<div>
-				商户合作 <a href="${staticMemberPath}/company/hezuoshanghu.html" class="more">更多 >></a>
-                <a href="${staticMemberPath}/company/hezuoshanghu.html" class="sponsors"></a>
+				商户合作 <a href="${staticbase_platformPath}/company/hezuoshanghu.html" class="more">更多 >></a>
+                <a href="${staticbase_platformPath}/company/hezuoshanghu.html" class="sponsors"></a>
 			</div>
 			<div>
-				先锋支付资质 <a href="${staticMemberPath}/company/gongsizizhi.html" class="more">更多 >></a>
+				先锋支付资质 <a href="${staticbase_platformPath}/company/gongsizizhi.html" class="more">更多 >></a>
 		<div class="zz-all">
-                	<a href="${staticMemberPath}/company/gongsizizhi.html" class="zz1"></a>
-                	<a href="${staticMemberPath}/company/gongsizizhi.html" class="zz2"></a>
-                	<a href="${staticMemberPath}/company/gongsizizhi.html" class="zz3"></a>
+                	<a href="${staticbase_platformPath}/company/gongsizizhi.html" class="zz1"></a>
+                	<a href="${staticbase_platformPath}/company/gongsizizhi.html" class="zz2"></a>
+                	<a href="${staticbase_platformPath}/company/gongsizizhi.html" class="zz3"></a>
 		</div>
 			</div>
 			<div>
 				公告</br>
                 <div class="mgt10" >
-                	<a href="${staticMemberPath}/company/gerengonggao.html" class="color999">先锋支付个人平台上线。2014-05-30</a>
+                	<a href="${staticbase_platformPath}/company/gerengonggao.html" class="color999">先锋支付个人平台上线。2014-05-30</a>
                 </div>
 			</div>
 		</div>
         <div class="container border-bottom-line"></div>
 		<div class="container foot-text">
 			<ul class="about">
-				<li><a href="${staticMemberPath}/company/guanyuwomen.html">关于先锋支付</a></li>
+				<li><a href="${staticbase_platformPath}/company/guanyuwomen.html">关于先锋支付</a></li>
 				<li><a href="http://weibo.com/ucfpay">官方博客</a></li>
-				<li><a href="${staticMemberPath}/company/jiaruwomen.html">诚征英才</a></li>
-				<li class="border-none"><a href="${staticMemberPath}/company/lianxiwomen.html">联系我们</a></li>
+				<li><a href="${staticbase_platformPath}/company/jiaruwomen.html">诚征英才</a></li>
+				<li class="border-none"><a href="${staticbase_platformPath}/company/lianxiwomen.html">联系我们</a></li>
 			</ul>
 			</br>
 			<ul class="copyright">

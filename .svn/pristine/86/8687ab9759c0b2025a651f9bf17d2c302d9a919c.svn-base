@@ -49,7 +49,7 @@ import com.ucf.customer.ws.business.BusinessService;
 import com.ucf.customer.api.enums.EnumBankCardUseType;
 import com.ucf.customer.ws.enums.EnumCertFrom;
 import com.ucf.customer.ws.enums.EnumCertStatus;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.model.ServiceInterfaceModel;
 import com.ucf.onlinepay.framework.common.bean.Money;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -572,19 +572,19 @@ public class BusinessServiceImpl implements BusinessService {
 					UcfCard card = loginService.queryUcfCardByUserId(user.getUserId(),model.getRegFrom());
 					if (null!=card) {
 						if (user.getRealName().equals(model.getRealName())&&user.getCertNo().equals(model.getCertNo())) {
-							returnMap.put("respCode", EnumMemberCode.SUCCESS.getCode());
-							returnMap.put("respMsg",  EnumMemberCode.EXIST_USER.getMsgS());
+							returnMap.put("respCode", Enumbase_platformCode.SUCCESS.getCode());
+							returnMap.put("respMsg",  Enumbase_platformCode.EXIST_USER.getMsgS());
 							returnMap.put("reqReserved", model.getReqReserved());
 							returnMap.put("signature", model.getSignature());
-							returnMap.put("status", EnumMemberCode.EXIST_USER.getCode());
+							returnMap.put("status", Enumbase_platformCode.EXIST_USER.getCode());
 							returnMap.put("userId", user.getUserId());
 							returnMap.put("merchantId", model.getMerchantId());
 						} else {
-							returnMap.put("respCode", EnumMemberCode.SUCCESS.getCode());
-							returnMap.put("respMsg", EnumMemberCode.EXIST_MOBLEPHOE.getMsgS());
+							returnMap.put("respCode", Enumbase_platformCode.SUCCESS.getCode());
+							returnMap.put("respMsg", Enumbase_platformCode.EXIST_MOBLEPHOE.getMsgS());
 							returnMap.put("reqReserved", model.getReqReserved());
 							returnMap.put("signature", model.getSignature());
-							returnMap.put("status",  EnumMemberCode.EXIST_MOBLEPHOE.getCode());
+							returnMap.put("status",  Enumbase_platformCode.EXIST_MOBLEPHOE.getCode());
 							returnMap.put("userId", user.getUserId());
 							returnMap.put("merchantId", model.getMerchantId());
 						}
@@ -677,20 +677,20 @@ public class BusinessServiceImpl implements BusinessService {
 					});
 
 			if (commit) {
-				returnMap.put("respCode", EnumMemberCode.SUCCESS.getCode());
+				returnMap.put("respCode", Enumbase_platformCode.SUCCESS.getCode());
 				returnMap.put("respMsg", "注册成功");
 				returnMap.put("reqReserved", model.getReqReserved());
 				returnMap.put("signature", model.getSignature());
-				returnMap.put("status",EnumMemberCode.SUCCESS.getCode());
+				returnMap.put("status",Enumbase_platformCode.SUCCESS.getCode());
 				returnMap.put("userId", ucfUser.getUserId());
 				returnMap.put("merchantId", model.getMerchantId());
 
 			} else {				
-				returnMap.put("respCode", EnumMemberCode.ERROR.getCode());
+				returnMap.put("respCode", Enumbase_platformCode.ERROR.getCode());
 				returnMap.put("respMsg", "注册失败");
 				returnMap.put("reqReserved", model.getReqReserved());
 				returnMap.put("signature", model.getSignature());
-				returnMap.put("status", EnumMemberCode.ERROR_DB_OPERATE.getCode());
+				returnMap.put("status", Enumbase_platformCode.ERROR_DB_OPERATE.getCode());
 				returnMap.put("userId", ucfUser.getUserId());
 				returnMap.put("merchantId", model.getMerchantId());
 			}

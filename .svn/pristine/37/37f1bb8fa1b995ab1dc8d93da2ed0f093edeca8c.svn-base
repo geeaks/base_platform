@@ -9,12 +9,12 @@
 <jsp:include page="commons/resource_css.jsp"/>
 <jsp:include page="commons/resource_js.jsp"/>
 <c:if test="${'common' == p2p_type }">
-<script type="text/javascript" src="${staticMemberPath}/p2p/js/set-pay-telephone/index_common.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/p2p/js/set-pay-telephone/index_common.js"></script>
 <script type="text/javascript" src="${basePath}/passwordControl/individual_index.js"></script>
 <script type="text/javascript" src="${basePath}/passwordControl/individual_index1.js"></script>
 </c:if>
 <c:if test="${'common' != p2p_type }">
-<script type="text/javascript" src="${staticMemberPath}/p2p/js/set-pay-telephone/index.js"></script>  
+<script type="text/javascript" src="${staticbase_platformPath}/p2p/js/set-pay-telephone/index.js"></script>  
 <script type="text/javascript" src="${basePath}/passwordControl/findpaypwd_index.js"></script>
 <script type="text/javascript" src="${basePath}/passwordControl/findpaypwd_index1.js"></script>
 </c:if>

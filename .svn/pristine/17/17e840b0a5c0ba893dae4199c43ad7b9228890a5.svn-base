@@ -24,8 +24,8 @@ import com.ucf.customer.pojo.UcfQuestion;
 import com.ucf.customer.pojo.UcfUser;
 import com.ucf.customer.pojo.UcfUserLoginApp;
 import com.ucf.customer.security.Cryptos;
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAccess;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAccess;
 import com.ucf.customer.service.CardService;
 import com.ucf.customer.service.LoginService;
 import com.ucf.customer.service.UserInfoService;
@@ -40,7 +40,7 @@ import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
 /**
  * 
  * 
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：PaymentPasswordAction <br>
  * 类描述：支付密码修改/找回 <br>
  * 创建人：许浩 <br>
@@ -69,7 +69,7 @@ public class PasswordController extends BaseAction {
 	@Autowired
 	private UserInfoService userInfoService;
 	
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping({ "/manage.htm" })
 	public String index(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		return "safe/password";
@@ -83,13 +83,13 @@ public class PasswordController extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/pwdmodify.htm")
 	public String lgnpwdMod(
 			HttpServletRequest request,
 			HttpServletResponse response,Model model) throws Exception {
 		LOGGER.debug("  lgnpwdMod modify  !");
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		String mobile  = user.getCell();
 		model.addAttribute("cell", mobile);
 		model.addAttribute("userName", user.getRealName());
@@ -98,7 +98,7 @@ public class PasswordController extends BaseAction {
 	}
 	
 	
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/modifylgnPwd.htm")
 	public String modifyLgnPwd(@RequestParam("pwd") String pwd,
 			@RequestParam("newpwd") String newpwd,
@@ -107,8 +107,8 @@ public class PasswordController extends BaseAction {
 			HttpServletResponse response,Model model) throws Exception {
 		LOGGER.debug("pwd modify  !");
 		pwd = (String)request.getAttribute("payPassword");
-		UcfUser  user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
-		UcfUserLoginApp userApp= loginService.queryUserAppInfo(getMemberAgent(request, response).getLoginId());
+		UcfUser  user = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
+		UcfUserLoginApp userApp= loginService.queryUserAppInfo(getbase_platformAgent(request, response).getLoginId());
 		String mobile  = userApp.getPhone();
 		model.addAttribute("picna", MobileUtil.mobileNoEncrypt(mobile));
 		model.addAttribute("cell", mobile);
@@ -147,15 +147,15 @@ public class PasswordController extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping({ "/paypwdmodify.htm" })
 	public String toModifyPayPwd(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		String userId = user.getUserId();
 		
 		// add by liwenjing 增加判断用户注册来源是否正确
 		UcfCard ucfCard = loginService.queryUcfCardByUserId(userId);
-		if (!EnumRegisterFrom.MEMBER_FROM.getCode().equals(ucfCard.getRegisterFrom())) {
+		if (!EnumRegisterFrom.base_platform_FROM.getCode().equals(ucfCard.getRegisterFrom())) {
 			return "forward:/common/error.htm?msg=用户注册来源不正确,不允许修改支付密码！";
 		}
 
@@ -189,7 +189,7 @@ public class PasswordController extends BaseAction {
 			HttpServletRequest request, HttpServletResponse response,
 			Model model) throws Exception {
 		pwd = (String)request.getAttribute("payPassword");
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,
 				response).getId());
 		UcfUserLoginApp userApp = loginService.queryUserAppInfo(user.getCell());
 		String lgnPwd = userApp.getLoginPwd();
@@ -203,7 +203,7 @@ public class PasswordController extends BaseAction {
 		}
 		// add by liwenjing 增加判断用户注册来源是否正确
 		UcfCard ucfCard = loginService.queryUcfCardByUserId(userId);
-		if (!EnumRegisterFrom.MEMBER_FROM.getCode().equals(
+		if (!EnumRegisterFrom.base_platform_FROM.getCode().equals(
 				ucfCard.getRegisterFrom())) {
 			return "forward:/common/error.htm?msg=用户注册来源不正确,不允许修改支付密码！";
 		}
@@ -243,7 +243,7 @@ public class PasswordController extends BaseAction {
 	public String findPayPwdVerify(@RequestParam("vercode") String vercode,
 			@RequestParam("cellNO") String cellNO, HttpServletRequest request,
 			HttpServletResponse response, Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		if(!cellNO.equals(user.getCell())){
 			model.addAttribute("msg", "账户名错误!");
 			return "safe/beforeFind";
@@ -254,7 +254,7 @@ public class PasswordController extends BaseAction {
 			return "safe/beforeFind";
 		}
 		UcfCard ucfCard = loginService.queryUcfCardByUserId(user.getUserId());
-		if (!EnumRegisterFrom.MEMBER_FROM.getCode().equals(ucfCard.getRegisterFrom())) {
+		if (!EnumRegisterFrom.base_platform_FROM.getCode().equals(ucfCard.getRegisterFrom())) {
 			return "forward:/common/error.htm?msg=用户注册来源不正确,不允许修改支付密码！";
 		}
 		model.addAttribute("cell", user.getCell());
@@ -268,7 +268,7 @@ public class PasswordController extends BaseAction {
 			@RequestParam("quesInfo") String quesInfo,
 			@RequestParam("res") String res, HttpServletRequest request,
 			HttpServletResponse response, Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		
 		List<UcfQuestion> list = this.loginService.queryUcfQuestion(user.getUserId());
 		UcfQuestion question = new UcfQuestion();
@@ -301,11 +301,11 @@ public class PasswordController extends BaseAction {
 			@RequestParam("paymentPassword") String paymentPassword,
 			HttpServletRequest request, HttpServletResponse response,
 			Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		UcfUserLoginApp userApp = loginService.queryUserAppInfo(user.getCell());
 		String lgnPwd = userApp.getLoginPwd();
 		UcfCard card = loginService.queryUcfCardByUserId(user.getUserId());
-		if (!EnumRegisterFrom.MEMBER_FROM.getCode().equals(card.getRegisterFrom())) {
+		if (!EnumRegisterFrom.base_platform_FROM.getCode().equals(card.getRegisterFrom())) {
 			return "forward:/common/error.htm?msg=用户注册来源不正确,不允许修改支付密码！";
 		}
 		model.addAttribute("mobilePhone",MobileUtil.mobileNoEncrypt(user.getCell()));

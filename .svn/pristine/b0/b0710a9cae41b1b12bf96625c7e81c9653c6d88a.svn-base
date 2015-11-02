@@ -6,9 +6,9 @@
 <head>
 <title>先锋支付</title>
 <jsp:include page="commons/resource_css.jsp"/>
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/host_addbank.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/host_addbank.css">
 <jsp:include page="commons/resource_js.jsp"/>
-<script type="text/javascript" src="${staticMemberPath}/p2p/js/host_add/index.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/p2p/js/host_add/index.js"></script>
 <script src="${basePath}/passwordControl/index.js"
 	type="text/javascript"></script>
 </head>

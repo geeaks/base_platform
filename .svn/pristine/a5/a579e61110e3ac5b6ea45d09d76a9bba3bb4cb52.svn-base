@@ -9,7 +9,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.ModelAndView;
 
-public class MemberActionTest extends BaseTest{
+public class base_platformActionTest extends BaseTest{
 	MockHttpServletRequest request = new MockHttpServletRequest();    
     MockHttpServletResponse response = new MockHttpServletResponse();
 	

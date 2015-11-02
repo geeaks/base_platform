@@ -6,8 +6,8 @@
   <head>
     <title>先锋支付--修改用户支付密码</title>
 	<jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-    <link href="${staticMemberPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
-    <link href="${staticMemberPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css" />
+    <link href="${staticbase_platformPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
+    <link href="${staticbase_platformPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css" />
     <!--private js&css end-->
     <style type="text/css">
 p.tip span {font-weight:130px;

@@ -4,9 +4,9 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.alibaba.fastjson.JSON;
-import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.base_platformService;
 import com.ucf.customer.api.bo.BaseResultBO;
-import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.base_platformCommonResult;
 import com.ucf.customer.test.BaseTest;
 import com.ucf.customer.ws.bo.SmsBO;
 import com.ucf.customer.ws.service.UserServiceWS;
@@ -20,14 +20,14 @@ import com.ucf.customer.ws.service.UserServiceWS;
 public class MessageServiceTest extends BaseTest {
 	
 	@Autowired
-	private MemberService memberService;
+	private base_platformService base_platformService;
 	
 	@Autowired
 	private UserServiceWS userServiceWS;
 	
 	@Test
 	public void 发送自定义内容短信() throws Exception{
-		MemberCommonResult<String> sendSms = memberService.sendSms("18811511061","测试吧，自定义的");
+		base_platformCommonResult<String> sendSms = base_platformService.sendSms("18811511061","测试吧，自定义的");
 		System.err.println(JSON.toJSONString(sendSms));
 	}
 	
@@ -40,8 +40,8 @@ public class MessageServiceTest extends BaseTest {
 	 */
 	@Test
 	public void 发送自定义模板短信验证码() throws Exception{
-		MemberCommonResult<String> sendSms = 
-				memberService.sendTemplateSMS("M100007", "18811511061", "前边的%vfyCode%后边的");
+		base_platformCommonResult<String> sendSms = 
+				base_platformService.sendTemplateSMS("M100007", "18811511061", "前边的%vfyCode%后边的");
 		System.err.println(JSON.toJSONString(sendSms));
 	}
 
@@ -59,7 +59,7 @@ public class MessageServiceTest extends BaseTest {
 	
 	@Test
 	public void 发送模板短信验证码2() throws Exception{
-		BaseResultBO baseResultBO = memberService.sendVfyCodeSMS("18811511061");
+		BaseResultBO baseResultBO = base_platformService.sendVfyCodeSMS("18811511061");
 		System.err.println(JSON.toJSONString(baseResultBO));
 	}
 	
@@ -67,7 +67,7 @@ public class MessageServiceTest extends BaseTest {
 	public void 校验短信验证码() throws Exception{
 		String phone = "18811511061";
 		String code = "203515";
-		BaseResultBO checkVfyCode = memberService.checkVfyCode(phone, code);
+		BaseResultBO checkVfyCode = base_platformService.checkVfyCode(phone, code);
 		System.err.println(JSON.toJSONString(checkVfyCode));
 	}
 	

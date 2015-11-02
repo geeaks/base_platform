@@ -18,8 +18,8 @@ import com.ucf.customer.bo.ResultBo;
 import com.ucf.customer.pojo.UcfBankCard;
 import com.ucf.customer.pojo.UcfCard;
 import com.ucf.customer.pojo.UcfUser;
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAccess;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAccess;
 import com.ucf.customer.service.BankCardService;
 import com.ucf.customer.service.CardService;
 import com.ucf.customer.service.LoginService;
@@ -36,7 +36,7 @@ import com.ucf.trade.ws.service.TradeUcfWithdrawServiceWs;
 /**
  * 
  * 
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：WithDrawAction <br>
  * 类描述：提现action <br>
  * 创建人：李文静 <br>
@@ -89,10 +89,10 @@ public class WithDrawController extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping({ "/index.htm" })
 	public String index(HttpServletRequest request,HttpServletResponse response, Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		if(!"T".equals(user.getRealnameStatus())){
 			return "realNameAuth/index";
 		}
@@ -123,7 +123,7 @@ public class WithDrawController extends BaseAction {
 			HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 
 //		HttpSession session  = request.getSession();
-//		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+//		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 //		/**
 //		 * 获取用户卡的支付密码
 //		 */
@@ -165,7 +165,7 @@ public class WithDrawController extends BaseAction {
 //		tradeUcfWsParamBo.setBankCardNo((String) mapo2.get("cardNo"));
 //		tradeUcfWsParamBo.setBankCardUserName((String) mapo.get("userName"));
 //		tradeUcfWsParamBo.setBankNo(bankCard.getBankId().toUpperCase());
-//		tradeUcfWsParamBo.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+//		tradeUcfWsParamBo.setBizProduct(BizProduct.BIZ_PRODUCT_base_platform.getCode());
 //		tradeUcfWsParamBo.setIssuer(bankCard.getIssuer());
 //		if (LOGGER.isDebugEnabled()) {
 //			LOGGER.debug("提现接口传递参数：" + SensitiveInfoUtils.getJson(tradeUcfWsParamBo));//交易系统修改

@@ -40,9 +40,9 @@ import com.ucf.customer.pojo.UcfCard;
 import com.ucf.customer.pojo.UcfCustomer;
 import com.ucf.customer.pojo.UcfPerson;
 import com.ucf.customer.pojo.UcfUser;
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAccess;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAccess;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.service.BankCardService;
 import com.ucf.customer.service.LoginService;
 import com.ucf.customer.service.RealAuthService;
@@ -72,7 +72,7 @@ import com.ucf.trade.ws.service.TradeUcfSearchCardBINServiceWs;
 /**
  * 
  * 
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：BankCardAction <br>
  * 类描述：银行卡绑定查询等操作 <br>
  * 创建人：李文静 <br>
@@ -123,11 +123,11 @@ public class BankCardAction extends BaseAction {
 	 * @throws Exception
 	 */
 	@RequestMapping({ "/index.htm" })
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	public String toManageBankCard(HttpServletRequest request,
 			HttpServletResponse response, Model model) throws Exception {
 		LOGGER.debug("  manageBankCard   !");
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		// 判断用户是否绑卡
 		UcfBankCard verifyBank = new UcfBankCard();
 		verifyBank.setUserId(user.getUserId());
@@ -171,14 +171,14 @@ public class BankCardAction extends BaseAction {
 	 * @return
 	 */
 	@RequestMapping(value = "/firstaddbank.htm")
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	public String firstaddbank(Model model, HttpServletRequest request,
 			HttpServletResponse response) {
-		MemberAgent memberAgent = getMemberAgent(request, response);
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
 		
 		// 判断用户是否绑卡
 		UcfBankCard verifyBank = new UcfBankCard();
-		verifyBank.setUserId(memberAgent.getId());
+		verifyBank.setUserId(base_platformAgent.getId());
 		List<UcfBankCard> list = loginService.queryUcfBankCard(verifyBank);
 		if (list != null) {
 			model.addAttribute("msg", "用户已经绑卡,不能再次进行首次绑卡");
@@ -186,13 +186,13 @@ public class BankCardAction extends BaseAction {
 			return "redirect:/bank/authSuc.htm";
 		}
 
-		String certNo = memberAgent.getCertNo();
-		String mobile = memberAgent.getMobile();
-		Map<Object, Object> mapo = loginService.queryUcfUserCell(memberAgent
+		String certNo = base_platformAgent.getCertNo();
+		String mobile = base_platformAgent.getMobile();
+		Map<Object, Object> mapo = loginService.queryUcfUserCell(base_platformAgent
 				.getId());
 		String cell = (String) mapo.get("cell");
 		model.addAttribute("cell", cell);
-		model.addAttribute("userName", memberAgent.getRealName());
+		model.addAttribute("userName", base_platformAgent.getRealName());
 		model.addAttribute("mobile", MobileUtil.mobileNoEncrypt(mobile));
 		model.addAttribute("certNo", certNo);
 		model.addAttribute("certNohidden", IdCardUtil.IdCardNoEncrypt(certNo));
@@ -219,10 +219,10 @@ public class BankCardAction extends BaseAction {
 		paypwd = (String)request.getAttribute("payPassword");
 		final HttpSession session = request.getSession();
 		//记录绑卡日志
-		MemberAgent memberAgent = getMemberAgent(request, response);
-		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(memberAgent.getRealName())+","+memberAgent.getId()+"]进行了实名绑卡!");
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
+		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(base_platformAgent.getRealName())+","+base_platformAgent.getId()+"]进行了实名绑卡!");
 		
-		final UcfUser ucfUser = loginService.queryUserInfo(memberAgent.getId());
+		final UcfUser ucfUser = loginService.queryUserInfo(base_platformAgent.getId());
 		UcfBankCard insertUcfBankCard = new UcfBankCard();
 		insertUcfBankCard.setBankId(cardNo);
 		insertUcfBankCard.setUserId(ucfUser.getUserId());
@@ -280,7 +280,7 @@ public class BankCardAction extends BaseAction {
 
 		// 新增提现银行卡
 		// 生成客户信息/个人信息
-		if (!memberAgent.isCustomer()) {
+		if (!base_platformAgent.isCustomer()) {
 			Date date = new Date();
 			final UcfCustomer customer = new UcfCustomer();
 			if (certNo.contains("*")) {
@@ -375,15 +375,15 @@ public class BankCardAction extends BaseAction {
 				// ucfUser.setVerifyStatus(Constants.VERIFY_STATUS_T);
 				session.setAttribute("user", ucfUser);
 				// 实名认证后更新session
-				memberAgent.setBindCard(true);
-				memberAgent.setCustomer(true);
-				session.setAttribute("MemberAgent", memberAgent);
+				base_platformAgent.setBindCard(true);
+				base_platformAgent.setCustomer(true);
+				session.setAttribute("base_platformAgent", base_platformAgent);
 				cleanMobileCode(request, response, cell);
 				return "realNameAuth/addbanksuc";
 			} else {
 				return "common/error";
 			}
-		} else if (memberAgent.isCustomer()) {
+		} else if (base_platformAgent.isCustomer()) {
 			LOGGER.info("-------用户已经实名认证开始绑卡------");
 			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
 						// the code in this method executes in a transactional
@@ -449,9 +449,9 @@ public class BankCardAction extends BaseAction {
 				session.setAttribute("user", ucfUser);
 
 				// 实名认证后更新session
-				memberAgent.setBindCard(true);
-				memberAgent.setCustomer(true);
-				session.setAttribute("MemberAgent", memberAgent);
+				base_platformAgent.setBindCard(true);
+				base_platformAgent.setCustomer(true);
+				session.setAttribute("base_platformAgent", base_platformAgent);
 				cleanMobileCode(request, response, cell);
 				return "realNameAuth/addbanksuc";
 			} else {
@@ -474,11 +474,11 @@ public class BankCardAction extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping({ "/add.htm" })
 	public String addBankCard(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception {
 		LOGGER.debug("add  bank  entry !");
-		UcfUser ucfUser = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		UcfUser ucfUser = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		Map<Object, Object> mapo = new HashMap<Object, Object>();
 		mapo = loginService.queryUcfUserCell(ucfUser.getUserId());
 		setInfo(model, ucfUser, mapo);
@@ -503,7 +503,7 @@ public class BankCardAction extends BaseAction {
 		model.addAttribute("user", ucfUser);
 	}
 
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/add.htm", method = RequestMethod.POST)
 	public String addBankCardPro(@RequestParam("vercode") String vercode,
 			@RequestParam("cardNo") String cardNo,
@@ -517,7 +517,7 @@ public class BankCardAction extends BaseAction {
 			HttpServletResponse response, Model model) throws Exception {
 		LOGGER.debug("add  bankpro  entry !");
 		pwd = (String)request.getAttribute("payPassword");
-		UcfUser ucfUser = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		UcfUser ucfUser = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		Map<Object, Object> mapo = new HashMap<Object, Object>();
 		mapo = loginService.queryUcfUserCell(ucfUser.getUserId());
 		String cell = (String) mapo.get("cell");
@@ -576,8 +576,8 @@ public class BankCardAction extends BaseAction {
 		insertBankCard.setUseType(EnumBankCardUseType.CONSUME.getCode());
 		this.loginService.insertBankCardInfo(insertBankCard);
 		//记录绑卡日志
-		MemberAgent memberAgent = getMemberAgent(request, response);
-		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(memberAgent.getRealName())+","+memberAgent.getId()+"]新增银行卡成功!");
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
+		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(base_platformAgent.getRealName())+","+base_platformAgent.getId()+"]新增银行卡成功!");
 		// 清除短信验证码
 		cleanMobileCode(request, response, cell);
 		return "bank/addbanksuc";
@@ -593,13 +593,13 @@ public class BankCardAction extends BaseAction {
 	 * @throws Exception
 	 */
 	@RequestMapping(value = "/delete.htm", method = RequestMethod.GET)
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	public String deleteBankCard(@RequestParam("id") String id,
 			HttpServletRequest request, HttpServletResponse response,
 			Model model) throws Exception {
 		LOGGER.debug("  deleteBankCard   !");
 		HttpSession session = request.getSession();
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,
 				response).getId());
 
 		String userName = user.getRealName();
@@ -639,10 +639,10 @@ public class BankCardAction extends BaseAction {
 		return "bank/deleteBankCard";
 	}
 	
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/authSuc.htm")
 	public String authSuc(HttpServletRequest request,HttpServletResponse response, Model model) throws Exception{
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
 		String certValidEndDate=sdf.format(user.getCertValidEndDate());
 		model.addAttribute("realName", user.getRealName());
@@ -662,13 +662,13 @@ public class BankCardAction extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/delete.htm", method = RequestMethod.POST)
 	public String deleteBankCardPro(@RequestParam("vercode") String vercode,HttpServletRequest request,HttpServletResponse response, Model model) throws Exception {
 		LOGGER.debug("  deleteBankCardPro   !");
 		String pwd = (String) request.getAttribute("payPassword");
 		HttpSession session = request.getSession();
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		UcfBankCard othercard = (UcfBankCard) session.getAttribute("card");
 		model.addAttribute("branchname", othercard.getBranchname());
 		model.addAttribute("province", othercard.getProvince());
@@ -696,8 +696,8 @@ public class BankCardAction extends BaseAction {
 		card = this.loginService.queryUcfBankCard(card).get(0);
 		bankCardService.deleteUcfBankCard(user.getUserId(), othercard.getCardNo());
 		//记录绑卡日志
-		MemberAgent memberAgent = getMemberAgent(request, response);
-		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(memberAgent.getRealName())+","+memberAgent.getId()+"]删除银行卡成功!");
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
+		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(base_platformAgent.getRealName())+","+base_platformAgent.getId()+"]删除银行卡成功!");
 		cleanMobileCode(request, response, user.getCell());
 		return "bank/deleteBankCardSuc";
 	}
@@ -712,12 +712,12 @@ public class BankCardAction extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/modify.htm", method = RequestMethod.GET)
 	public String modifyBankCard(@RequestParam("id") String id,HttpServletRequest request, HttpServletResponse response,Model model) throws Exception {
 		LOGGER.debug("  modifyBankCard   !");
 		HttpSession session = request.getSession();
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 
 		String mobile = user.getCell();
 		String userName = user.getRealName();
@@ -762,7 +762,7 @@ public class BankCardAction extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping(value = "/modify.htm", method = RequestMethod.POST)
 	public String modifyBankCardPro(@RequestParam("vercode") String vercode,
 			@RequestParam("pwd") String pwd,
@@ -776,7 +776,7 @@ public class BankCardAction extends BaseAction {
 		pwd = (String)request.getAttribute("payPassword");
 		HttpSession session = request.getSession();
 
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request,response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request,response).getId());
 		String cardId = (String) session.getAttribute("cardId");
 		UcfBankCard card = new UcfBankCard();
 		card.setId(cardId);
@@ -829,8 +829,8 @@ public class BankCardAction extends BaseAction {
 		othercard.setIssuer(issuer);
 		this.loginService.updateBankCard(othercard);
 		//记录绑卡日志
-		MemberAgent memberAgent = getMemberAgent(request, response);
-		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(memberAgent.getRealName())+","+memberAgent.getId()+"]修改银行卡成功!");
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
+		LOGGER.info("会员["+SensitiveInfoUtils.chineseName(base_platformAgent.getRealName())+","+base_platformAgent.getId()+"]修改银行卡成功!");
 		model.addAttribute("userName", user.getRealName());
 		cleanMobileCode(request, response, cell);
 		return "bank/modifyBankCardSuc";

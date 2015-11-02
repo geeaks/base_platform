@@ -4,7 +4,7 @@
      <div class="head-top">
 			<div class="container">
 	          <ul class="">
-			    <li class="margin-left0"><a href="${staticMemberPath}/help/bangzhuzhongxin.html">帮助中心</a></li>
+			    <li class="margin-left0"><a href="${staticbase_platformPath}/help/bangzhuzhongxin.html">帮助中心</a></li>
                 <li class="short-line">|</li>
 	            <li class=""><a href="${basePath}/reg/index.htm">注册</a></li>
                 <li class="short-line">|</li>
@@ -23,7 +23,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a href="${basePath}/login/index.htm"><img src="${staticMemberPath}/images/logo.png" alt="..."></a>
+              <a href="${basePath}/login/index.htm"><img src="${staticbase_platformPath}/images/logo.png" alt="..."></a>
             </div>
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
@@ -38,7 +38,7 @@
                     <li class="divider"></li>
                   </ul-->
                 </li>
-               <li class="dropdown"><a href="${staticMemberPath}/help/anquanzhongxin.html" class="dropdown-toggle g-aq" >安全中心</a></li>
+               <li class="dropdown"><a href="${staticbase_platformPath}/help/anquanzhongxin.html" class="dropdown-toggle g-aq" >安全中心</a></li>
 <li class="dropdown"><a href="#" class="dropdown-toggle g-yy">应用中心</a></li>
                 <li class="dropdown dropdown_li">
                   <a href="#" class="dropdown-toggle g-sj pdr0" data-toggle="dropdown">商家服务 <b class="caret"></b></a>

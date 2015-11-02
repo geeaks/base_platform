@@ -5,7 +5,7 @@ package com.ucf.customer.ws.bo.enterprise;
  * @author zhanglei
  *
  */
-public class OuterEnterpriseMemberRegRequestBO extends EnterpriseMemberRegRequestBO{
+public class OuterEnterprisebase_platformRegRequestBO extends Enterprisebase_platformRegRequestBO{
 	
 	private static final long serialVersionUID = -8720695837518359730L;
 	//平台商id	
@@ -28,7 +28,7 @@ public class OuterEnterpriseMemberRegRequestBO extends EnterpriseMemberRegReques
 	}
 	/*
 	 * 外部商户关联注册 只可以注册企业会员，不可注册为商户
-	 * @see com.ucf.customer.ws.bo.enterprise.EnterpriseMemberRegRequestBO#getIsSignCustomer()
+	 * @see com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformRegRequestBO#getIsSignCustomer()
 	 */
 	@Override
 	public String getIsSignCustomer() {

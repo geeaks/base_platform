@@ -26,7 +26,7 @@ import com.ucf.customer.ws.bo.BaseBO;
 import com.ucf.customer.ws.bo.CardInfoParamBO;
 import com.ucf.customer.ws.bo.CardInfoReturnValueBO;
 import com.ucf.customer.ws.bo.VerifyBO;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.service.CardInfoWS;
 import com.ucf.onlinepay.framework.common.util.StringUtil;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -121,26 +121,26 @@ public class CardInfoWSImpl implements CardInfoWS {
 		VerifyBO verifyBO = new VerifyBO();
 		// 参数校验
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId) || payPassword==null || payPassword.length ==0 ) {
-			verifyBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			verifyBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
-			verifyBO.setStatus(EnumMemberCode.ERROR.getCode());
+			verifyBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			verifyBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
+			verifyBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			return verifyBO;
 		}
 		ResultBo resultBo = userInfoService.checkPayPwd(userId, payPassword);
 		if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
-			verifyBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			verifyBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-			verifyBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+			verifyBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			verifyBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+			verifyBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
 		}else{
 			if(resultBo.getErrorTimes() == 5){
-				verifyBO.setRespCode(EnumMemberCode.VERIFY_LOGIN_PASSWORD_FAIL_FIVE_TIMES.getCode());
-				verifyBO.setRespMsg(EnumMemberCode.VERIFY_LOGIN_PASSWORD_FAIL_FIVE_TIMES.getMsgS());
-				verifyBO.setStatus(EnumMemberCode.ERROR.getCode());
+				verifyBO.setRespCode(Enumbase_platformCode.VERIFY_LOGIN_PASSWORD_FAIL_FIVE_TIMES.getCode());
+				verifyBO.setRespMsg(Enumbase_platformCode.VERIFY_LOGIN_PASSWORD_FAIL_FIVE_TIMES.getMsgS());
+				verifyBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				verifyBO.setErrorTimes(5);
 			}else{
-				verifyBO.setRespCode(EnumMemberCode.VERIFY_PAY_PASSWORD_FAIL.getCode());
-				verifyBO.setRespMsg(EnumMemberCode.VERIFY_PAY_PASSWORD_FAIL.getMsgS());
-				verifyBO.setStatus(EnumMemberCode.ERROR.getCode());
+				verifyBO.setRespCode(Enumbase_platformCode.VERIFY_PAY_PASSWORD_FAIL.getCode());
+				verifyBO.setRespMsg(Enumbase_platformCode.VERIFY_PAY_PASSWORD_FAIL.getMsgS());
+				verifyBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				verifyBO.setErrorTimes(resultBo.getErrorTimes());
 			}
 		}
@@ -156,21 +156,21 @@ public class CardInfoWSImpl implements CardInfoWS {
 		BaseBO baseBO = new BaseBO();
 		// 参数校验
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId) || payPassword == null || payPassword.length == 0) {
-			baseBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
 			return baseBO;
 		}
 		try {
 			userInfoService.resetPayPwd(userId, payPassword);	
-			baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-			baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 			return baseBO;
 		} catch (Exception e1) {
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 			return baseBO;
 		}
 	}
@@ -184,36 +184,36 @@ public class CardInfoWSImpl implements CardInfoWS {
 		BaseBO baseBO = new BaseBO();
 		// 参数校验
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId) || payPassword==null || payPassword.length == 0 || newPayPassword==null || newPayPassword.length==0) {
-			baseBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
 			return baseBO;
 		}
 		try {
 			UcfCard ucfCard = cardService.queryCardInfo(userId);
 			if(ucfCard==null){
-				baseBO.setStatus(EnumMemberCode.NO_EXIST_USER.getCode());
-				baseBO.setRespCode(EnumMemberCode.NO_EXIST_USER.getCode());
-				baseBO.setRespMsg(EnumMemberCode.NO_EXIST_USER.getMsgS());
+				baseBO.setStatus(Enumbase_platformCode.NO_EXIST_USER.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.NO_EXIST_USER.getCode());
+				baseBO.setRespMsg(Enumbase_platformCode.NO_EXIST_USER.getMsgS());
 				return baseBO;
 			}
 			ResultBo resultBo = userInfoService.checkPayPwd(userId, payPassword);
 			if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
 				userInfoService.resetPayPwd(userId, newPayPassword);
-				baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				baseBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 				return baseBO;
 			}else{
-				baseBO.setStatus(EnumMemberCode.WRONG_PAY_PASSWORD.getCode());
-				baseBO.setRespCode(EnumMemberCode.WRONG_PAY_PASSWORD.getCode());
+				baseBO.setStatus(Enumbase_platformCode.WRONG_PAY_PASSWORD.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.WRONG_PAY_PASSWORD.getCode());
 				baseBO.setRespMsg(resultBo.getMsg());
 				return baseBO;
 			}
 		} catch (Exception e) {
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 			return baseBO;
 		}
 	}

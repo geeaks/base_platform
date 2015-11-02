@@ -62,11 +62,11 @@
      <div class="head-top">
 			<div class="container">
 	          <ul class="">
-			    <li class="margin-left0"><a href="${staticMemberPath}/help/bangzhuzhongxin.html">帮助中心</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line2.png"></li>
-	            <li class=""><a href="${staticMemberPath}/reg/index.htm">注册</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line2.png"></li>
-	            <li class=""><a href="${staticMemberPath}/login/index.htm">登录</a></li>
+			    <li class="margin-left0"><a href="${staticbase_platformPath}/help/bangzhuzhongxin.html">帮助中心</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line2.png"></li>
+	            <li class=""><a href="${staticbase_platformPath}/reg/index.htm">注册</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line2.png"></li>
+	            <li class=""><a href="${staticbase_platformPath}/login/index.htm">登录</a></li>
 	          </ul>
 			</div>
         </div>
@@ -80,13 +80,13 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </button>
-              <a href="${staticMemberPath}/login/index.htm"><img src="${staticMemberPath}/images/logo.png" alt="..."></a>
+              <a href="${staticbase_platformPath}/login/index.htm"><img src="${staticbase_platformPath}/images/logo.png" alt="..."></a>
             </div>
             <div class="navbar-collapse collapse">
               <ul class="nav navbar-nav">
-               <li class="dropdown  "><a href="${staticMemberPath}/" class="dropdown-toggle g-index " id="g-color" >首页</a></li>
+               <li class="dropdown  "><a href="${staticbase_platformPath}/" class="dropdown-toggle g-index " id="g-color" >首页</a></li>
                 <li class="dropdown">
-                  <a href="${staticMemberPath}/securityCenter/zhuce.html" class="dropdown-toggle g-gr" >个人服务 <!--b class="caret"></b--></a>
+                  <a href="${staticbase_platformPath}/securityCenter/zhuce.html" class="dropdown-toggle g-gr" >个人服务 <!--b class="caret"></b--></a>
                   <!--ul class="dropdown-menu">
                     <li><a href="#">转账付款</a></li>
                     <li><a href="#">水电煤缴费</a></li>
@@ -95,8 +95,8 @@
                     <li class="divider"></li>
                   </ul-->
                 </li>
-               <li class="dropdown"><a href="${staticMemberPath}/securityCenter/anquanzhongxin.html" class="dropdown-toggle g-aq" >安全中心</a></li>
-<li class="dropdown"><a href="${staticMemberPath}/securityCenter/kuaijiezhifu.html" class="dropdown-toggle g-yy">付款方式</a></li>
+               <li class="dropdown"><a href="${staticbase_platformPath}/securityCenter/anquanzhongxin.html" class="dropdown-toggle g-aq" >安全中心</a></li>
+<li class="dropdown"><a href="${staticbase_platformPath}/securityCenter/kuaijiezhifu.html" class="dropdown-toggle g-yy">付款方式</a></li>
                 <li class="dropdown dropdown_li">
                   <a href="https://b.ucfpay.com" class="dropdown-toggle g-sj pdr0">商家服务 <b class="caret"></b></a>
                   <!--ul class="dropdown-menu">
@@ -159,18 +159,18 @@ $(document).ready(function(){
 				</span>
 			</div>
 			<div style="height:40px;" >
-				<span class="name-img"><img src="${staticMemberPath}/images/user.jpg"></img></span>
+				<span class="name-img"><img src="${staticbase_platformPath}/images/user.jpg"></img></span>
 				<input type="text" value="${user.cell}" id="username" name="username" class="input-block-level " maxlength="11" placeholder=" 用户名">
 			</div>
 			<div style="height: 40px;">
-				<span class="pass-word-img add-mgt10"><img src="${staticMemberPath}/images/password.jpg"></img></span>
+				<span class="pass-word-img add-mgt10"><img src="${staticbase_platformPath}/images/password.jpg"></img></span>
 				<jsp:include page="../p2p/passwordControl/resource_pwd_login.jsp" />
 			</div>
                
                     <div class="row" style="height: 40px;">
                     	<div class="col-md-6" style="padding:0">
 		                    <span class="pass-word-img add-mgt10">
-		                    	<img src="${staticMemberPath}/images/text.jpg"/>
+		                    	<img src="${staticbase_platformPath}/images/text.jpg"/>
 		                    </span>
 		                    <input type="text" id="checkCode" name="checkCode"   maxlength="4"  class="input-block-level wx add-mgt10" placeholder=" 验证码">
 	                    </div>
@@ -206,25 +206,25 @@ $(document).ready(function(){
       <div class="carousel-inner">
         <div class="item active add-image1">
           <div class="carousel-caption">
-          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          <a class="g-zc" href="${staticbase_platformPath}/reg/index.htm"></a>
           </div>
         </div>
         <div class="item add-image2">
           <!--img src="images/banner2.png" alt="..."-->
           <div class="carousel-caption">
-          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          <a class="g-zc" href="${staticbase_platformPath}/reg/index.htm"></a>
           </div>
         </div>
         <div class="item add-image3">
           <!--img src="images/banner.png" alt="..."-->
           <div class="carousel-caption">
-          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          <a class="g-zc" href="${staticbase_platformPath}/reg/index.htm"></a>
           </div>
         </div>
         <div class="item add-image4">
           <!--img src="images/banner.png" alt="..."-->
           <div class="carousel-caption">
-          <a class="g-zc" href="${staticMemberPath}/reg/index.htm"></a>
+          <a class="g-zc" href="${staticbase_platformPath}/reg/index.htm"></a>
           </div>
         </div>
       </div>
@@ -247,66 +247,66 @@ $(document).ready(function(){
       <!-- Three columns of text below the carousel -->
       <div class="row mgt">
         <div class="col-lg-4">
-              <img src="${staticMemberPath}/images/index-title.png">
+              <img src="${staticbase_platformPath}/images/index-title.png">
               <ul class="index-bottom-list">
-                <li><a href="${staticMemberPath}/company/guanyuwomen.html">关于我们</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/company/yewutixi.html">公司业务体系</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/company/gongsiyuanjing.html">公司愿景</a></li>
+                <li><a href="${staticbase_platformPath}/company/guanyuwomen.html">关于我们</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/company/yewutixi.html">公司业务体系</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/company/gongsiyuanjing.html">公司愿景</a></li>
               </ul></br>
-              <div class="index-bottom-list2"><a class="color666" href="${staticMemberPath}/company/gongsigonggao.html" >集团领导莅临我公司视察指导工作</a></div>
+              <div class="index-bottom-list2"><a class="color666" href="${staticbase_platformPath}/company/gongsigonggao.html" >集团领导莅临我公司视察指导工作</a></div>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
-              <img src="${staticMemberPath}/images/index-title2.png">
+              <img src="${staticbase_platformPath}/images/index-title2.png">
               <ul class="index-bottom-list">
-                <li><a href="${staticMemberPath}/help/zhanghuliushui.html">账户服务</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/help/chongzhi.html">充值</a> · <a href="${staticMemberPath}/help/tixian.html">提现</a> · <a href="${staticMemberPath}/help/zhanghuliushui.html">交易</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/help/zhanghuliushui.html">账户服务</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/help/chongzhi.html">充值</a> · <a href="${staticbase_platformPath}/help/tixian.html">提现</a> · <a href="${staticbase_platformPath}/help/zhanghuliushui.html">交易</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
                 <li><a href="${basePath}/login/gotoSafeBase.htm">安全服务</a></li>
               </ul></br>
-              <div class="index-bottom-list3"><a class="color666" href="${staticMemberPath}/company/gerengonggao.html" >先锋支付个人平台新版门户上线啦</a></div>
+              <div class="index-bottom-list3"><a class="color666" href="${staticbase_platformPath}/company/gerengonggao.html" >先锋支付个人平台新版门户上线啦</a></div>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4">
-          	<img src="${staticMemberPath}/images/index-title3.png">
+          	<img src="${staticbase_platformPath}/images/index-title3.png">
               <ul class="index-bottom-list">
-                <li><a href="${staticMemberPath}/merchant/wangyinzhifu.html">网银支付</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/merchant/kuaijiezhifu.html">快捷支付</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/merchant/zijintuoguan.html">资金托管平台</a></li>
+                <li><a href="${staticbase_platformPath}/merchant/wangyinzhifu.html">网银支付</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/merchant/kuaijiezhifu.html">快捷支付</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/merchant/zijintuoguan.html">资金托管平台</a></li>
               </ul></br>
-              <div class="index-bottom-list4"><a class="color666" href="${staticMemberPath}/company/qiyegonggao.html" class="color999">先锋支付企业平台新版门户上线啦</a></div>
+              <div class="index-bottom-list4"><a class="color666" href="${staticbase_platformPath}/company/qiyegonggao.html" class="color999">先锋支付企业平台新版门户上线啦</a></div>
         </div><!-- /.col-lg-4 -->
       </div><!-- /.row -->
       <div class="row mgt g-border-top mgb30">
         <div class="col-lg-4 rs-bg">
-              <img src="${staticMemberPath}/images/rs.png">
+              <img src="${staticbase_platformPath}/images/rs.png">
               <ul class="index-bottom-list">
-                <li><a href="${staticMemberPath}/company/jiaruwomen.html">加入我们</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/company/tuanduijianshe.html">团队建设</a></li>
-                 <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/company/lianxiwomen.html">联系我们</a></li>
+                <li><a href="${staticbase_platformPath}/company/jiaruwomen.html">加入我们</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/company/tuanduijianshe.html">团队建设</a></li>
+                 <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/company/lianxiwomen.html">联系我们</a></li>
               </ul>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 rs-bg2">
-              <img src="${staticMemberPath}/images/rs2.png">
+              <img src="${staticbase_platformPath}/images/rs2.png">
               <ul class="index-bottom-list">
-                <li><a href="${staticMemberPath}/help/bangzhuzhongxin.html">新手教学</a></li>
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/help/zizhufuwu.html">个人支付服务实操</a></li>
+                <li><a href="${staticbase_platformPath}/help/bangzhuzhongxin.html">新手教学</a></li>
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/help/zizhufuwu.html">个人支付服务实操</a></li>
               </ul>
         </div><!-- /.col-lg-4 -->
         <div class="col-lg-4 rs-bg3">
-              <img src="${staticMemberPath}/images/rs3.png">
+              <img src="${staticbase_platformPath}/images/rs3.png">
               <ul class="index-bottom-list">
-                <li><a href="${staticMemberPath}/merchant/fuwutixi.html">服务体系</a></li> 
-                <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/merchant/fuwutuandui.html">服务团队</a></li>
-                 <li class="short-line"><img src="${staticMemberPath}/images/short-line.png"></li>
-                <li><a href="${staticMemberPath}/merchant/fuwukaitong.html">服务开通</a></li>
+                <li><a href="${staticbase_platformPath}/merchant/fuwutixi.html">服务体系</a></li> 
+                <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/merchant/fuwutuandui.html">服务团队</a></li>
+                 <li class="short-line"><img src="${staticbase_platformPath}/images/short-line.png"></li>
+                <li><a href="${staticbase_platformPath}/merchant/fuwukaitong.html">服务开通</a></li>
               </ul>
 				</div><!-- /.col-lg-4 -->
 			<div class="clear"></div>

@@ -4,14 +4,14 @@
 <head>
 <title>先锋支付--用户注册</title>
 <jsp:include page="/WEB-INF/views/jsp/common/oldcommon.jsp" />
-<link href="${staticMemberPath}/new/css/frist-register.css" rel="stylesheet" type="text/css" />
-<link href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet" />
+<link href="${staticbase_platformPath}/new/css/frist-register.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet" />
 </head>
 <body>
 	<c:import url="headforregister.jsp"></c:import>
 	<section class="bgc-gray">
 	<div class="gs-center register">
-		<img src="${staticMemberPath}/images/fund/asd_02.png" />
+		<img src="${staticbase_platformPath}/images/fund/asd_02.png" />
 		<div class="tab-content help-tab-content border-none">
 			<div class="tab-pane active">
 				<div class="background-wite">
@@ -142,7 +142,7 @@ $('#vfyCode').keyup(function() {
 		});
 	});
 </script>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/zh_CN.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/zh_CN.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
 </html>

@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.utils.enums.EnumsTrueFlase;
 import com.ucf.onlinepay.framework.common.util.StringUtil;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -20,7 +20,7 @@ import com.ucf.platform.framework.core.log.UcfLoggerFactory;
 /**
  * 
  * 
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：BaseAction <br>
  * 类描述：aciton 基类 共用的方法推荐放到这里来 <br>
  * 创建人：李文静 <br>
@@ -48,12 +48,12 @@ public abstract class BaseAction {
 	 * @param response
 	 * @return
 	 */
-	public MemberAgent getMemberAgent(HttpServletRequest request,
+	public base_platformAgent getbase_platformAgent(HttpServletRequest request,
 			HttpServletResponse response) {
 		HttpSession session = request.getSession();
-		MemberAgent memberAgent = (MemberAgent) session
-				.getAttribute("MemberAgent");
-		return memberAgent;
+		base_platformAgent base_platformAgent = (base_platformAgent) session
+				.getAttribute("base_platformAgent");
+		return base_platformAgent;
 	}
 
 	/**
@@ -83,9 +83,9 @@ public abstract class BaseAction {
 		if (session==null) {
 			return false;
 		}
-		MemberAgent memberAgent = (MemberAgent) session
-				.getAttribute("MemberAgent");
-		return memberAgent == null ? false : true;
+		base_platformAgent base_platformAgent = (base_platformAgent) session
+				.getAttribute("base_platformAgent");
+		return base_platformAgent == null ? false : true;
 	}
 
 	/**

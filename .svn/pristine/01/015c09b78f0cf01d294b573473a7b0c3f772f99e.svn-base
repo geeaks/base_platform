@@ -4,8 +4,8 @@
 <head>
 <title>先锋支付--会员</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/new/css/host_open.css" rel="stylesheet" type="text/css" />
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/host_open.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
 </head>
 <body>
 <c:import url="/common/head.htm"></c:import>

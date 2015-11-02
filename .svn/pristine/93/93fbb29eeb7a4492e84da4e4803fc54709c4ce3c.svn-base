@@ -7,7 +7,7 @@
 <title>先锋支付</title>
 <jsp:include page="commons/resource_css.jsp"/>
 <jsp:include page="commons/resource_js.jsp"/>
-<script type="text/javascript" src="${staticMemberPath}/p2p/js/use_reg/index.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/p2p/js/use_reg/index.js"></script>
 </head>
 <body>
 <section>

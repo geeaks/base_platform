@@ -3,7 +3,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
  * 
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：EnumRegisterFrom <br>
  * 类描述：注册来源 <br>
  * 创建人：李文静 <br>
@@ -16,7 +16,7 @@ package com.ucf.customer.ws.enums;
  * 
  */
 public enum EnumRegisterFrom {
-	MEMBER_FROM("member", "会员系统"), 
+	base_platform_FROM("base_platform", "会员系统"), 
 	P2P_FROM("P2P", "P2P系统"),
 	GZB_FROM("GZB", "工资宝系统"),
 	MANAGED_FROM("managed", "外部系统"),

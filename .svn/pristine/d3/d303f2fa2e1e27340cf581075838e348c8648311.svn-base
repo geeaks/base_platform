@@ -4,7 +4,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
 *    
-* 项目名称：member   
+* 项目名称：base_platform   
 * 类名称：EnumAccountType   
 * 类描述：   账户类型枚举
 * 创建人：李文静 

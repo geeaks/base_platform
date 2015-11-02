@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.utils.enums.EnumSessionKey;
 
 
@@ -22,8 +22,8 @@ public abstract class BaseController {
 	 * @param request
 	 * @return
 	 */
-	public MemberAgent getMemberAgent(HttpServletRequest request) {		
-		return (MemberAgent) request.getSession().getAttribute(EnumSessionKey.MEMBER_AGENT_KEY.getKey());
+	public base_platformAgent getbase_platformAgent(HttpServletRequest request) {		
+		return (base_platformAgent) request.getSession().getAttribute(EnumSessionKey.base_platform_AGENT_KEY.getKey());
 	}
 	
 	public boolean checkImgCode(HttpServletRequest request,String imgCode) {
@@ -43,8 +43,8 @@ public abstract class BaseController {
 	 * @return
 	 */
 	public boolean isLogin(HttpServletRequest request) {
-		MemberAgent memberAgent = getMemberAgent(request);
-		return memberAgent == null ? false : true;
+		base_platformAgent base_platformAgent = getbase_platformAgent(request);
+		return base_platformAgent == null ? false : true;
 	}
 	
 	

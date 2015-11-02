@@ -42,7 +42,7 @@ import com.ucf.customer.utils.exception.P2PCustomerException;
 import com.ucf.customer.ws.bo.SmsBO;
 import com.ucf.customer.ws.bo.UserInfoBO;
 import com.ucf.customer.ws.enums.EnumIdCardType;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.service.UserServiceWS;
 import com.ucf.onlinepay.framework.common.util.StringUtil;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -230,7 +230,7 @@ public class PasswordManageController {
 	 */
 	private boolean checkmMbileCode(HttpServletRequest request, HttpServletResponse response, String vercodeInput, String mobileNo) {
 		try {
-			SmsBO smsBO = userServiceWS.checkSms("member", mobileNo, vercodeInput);
+			SmsBO smsBO = userServiceWS.checkSms("base_platform", mobileNo, vercodeInput);
 			return smsBO.isCheckResult();
 		} catch (Exception e) {
 			LOGGER.error("调用会员短信校验接口错误");
@@ -552,8 +552,8 @@ public class PasswordManageController {
 			return;
 		}
 		try {
-			String redisUserKey = "MEMBER_P2P_FIND_PAY_PWD_SMS_USER_TIME_" + user.getUserId();
-			String redisPhoneKey = "MEMBER_P2P_FIND_PAY_PWD_SMS_PHONE_TIME_" + user.getUserId();
+			String redisUserKey = "base_platform_P2P_FIND_PAY_PWD_SMS_USER_TIME_" + user.getUserId();
+			String redisPhoneKey = "base_platform_P2P_FIND_PAY_PWD_SMS_PHONE_TIME_" + user.getUserId();
 			int utimes = 0;
 			int ptimes = 0;
 			if (atomic.isExist(redisUserKey)) {
@@ -568,8 +568,8 @@ public class PasswordManageController {
 				printWriter.close();
 				return;
 			}else{
-				SmsBO vfyCode = userServiceWS.sendSms("member", cellNo);
-				if (!vfyCode.getRespCode().equals(EnumMemberCode.SUCCESS.getCode())) {
+				SmsBO vfyCode = userServiceWS.sendSms("base_platform", cellNo);
+				if (!vfyCode.getRespCode().equals(Enumbase_platformCode.SUCCESS.getCode())) {
 					printWriter.write(vfyCode.getRespMsg());
 				} else {
 					session.setAttribute("vfyCode|"+cellNo, vfyCode.getCode());

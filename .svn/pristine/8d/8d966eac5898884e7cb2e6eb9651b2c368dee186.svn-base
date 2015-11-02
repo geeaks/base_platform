@@ -18,7 +18,7 @@ public class WebTestServer {
         conn.setPort(8081);
         server.setConnectors(new Connector[] { conn });
 
-        WebAppContext webapp = new WebAppContext("src/main/webapp", "/member");
+        WebAppContext webapp = new WebAppContext("src/main/webapp", "/base_platform");
         server.setHandler(webapp);
         server.start();
     }

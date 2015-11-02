@@ -5,7 +5,7 @@
 <head>
 <title>先锋支付--会员中心</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet"/>
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet"/>
 </head>
 <title>先锋支付-交易记录</title>
 <script type="text/javascript">
@@ -248,7 +248,7 @@
 														<div class="tan2" style="position:static;">点击查看明细</div>
 														<div class="tri2" style="position:static;margin-left: 40px;margin-top: -5px;"></div>
 													</div>
-													<img src="${staticMemberPath}/images/jt2.jpg">
+													<img src="${staticbase_platformPath}/images/jt2.jpg">
 												</span>
 											</a>
 			                            </c:if>
@@ -263,7 +263,7 @@
 			                                            <li>删除</li>
 			                                        </ul>
 			                                    </div>
-			                                    <img src="${staticMemberPath}/images/jt3.jpg">
+			                                    <img src="${staticbase_platformPath}/images/jt3.jpg">
 											</span>
 										</a>
 									</td>

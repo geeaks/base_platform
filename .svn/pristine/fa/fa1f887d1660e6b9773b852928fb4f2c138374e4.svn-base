@@ -18,9 +18,9 @@ import com.ucf.customer.bo.ResultBo;
 import com.ucf.customer.pojo.UcfBankCard;
 import com.ucf.customer.pojo.UcfCard;
 import com.ucf.customer.pojo.UcfUser;
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAccess;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAccess;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.service.BankCardService;
 import com.ucf.customer.service.LoginService;
 import com.ucf.customer.service.UserService;
@@ -35,7 +35,7 @@ import com.ucf.onlinepay.framework.common.bean.Money;
 /**
  * 
  * 
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：UserInfoAction <br>
  * 类描述： 用户信息管理ACTION 需要登录 <br>
  * 创建人：李文静 <br>
@@ -73,12 +73,12 @@ public class UserInfoController extends BaseAction {
 		return "redirect:/login/index.htm";
 	}
 
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping({ "/index.htm" })
 	public String index(HttpServletRequest request,HttpServletResponse response, Model model) throws Exception {
 	
-		MemberAgent memberAgent = getMemberAgent(request, response);
-		UcfCard ucfcard = loginService.queryUcfCardByUserId(memberAgent.getId());
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
+		UcfCard ucfcard = loginService.queryUcfCardByUserId(base_platformAgent.getId());
 		ResultBo ro = accountService.searchAccount(ucfcard.getAccountId());
 		Money money = new Money(0.0);
 		if(EnumResultCode.SUCCESS.getCode().equals(ro.getResult())){
@@ -88,17 +88,17 @@ public class UserInfoController extends BaseAction {
 			model.addAttribute("error", "0");
 		}
 		model.addAttribute("money", money.toString());
-		request.getSession().setAttribute("userName", memberAgent.getRealName());
+		request.getSession().setAttribute("userName", base_platformAgent.getRealName());
 		try {
-			Map<String, Object> resultMap = tradeCallServiceImpl.queryOrdersByUserId(memberAgent.getId(), null,Constants.CHAR_ORDER_SUCC, null, null, 10, 1);
+			Map<String, Object> resultMap = tradeCallServiceImpl.queryOrdersByUserId(base_platformAgent.getId(), null,Constants.CHAR_ORDER_SUCC, null, null, 10, 1);
 			model.addAttribute("orders", resultMap.get("orders"));
 		} catch (Exception e) {
 			model.addAttribute("neter", "0");
 		}
-		model.addAttribute("bankList", bankCardService.queryUserBankInfos(memberAgent.getId()));
-		model.addAttribute("user", loginService.queryUserInfoByPhone(memberAgent.getLoginId()));
-		model.addAttribute("cell", MobileUtil.mobileNoEncrypt(memberAgent.getMobile()));
-		model.addAttribute("lastLgnTime", memberAgent.getLastLoginTime());
+		model.addAttribute("bankList", bankCardService.queryUserBankInfos(base_platformAgent.getId()));
+		model.addAttribute("user", loginService.queryUserInfoByPhone(base_platformAgent.getLoginId()));
+		model.addAttribute("cell", MobileUtil.mobileNoEncrypt(base_platformAgent.getMobile()));
+		model.addAttribute("lastLgnTime", base_platformAgent.getLastLoginTime());
 		return "user/index";
 	}
 
@@ -111,12 +111,12 @@ public class UserInfoController extends BaseAction {
 	 * @return
 	 * @throws Exception
 	 */
-	@MemberAccess(EnumMemberUserType.Logined)
+	@base_platformAccess(Enumbase_platformUserType.Logined)
 	@RequestMapping({ "/basicinfo.htm" })
 	public String basicinfo(HttpServletRequest request,
 			HttpServletResponse response, Model model) throws Exception {
-		MemberAgent memberAgent = getMemberAgent(request, response);
-		UcfUser user = loginService.queryUserInfo(memberAgent.getId());
+		base_platformAgent base_platformAgent = getbase_platformAgent(request, response);
+		UcfUser user = loginService.queryUserInfo(base_platformAgent.getId());
 		user.setCellEncrypt(MobileUtil.mobileNoEncrypt(user.getCell()));
 		user.setCertNoEncrypt(IdCardUtil.IdCardNoEncrypt(user.getCertNo()));
 		// 判断用户是否绑卡

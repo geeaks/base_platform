@@ -9,13 +9,13 @@
 <c:set var="basePath" value="${pageContext.request.contextPath }" />
 <jsp:include page="../../common/resource_css.jsp"/>
 <!--private js&css start-->
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
-<link href="${staticMemberPath}/new/css/investment_view.css" rel="stylesheet" type="text/css">
-<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css">
-<link href="${staticMemberPath}/new/css/host_bank.css" rel="stylesheet" type="text/css">
-<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/host_findpassword.css">
-<link href="${staticMemberPath}/new/css/person_login.css" rel="stylesheet" type="text/css" />  
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/investment_view.css" rel="stylesheet" type="text/css">
+<link href="${staticbase_platformPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css">
+<link href="${staticbase_platformPath}/new/css/host_bank.css" rel="stylesheet" type="text/css">
+<link href="${staticbase_platformPath}/new/css/user.css" rel="stylesheet" type="text/css">
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/host_findpassword.css">
+<link href="${staticbase_platformPath}/new/css/person_login.css" rel="stylesheet" type="text/css" />  
 <style type="text/css">
 p.tip span {font-weight:130px;
     background-color: yellow;

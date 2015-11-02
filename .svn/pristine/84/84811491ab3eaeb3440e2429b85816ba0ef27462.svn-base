@@ -22,13 +22,13 @@ import org.springframework.util.StringUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.producer.SendResult;
 import com.ucf.account.ws.bo.AccountReturnValueBO;
-import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.base_platformService;
 import com.ucf.customer.api.bo.AccountInfoRsBO;
 import com.ucf.customer.api.bo.BankCardBo;
 import com.ucf.customer.api.bo.BankCardModifyBo;
 import com.ucf.customer.api.bo.BaseResultBO;
-import com.ucf.customer.api.bo.MemberRegisterBO;
-import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.base_platformRegisterBO;
+import com.ucf.customer.api.bo.base_platformCommonResult;
 import com.ucf.customer.api.bo.PageRs;
 import com.ucf.customer.api.bo.PhoneModifyBo;
 import com.ucf.customer.api.bo.PhotoAuthApplyBo;
@@ -85,7 +85,7 @@ import com.ucf.customer.utils.enums.EnumTrueFalse;
 import com.ucf.customer.utils.enums.EnumUserEnabledStatus;
 import com.ucf.customer.utils.enums.EnumVerifyLevle;
 import com.ucf.customer.api.enums.EnumBankCardUseType;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.enums.EnumRegisterFrom;
 import com.ucf.onlinepay.framework.common.util.StringUtil;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -101,9 +101,9 @@ import com.ucf.trade.ws.bo.TradeUcfWsParamBo;
 import com.ucf.trade.ws.bo.TradeUcfWsReturnValueBo;
 import com.ucf.trade.ws.service.TradeUcfSearchCardBINServiceWs;
 
-public class MemberServiceImpl implements MemberService {
+public class base_platformServiceImpl implements base_platformService {
 	
-	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(MemberServiceImpl.class);
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(base_platformServiceImpl.class);
 	
 	@Autowired
 	private LoginService loginService;
@@ -482,7 +482,7 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> modifyLoginPwd(String userId,byte [] oldPwd,byte [] newPwd){
+	public base_platformCommonResult<String> modifyLoginPwd(String userId,byte [] oldPwd,byte [] newPwd){
 		try {
 			ResultBo rsbo = userInfoService.checkLoginPwd(userId, oldPwd);
 			if(EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
@@ -492,25 +492,25 @@ public class MemberServiceImpl implements MemberService {
 				final UcfUserLoginApp userLoginApp = loginService.queryUserAppInfo(user.getEmail());
 				userLoginApp.setLoginPwd(Cryptos.encrypt(new String(newPwd),userId));
 				loginService.updateUcfUserApp(userLoginApp);
-				return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(), "");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(), "");
 			}else{
 				LOGGER.warn("密码校验" + SensitiveInfoUtils.getJson(rsbo));
-				return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),rsbo.getMsg(),"");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),rsbo.getMsg(),"");
 			}
 		} catch (Exception e) {
 			LOGGER.error("修改用户登录密码", e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","");
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> sendSms(String phone,String msg) {
+	public base_platformCommonResult<String> sendSms(String phone,String msg) {
 		ResultBo smsbo = smsService.sendSMS(null,phone, msg);
 		if(EnumResultCode.SUCCESS.getCode().equals(smsbo.getResult())){
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"发送成功","S");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"发送成功","S");
 		}else{
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),smsbo.getMsg(),"F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),smsbo.getMsg(),"F");
 		}
 	}
 	
@@ -523,7 +523,7 @@ public class MemberServiceImpl implements MemberService {
 			baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
 			baseResultBO.setRespMsg("手机号码不能为空");
 		}else{
-			ResultBo checkVfbo = smsService.sendVfyCodeSMS(null,phone, EnumSMSTemplate.MemberVfyCode.getContent());
+			ResultBo checkVfbo = smsService.sendVfyCodeSMS(null,phone, EnumSMSTemplate.base_platformVfyCode.getContent());
 			baseResultBO.setRespCode(EnumRespStatusCode.SUCCESS.getCode());
 			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
 				baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
@@ -558,7 +558,7 @@ public class MemberServiceImpl implements MemberService {
 			// 参数校验
 			String result = CommonUtils.check(userAuthParamBO);
 			if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
-				baseResultBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				baseResultBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 				baseResultBO.setRespMsg(result);
 				return baseResultBO;
 			}
@@ -574,10 +574,10 @@ public class MemberServiceImpl implements MemberService {
 					ucfUser.getCertNo(), userAuthParamBO.getBankCardNo(),userAuthParamBO.getPhone(),userAuthParamBO.getCardType(),userAuthParamBO.getCvn2(),userAuthParamBO.getValidDate(),userAuthParamBO.getBankId());
 			if(EnumRespStatusCode.SUCCESS.getCode().equals(bo.getResult())){
 				baseResultBO.setStatus(EnumRespStatusCode.SUCCESS.getCode());
-				baseResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				baseResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 			}else {
 				baseResultBO.setStatus(EnumRespStatusCode.ERROR.getCode());
-				baseResultBO.setRespMsg(EnumMemberCode.AUTH_ERROR.getMsgS());
+				baseResultBO.setRespMsg(Enumbase_platformCode.AUTH_ERROR.getMsgS());
 			}
 		} catch (Exception e) {
 			baseResultBO.setRespCode(EnumRespStatusCode.ERROR.getCode());
@@ -644,22 +644,22 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> userAuth(String merchantId,String realName,String certNo){
+	public base_platformCommonResult<String> userAuth(String merchantId,String realName,String certNo){
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(realName) || StringUtil.isEmpty(certNo)) {
-			return new MemberCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"F");
 		}
 		ResultBo bo = paymentService.userAuth(merchantId,EnumAuthType.NAME_CERT.getCode(), realName, 
 				certNo, null,null,null,null,null,null);
 		if(EnumRespStatusCode.SUCCESS.getCode().equals(bo.getResult())){
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
 		}else {
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"F");
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> photoAuthApply(String userId, String photoPath) {
+	public base_platformCommonResult<String> photoAuthApply(String userId, String photoPath) {
 		PhotoAuthApplyBo authApplyBo = new PhotoAuthApplyBo();
 		authApplyBo.setUserId(userId);
 		authApplyBo.setImgPath(photoPath);
@@ -673,16 +673,16 @@ public class MemberServiceImpl implements MemberService {
 	 */
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> photoAuthApply(PhotoAuthApplyBo authApplyBo){
+	public base_platformCommonResult<String> photoAuthApply(PhotoAuthApplyBo authApplyBo){
 		try {
 			if (authApplyBo == null || StringUtil.isEmpty(authApplyBo.getUserId())
 					|| StringUtil.isEmpty(authApplyBo.getImgPath())) {
-				return new MemberCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"F");
 			}
 
 			UcfUser ucfUser = loginService.queryUserInfo(authApplyBo.getUserId());
 			if (ucfUser == null) {
-				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
 			}
 
 			UcfRealnamePhotoApply checkIngApply = new UcfRealnamePhotoApply();
@@ -690,7 +690,7 @@ public class MemberServiceImpl implements MemberService {
 			checkIngApply.setStatus("N");
 			List<UcfRealnamePhotoApply> ingPhotoApplys = photoApplyDao.select(checkIngApply);
 			if (ingPhotoApplys.size() > 0) {
-				return new MemberCommonResult<String>(EnumRespStatusCode.EXIST_APPLY.getCode(),"用户照片审核申请审核中，不可重复申请！","F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.EXIST_APPLY.getCode(),"用户照片审核申请审核中，不可重复申请！","F");
 			}
 			UcfRealnamePhotoApply ucfRealnamePhotoApply = new UcfRealnamePhotoApply();
 			ucfRealnamePhotoApply.setUserId(authApplyBo.getUserId());
@@ -703,16 +703,16 @@ public class MemberServiceImpl implements MemberService {
 			ucfRealnamePhotoApply.setCreateor("system");
 			ucfRealnamePhotoApply.setStatus("N");
 			photoApplyDao.insert(ucfRealnamePhotoApply);
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"E");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"E");
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> findPhotoAuthApply(String userId){
+	public base_platformCommonResult<String> findPhotoAuthApply(String userId){
 		PhotoAuthApplyBo record = new PhotoAuthApplyBo();
 		record.setUserId(userId);
 		record.setType(EnumPhotoAuditType.IDCARD_BANKCARD_AUTH.getCode());
@@ -721,15 +721,15 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=false)
-	public MemberCommonResult<String> findPhotoAuthApply(PhotoAuthApplyBo apply){
+	public base_platformCommonResult<String> findPhotoAuthApply(PhotoAuthApplyBo apply){
 		UcfRealnamePhotoApply record = new UcfRealnamePhotoApply();
 		record.setUserId(apply.getUserId());
 		record.setType(apply.getType());
 		record.setBankCardNo(apply.getBankCardNo());
 		List<UcfRealnamePhotoApply> list = photoApplyDao.select(record);
-		MemberCommonResult<String> result = null;
+		base_platformCommonResult<String> result = null;
 		if (list == null || list.isEmpty()) {//没有认证记录
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"未申请","");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"未申请","");
 		} else {
 			int succ = 0;
 			int dealing = 0;
@@ -745,11 +745,11 @@ public class MemberServiceImpl implements MemberService {
 				}
 			}
 			if (succ > 0) {
-				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+				result = new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
 			} else if (dealing > 0) {
-				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"I");
+				result = new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"I");
 			} else {
-				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),msg,"F");
+				result = new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),msg,"F");
 			}
 		}
 		return result;
@@ -757,20 +757,20 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> auditPhotoAuth(String applyId,
+	public base_platformCommonResult<String> auditPhotoAuth(String applyId,
 			String status, String auditor) {
 		return auditPhotoAuth(applyId,status,null,auditor);
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> auditPhotoAuth(String applyId,String status,String memo,String auditor){
+	public base_platformCommonResult<String> auditPhotoAuth(String applyId,String status,String memo,String auditor){
 		UcfRealnamePhotoApply ucfRealnamePhoto = photoApplyDao.selectByPrimaryKey(applyId);
 		if(ucfRealnamePhoto==null){
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"记录不存在","E");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"记录不存在","E");
 		}
 		if(!"N".equals(ucfRealnamePhoto.getStatus())){
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"记录状态不为待审核状态","F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"记录状态不为待审核状态","F");
 		}
 		ucfRealnamePhoto.setStatus(status);
 		ucfRealnamePhoto.setMemo(memo);
@@ -782,20 +782,20 @@ public class MemberServiceImpl implements MemberService {
 				UcfUser user = this.loginService.queryUserInfo(ucfRealnamePhoto.getUserId());
 				ResultBo rsbo = userInfoService.realName(user.getUserId(), user.getRealName(), user.getCertType(), user.getCertNo(), EnumCertStatus.AUDIT_CERT.getCode());
 				if(!EnumResultCode.SUCCESS.getCode().equals(rsbo.getResult())){
-					return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"实名认证状态更新失败","F");
+					return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"实名认证状态更新失败","F");
 				}
 				List<UcfBankCard> userBankList = bankCardService.queryUserBankInfosByUseType(user.getUserId(), EnumBankCardUseType.FINANCIAL.getCode());
 				if(EnumPhotoAuditType.LIMIT_OPT_AUTH.getCode().equals(ucfRealnamePhoto.getType())){
 					if(userBankList == null || userBankList.size()==0){
 						LOGGER.warn(ucfRealnamePhoto.getUserId() + "不存在银行卡");
-						return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户不存在银行卡","F");
+						return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户不存在银行卡","F");
 					}
 					UcfBankCard b = userBankList.get(0);
 					if(b.getCardNo().equals(ucfRealnamePhoto.getBankCardNo())){
 						updateBankCardOptCertStatus(b);
 					}else{
 						LOGGER.warn(ucfRealnamePhoto.getUserId() + "提升额度的银行卡与已绑定银行卡不一致,审核[" + ucfRealnamePhoto.getBankCardNo()+ " ] 原银行卡["+ b.getCardNo() + " ]");
-						return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"提升额度的银行卡与已绑定银行卡不一致","F");
+						return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"提升额度的银行卡与已绑定银行卡不一致","F");
 					}
 				}else if(EnumPhotoAuditType.IDCARD_BANKCARD_AUTH.getCode().equals(ucfRealnamePhoto.getType())
 						|| StringUtil.isEmpty(ucfRealnamePhoto.getType())){
@@ -816,9 +816,9 @@ public class MemberServiceImpl implements MemberService {
 			}
 		} catch (Exception e) {
 			LOGGER.error("照片审核异常", e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),EnumRespStatusCode.ERROR.getMsg(),"F");
 		}
-		return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
+		return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),"S");
 	}
 
 	/**
@@ -934,18 +934,18 @@ public class MemberServiceImpl implements MemberService {
 		UcfSendMessage mqmsg = new UcfSendMessage();
 		mqmsg.setBizValue(params);
 		SendResult rocketResult = ucfMQProducer.sendMessage(
-				RocketMQTopicEnum.ROCKETMQ_MEMBER_REMIT_BINDCARD_NOTIFY_MOBILE_TOPICANDTAG.getTopic(),
-				RocketMQTopicEnum.ROCKETMQ_MEMBER_REMIT_BINDCARD_NOTIFY_MOBILE_TOPICANDTAG.getTag(), mqmsg);
+				RocketMQTopicEnum.ROCKETMQ_base_platform_REMIT_BINDCARD_NOTIFY_MOBILE_TOPICANDTAG.getTopic(),
+				RocketMQTopicEnum.ROCKETMQ_base_platform_REMIT_BINDCARD_NOTIFY_MOBILE_TOPICANDTAG.getTag(), mqmsg);
 		LOGGER.info("【身份验证绑卡】发送RocketMQ消息成功：" + rocketResult.toString());
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<UserInfoBo> findUserById(String userId) {
-		MemberCommonResult<UserInfoBo> rs = null;
+	public base_platformCommonResult<UserInfoBo> findUserById(String userId) {
+		base_platformCommonResult<UserInfoBo> rs = null;
 		if(StringUtils.isEmpty(userId)){
 			LOGGER.info("用户Id不能为空");
-			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"用户Id不能为空",null);
+			rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"用户Id不能为空",null);
 		}else{
 			try {
 				UcfUser ucfUser = loginService.queryUserInfo(userId);
@@ -958,13 +958,13 @@ public class MemberServiceImpl implements MemberService {
 					}else{
 						userInfoBo.setSetPayPwd(false);
 					}
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
 				}else{
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询用户信息异常:",e);
-				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+				rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
 			}
 		}
 		return rs;
@@ -972,12 +972,12 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<UserInfoBo> findUserInfo(String merchantId,
+	public base_platformCommonResult<UserInfoBo> findUserInfo(String merchantId,
 			String refUserId) {
-		MemberCommonResult<UserInfoBo> rs = null;
+		base_platformCommonResult<UserInfoBo> rs = null;
 		if(StringUtils.isEmpty(merchantId) || StringUtils.isEmpty(refUserId)){
 			LOGGER.info("商户Id或关联用户Id不能为空");
-			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"商户Id或关联用户Id不能为空",null);
+			rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"商户Id或关联用户Id不能为空",null);
 		}else{
 			try {
 				UcfUser ucfUser = userService.findUserInfo(merchantId, refUserId);
@@ -990,13 +990,13 @@ public class MemberServiceImpl implements MemberService {
 					}else{
 						userInfoBo.setSetPayPwd(false);
 					}
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
 				}else{
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询用户信息异常:",e);
-				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+				rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
 			}
 		}
 		return rs;
@@ -1026,11 +1026,11 @@ public class MemberServiceImpl implements MemberService {
 	 * @return
 	 */
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<UserInfoBo> findUserInfoByCell(String merchantId,String cell){
-		MemberCommonResult<UserInfoBo> rs = null;
+	public base_platformCommonResult<UserInfoBo> findUserInfoByCell(String merchantId,String cell){
+		base_platformCommonResult<UserInfoBo> rs = null;
 		if(StringUtils.isEmpty(merchantId) || StringUtils.isEmpty(cell)){
 			LOGGER.info("商户Id或手机号不能为空");
-			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"商户Id或关联用户Id不能为空",null);
+			rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"商户Id或关联用户Id不能为空",null);
 		}else{
 			try {
 				UcfUser ucfUser = userService.findUserInfoByCell(merchantId, cell);
@@ -1043,13 +1043,13 @@ public class MemberServiceImpl implements MemberService {
 					}else{
 						userInfoBo.setSetPayPwd(false);
 					}
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
 				}else{
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询用户信息异常:",e);
-				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+				rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
 			}
 		}
 		return rs;
@@ -1057,40 +1057,40 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> registerManagedUser(MemberRegisterBO memberBo) {
+	public base_platformCommonResult<String> registerManagedUser(base_platformRegisterBO base_platformBo) {
 		RegisterParamBO paramBo = new RegisterParamBO();
-		paramBo.setRefUser(memberBo.getRefUserId());
-		paramBo.setRefMerchant(memberBo.getMerchantId());
-		paramBo.setCertType(memberBo.getCertType());
-		paramBo.setCertNo(memberBo.getCertNo());
-		if(StringUtil.isEmpty(memberBo.getPhone()) && !StringUtil.isEmpty(memberBo.getRefUserId()) && memberBo.getRefUserId().length()<=32){
-			paramBo.setPhoneNo(memberBo.getRefUserId());
+		paramBo.setRefUser(base_platformBo.getRefUserId());
+		paramBo.setRefMerchant(base_platformBo.getMerchantId());
+		paramBo.setCertType(base_platformBo.getCertType());
+		paramBo.setCertNo(base_platformBo.getCertNo());
+		if(StringUtil.isEmpty(base_platformBo.getPhone()) && !StringUtil.isEmpty(base_platformBo.getRefUserId()) && base_platformBo.getRefUserId().length()<=32){
+			paramBo.setPhoneNo(base_platformBo.getRefUserId());
 		}else{
-			paramBo.setPhoneNo(memberBo.getPhone());
+			paramBo.setPhoneNo(base_platformBo.getPhone());
 		}
 		paramBo.setUserType(Integer.parseInt(EnumUserType.PERSON.getCode()));
-		paramBo.setEmail(memberBo.getEmail());
-		paramBo.setRealName(memberBo.getName());
+		paramBo.setEmail(base_platformBo.getEmail());
+		paramBo.setRealName(base_platformBo.getName());
 		paramBo.setUserType(1);
-		paramBo.setSource(memberBo.getSource());
-		paramBo.setRegFrom(memberBo.getRegisterFrom());
+		paramBo.setSource(base_platformBo.getSource());
+		paramBo.setRegFrom(base_platformBo.getRegisterFrom());
 		return userInfoService.registerManagedUser(paramBo);
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> delUserBankCard(String userId,
+	public base_platformCommonResult<String> delUserBankCard(String userId,
 			String bankCardId) {
-		MemberCommonResult<String> result = null;
+		base_platformCommonResult<String> result = null;
 		if(StringUtils.isEmpty(bankCardId)){
-			result = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"银行卡号不能为空","E");
+			result = new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"银行卡号不能为空","E");
 		}else{
 			try {
 				bankCardService.deleteUcfBankCard(bankCardId);
-				result = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(), "S");
+				result = new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(), "S");
 			} catch (Exception e) {
 				LOGGER.error("删除用户银行卡", e);
-				result = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","E");
+				result = new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","E");
 			}
 		}
 		return result;
@@ -1098,11 +1098,11 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<List<BankCardBo>> findUserBankCards(String userId) {
-		MemberCommonResult<List<BankCardBo>> result = null;
+	public base_platformCommonResult<List<BankCardBo>> findUserBankCards(String userId) {
+		base_platformCommonResult<List<BankCardBo>> result = null;
 		if(StringUtils.isEmpty(userId)){
 			LOGGER.info("用户ID不能为空");
-			result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空",null);
+			result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空",null);
 		}else{
 			try {
 				//查询用户的理财卡
@@ -1134,13 +1134,13 @@ public class MemberServiceImpl implements MemberService {
 						}
 						list.add(bo);
 					}
-					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(), list);
+					result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(), list);
 				}else{
-					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(),"用户未绑定银行卡", new ArrayList<BankCardBo>());
+					result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(),"用户未绑定银行卡", new ArrayList<BankCardBo>());
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询用户银行卡", e);
-				result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+				result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
 			}
 		}
 		return result;
@@ -1148,11 +1148,11 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<List<BankCardBo>> findUserBankCardsByUseType(String userId,String useType) {
-		MemberCommonResult<List<BankCardBo>> result = null;
+	public base_platformCommonResult<List<BankCardBo>> findUserBankCardsByUseType(String userId,String useType) {
+		base_platformCommonResult<List<BankCardBo>> result = null;
 		if(StringUtils.isEmpty(userId)){
 			LOGGER.info("用户ID不能为空");
-			result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空",null);
+			result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空",null);
 		}else{
 			try {
 				//根据使用类型查询用户的银行卡
@@ -1184,13 +1184,13 @@ public class MemberServiceImpl implements MemberService {
 						}
 						list.add(bo);
 					}
-					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(), list);
+					result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(), list);
 				}else{
-					result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(),"用户未绑定银行卡", null);
+					result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.SUCCESS.getCode(),"用户未绑定银行卡", null);
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询用户银行卡", e);
-				result = new MemberCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+				result = new base_platformCommonResult<List<BankCardBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
 			}
 		}
 		return result;
@@ -1198,11 +1198,11 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<BankCardBo> findBankCardById(String bankCardId) {
-		MemberCommonResult<BankCardBo> result = null;
+	public base_platformCommonResult<BankCardBo> findBankCardById(String bankCardId) {
+		base_platformCommonResult<BankCardBo> result = null;
 		if(StringUtils.isEmpty(bankCardId)){
 			LOGGER.info("银行卡ID不能为空");
-			result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.ERROR.getCode(),"银行卡ID不能为空",null);
+			result = new base_platformCommonResult<BankCardBo>(EnumRespStatusCode.ERROR.getCode(),"银行卡ID不能为空",null);
 		}else{
 			try {
 				UcfBankCard bankCard = bankCardService.queryUserBankInfoById(bankCardId);
@@ -1229,13 +1229,13 @@ public class MemberServiceImpl implements MemberService {
 							LOGGER.error("银行卡validDate解密异常", e);
 						}
 					}
-					result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.SUCCESS.getCode(), bankCardBo);
+					result = new base_platformCommonResult<BankCardBo>(EnumRespStatusCode.SUCCESS.getCode(), bankCardBo);
 				}else{
-					result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.SUCCESS.getCode(),"未找到该银行卡", null);
+					result = new base_platformCommonResult<BankCardBo>(EnumRespStatusCode.SUCCESS.getCode(),"未找到该银行卡", null);
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询用户银行卡", e);
-				result = new MemberCommonResult<BankCardBo>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+				result = new base_platformCommonResult<BankCardBo>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
 			}
 		}
 		return result;
@@ -1243,13 +1243,13 @@ public class MemberServiceImpl implements MemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> registerGZBUser(MemberRegisterBO userBo) {
+	public base_platformCommonResult<String> registerGZBUser(base_platformRegisterBO userBo) {
 		LOGGER.info("工资宝注册开户入参:"+JSON.toJSONString(userBo));
 		UcfUser u = userInfoService.isExistsMerchantUser(userBo.getMerchantId(),userBo.getRefUserId());
 		if(u != null){
-			return new MemberCommonResult<String>(EnumRespStatusCode.EXIST_USER.getCode(),EnumRespStatusCode.EXIST_USER.getMsg(),u.getUserId());
+			return new base_platformCommonResult<String>(EnumRespStatusCode.EXIST_USER.getCode(),EnumRespStatusCode.EXIST_USER.getMsg(),u.getUserId());
 		}
-		MemberCommonResult<String>  result = null;
+		base_platformCommonResult<String>  result = null;
 		try {
 			final String userId = userService.queryUcfUserId();
 			//保存用户信息
@@ -1316,7 +1316,7 @@ public class MemberServiceImpl implements MemberService {
 			if (EnumResultCode.SUCCESS.getCode().equals(rsBo.getResult())) {
 				card.setAccountId(rsBo.getResultObject().toString());
 			}else{
-				result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"帐务开户失败","");
+				result = new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"帐务开户失败","");
 				return result;
 			}
 			boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
@@ -1354,50 +1354,50 @@ public class MemberServiceImpl implements MemberService {
 				}
 			});
 			if(!commit){
-				result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"数据库操作异常","F");
+				result = new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"数据库操作异常","F");
 			}else{
-				result = new  MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
+				result = new  base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
 			}
 		} catch (Exception e) {
 			 LOGGER.error(e.getMessage(),e);
-			 result =  new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
+			 result =  new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
 		}
 		return result;
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> modifyUserPhone(PhoneModifyBo phoneModifyBo) {
+	public base_platformCommonResult<String> modifyUserPhone(PhoneModifyBo phoneModifyBo) {
 		LOGGER.info("工资宝修改用户手机号码入参:"+JSON.toJSONString(phoneModifyBo));
 		try {
 			UcfUser ucfUser = userService.queryUserInfoById(phoneModifyBo.getUserId());
 			//用户不存在
 			if(ucfUser==null){
-				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
 			}
 			//判断原手机号是否正确
 			if(!ucfUser.getCell().equals(phoneModifyBo.getOldPhone())){
-				return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"原手机号码错误","F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"原手机号码错误","F");
 			}
 			//保存新手机号码
 			ucfUser.setCell(phoneModifyBo.getPhone());
 			loginService.updateUcfUser(ucfUser);
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户手机号码修改成功","S");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户手机号码修改成功","S");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> modifyUserBankCard(BankCardModifyBo bankCardModifyBo) {
+	public base_platformCommonResult<String> modifyUserBankCard(BankCardModifyBo bankCardModifyBo) {
 		LOGGER.info("工资宝修改用户银行卡入参:"+JSON.toJSONString(bankCardModifyBo));
 		try {
 			UcfBankCard ucfBankCard = bankCardService.queryUserBankInfo(bankCardModifyBo.getUserId(), bankCardModifyBo.getOldBankCardNo());
 			//银行卡不存在不存在
 			if(ucfBankCard==null){
-				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_BANKCARD.getCode(),EnumRespStatusCode.NO_EXIST_BANKCARD.getMsg(),"F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.NO_EXIST_BANKCARD.getCode(),EnumRespStatusCode.NO_EXIST_BANKCARD.getMsg(),"F");
 			}
 			//修改银行卡信息
 			ucfBankCard.setCardNo(bankCardModifyBo.getBankCardNo());
@@ -1409,41 +1409,41 @@ public class MemberServiceImpl implements MemberService {
 			ucfBankCard.setBranchname(bankCardModifyBo.getBranchName());
 			ucfBankCard.setIssuer(bankCardModifyBo.getBranchId());
 			bankCardService.updateUcfBankCard(ucfBankCard);
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户银行卡修改成功","S");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户银行卡修改成功","S");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> setBankcardPayStatus(String bankcardId,String isPay) {
+	public base_platformCommonResult<String> setBankcardPayStatus(String bankcardId,String isPay) {
 		//如果银行卡id或者开关关 一键支付标记为空 则返回参数校验错误
 		if(StringUtils.isEmpty(bankcardId) || StringUtils.isEmpty(isPay)){
-			return new MemberCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"入参存在空值");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.PARAM_ERROR.getCode(),EnumRespStatusCode.PARAM_ERROR.getMsg(),"入参存在空值");
 		}else{
 			try {
 				UcfBankCard ucfBankCard = bankCardService.queryUserBankInfoById(bankcardId);
 				//银行卡不存在不存在
 				if(ucfBankCard==null){
-					return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_BANKCARD.getCode(),EnumRespStatusCode.NO_EXIST_BANKCARD.getMsg(),"F");
+					return new base_platformCommonResult<String>(EnumRespStatusCode.NO_EXIST_BANKCARD.getCode(),EnumRespStatusCode.NO_EXIST_BANKCARD.getMsg(),"F");
 				}
 				//开关一键支付
 				ucfBankCard.setIsPay(isPay);
 				bankCardService.updateUcfBankCard(ucfBankCard);
-				return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"修改一键支付功能成功","S");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"修改一键支付功能成功","S");
 			} catch (Exception e) {
 				LOGGER.error(e.getMessage(),e);
-				return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
 			}
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=false)
-	public MemberCommonResult<UserInfoBo> findAnonymousUser() {
-		MemberCommonResult<UserInfoBo> rs;
+	public base_platformCommonResult<UserInfoBo> findAnonymousUser() {
+		base_platformCommonResult<UserInfoBo> rs;
 		try {
 			List<UcfUser> userList = userService.findAnonymousUser();
 			if(userList != null && userList.size()>0){
@@ -1456,21 +1456,21 @@ public class MemberServiceImpl implements MemberService {
 				}else{
 					userInfoBo.setSetPayPwd(false);
 				}
-				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+				rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
 			}else{
-				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+				rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
 			}
 		} catch (Exception e) {
 			LOGGER.error("查询匿名用户信息异常:",e);
-			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询匿名用户信息异常",null);
+			rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询匿名用户信息异常",null);
 		}
 		return rs;
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<UserInfoBo> checkUserInfo(String merchantId, String phone) {
-		MemberCommonResult<UserInfoBo> rs;
+	public base_platformCommonResult<UserInfoBo> checkUserInfo(String merchantId, String phone) {
+		base_platformCommonResult<UserInfoBo> rs;
 		try {
 			UcfUser user = userService.findUserInfoByCell(merchantId,phone);
 			if(user != null){
@@ -1486,42 +1486,42 @@ public class MemberServiceImpl implements MemberService {
 				BaseResultBO resultBo = this.sendVfyCodeSMS(phone);
 				//如果发送短信成功
 				if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getStatus())){
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.SUCCESS.getCode(),EnumRespStatusCode.SUCCESS.getMsg(),userInfoBo);
 				}else{
-					rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.MSG_SEND_ERROR.getCode(),EnumRespStatusCode.MSG_SEND_ERROR.getMsg(),null);
+					rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.MSG_SEND_ERROR.getCode(),EnumRespStatusCode.MSG_SEND_ERROR.getMsg(),null);
 				}
 			}else{
-				rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
+				rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),null);
 			}
 		} catch (Exception e) {
 			LOGGER.error("查询用户信息异常:",e);
-			rs = new MemberCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
+			rs = new base_platformCommonResult<UserInfoBo>(EnumRespStatusCode.ERROR.getCode(),"查询用户信息异常",null);
 		}
 		return rs;
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> checkUserSms(String userId, String code) {
-		MemberCommonResult<String> rs;
+	public base_platformCommonResult<String> checkUserSms(String userId, String code) {
+		base_platformCommonResult<String> rs;
 		try {
 			UcfUser ucfUser = userService.queryUserInfoById(userId);
 			if(ucfUser == null){
-				rs = new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+				rs = new base_platformCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
 			}else{
 				ResultBo resultBo = smsService.checkVfyCode(null,ucfUser.getCell(), code);
-				rs = new MemberCommonResult<String>(resultBo.getResult(),resultBo.getMsg(),"");
+				rs = new base_platformCommonResult<String>(resultBo.getResult(),resultBo.getMsg(),"");
 			}
 		} catch (Exception e) {
 			LOGGER.error("校验验证码会员系统异常:",e);
-			rs = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"校验验证码会员系统异常",null);
+			rs = new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"校验验证码会员系统异常",null);
 		}
 		return rs;
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<PageRs<UserInfoBo>> findUsersInfo(UserInfoBo userInfoBo) {
+	public base_platformCommonResult<PageRs<UserInfoBo>> findUsersInfo(UserInfoBo userInfoBo) {
 		UcfUser user = new UcfUser();
 		try {
 			//设置分页信息
@@ -1553,43 +1553,43 @@ public class MemberServiceImpl implements MemberService {
 			pageRs.setCount(user.getPage().getTotalResult());
 			pageRs.setPageNo(user.getPage().getCurrentPage());
 			pageRs.setPageSize(user.getPage().getShowCount());
-			return new MemberCommonResult<PageRs<UserInfoBo>>(EnumRespStatusCode.SUCCESS.getCode(),"查询成功",pageRs);
+			return new base_platformCommonResult<PageRs<UserInfoBo>>(EnumRespStatusCode.SUCCESS.getCode(),"查询成功",pageRs);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return new MemberCommonResult<PageRs<UserInfoBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+			return new base_platformCommonResult<PageRs<UserInfoBo>>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> refreshUserCache(String userId) {
+	public base_platformCommonResult<String> refreshUserCache(String userId) {
 		if(StringUtils.isEmpty(userId)){
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空","F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空","F");
 		}
 		try{
 			//刷新用户缓存
 			userService.refreshUserInfo(userId);
 			cardService.refreshCardInfo(userId);
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"刷新用户缓存成功",null);
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"刷新用户缓存成功",null);
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常",null);
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> modifyUserInfo(UserInfoBo userInfoBo) {
+	public base_platformCommonResult<String> modifyUserInfo(UserInfoBo userInfoBo) {
 		LOGGER.info("修改用户信息入参:"+JSON.toJSONString(userInfoBo));
 		if(StringUtils.isEmpty(userInfoBo.getUserId())){
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空","F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"用户ID不能为空","F");
 		}
 		try {
 			UcfUser ucfUser = userService.queryUserInfoById(userInfoBo.getUserId());
 			//用户不存在
 			if(ucfUser==null){
 				LOGGER.info("用户["+userInfoBo.getUserId()+"]不存在！");
-				return new MemberCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
+				return new base_platformCommonResult<String>(EnumRespStatusCode.NO_EXIST_USER.getCode(),EnumRespStatusCode.NO_EXIST_USER.getMsg(),"F");
 			}
 			//保存新名字
 			if(!StringUtils.isEmpty(userInfoBo.getRealName())){
@@ -1616,56 +1616,56 @@ public class MemberServiceImpl implements MemberService {
 			ucfUser.setEnabledStatus(userInfoBo.getEnabledStatus());
 			loginService.updateUcfUser(ucfUser);
 			LOGGER.info("用户["+userInfoBo.getUserId()+"]信息修改成功!");
-			return new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户姓名修改成功","S");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"用户姓名修改成功","S");
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			return new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
+			return new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","F");
 		}
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> registerP2PUser(MemberRegisterBO memberBo) {
-		MemberCommonResult<String>  result = null;
+	public base_platformCommonResult<String> registerP2PUser(base_platformRegisterBO base_platformBo) {
+		base_platformCommonResult<String>  result = null;
 		// 此时生成用户信息
 		try {
-			boolean isMobile = CheckMailOrPhone.isMobileNO(memberBo.getPhone());
+			boolean isMobile = CheckMailOrPhone.isMobileNO(base_platformBo.getPhone());
 			final UcfUser ucfUser = new UcfUser();
 			if (isMobile) {
-				ucfUser.setCell(memberBo.getPhone());
+				ucfUser.setCell(base_platformBo.getPhone());
 			}
-			ucfUser.setRefMerchant(memberBo.getMerchantId());
+			ucfUser.setRefMerchant(base_platformBo.getMerchantId());
 			List<UcfUser> list = userRegService.queryUserInfo(ucfUser);
 			if (null != list && list.size() > 0) {
 				for (UcfUser user : list) {
-					if (user.getRealName().equals(memberBo.getName())&&user.getCertNo().equals(memberBo.getCertNo())) {
-						result = new  MemberCommonResult<String>(EnumMemberCode.EXIST_USER.getCode(),EnumMemberCode.EXIST_USER.getMsgS(),user.getUserId());
+					if (user.getRealName().equals(base_platformBo.getName())&&user.getCertNo().equals(base_platformBo.getCertNo())) {
+						result = new  base_platformCommonResult<String>(Enumbase_platformCode.EXIST_USER.getCode(),Enumbase_platformCode.EXIST_USER.getMsgS(),user.getUserId());
 					} else {
-						result = new  MemberCommonResult<String>(EnumMemberCode.EXIST_MOBLEPHOE.getCode(),EnumMemberCode.EXIST_MOBLEPHOE.getMsgS(),"");
+						result = new  base_platformCommonResult<String>(Enumbase_platformCode.EXIST_MOBLEPHOE.getCode(),Enumbase_platformCode.EXIST_MOBLEPHOE.getMsgS(),"");
 					}
 					return result;
 				}
 			}
 			final String userId = userService.queryUcfUserId();
 			ucfUser.setUserId(userId);
-			ucfUser.setCell(memberBo.getPhone());
-			ucfUser.setEmail(memberBo.getEmail());
-			ucfUser.setRealName(memberBo.getName());
-			ucfUser.setRefMerchant(memberBo.getMerchantId());
-			ucfUser.setRefUser(memberBo.getRefUserId());
-			ucfUser.setCertType(memberBo.getCertType());
-			ucfUser.setCertNo(memberBo.getCertNo());
+			ucfUser.setCell(base_platformBo.getPhone());
+			ucfUser.setEmail(base_platformBo.getEmail());
+			ucfUser.setRealName(base_platformBo.getName());
+			ucfUser.setRefMerchant(base_platformBo.getMerchantId());
+			ucfUser.setRefUser(base_platformBo.getRefUserId());
+			ucfUser.setCertType(base_platformBo.getCertType());
+			ucfUser.setCertNo(base_platformBo.getCertNo());
 			ucfUser.setUserType(new BigDecimal(1));
 			ucfUser.setRealnameStatus(EnumRealnameStatus.NOT_REALNAMED.getCode());//未认证
 			ucfUser.setEnabledStatus(EnumUserEnabledStatus.T.getCode());
 			ucfUser.setVerifyStatus(EnumVerifyLevle.REGISTER.getCode());//注册实名认证级别
-			ucfUser.setLoginId(memberBo.getPhone());
+			ucfUser.setLoginId(base_platformBo.getPhone());
 			final UcfCard card = new UcfCard();
 			card.setCardNo(userId);
 			card.setUserId(userId);
 			card.setCardType(EnumsUserCardType.PERSON_CARD.getCode());
 			card.setRegisterFrom(EnumRegisterFrom.P2P_FROM.getCode());
-			card.setCertFrom(memberBo.getSource());
+			card.setCertFrom(base_platformBo.getSource());
 			//用户属于未认证状态
 			card.setCertStatus(EnumCertStatus.NO_CERT.getCode());
 			//保存银行卡信息
@@ -1676,15 +1676,15 @@ public class MemberServiceImpl implements MemberService {
 			bankCardId.append(bankCardService.getBankCardSeq());
 			bankCard.setId(bankCardId.toString());
 			bankCard.setUserId(ucfUser.getUserId());
-			bankCard.setCardNo(memberBo.getBankCardNo());// 银行卡号
-			bankCard.setBankId(memberBo.getBankCode());
-			bankCard.setBankName(memberBo.getBankName());
-			bankCard.setCardType(memberBo.getBankCardType());
-			bankCard.setProvince(memberBo.getProvince());
-			bankCard.setCity(memberBo.getCity());
-			bankCard.setBranchname(memberBo.getBranchName());
-			bankCard.setIssuer(memberBo.getBranchId());
-			bankCard.setPhone(memberBo.getPhone());
+			bankCard.setCardNo(base_platformBo.getBankCardNo());// 银行卡号
+			bankCard.setBankId(base_platformBo.getBankCode());
+			bankCard.setBankName(base_platformBo.getBankName());
+			bankCard.setCardType(base_platformBo.getBankCardType());
+			bankCard.setProvince(base_platformBo.getProvince());
+			bankCard.setCity(base_platformBo.getCity());
+			bankCard.setBranchname(base_platformBo.getBranchName());
+			bankCard.setIssuer(base_platformBo.getBranchId());
+			bankCard.setPhone(base_platformBo.getPhone());
 			bankCard.setConfirmStatus(EnumConfirmStatus.CONFIRM_YES.getCode());
 			bankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
 			bankCard.setUnionSeq(0);
@@ -1715,21 +1715,21 @@ public class MemberServiceImpl implements MemberService {
 				}
 			});
 			if(!commit){
-				result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"事物执行异常","");
+				result = new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"事物执行异常","");
 			}else{
-				result = new  MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
+				result = new  base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			result =  new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
+			result =  new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
 		}
 		return result;
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<Boolean> isBankCardBound(String merchantId,String userId, String bankCardNo) {
-		MemberCommonResult<Boolean> result;
+	public base_platformCommonResult<Boolean> isBankCardBound(String merchantId,String userId, String bankCardNo) {
+		base_platformCommonResult<Boolean> result;
 		try {
 			Map<String,String> map = new HashMap<String,String>();
 			map.put("merchantId", merchantId);
@@ -1737,37 +1737,37 @@ public class MemberServiceImpl implements MemberService {
 			map.put("userId", userId);
 			List<UcfBankCard> list = bankCardService.isBankCardBound(map);
 			if(list!=null && list.size()>0){
-				result = new MemberCommonResult<Boolean>(EnumRespStatusCode.SUCCESS.getCode(),"已绑定银行卡",true);
+				result = new base_platformCommonResult<Boolean>(EnumRespStatusCode.SUCCESS.getCode(),"已绑定银行卡",true);
 			}else{
-				result = new MemberCommonResult<Boolean>(EnumRespStatusCode.SUCCESS.getCode(),"未绑定银行卡",false);
+				result = new base_platformCommonResult<Boolean>(EnumRespStatusCode.SUCCESS.getCode(),"未绑定银行卡",false);
 			}
 		} catch (Exception e) {
 			LOGGER.error("校验银行卡是否绑定系统异常:",e);
-			result = new MemberCommonResult<Boolean>(EnumRespStatusCode.ERROR.getCode(),"系统异常",false);
+			result = new base_platformCommonResult<Boolean>(EnumRespStatusCode.ERROR.getCode(),"系统异常",false);
 		}
 		return result;
 	}
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberCommonResult<String> sendTemplateSMS(String merchantId, String phoneNumber,String template) {
-		MemberCommonResult<String> rs;
+	public base_platformCommonResult<String> sendTemplateSMS(String merchantId, String phoneNumber,String template) {
+		base_platformCommonResult<String> rs;
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(phoneNumber)) {
-			rs = new MemberCommonResult<String>(EnumMemberCode.PARAM_ERROR.getCode(),EnumMemberCode.PARAM_ERROR.getMsgS(),null);
+			rs = new base_platformCommonResult<String>(Enumbase_platformCode.PARAM_ERROR.getCode(),Enumbase_platformCode.PARAM_ERROR.getMsgS(),null);
 			return rs;
 		}
 		//如果未传递template参数  则默认会员的短信模板
-		template = StringUtils.isEmpty(template)? EnumSMSTemplate.MemberVfyCode.getContent() : template;
+		template = StringUtils.isEmpty(template)? EnumSMSTemplate.base_platformVfyCode.getContent() : template;
 		try {
 			ResultBo resultBo = smsService.sendVfyCodeSMS(merchantId,phoneNumber, template);
 			if(EnumResultCode.SUCCESS.getCode().equals(resultBo.getResult())){
-				rs = new MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"发送成功",resultBo.getResultObject().toString());
+				rs = new base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"发送成功",resultBo.getResultObject().toString());
 			}else{
-				rs = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),resultBo.getMsg(),null);
+				rs = new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),resultBo.getMsg(),null);
 			}
 		} catch (Exception e) {
 			LOGGER.error("发送模板短信失败",e);
-			rs = new MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"会员系统异常",null);
+			rs = new base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"会员系统异常",null);
 		}
 		return rs;
 	}

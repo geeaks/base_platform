@@ -3,7 +3,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
 *    
-* 项目名称：member   
+* 项目名称：base_platform   
 * 类名称：RealnamePhotoApplyStatus   
 * 类描述： 实名认证申请状态  
 * 创建人：李文静  

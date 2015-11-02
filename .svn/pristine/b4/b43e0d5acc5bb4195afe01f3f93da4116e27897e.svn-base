@@ -3,7 +3,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：EnumCertFrom      <br>
 * 类描述：   认证来源				  <br>
 * 创建人：李文静 				  <br>

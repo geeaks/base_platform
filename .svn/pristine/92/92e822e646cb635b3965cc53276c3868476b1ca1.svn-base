@@ -50,7 +50,7 @@ public class LoginPasswordAction extends BaseAction{
 	@RequestMapping({ "/findPwd" })
 	public String findPwdByPhone(HttpServletRequest request,HttpServletResponse response,Model model) {
 		HttpSession session = request.getSession();
-		request.setAttribute("staticMemberPath", session.getAttribute("staticMemberPath"));
+		request.setAttribute("staticbase_platformPath", session.getAttribute("staticbase_platformPath"));
 		session.invalidate();
 		return "login/findPwdByPhone";
 	}

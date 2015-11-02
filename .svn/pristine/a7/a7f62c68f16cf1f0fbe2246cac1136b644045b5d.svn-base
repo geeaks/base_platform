@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：AccountInfoBO      <br>
 * 类描述： 查询账户结果集对象  				  <br>
 * 创建人：李文静 				  <br>
@@ -41,7 +41,7 @@ public class AccountInfoBO implements Serializable{
 	/**
 	 * dubbo调用结果
 	 */
-	private String enumMemberCode;
+	private String enumbase_platformCode;
 	
 	/**
 	 * 结果返回的错误消息
@@ -78,13 +78,13 @@ public class AccountInfoBO implements Serializable{
 
 
 
-	public String getEnumMemberCode() {
-		return enumMemberCode;
+	public String getEnumbase_platformCode() {
+		return enumbase_platformCode;
 	}
 
 
-	public void setEnumMemberCode(String enumMemberCode) {
-		this.enumMemberCode = enumMemberCode;
+	public void setEnumbase_platformCode(String enumbase_platformCode) {
+		this.enumbase_platformCode = enumbase_platformCode;
 	}
 
 

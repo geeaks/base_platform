@@ -65,7 +65,7 @@ public class TradeCallServcieImpl implements TradeCallService {
 		tradeSearchOrderParamBO.setUserId(userId);
 		tradeSearchOrderParamBO.setStartDate(dstartDate);
 		tradeSearchOrderParamBO.setEndDate(dendDate);
-		tradeSearchOrderParamBO.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+		tradeSearchOrderParamBO.setBizProduct(BizProduct.BIZ_PRODUCT_base_platform.getCode());
 		if(tradeType!=null && !tradeType.trim().equals("")){
 			tradeSearchOrderParamBO.setBusinessType(tradeType);
 		}

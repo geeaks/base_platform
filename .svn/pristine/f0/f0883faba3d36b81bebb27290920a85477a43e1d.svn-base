@@ -3,7 +3,7 @@ package com.ucf.customer.utils.enums;
 /**
  * 
 *    
-* 项目名称：member   
+* 项目名称：base_platform   
 * 类名称：EnumCustomerCertStatus   
 * 类描述：   客户实名状态
 * 创建人：李文静  

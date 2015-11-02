@@ -4,7 +4,7 @@ public enum EnumSMSTemplate {
 	
 	
 
-	MemberVfyCode("MEMBER_VFY_CODE","您的先锋支付手机验证码是：%vfyCode%。工作人员不会向您索取验证码，请勿泄露，如非本人操作，请致电  4008189889 ");
+	base_platformVfyCode("base_platform_VFY_CODE","您的先锋支付手机验证码是：%vfyCode%。工作人员不会向您索取验证码，请勿泄露，如非本人操作，请致电  4008189889 ");
 	
 	
 	private EnumSMSTemplate(String id,String content){

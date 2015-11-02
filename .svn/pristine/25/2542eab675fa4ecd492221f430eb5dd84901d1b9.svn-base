@@ -79,7 +79,7 @@ import com.ucf.customer.ws.enums.EnumBankCardType;
 import com.ucf.customer.ws.enums.EnumBindCardType;
 import com.ucf.customer.ws.enums.EnumCertFrom;
 import com.ucf.customer.ws.enums.EnumCertStatus;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.enums.EnumRegisterFrom;
 import com.ucf.customer.ws.enums.EnumUserRegisterStatus;
 import com.ucf.customer.ws.service.UserServiceWS;
@@ -100,8 +100,8 @@ public class UserServiceWSImpl implements UserServiceWS {
 	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(UserServiceWSImpl.class);
 
 	
-	@Value("${com.ucf.member.url}")
-	private String memberUrl;
+	@Value("${com.ucf.base_platform.url}")
+	private String base_platformUrl;
 	private static String loginUrl = "/login/";
 	private static String registrerd = "/reg/";
 
@@ -156,22 +156,22 @@ public class UserServiceWSImpl implements UserServiceWS {
 			if (customer != null) {
 				userCheckResultBO
 						.setEnumUserRegisterStatus(EnumUserRegisterStatus.USER_REGISTERD);
-				userCheckResultBO.setReturnUrl(memberUrl + loginUrl + "certNo="
+				userCheckResultBO.setReturnUrl(base_platformUrl + loginUrl + "certNo="
 						+ certNo);
 			} else {
 				userCheckResultBO
 						.setEnumUserRegisterStatus(EnumUserRegisterStatus.USER_UNREGISTERED);
-				userCheckResultBO.setReturnUrl(memberUrl + registrerd
+				userCheckResultBO.setReturnUrl(base_platformUrl + registrerd
 						+ "certNo=" + certNo);
 			}
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			userCheckResultBO.setEnumMemberCode(EnumMemberCode.ERROR);
+			userCheckResultBO.setEnumbase_platformCode(Enumbase_platformCode.ERROR);
 			return userCheckResultBO;
 		}
 
-		userCheckResultBO.setEnumMemberCode(EnumMemberCode.SUCCESS);
+		userCheckResultBO.setEnumbase_platformCode(Enumbase_platformCode.SUCCESS);
 		return userCheckResultBO;
 	}
 
@@ -204,9 +204,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 	public AccountInfoBO queryAccountNo(AccountInfoParamBO accountInfoParamBD) {
 		UcfCard card = null;
 		AccountInfoBO accountInfoBO = new AccountInfoBO();
-		accountInfoBO.setEnumMemberCode(EnumMemberCode.SUCCESS.getCode());
+		accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.SUCCESS.getCode());
 		if (StringUtil.isEmpty(accountInfoParamBD.getUserId())) {
-			accountInfoBO.setEnumMemberCode(EnumMemberCode.PARAM_ERROR.getCode());
+			accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 			accountInfoBO.setErrorMsg("会员id不能为空！");
 			return accountInfoBO;
 		}
@@ -215,7 +215,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 			card = cardService.queryCardInfo(accountInfoParamBD.getUserId());
 			if (card == null) {
 				accountInfoBO.setErrorMsg("该用户不存在主卡");
-				accountInfoBO.setEnumMemberCode(EnumMemberCode.QUERY_ERROR.getCode());
+				accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.QUERY_ERROR.getCode());
 				return accountInfoBO;
 			}
 			UcfUser ucfUser = ucfUserDao.getUcfUserByUserId(accountInfoParamBD.getUserId());
@@ -235,20 +235,20 @@ public class UserServiceWSImpl implements UserServiceWS {
 					List<UcfSubCard> list = cardService.queryUcfSubCard(ucfSubCard);
 					if (null != list && 0 < list.size()) {
 						accountInfoBO.setSubCardAccountId(list.get(0).getAccountNo());
-						accountInfoBO.setEnumMemberCode(EnumMemberCode.SUCCESS.getCode());
+						accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.SUCCESS.getCode());
 						return accountInfoBO;
 					} else {
 						accountInfoBO.setErrorMsg("该用户不存在子卡");
-						accountInfoBO.setEnumMemberCode(EnumMemberCode.QUERY_ERROR.getCode());
+						accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.QUERY_ERROR.getCode());
 					}
 				} else {
 					accountInfoBO.setErrorMsg("该用户不存在子卡");
-					accountInfoBO.setEnumMemberCode(EnumMemberCode.QUERY_ERROR.getCode());
+					accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.QUERY_ERROR.getCode());
 				}
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			accountInfoBO.setEnumMemberCode(EnumMemberCode.ERROR.getCode());
+			accountInfoBO.setEnumbase_platformCode(Enumbase_platformCode.ERROR.getCode());
 			accountInfoBO.setErrorMsg("会员系统出现异常！");
 		}
 		return accountInfoBO;
@@ -269,10 +269,10 @@ public class UserServiceWSImpl implements UserServiceWS {
 			LOGGER.info("----入参：merchantId :" + merchantId+ "| userId:" + userId );
 			// 参数校验
 			if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId)) {
-				userBankInfoBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+				userBankInfoBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
 				userBankInfoBO
-						.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				userBankInfoBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+						.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				userBankInfoBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
 				return userBankInfoBO;
 			}
 
@@ -286,15 +286,15 @@ public class UserServiceWSImpl implements UserServiceWS {
 					com.ucf.customer.ws.bo.UcfBankCard.class);
 			userBankInfoBO.setBankCards(ucfBankCardsBo);
 
-			userBankInfoBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-			userBankInfoBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			userBankInfoBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			userBankInfoBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			userBankInfoBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			userBankInfoBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			userBankInfoBO.setStatus(EnumMemberCode.ERROR.getCode());
-			userBankInfoBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			userBankInfoBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			userBankInfoBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			userBankInfoBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			userBankInfoBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 		}
 		return userBankInfoBO;
 	}
@@ -310,7 +310,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 			List<UcfBankCard> list = bankCardService.queryUserBankInfosByUseType(userInfoBO.getUserId(), EnumBankCardUseType.FINANCIAL.getCode());
 			// 参数校验
 			baseBO = checkParam(userInfoBO, baseBO, list);
-			if (baseBO.getStatus().equals(EnumMemberCode.ERROR.getCode())) {
+			if (baseBO.getStatus().equals(Enumbase_platformCode.ERROR.getCode())) {
 				return baseBO;
 			}
 			// 标准绑卡
@@ -322,9 +322,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage());
-			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespMsg((EnumMemberCode.ERROR.getMsgS()));
+			baseBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespMsg((Enumbase_platformCode.ERROR.getMsgS()));
 
 		}
 
@@ -334,22 +334,22 @@ public class UserServiceWSImpl implements UserServiceWS {
 	private BaseBO checkParam(UserInfoBO userInfoBO, BaseBO baseBO, List<UcfBankCard> list) {
 		String result = BOCheckUtil.check(userInfoBO);
 		if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			baseBO.setRespMsg(result);
 			return baseBO;
 		}
 
 		if (!EnumBankCardType.isExist(userInfoBO.getCardType())) {
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			baseBO.setRespMsg("卡类型错误：只能绑定借记卡 和贷记卡");
 			return baseBO;
 		}
 
 		if (list.size() > 4) {
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			baseBO.setRespMsg("最大只能添加5张银行卡");
 			return baseBO;
 		}
@@ -361,8 +361,8 @@ public class UserServiceWSImpl implements UserServiceWS {
 
 			if (list.size() > 1) {
 				LOGGER.error("数据异常： 用户银行卡数已经超过一张！");
-				baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				baseBO.setRespMsg("用户银行卡数已经超过一张！");
 				return baseBO;
 			}
@@ -371,16 +371,16 @@ public class UserServiceWSImpl implements UserServiceWS {
 					&& !EnumBindBankCardStatus.FAILE.getCode().equals(list.get(0).getStatus())
 					&& EnumBindCardType.P.getCode().equals(userInfoBO.getType())) {
 				LOGGER.error("请求异常： 用户当前已经绑定银行卡，无法再次预绑卡");
-				baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				baseBO.setRespMsg("用户当前已经绑定银行卡，无法再次预绑卡");
 				return baseBO;
 			}
 
 			if (EnumBindCardType.U.getCode().equals(userInfoBO.getType()) && list.size() == 0) {
 				LOGGER.error("数据异常： 用户没有绑定过一张银行卡无法进行修改！");
-				baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				baseBO.setRespMsg("用户没有绑定过一张银行卡无法进行修改！");
 				return baseBO;
 			}
@@ -388,14 +388,14 @@ public class UserServiceWSImpl implements UserServiceWS {
 			if (EnumBindCardType.U.getCode().equals(userInfoBO.getType()) && list.size() == 1) {
 				if (!list.get(0).getCardNo().equals(userInfoBO.getCardNo()) || 
 					!list.get(0).getBankId().equals(userInfoBO.getBankCode())) {
-					baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-					baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+					baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+					baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 					baseBO.setRespMsg("银行卡号不一致，无法修改");
 					return baseBO;
 				}
 			}
 		}
-		baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+		baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
 		return baseBO;
 	}
 
@@ -458,9 +458,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 				throw new P2PCustomerException();
 			}
 		}
-		baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-		baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-		baseBO.setRespMsg((EnumMemberCode.SUCCESS.getMsgS()));
+		baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+		baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+		baseBO.setRespMsg((Enumbase_platformCode.SUCCESS.getMsgS()));
 	}
 
 	/**
@@ -477,7 +477,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 		UcfUser ucfUser = new UcfUser();
 		ucfUser.setUserId(userInfoBO.getUserId());
 		if (!bankCardService.checkCardNum(ucfUser)) {
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 			baseBO.setRespMsg("最大只能添加5张银行卡");
 			return;
 		}
@@ -489,7 +489,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 		listnew = this.loginService.queryUcfBankCard(card);
 
 		if (listnew != null && listnew.size() > 0) {
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 			baseBO.setRespMsg("本卡已经被绑定，不能重复绑定！");
 			return;
 		}
@@ -519,8 +519,8 @@ public class UserServiceWSImpl implements UserServiceWS {
 		insertBankCard.setStatus(EnumBindBankCardStatus.SUCCESS.getCode());
 		this.ucfBankCardDao.insertUcfBankCard(insertBankCard);
 		LOGGER.info("-------标准绑卡：" + SensitiveInfoUtils.getJson(insertBankCard));
-		baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-		baseBO.setRespMsg((EnumMemberCode.SUCCESS.getMsgS()));
+		baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+		baseBO.setRespMsg((Enumbase_platformCode.SUCCESS.getMsgS()));
 	}
 
 	@DigestLogAnnotated(digestIdentificationCode = "1006",
@@ -532,22 +532,22 @@ public class UserServiceWSImpl implements UserServiceWS {
 		BaseBO baseBO = new BaseBO();
 		LOGGER.info("预绑卡后修改状态传染参数：merchantId[" + merchantId + "] userId[" + merchantId + "] status [" + status + "]  bankCardNo[" + SensitiveInfoUtils.bankCard(bankCardNo) + "]");
 		try {
-			baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
 			UcfBankCard ucfBankCard = bankCardService.queryUserBankInfo(userId, bankCardNo, Constants.STATUS_ING);
 			if(ucfBankCard==null){
-				baseBO.setRespMsg((EnumMemberCode.NO_EXIST_USER_BANK_CARD.getMsgS()));
-				baseBO.setStatus(EnumMemberCode.NO_EXIST_USER_BANK_CARD.getCode());	
+				baseBO.setRespMsg((Enumbase_platformCode.NO_EXIST_USER_BANK_CARD.getMsgS()));
+				baseBO.setStatus(Enumbase_platformCode.NO_EXIST_USER_BANK_CARD.getCode());	
 			}else{
 				ucfBankCard.setStatus(status);
 				bankCardService.updateUcfBankCard(ucfBankCard);
-				baseBO.setRespMsg((EnumMemberCode.SUCCESS.getMsgS()));
-				baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				baseBO.setRespMsg((Enumbase_platformCode.SUCCESS.getMsgS()));
+				baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
 			}
 		} catch (Exception e) {
 			LOGGER.error("预绑卡后修改状态失败", e);
-			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespMsg((EnumMemberCode.ERROR.getMsgS()));
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespMsg((Enumbase_platformCode.ERROR.getMsgS()));
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 		}
 		LOGGER.info("预绑卡后修改状态输出参数：" + SensitiveInfoUtils.getJson(baseBO));
 		return baseBO;
@@ -561,27 +561,27 @@ public class UserServiceWSImpl implements UserServiceWS {
 		LOGGER.info("发送短信：sendSms[" + merchantId + "] phoneNumber[" + SensitiveInfoUtils.mobilePhone(phoneNumber) + "]");
 		SmsBO smsBO = new SmsBO();
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(phoneNumber)) {
-			smsBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			smsBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			smsBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			smsBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
 			return smsBO;
 		}
 		try{	
-			ResultBo checkVfbo = smsService.sendVfyCodeSMS(merchantId,phoneNumber, EnumSMSTemplate.MemberVfyCode.getContent());
+			ResultBo checkVfbo = smsService.sendVfyCodeSMS(merchantId,phoneNumber, EnumSMSTemplate.base_platformVfyCode.getContent());
 			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
-				smsBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				smsBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-				smsBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				smsBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+				smsBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
 				smsBO.setCode(checkVfbo.getResultObject().toString());
 			}else{
-				smsBO.setRespCode(EnumMemberCode.ERROR.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
 				smsBO.setRespMsg(checkVfbo.getMsg());
-				smsBO.setStatus(EnumMemberCode.ERROR.getCode());
+				smsBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				smsBO.setCode("");
 			}			
 		}catch(Exception e){
-			smsBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			smsBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			smsBO.setStatus(EnumMemberCode.ERROR.getCode());
+			smsBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			smsBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			smsBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			smsBO.setCode("");
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -597,7 +597,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 		SmsBO smsBO = new SmsBO();
 		try{
 			if (StringUtil.isEmpty(code)) {
-				smsBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 				smsBO.setRespMsg("校验码为不能为空！");
 				smsBO.setCode(null);
 				smsBO.setCheckResult(false);
@@ -605,11 +605,11 @@ public class UserServiceWSImpl implements UserServiceWS {
 			}			
 			ResultBo checkVfbo = smsService.checkVfyCode(merchantId,phoneNumber, code);
 			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
-				smsBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				smsBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				smsBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				smsBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 				smsBO.setCheckResult(true);
 			}else if(EnumResultCode.FAI.getCode().equals(checkVfbo.getResult())){
-				smsBO.setRespCode(EnumMemberCode.QUERY_ERROR.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.QUERY_ERROR.getCode());
 				smsBO.setRespMsg("校验码错误！");
 				if(checkVfbo.getResultObject()!=null){
 					smsBO.setCode(checkVfbo.getResultObject().toString());
@@ -617,7 +617,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 				smsBO.setCheckResult(false);
 				return smsBO;
 			}else{
-				smsBO.setRespCode(EnumMemberCode.QUERY_CODE_NO_EXIST.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.QUERY_CODE_NO_EXIST.getCode());
 				smsBO.setRespMsg("校验失败，短信验证码过期或不存在！");
 				if(checkVfbo.getResultObject()!=null){
 					smsBO.setCode(checkVfbo.getResultObject().toString());
@@ -626,9 +626,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 				return smsBO;
 			}
 		}catch(Exception e){
-			smsBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			smsBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
 			smsBO.setRespMsg("系统异常！");
-			smsBO.setCode(EnumMemberCode.ERROR.getCode());
+			smsBO.setCode(Enumbase_platformCode.ERROR.getCode());
 			smsBO.setCheckResult(false);
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -644,7 +644,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 		// 参数校验
 		String result = BOCheckUtil.check(bo);
 		if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
-			returnBo.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			returnBo.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 			returnBo.setRespMsg(result);
 			return returnBo;
 		}
@@ -658,14 +658,14 @@ public class UserServiceWSImpl implements UserServiceWS {
 			if (ucfUsers.size() > 0) {
 				UcfUser u = ucfUsers.get(0);
 				if(u.getRealName().equals(bo.getRealName()) && u.getCertNo().equals(bo.getIdNo())){
-					returnBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-					returnBo.setRespMsg(EnumMemberCode.EXIST_USER.getMsgS());
+					returnBo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+					returnBo.setRespMsg(Enumbase_platformCode.EXIST_USER.getMsgS());
 					returnBo.setUserId(u.getUserId());
-					returnBo.setStatus(EnumMemberCode.EXIST_USER.getCode());
+					returnBo.setStatus(Enumbase_platformCode.EXIST_USER.getCode());
 				}else{
-					returnBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-					returnBo.setRespMsg(EnumMemberCode.EXIST_MOBLEPHOE.getMsgS());
-					returnBo.setStatus(EnumMemberCode.EXIST_MOBLEPHOE.getCode());
+					returnBo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+					returnBo.setRespMsg(Enumbase_platformCode.EXIST_MOBLEPHOE.getMsgS());
+					returnBo.setStatus(Enumbase_platformCode.EXIST_MOBLEPHOE.getCode());
 				}	
 				return returnBo;
 			}
@@ -721,7 +721,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 			if (null == ret || !ret.getCode().equals("0000")) {
 				LOGGER.error("账户返回：" + SensitiveInfoUtils.getJson(ret));//账务系统修改
 				returnBo.setRespMsg("调用账户开户失败");
-				returnBo.setRespCode(EnumMemberCode.ERROR.getCode());
+				returnBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 				return returnBo;
 
 			} else {
@@ -750,18 +750,18 @@ public class UserServiceWSImpl implements UserServiceWS {
 					returnBo.setRespMsg(errMsg);
 				} else {
 					returnBo.setUserId(userId);
-					returnBo.setStatus(EnumMemberCode.SUCCESS.getCode());
-					returnBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-					returnBo.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+					returnBo.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+					returnBo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+					returnBo.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 					LOGGER.info("注册成功 ，userId:", userId);
 				}
 
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			returnBo.setRespCode(EnumMemberCode.ERROR.getCode());
+			returnBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 			returnBo.setRespMsg("用户注册失败");
-			returnBo.setStatus(EnumMemberCode.ERROR.getCode());
+			returnBo.setStatus(Enumbase_platformCode.ERROR.getCode());
 		}
 
 		return returnBo;
@@ -779,9 +779,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 					|| bo.getPhoneNo()==null || "".equals(bo.getPhoneNo().trim())
 					|| bo.getRealName()==null || "".equals(bo.getRealName().trim())
 					){
-				registReturnValueBo.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				registReturnValueBo.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
-				registReturnValueBo.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
+				registReturnValueBo.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				registReturnValueBo.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
+				registReturnValueBo.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
 				return registReturnValueBo;
 			}
 			UcfUserLoginApp loginApp = new UcfUserLoginApp();
@@ -796,15 +796,15 @@ public class UserServiceWSImpl implements UserServiceWS {
 				user.setCertNo(bo.getIdNo().replace(" ", ""));
 				List<UcfUser> userList = this.loginService.queryUcfUser(user);
 				if(userList.size()>0){
-					registReturnValueBo.setStatus(EnumMemberCode.SUCCESS.getCode());
-					registReturnValueBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-					registReturnValueBo.setRespMsg(EnumMemberCode.EXIST_USER.getMsgS());
+					registReturnValueBo.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+					registReturnValueBo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+					registReturnValueBo.setRespMsg(Enumbase_platformCode.EXIST_USER.getMsgS());
 					registReturnValueBo.setUserId(((UcfUser)userList.get(0)).getUserId());
 					return registReturnValueBo;
 				}else{
-					registReturnValueBo.setStatus(EnumMemberCode.CELL_IS_USING.getCode());
-					registReturnValueBo.setRespCode(EnumMemberCode.CELL_IS_USING.getCode());
-					registReturnValueBo.setRespMsg(EnumMemberCode.CELL_IS_USING.getMsgS());
+					registReturnValueBo.setStatus(Enumbase_platformCode.CELL_IS_USING.getCode());
+					registReturnValueBo.setRespCode(Enumbase_platformCode.CELL_IS_USING.getCode());
+					registReturnValueBo.setRespMsg(Enumbase_platformCode.CELL_IS_USING.getMsgS());
 					return registReturnValueBo;
 				}
 			}	
@@ -846,9 +846,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 			
 			String result =loginService.createAcccount(null,EnumAccountType.PERSON,ucfCard);
 			if (!result.equals("success")) {
-				registReturnValueBo.setStatus(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
-				registReturnValueBo.setRespCode(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
-				registReturnValueBo.setRespMsg(EnumMemberCode.OPEN_ACCOUNT_FAIL.getMsgS());
+				registReturnValueBo.setStatus(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getCode());
+				registReturnValueBo.setRespCode(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getCode());
+				registReturnValueBo.setRespMsg(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getMsgS());
 				return registReturnValueBo;
 			}
 			
@@ -874,22 +874,22 @@ public class UserServiceWSImpl implements UserServiceWS {
 			    	}
 			});
 			if(commit) {
-				registReturnValueBo.setStatus(EnumMemberCode.SUCCESS.getCode());
-				registReturnValueBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				registReturnValueBo.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				registReturnValueBo.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				registReturnValueBo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				registReturnValueBo.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 				registReturnValueBo.setUserId(userId);
 				return registReturnValueBo;
 			}else{
-				registReturnValueBo.setStatus(EnumMemberCode.ERROR.getCode());
-				registReturnValueBo.setRespCode(EnumMemberCode.ERROR.getCode());
-				registReturnValueBo.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+				registReturnValueBo.setStatus(Enumbase_platformCode.ERROR.getCode());
+				registReturnValueBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
+				registReturnValueBo.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 				return registReturnValueBo;
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			registReturnValueBo.setStatus(EnumMemberCode.ERROR.getCode());
-			registReturnValueBo.setRespCode(EnumMemberCode.ERROR.getCode());
-			registReturnValueBo.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			registReturnValueBo.setStatus(Enumbase_platformCode.ERROR.getCode());
+			registReturnValueBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			registReturnValueBo.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 			return registReturnValueBo;
 		}
 	}
@@ -927,7 +927,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 		// 参数校验
 		String result = BOCheckUtil.check(bo);
 		if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
-			ret.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			ret.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 			ret.setRespMsg(result);
 			return ret;
 		}
@@ -977,7 +977,7 @@ public class UserServiceWSImpl implements UserServiceWS {
 		// 参数校验
 		String result = BOCheckUtil.check(bo);
 		if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
-			ret.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+			ret.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 			ret.setRespMsg(result);
 			return ret;
 		}
@@ -1072,9 +1072,9 @@ public class UserServiceWSImpl implements UserServiceWS {
 		// 参数校验
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(userId)
 				|| StringUtil.isEmpty(bankCardNo)) {
-			baseBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
 			return baseBO;
 		}
 		try {
@@ -1084,25 +1084,25 @@ public class UserServiceWSImpl implements UserServiceWS {
 			List<UcfBankCard> bankCardList = this.loginService
 					.queryUcfBankCard(card);
 			if (bankCardList == null || bankCardList.size() <= 0) {
-				baseBO.setStatus(EnumMemberCode.NO_EXIST_USER_BANK_CARD
+				baseBO.setStatus(Enumbase_platformCode.NO_EXIST_USER_BANK_CARD
 						.getCode());
-				baseBO.setRespCode(EnumMemberCode.NO_EXIST_USER_BANK_CARD
+				baseBO.setRespCode(Enumbase_platformCode.NO_EXIST_USER_BANK_CARD
 						.getCode());
-				baseBO.setRespMsg(EnumMemberCode.NO_EXIST_USER_BANK_CARD
+				baseBO.setRespMsg(Enumbase_platformCode.NO_EXIST_USER_BANK_CARD
 						.getMsgS());
 			} else {
 				UcfBankCard ncard = bankCardList.get(0);
 				ncard.setIsDelete("Y");
 				this.loginService.updateBankCard(ncard);
-				baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				baseBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 			}
 
 		} catch (Exception e) {
-			baseBO.setStatus(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			baseBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 		}
 		return baseBO;
 	}
@@ -1118,23 +1118,23 @@ public class UserServiceWSImpl implements UserServiceWS {
 			// 参数校验
 			String result = BOCheckUtil.check(userAuthParamBO);
 			if (!result.equals(EnumTrueFalse.TRUE.getCode())) {
-				baseBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
 				baseBO.setRespMsg(result);
 				return baseBO;
 			}
 			UcfUser ucfUser = ucfUserDao.getUcfUserByUserId(userAuthParamBO
 					.getUserId());
 			if (ucfUser == null) {
-				baseBO.setRespCode(EnumMemberCode.NO_EXIST_USER.getCode());
-				baseBO.setRespMsg(EnumMemberCode.NO_EXIST_USER.getMsgS());
-				baseBO.setStatus(EnumMemberCode.NO_EXIST_USER.getCode());
+				baseBO.setRespCode(Enumbase_platformCode.NO_EXIST_USER.getCode());
+				baseBO.setRespMsg(Enumbase_platformCode.NO_EXIST_USER.getMsgS());
+				baseBO.setStatus(Enumbase_platformCode.NO_EXIST_USER.getCode());
 				return baseBO;
 			}
 			baseBO = userAuthBasic(userAuthParamBO, baseBO, ucfUser);
 			return baseBO;
 		} catch (Exception e) {
-			baseBO.setRespCode(EnumMemberCode.AUTH_ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.AUTH_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.AUTH_ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.AUTH_ERROR.getCode());
 			baseBO.setRespMsg("系统异常");
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -1185,14 +1185,14 @@ public class UserServiceWSImpl implements UserServiceWS {
 				+ SensitiveInfoUtils.getJson(authRealNameWsReturnValueBo));//统一支付系统修改
 		if (PaymentEnum.PAYMENT_DEAL_RESULT_SUCCESS.getCode().equals(
 				authRealNameWsReturnValueBo.getReturnValueMap().get("result"))) {
-			baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-			baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 			return baseBO;
 		} else {
-			baseBO.setRespCode(EnumMemberCode.AUTH_ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.AUTH_ERROR.getCode());
-			baseBO.setRespMsg(EnumMemberCode.AUTH_ERROR.getMsgS());
+			baseBO.setRespCode(Enumbase_platformCode.AUTH_ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.AUTH_ERROR.getCode());
+			baseBO.setRespMsg(Enumbase_platformCode.AUTH_ERROR.getMsgS());
 			return baseBO;
 		}
 	}
@@ -1220,19 +1220,19 @@ public class UserServiceWSImpl implements UserServiceWS {
 			if (PaymentEnum.PAYMENT_DEAL_RESULT_SUCCESS.getCode().equals(
 					authRealNameWsReturnValueBo.getReturnValueMap().get(
 							"result"))) {
-				baseBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				baseBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				baseBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+				baseBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				baseBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				baseBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 				return baseBO;
 			} else {
-				baseBO.setRespCode(EnumMemberCode.AUTH_ERROR.getCode());
-				baseBO.setStatus(EnumMemberCode.AUTH_ERROR.getCode());
-				baseBO.setRespMsg(EnumMemberCode.AUTH_ERROR.getMsgS());
+				baseBO.setRespCode(Enumbase_platformCode.AUTH_ERROR.getCode());
+				baseBO.setStatus(Enumbase_platformCode.AUTH_ERROR.getCode());
+				baseBO.setRespMsg(Enumbase_platformCode.AUTH_ERROR.getMsgS());
 				return baseBO;
 			}
 		} catch (Exception e) {
-			baseBO.setRespCode(EnumMemberCode.AUTH_ERROR.getCode());
-			baseBO.setStatus(EnumMemberCode.AUTH_ERROR.getCode());
+			baseBO.setRespCode(Enumbase_platformCode.AUTH_ERROR.getCode());
+			baseBO.setStatus(Enumbase_platformCode.AUTH_ERROR.getCode());
 			baseBO.setRespMsg("系统异常");
 			LOGGER.error(e.getMessage(), e);
 		}
@@ -1246,27 +1246,27 @@ public class UserServiceWSImpl implements UserServiceWS {
 	public SmsBO sendSms(String merchantId, String phoneNumber,String template) {
 		SmsBO smsBO = new SmsBO();
 		if (StringUtil.isEmpty(merchantId) || StringUtil.isEmpty(phoneNumber)) {
-			smsBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-			smsBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
+			smsBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+			smsBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
 			return smsBO;
 		}
 		try{
 			ResultBo checkVfbo = smsService.sendVfyCodeSMS(merchantId,phoneNumber, template);
 			if(EnumResultCode.SUCCESS.getCode().equals(checkVfbo.getResult())){
-				smsBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				smsBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-				smsBO.setStatus(EnumMemberCode.SUCCESS.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				smsBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+				smsBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
 				smsBO.setCode(checkVfbo.getResultObject().toString());
 			}else{
-				smsBO.setRespCode(EnumMemberCode.ERROR.getCode());
+				smsBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
 				smsBO.setRespMsg(checkVfbo.getMsg());
-				smsBO.setStatus(EnumMemberCode.ERROR.getCode());
+				smsBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 				smsBO.setCode("");
 			}
 		}catch(Exception e){
-			smsBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			smsBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			smsBO.setStatus(EnumMemberCode.ERROR.getCode());
+			smsBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			smsBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			smsBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			smsBO.setCode("");
 			LOGGER.error(e.getMessage(), e);
 		}

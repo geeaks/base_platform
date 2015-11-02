@@ -28,13 +28,13 @@ import com.ucf.platform.framework.mq.enums.UcfMQConsumeStatus;
 
 /**
  * @Description: 会员接收mq消息进行绑卡
- * @ClassName: MemberMQConsumerService
+ * @ClassName: base_platformMQConsumerService
  * @author gaoxiang
  * @date 2015-1-22 下午4:09:55
  */ 
-public class MemberMQConsumerService extends AbstractUcfMQSyncConsumerConcurrently {
+public class base_platformMQConsumerService extends AbstractUcfMQSyncConsumerConcurrently {
 
-	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(MemberMQConsumerService.class);
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(base_platformMQConsumerService.class);
 	
 	@Resource(name="mqConsumeService")
 	private MQConsumeService mqConsumeService;

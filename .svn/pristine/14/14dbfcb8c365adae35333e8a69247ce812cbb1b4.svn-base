@@ -13,9 +13,9 @@ oracle.jdbc.minIdle=2
 dubbo.registry=192.168.3.221:2181
 dubbo.service.timeout=2000
 dubbo.service.retries=0
-dubbo.member.service.port=4021
-dubbo.member.service.version=1.0.0-DEV_LWJ
-dubbo.p2p.member.service.version=1.0.0-DEVP2P
+dubbo.base_platform.service.port=4021
+dubbo.base_platform.service.version=1.0.0-DEV_LWJ
+dubbo.p2p.base_platform.service.version=1.0.0-DEVP2P
 dubbo.account.service.version=1.0.0-DEV
 dubbo.payment.service.version=1.0.0-DEV
 dubbo.trade.service.version=1.0.0-DEV
@@ -24,7 +24,7 @@ dubbo.gateway.service.version=1.6.6-DEV
 
 
 
-com.ucf.member.url=http://192.168.3.226:8083/member
+com.ucf.base_platform.url=http://192.168.3.226:8083/base_platform
 com.ucf.cashier.url=http://192.168.3.223:8085
 com.ucf.trade.url=http://192.168.3.220:8084
 com.ucf.payment.url=http://192.168.3.226:8081
@@ -33,7 +33,7 @@ com.ucf.channel.url=http://192.168.3.223:8086
 com.ucf.gateway.url=http://192.168.3.226:8080
 
 com.ucf.trade.recharge.uri=http://192.168.3.220:8084/trade/ucfTradeOrderRechargeController/recharge
-com.ucf.member.uniologin.host=192.168.3.226:8083
+com.ucf.base_platform.uniologin.host=192.168.3.226:8083
 
 # redis configration
 redis.pool.host=192.168.3.223

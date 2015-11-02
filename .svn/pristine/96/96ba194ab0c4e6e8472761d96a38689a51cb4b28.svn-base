@@ -1,9 +1,9 @@
 #database connection properties
 
-oracle.jdbc.driver=${member.jdbc.driver}
-oracle.jdbc.url=${member.jdbc.url}
-oracle.jdbc.username=${member.jdbc.username}
-oracle.jdbc.password=${member.jdbc.password}
+oracle.jdbc.driver=${base_platform.jdbc.driver}
+oracle.jdbc.url=${base_platform.jdbc.url}
+oracle.jdbc.username=${base_platform.jdbc.username}
+oracle.jdbc.password=${base_platform.jdbc.password}
 oracle.jdbc.maxActive=${oracle.jdbc.maxActive}
 oracle.jdbc.maxWait=${oracle.jdbc.maxWait}
 oracle.jdbc.initialSize=${oracle.jdbc.initialSize}
@@ -16,9 +16,9 @@ oracle.jdbc.removeAbandonedTimeout=1800
 dubbo.registry=${dubbo.registry}
 dubbo.service.timeout=${dubbo.service.timeout}
 dubbo.service.retries=${dubbo.service.retries}
-dubbo.member.service.port=${dubbo.member.service.port}
-dubbo.member.service.version=${dubbo.member.service.version}
-dubbo.p2p.member.service.version=${dubbo.p2p.member.service.version}
+dubbo.base_platform.service.port=${dubbo.base_platform.service.port}
+dubbo.base_platform.service.version=${dubbo.base_platform.service.version}
+dubbo.p2p.base_platform.service.version=${dubbo.p2p.base_platform.service.version}
 dubbo.account.service.version=${dubbo.account.service.version}
 dubbo.payment.service.version=${dubbo.payment.service.version}
 dubbo.trade.service.version=${dubbo.trade.service.version}
@@ -26,7 +26,7 @@ dubbo.channel.service.version=${dubbo.channel.service.version}
 dubbo.gateway.service.version=${dubbo.gateway.service.version}
 dubbo.message.service.version=${dubbo.message.service.version}
 
-com.ucf.member.url=${member.host}
+com.ucf.base_platform.url=${base_platform.host}
 com.ucf.cashier.url=${cashier.host}
 com.ucf.trade.url=${trade.host}
 com.ucf.payment.url=${payment.host}
@@ -34,10 +34,10 @@ com.ucf.account.url=${account.host}
 com.ucf.channel.url=${channel.host}
 com.ucf.gateway.url=${gateway.host}
 
-com.ucf.customer.uri=/member
+com.ucf.customer.uri=/base_platform
 
 com.ucf.trade.recharge.uri=${trade.host}/trade/ucfTradeOrderRechargeController/recharge
-com.ucf.member.uniologin.host=${member.host}
+com.ucf.base_platform.uniologin.host=${base_platform.host}
 
 # redis configration
 redis.pool.host=${redis.host.ip}

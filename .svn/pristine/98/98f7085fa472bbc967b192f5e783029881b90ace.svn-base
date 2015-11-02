@@ -9,12 +9,12 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <META http-equiv="X-UA-Compatible" content="IE=9" >
-    <link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
+    <link href="${staticbase_platformPath}/css/shouyintai.css" rel="stylesheet">
   </head>
   <body>
     <div class="head">
     	<div class="container">
-        	<img src="${staticMemberPath}/images/zgpt.png" alt="...">
+        	<img src="${staticbase_platformPath}/images/zgpt.png" alt="...">
         </div>
     </div>
   	<div class="container">
@@ -29,7 +29,7 @@
       	</footer>
     </div>
     </div> <!-- /container -->
-    <script src="${StaticMemberPath}js/jquery-1.11.1.min.js"></script>
-    <script src="${StaticMemberPath}js/bootstrap.js"></script>
+    <script src="${Staticbase_platformPath}js/jquery-1.11.1.min.js"></script>
+    <script src="${Staticbase_platformPath}js/bootstrap.js"></script>
   </body>
 </html>

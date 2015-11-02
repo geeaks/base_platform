@@ -3,7 +3,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
 *    
-* 项目名称：member-client   <br/>
+* 项目名称：base_platform-client   <br/>
 * 类名称：EnumIdCardType   <br/>
 * 类描述： 身份证类型  <br/>
 * 创建人：李文静  <br/>
@@ -46,9 +46,9 @@ public enum EnumIdCardType {
 	}
 
 	public static EnumIdCardType getByCode(String code) {
-		for (EnumIdCardType enunEnumMemberUserType : EnumIdCardType.values()) {
-			if (enunEnumMemberUserType.code.equals(code)) {
-				return enunEnumMemberUserType;
+		for (EnumIdCardType enunEnumbase_platformUserType : EnumIdCardType.values()) {
+			if (enunEnumbase_platformUserType.code.equals(code)) {
+				return enunEnumbase_platformUserType;
 			}
 		}
 		return null;

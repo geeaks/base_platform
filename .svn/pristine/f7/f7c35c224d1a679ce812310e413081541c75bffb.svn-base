@@ -10,7 +10,7 @@
 
 											<div style="display:inline;">
 											<div id="myTip" style="width:220px;height:28px;border:1px solid #888888;background:#FFFFFF;display:none;" align="center" valign="middle">
-												<a id='downLink' href="${staticMemberPath}/${myexe}" class="mylink">
+												<a id='downLink' href="${staticbase_platformPath}/${myexe}" class="mylink">
 													<font face="宋体" size="-1">点此下载控件</font>
 												</a>
 											</div>
@@ -21,7 +21,7 @@
 												<object id="userpasswd" style="width:220px;height:40px;margin-left:2px; margin-top:-8px;"  classid="CLSID:598BD8F9-CE1C-4b52-9C0E-6EA55E2371A7" tabIndex="2"
 													
 													
-													codebase="${staticMemberPath}/${mycab}#Version=${myVersion}" data-tip="6-20位字符，必须包含：大写字母、小写字母、数字、符号至少两种">
+													codebase="${staticbase_platformPath}/${mycab}#Version=${myVersion}" data-tip="6-20位字符，必须包含：大写字母、小写字母、数字、符号至少两种">
 														
 													<param name="textsize" value="16"> 
 													<param name="color" value="#000000"> 

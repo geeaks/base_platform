@@ -4,8 +4,8 @@ package com.ucf.customer.ws.enums;
 /**
  * 
 *    
-* 项目名称：member   
-* 类名称：EnumMemberUserType   
+* 项目名称：base_platform   
+* 类名称：Enumbase_platformUserType   
 * 类描述：  默认url 不需要访问权限。 普通登录用户需要 配置 ；logined登录权限 
 * 创建人：李文静 
 * 创建时间：2014-4-28 上午9:28:13   
@@ -43,10 +43,10 @@ public enum EnumFieldType {
 	}
 
 	public static EnumFieldType getByCode(int code) {
-		for (EnumFieldType enunEnumMemberUserType : EnumFieldType
+		for (EnumFieldType enunEnumbase_platformUserType : EnumFieldType
 				.values()) {
-			if (enunEnumMemberUserType.code == code) {
-				return enunEnumMemberUserType;
+			if (enunEnumbase_platformUserType.code == code) {
+				return enunEnumbase_platformUserType;
 			}
 		}
 		return null;

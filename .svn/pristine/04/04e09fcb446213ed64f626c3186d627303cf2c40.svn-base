@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <title>先锋支付--用户中心 </title>
-<link href="${staticMemberPath}/new/css/host_bank.css" rel="stylesheet" type="text/css"/>
+<link href="${staticbase_platformPath}/new/css/host_bank.css" rel="stylesheet" type="text/css"/>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
 <style type="text/css">
 	p.tip span {
@@ -25,7 +25,7 @@
 		color:red;
 	}
 	.add-card {
-		background: url('${staticMemberPath}/images/add-card.png') no-repeat scroll 50px 115px transparent;
+		background: url('${staticbase_platformPath}/images/add-card.png') no-repeat scroll 50px 115px transparent;
 		padding-left: 20px;
 		width: 200px;
 		color: #999;
@@ -79,8 +79,8 @@
 							<thead>
 								<tr>
 									<td colspan="3" ><div class="pl15 pr15 pt5 pb5" style="background:#f7f7f7;">
-									<img class="fr" src="${staticMemberPath}/images/cxk.png" />
-									<img src="${staticMemberPath}/new/images/logo/${a.bankId }_1301.png" /></div></td>
+									<img class="fr" src="${staticbase_platformPath}/images/cxk.png" />
+									<img src="${staticbase_platformPath}/new/images/logo/${a.bankId }_1301.png" /></div></td>
 								</tr>
 							</thead>
 							<tbody>
@@ -115,7 +115,7 @@
 										</c:if>
 										<%-- <c:if test="${a.certStatus!='0' && freeze!='0'}"> --%>
 										<%-- <c:if test="${freeze!='0'}">
-											<a href="${staticMemberPath}/bank/remakeWithDrawCard.htm?id=${a.id}">设置为默认提现卡</a>
+											<a href="${staticbase_platformPath}/bank/remakeWithDrawCard.htm?id=${a.id}">设置为默认提现卡</a>
 										</c:if> --%>
 									</td>
 								</tr>

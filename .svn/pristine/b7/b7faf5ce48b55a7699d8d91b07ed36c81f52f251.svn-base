@@ -2,7 +2,7 @@ package com.ucf.customer.api.bo;
 
 import java.io.Serializable;
 
-public class EnterpriseMemberQueryBO implements Serializable {
+public class Enterprisebase_platformQueryBO implements Serializable {
 
 	/**
 	 * @Fields serialVersionUID : 序列

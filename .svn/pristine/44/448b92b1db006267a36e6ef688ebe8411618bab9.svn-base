@@ -6,14 +6,14 @@
 <title>找回支付密码</title>
 
 <!--public js&css start-->
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/css/commons/index.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/common.css"/>
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/css/commons/index.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/common.css"/>
 <script type="text/javascript">
 var APP_ROOT = '';
 var ERROR_IMG = '/static/v1/images/common/image_err.gif';
 var send_span = 60000;
 </script>
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/host_findpassword.css"/>
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/host_findpassword.css"/>
  <link href="../css/bootstrap.css" rel="stylesheet">  
 </head>
 <body>

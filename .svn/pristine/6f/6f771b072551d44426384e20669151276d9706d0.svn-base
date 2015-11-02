@@ -1,9 +1,9 @@
 package com.ucf.customer.api;
 
 import com.ucf.customer.api.bo.BaseResultBO;
-import com.ucf.customer.api.bo.EnterpriseMemberBO;
-import com.ucf.customer.api.bo.EnterpriseMemberQueryBO;
-import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.Enterprisebase_platformBO;
+import com.ucf.customer.api.bo.Enterprisebase_platformQueryBO;
+import com.ucf.customer.api.bo.base_platformCommonResult;
 import com.ucf.customer.api.bo.OperatorBo;
 import com.ucf.customer.api.bo.PageRs;
 
@@ -12,7 +12,7 @@ import com.ucf.customer.api.bo.PageRs;
  * @author 张磊
  *
  */
-public interface IEnterpriseMemberService {
+public interface IEnterprisebase_platformService {
 
 	
 	
@@ -21,7 +21,7 @@ public interface IEnterpriseMemberService {
 		 * @param registerRequestBO
 		 * @return
 		 */
-		BaseResultBO registerMember(EnterpriseMemberBO paramBo);
+		BaseResultBO registerbase_platform(Enterprisebase_platformBO paramBo);
 		
 		
 		/**
@@ -29,7 +29,7 @@ public interface IEnterpriseMemberService {
 		 * @param registerRequestBO
 		 * @return
 		 */
-		BaseResultBO updaterMember(EnterpriseMemberBO paramBo);
+		BaseResultBO updaterbase_platform(Enterprisebase_platformBO paramBo);
 		
 		
 		/**
@@ -37,7 +37,7 @@ public interface IEnterpriseMemberService {
 		 * @param registerRequestBO
 		 * @return
 		 */
-		BaseResultBO registerManagedMember(EnterpriseMemberBO registerRequestBO);
+		BaseResultBO registerManagedbase_platform(Enterprisebase_platformBO registerRequestBO);
 		
 		
 		/**
@@ -45,7 +45,7 @@ public interface IEnterpriseMemberService {
 		 * @param registerRequestBO
 		 * @return
 		 */
-		BaseResultBO updaterManagedMember(EnterpriseMemberBO registerRequestBO);
+		BaseResultBO updaterManagedbase_platform(Enterprisebase_platformBO registerRequestBO);
 		
 		
 		/**
@@ -53,14 +53,14 @@ public interface IEnterpriseMemberService {
 		 * @param registerRequestBO
 		 * @return
 		 */
-		BaseResultBO registerMerchant(EnterpriseMemberBO registerRequestBO);
+		BaseResultBO registerMerchant(Enterprisebase_platformBO registerRequestBO);
 		
 		/**
 		 * 注册商户
 		 * @param registerRequestBO
 		 * @return
 		 */
-		BaseResultBO updateMerchant(EnterpriseMemberBO registerRequestBO);
+		BaseResultBO updateMerchant(Enterprisebase_platformBO registerRequestBO);
 		
 		
 		
@@ -107,6 +107,6 @@ public interface IEnterpriseMemberService {
 		 * @param page  
 		 * @return
 		 */
-		MemberCommonResult<PageRs<EnterpriseMemberBO>> findEnterpriseMemberInfo(EnterpriseMemberQueryBO enterpriseMemberQueryBO);
+		base_platformCommonResult<PageRs<Enterprisebase_platformBO>> findEnterprisebase_platformInfo(Enterprisebase_platformQueryBO enterprisebase_platformQueryBO);
 		
 }

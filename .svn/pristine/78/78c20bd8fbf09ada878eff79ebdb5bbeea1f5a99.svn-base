@@ -1,24 +1,24 @@
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery-migrate-1.2.1.min.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/local/easyui-lang-zh_CN.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.blockUI.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/customer/com.ucf.customer.base.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/customer/com.ucf.customer.sms.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery-migrate-1.2.1.min.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/local/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.blockUI.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/customer/com.ucf.customer.base.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/customer/com.ucf.customer.sms.js"></script>
 
 
 <!--[if lte IE 9]>
 <script src="js/common/html5shiv.js"></script>
 <![endif]-->
-<script type="text/javascript" src="${staticMemberPath}/js/commons/lang.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/lang.js"></script>
 
 
 <!--private js&css start-->
-<script type="text/javascript" src="${staticMemberPath}/new/js/common/common.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/new/js/common/common.js"></script>
 
 <!--private js&css end-->
 
 <!--[if lte IE 9]>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/html5shiv.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/html5shiv.js"></script>
 <![endif]-->
    
     <script type="text/javascript">
@@ -50,5 +50,5 @@
         	});
         }
     </script>
-    <script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.validator.js"></script>
-    <script type="text/javascript" src="${staticMemberPath}/js/commons/local/zh_CN.js"></script>
+    <script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.validator.js"></script>
+    <script type="text/javascript" src="${staticbase_platformPath}/js/commons/local/zh_CN.js"></script>

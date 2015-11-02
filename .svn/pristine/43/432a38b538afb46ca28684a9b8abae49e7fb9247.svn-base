@@ -37,11 +37,11 @@
 
 	<bean id="tradeService" class="com.ucf.customer.service.impl.TradeServiceImpl">
 		<property name="tradeRechargeUrl" value="${com.ucf.trade.recharge.uri}" />
-		<property name="unioLoginUrl" value="${com.ucf.member.uniologin.host}" />
+		<property name="unioLoginUrl" value="${com.ucf.base_platform.uniologin.host}" />
 	</bean>
 
 	<bean id="customerServiceImpl" class="com.ucf.customer.service.impl.CustomerServiceImpl">
-		<property name="customerRegUrl" value="${com.ucf.member.url}${com.ucf.customer.uri}" />
+		<property name="customerRegUrl" value="${com.ucf.base_platform.url}${com.ucf.customer.uri}" />
 	</bean>
 
 	<bean id="protectionSystemServiceImpl"
@@ -154,9 +154,9 @@
 			<bean class="com.ucf.customer.interceptor.ProtectionSystemInterceptor" />
 		</mvc:interceptor>
 		<mvc:interceptor>
-			<mvc:mapping path="/member/withdraw" />
-			<mvc:mapping path="/member/bank/firstaddbank.htm" />
-			<mvc:mapping path="/member/bank/firstAddBankCardPro.htm" />
+			<mvc:mapping path="/base_platform/withdraw" />
+			<mvc:mapping path="/base_platform/bank/firstaddbank.htm" />
+			<mvc:mapping path="/base_platform/bank/firstAddBankCardPro.htm" />
 			<bean class="com.ucf.customer.interceptor.TokenInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
@@ -200,7 +200,7 @@
 	</bean>
 	<bean class="com.ucf.schedule.service.ScheduleClient" init-method="init">
 		<!-- 任务分组，不同的应用 值不相同 -->
-		<property name="group" value="MEMBER"></property>
+		<property name="group" value="base_platform"></property>
 		<property name="tasks">
 			<list>
 				<!-- 任务Bean -->

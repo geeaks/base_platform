@@ -8,200 +8,200 @@ import org.springframework.test.annotation.Rollback;
 import com.alibaba.fastjson.JSON;
 import com.ucf.customer.test.BaseTest;
 import com.ucf.customer.ws.bo.BaseBO;
-import com.ucf.customer.ws.bo.enterprise.MemberRegisterResultBO;
-import com.ucf.customer.ws.bo.enterprise.OuterEnterpriseMemberRegRequestBO;
-import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoRequestBO;
-import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoResultBO;
-import com.ucf.customer.ws.service.enterprise.EnterpriseMemberService;
+import com.ucf.customer.ws.bo.enterprise.base_platformRegisterResultBO;
+import com.ucf.customer.ws.bo.enterprise.OuterEnterprisebase_platformRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.Updatebase_platformInfoRequestBO;
+import com.ucf.customer.ws.bo.enterprise.Updatebase_platformInfoResultBO;
+import com.ucf.customer.ws.service.enterprise.Enterprisebase_platformService;
 
 public class CapitalDepositWSTest extends BaseTest{
 
 
 	
 	@Autowired
-	EnterpriseMemberService enterpriseMemberServiceImpl; 
+	Enterprisebase_platformService enterprisebase_platformServiceImpl; 
 	
 	@Test
-	public void testAuditEnterpriseMember(){
-		BaseBO baseBO = enterpriseMemberServiceImpl.auditEnterpriseMember("M0000000400", "S");
+	public void testAuditEnterprisebase_platform(){
+		BaseBO baseBO = enterprisebase_platformServiceImpl.auditEnterprisebase_platform("M0000000400", "S");
 		Assert.assertEquals(baseBO.getRespCode(), "00");
 	}
 	
 	@Test
-	public void testMemberRegister() {
+	public void testbase_platformRegister() {
 		
-		OuterEnterpriseMemberRegRequestBO memberRegisterRequestBO = new OuterEnterpriseMemberRegRequestBO();
+		OuterEnterprisebase_platformRegRequestBO base_platformRegisterRequestBO = new OuterEnterprisebase_platformRegRequestBO();
 		//平台商id	
-		memberRegisterRequestBO.setMerchantId("123456");
+		base_platformRegisterRequestBO.setMerchantId("123456");
 		//企业用户ID	
-		memberRegisterRequestBO.setUserId("654321");
+		base_platformRegisterRequestBO.setUserId("654321");
 		//代理人名称	
-		memberRegisterRequestBO.setAgentPersonName("李梦");
+		base_platformRegisterRequestBO.setAgentPersonName("李梦");
 		//代理人身份证号码	
-		memberRegisterRequestBO.setAgentPersonNo("511381198804498771");
+		base_platformRegisterRequestBO.setAgentPersonNo("511381198804498771");
 		//代理人手机号码	
-		memberRegisterRequestBO.setAgentPersonPhone("13641080489");
+		base_platformRegisterRequestBO.setAgentPersonPhone("13641080489");
 		//企业全称	
-		memberRegisterRequestBO.setEnterpriseFullName("先锋支付全称");
+		base_platformRegisterRequestBO.setEnterpriseFullName("先锋支付全称");
 		//企业简称	
-		memberRegisterRequestBO.setEnterpriseShortName("先锋支付简称");
+		base_platformRegisterRequestBO.setEnterpriseShortName("先锋支付简称");
 		//营业执照号	
-		memberRegisterRequestBO.setBusinessLicense("88888881");
+		base_platformRegisterRequestBO.setBusinessLicense("88888881");
 		//证件到期时间	
-		memberRegisterRequestBO.setEndDate("2014.12.31");
+		base_platformRegisterRequestBO.setEndDate("2014.12.31");
 		//法人姓名	
-		memberRegisterRequestBO.setLegalPersonName("Perry");
+		base_platformRegisterRequestBO.setLegalPersonName("Perry");
 		//法人身份证号	
-		memberRegisterRequestBO.setLegalPersonNo("666666666666666666");
+		base_platformRegisterRequestBO.setLegalPersonNo("666666666666666666");
 		//企业地址	
-		memberRegisterRequestBO.setEnterpriseAddress("北京酒仙桥");
+		base_platformRegisterRequestBO.setEnterpriseAddress("北京酒仙桥");
 		//联系电话	
-		memberRegisterRequestBO.setEnterprisePhone("99999999");
+		base_platformRegisterRequestBO.setEnterprisePhone("99999999");
 		//企业账户开户行名称	
-		memberRegisterRequestBO.setBankName("工商银行");
+		base_platformRegisterRequestBO.setBankName("工商银行");
 		//开户行Code
-		memberRegisterRequestBO.setBankCode("ICBC");
+		base_platformRegisterRequestBO.setBankCode("ICBC");
 		//对公账号	
-		memberRegisterRequestBO.setBankCardNo("655543545524423332");
+		base_platformRegisterRequestBO.setBankCardNo("655543545524423332");
 		//开户行省份	
-		memberRegisterRequestBO.setProvinces("北京");
+		base_platformRegisterRequestBO.setProvinces("北京");
 		//开户行城市	
-		memberRegisterRequestBO.setCity("北京");
+		base_platformRegisterRequestBO.setCity("北京");
 		//开户行支行名称	
-		memberRegisterRequestBO.setIssuerName("北京酒仙桥支行");
+		base_platformRegisterRequestBO.setIssuerName("北京酒仙桥支行");
 		//联行号	
-		memberRegisterRequestBO.setIssuer("987654321");
+		base_platformRegisterRequestBO.setIssuer("987654321");
 		//账户名称	
-		memberRegisterRequestBO.setBankCardName("先锋支付");
-		MemberRegisterResultBO memberRegisterResultBO = enterpriseMemberServiceImpl.register(memberRegisterRequestBO);
-		Assert.assertEquals(memberRegisterResultBO.getRespCode(), "00");
+		base_platformRegisterRequestBO.setBankCardName("先锋支付");
+		base_platformRegisterResultBO base_platformRegisterResultBO = enterprisebase_platformServiceImpl.register(base_platformRegisterRequestBO);
+		Assert.assertEquals(base_platformRegisterResultBO.getRespCode(), "00");
 	}
 
 	@Test
 	@Rollback(false)
 	public void testMerchantRegister() {
 		
-		OuterEnterpriseMemberRegRequestBO memberRegisterRequestBO = new OuterEnterpriseMemberRegRequestBO();
+		OuterEnterprisebase_platformRegRequestBO base_platformRegisterRequestBO = new OuterEnterprisebase_platformRegRequestBO();
 		//代理人名称	
-		memberRegisterRequestBO.setAgentPersonName("李梦");
+		base_platformRegisterRequestBO.setAgentPersonName("李梦");
 		//代理人手机号码	
-		memberRegisterRequestBO.setAgentPersonPhone("13641080489");
+		base_platformRegisterRequestBO.setAgentPersonPhone("13641080489");
 		//企业全称	
-		memberRegisterRequestBO.setEnterpriseFullName("先锋支付全称");
+		base_platformRegisterRequestBO.setEnterpriseFullName("先锋支付全称");
 		//企业简称	
-		memberRegisterRequestBO.setEnterpriseShortName("先锋支付简称");
+		base_platformRegisterRequestBO.setEnterpriseShortName("先锋支付简称");
 		//营业执照号	
-		memberRegisterRequestBO.setBusinessLicense("88888881");
+		base_platformRegisterRequestBO.setBusinessLicense("88888881");
 		//证件到期时间	
-		memberRegisterRequestBO.setEndDate("20141231");
+		base_platformRegisterRequestBO.setEndDate("20141231");
 		//法人姓名	
-		memberRegisterRequestBO.setLegalPersonName("Perry");
+		base_platformRegisterRequestBO.setLegalPersonName("Perry");
 		//法人身份证号	
-		memberRegisterRequestBO.setLegalPersonNo("666666666666666666");
+		base_platformRegisterRequestBO.setLegalPersonNo("666666666666666666");
 		//企业地址	
-		memberRegisterRequestBO.setEnterpriseAddress("北京酒仙桥");
+		base_platformRegisterRequestBO.setEnterpriseAddress("北京酒仙桥");
 		//联系电话	
-		memberRegisterRequestBO.setEnterprisePhone("99999999");
+		base_platformRegisterRequestBO.setEnterprisePhone("99999999");
 		//企业账户开户行名称	
-		memberRegisterRequestBO.setBankName("工商银行");
+		base_platformRegisterRequestBO.setBankName("工商银行");
 		//开户行Code
-		memberRegisterRequestBO.setBankCode("ICBC");
+		base_platformRegisterRequestBO.setBankCode("ICBC");
 		//对公账号	
-		memberRegisterRequestBO.setBankCardNo("655543545524423332");
+		base_platformRegisterRequestBO.setBankCardNo("655543545524423332");
 		//开户行省份	
-		memberRegisterRequestBO.setProvinces("北京");
+		base_platformRegisterRequestBO.setProvinces("北京");
 		//开户行城市	
-		memberRegisterRequestBO.setCity("北京");
-		memberRegisterRequestBO.setLoginPassword("123456".getBytes());
+		base_platformRegisterRequestBO.setCity("北京");
+		base_platformRegisterRequestBO.setLoginPassword("123456".getBytes());
 		//开户行支行名称	
-		memberRegisterRequestBO.setIssuerName("北京酒仙桥支行");
+		base_platformRegisterRequestBO.setIssuerName("北京酒仙桥支行");
 		//账户名称	
-		memberRegisterRequestBO.setBankCardName("先锋支付全称");
+		base_platformRegisterRequestBO.setBankCardName("先锋支付全称");
 		//邮箱
-		memberRegisterRequestBO.setEmail("463249264@qq.com");
+		base_platformRegisterRequestBO.setEmail("463249264@qq.com");
 		//营业执照副本
-		memberRegisterRequestBO.setLicenseCopy("营业执照副本");
+		base_platformRegisterRequestBO.setLicenseCopy("营业执照副本");
 		//组织机构代码证
-		memberRegisterRequestBO.setOrgCertificate("组织机构代码证");
+		base_platformRegisterRequestBO.setOrgCertificate("组织机构代码证");
 		//税务登记证明
-		memberRegisterRequestBO.setTaxCertificate("税务登记证明");
+		base_platformRegisterRequestBO.setTaxCertificate("税务登记证明");
 		//法人身份证复印件
-		memberRegisterRequestBO.setLegalIdentityCopy("法人身份证复印件");
-		MemberRegisterResultBO memberRegisterResultBO = enterpriseMemberServiceImpl.merchantRegister(memberRegisterRequestBO);
-		System.out.println(JSON.toJSON(memberRegisterResultBO));
+		base_platformRegisterRequestBO.setLegalIdentityCopy("法人身份证复印件");
+		base_platformRegisterResultBO base_platformRegisterResultBO = enterprisebase_platformServiceImpl.merchantRegister(base_platformRegisterRequestBO);
+		System.out.println(JSON.toJSON(base_platformRegisterResultBO));
 	}
 	
 	@Test
 	@Rollback(false)
-	public void testupdateMerchantMemberInfo() {
-		UpdateMemberInfoRequestBO updateMemberInfoRequestBO = new UpdateMemberInfoRequestBO();
+	public void testupdateMerchantbase_platformInfo() {
+		Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO = new Updatebase_platformInfoRequestBO();
 		
 		//企业用户ID	
-		updateMemberInfoRequestBO.setUserId("M200000211");
+		updatebase_platformInfoRequestBO.setUserId("M200000211");
 		//代理人名称	
-		updateMemberInfoRequestBO.setAgentPersonName("李梦1");
+		updatebase_platformInfoRequestBO.setAgentPersonName("李梦1");
 		//代理人手机号码	
-		updateMemberInfoRequestBO.setAgentPersonPhone("343222");
+		updatebase_platformInfoRequestBO.setAgentPersonPhone("343222");
 		//企业全称	
-		updateMemberInfoRequestBO.setEnterpriseFullName("先锋支付全称2");
+		updatebase_platformInfoRequestBO.setEnterpriseFullName("先锋支付全称2");
 		//企业简称	
-		updateMemberInfoRequestBO.setEnterpriseShortName("先锋支付简称2");
+		updatebase_platformInfoRequestBO.setEnterpriseShortName("先锋支付简称2");
 		//营业执照号	
-		updateMemberInfoRequestBO.setBusinessLicense("3333333");
+		updatebase_platformInfoRequestBO.setBusinessLicense("3333333");
 		//证件到期时间	
-		updateMemberInfoRequestBO.setEndDate("20141220");
+		updatebase_platformInfoRequestBO.setEndDate("20141220");
 		//法人姓名	
-		updateMemberInfoRequestBO.setLegalPersonName("哈哈");
+		updatebase_platformInfoRequestBO.setLegalPersonName("哈哈");
 		//法人身份证号	
-		updateMemberInfoRequestBO.setLegalPersonNo("778");
+		updatebase_platformInfoRequestBO.setLegalPersonNo("778");
 		//企业地址	
-		updateMemberInfoRequestBO.setEnterpriseAddress("8383292929292");
+		updatebase_platformInfoRequestBO.setEnterpriseAddress("8383292929292");
 		//联系电话	
-		updateMemberInfoRequestBO.setEnterprisePhone("0000000");
+		updatebase_platformInfoRequestBO.setEnterprisePhone("0000000");
 		
 		//企业账户开户行名称	
-		updateMemberInfoRequestBO.setBankName("工商Ke");
+		updatebase_platformInfoRequestBO.setBankName("工商Ke");
 				//开户行Code
-		updateMemberInfoRequestBO.setBankCode("ICBK");
+		updatebase_platformInfoRequestBO.setBankCode("ICBK");
 				//对公账号	
-		updateMemberInfoRequestBO.setBankCardNo("65554345511111111");
+		updatebase_platformInfoRequestBO.setBankCardNo("65554345511111111");
 				
-		UpdateMemberInfoResultBO updateMemberInfoResultBO = enterpriseMemberServiceImpl.updateMerchantMemberInfo(updateMemberInfoRequestBO);
-		Assert.assertEquals(updateMemberInfoResultBO.getRespCode(), "00");
+		Updatebase_platformInfoResultBO updatebase_platformInfoResultBO = enterprisebase_platformServiceImpl.updateMerchantbase_platformInfo(updatebase_platformInfoRequestBO);
+		Assert.assertEquals(updatebase_platformInfoResultBO.getRespCode(), "00");
 	}
 	
 	@Test
-	public void testUpdateMemberInfo() {
-		UpdateMemberInfoRequestBO updateMemberInfoRequestBO = new UpdateMemberInfoRequestBO();
+	public void testUpdatebase_platformInfo() {
+		Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO = new Updatebase_platformInfoRequestBO();
 		
 		//平台商id	
-		updateMemberInfoRequestBO.setMerchantId("12345");
+		updatebase_platformInfoRequestBO.setMerchantId("12345");
 		//企业用户ID	
-		updateMemberInfoRequestBO.setUserId("54321");
+		updatebase_platformInfoRequestBO.setUserId("54321");
 		//代理人名称	
-		updateMemberInfoRequestBO.setAgentPersonName("李梦1");
+		updatebase_platformInfoRequestBO.setAgentPersonName("李梦1");
 		//代理人身份证号码	
-		updateMemberInfoRequestBO.setAgentPersonNo("511381");
+		updatebase_platformInfoRequestBO.setAgentPersonNo("511381");
 		//代理人手机号码	
-		updateMemberInfoRequestBO.setAgentPersonPhone("343222");
+		updatebase_platformInfoRequestBO.setAgentPersonPhone("343222");
 		//企业全称	
-		updateMemberInfoRequestBO.setEnterpriseFullName("先锋支付全称1");
+		updatebase_platformInfoRequestBO.setEnterpriseFullName("先锋支付全称1");
 		//企业简称	
-		updateMemberInfoRequestBO.setEnterpriseShortName("先锋支付简称1");
+		updatebase_platformInfoRequestBO.setEnterpriseShortName("先锋支付简称1");
 		//营业执照号	
-		updateMemberInfoRequestBO.setBusinessLicense("6666666666666666666667");
+		updatebase_platformInfoRequestBO.setBusinessLicense("6666666666666666666667");
 		//证件到期时间	
-		updateMemberInfoRequestBO.setEndDate("20141230");
+		updatebase_platformInfoRequestBO.setEndDate("20141230");
 		//法人姓名	
-		updateMemberInfoRequestBO.setLegalPersonName("哈哈");
+		updatebase_platformInfoRequestBO.setLegalPersonName("哈哈");
 		//法人身份证号	
-		updateMemberInfoRequestBO.setLegalPersonNo("778");
+		updatebase_platformInfoRequestBO.setLegalPersonNo("778");
 		//企业地址	
-		updateMemberInfoRequestBO.setEnterpriseAddress("8383292929292");
+		updatebase_platformInfoRequestBO.setEnterpriseAddress("8383292929292");
 		//联系电话	
-		updateMemberInfoRequestBO.setEnterprisePhone("0000000");
-		UpdateMemberInfoResultBO updateMemberInfoResultBO = enterpriseMemberServiceImpl.updateMemberInfo(updateMemberInfoRequestBO);
-		Assert.assertEquals(updateMemberInfoResultBO.getRespCode(), "00");
+		updatebase_platformInfoRequestBO.setEnterprisePhone("0000000");
+		Updatebase_platformInfoResultBO updatebase_platformInfoResultBO = enterprisebase_platformServiceImpl.updatebase_platformInfo(updatebase_platformInfoRequestBO);
+		Assert.assertEquals(updatebase_platformInfoResultBO.getRespCode(), "00");
 	}
 	
 }

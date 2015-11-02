@@ -9,17 +9,17 @@
 <title>账户设置</title>
 <meta name="description" content="">
 <meta name="author" content="">
-<link href="${staticMemberPath}/css/select2.css" rel="stylesheet">
-<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
-<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css" />
-<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="${staticMemberPath}/css/commons/jquery.validator.css">
-<script type="text/javascript" src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/bootstrap.js"></script>
-<script type="text/javascript" type="text/javascript" src="${staticMemberPath}/js/commons/jquery.validator.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/local/zh_CN.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/select2.min.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/js/select2_locale_zh-CN.js"></script>
+<link href="${staticbase_platformPath}/css/select2.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/css/shouyintai.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/new/css/user.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="${staticbase_platformPath}/css/commons/jquery.validator.css">
+<script type="text/javascript" src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/bootstrap.js"></script>
+<script type="text/javascript" type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.validator.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/local/zh_CN.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/select2.min.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/select2_locale_zh-CN.js"></script>
 <style>
 <!--[if lt IE 8]>
 .select2-search INPUT{padding:0}
@@ -139,7 +139,7 @@ div.select2-container{margin-top:5px;}
 					msg:{required: "请填写银行卡号"}
 				},
 				'branchBank':'required;branchBankRequired;',
-				'remember':{
+				'rebase_platform':{
 					rule: "checked",
 					msg: {checked: "请选择同意!"}
 				}
@@ -400,7 +400,7 @@ div.select2-container{margin-top:5px;}
 <body>
 	<div class="head">
 		<div class="container">
-			<img src="${staticMemberPath}/images/logo-zhsz.png" alt="...">
+			<img src="${staticbase_platformPath}/images/logo-zhsz.png" alt="...">
 		</div>
 	</div>
 	<div class="container">
@@ -503,7 +503,7 @@ div.select2-container{margin-top:5px;}
 						</select> 支行
 					</p>
 					<p class="float_p">
-						<input id="remember" name="remember" type="checkbox" class="checkbox d-inline" checked tabindex="3" checked="false" />
+						<input id="rebase_platform" name="rebase_platform" type="checkbox" class="checkbox d-inline" checked tabindex="3" checked="false" />
 						<span class="deal d-inline" for="" >我同意开通
 							<a href="#" data-toggle="modal" data-target="#myModal">
 								《先锋支付账户注册协议》

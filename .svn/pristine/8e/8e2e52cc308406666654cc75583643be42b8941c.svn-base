@@ -7,14 +7,14 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>个人首页</title>
-    <link href="${staticMemberPath}/new/css/common.css" rel="stylesheet" type="text/css">
-    <link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
-    <script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
-    <script src="${staticMemberPath}/js/bootstrap.min.js"></script>
-    <script src="${staticMemberPath}/js/commons/holder.min.js"></script>
+    <link href="${staticbase_platformPath}/new/css/common.css" rel="stylesheet" type="text/css">
+    <link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
+    <script src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
+    <script src="${staticbase_platformPath}/js/bootstrap.min.js"></script>
+    <script src="${staticbase_platformPath}/js/commons/holder.min.js"></script>
     <!--[if lte IE 9]>
-	<script src="${staticMemberPath}/js/commons/respond.min.js">
-	<script src="${staticMemberPath}/js/commons/html5shiv.min.js"></script>
+	<script src="${staticbase_platformPath}/js/commons/respond.min.js">
+	<script src="${staticbase_platformPath}/js/commons/html5shiv.min.js"></script>
 	<![endif]-->
     <style>
     	#tan3>ul li:hover{
@@ -36,20 +36,20 @@
 				<span class="count">账户名：${cell}</span>
 				<c:if test="${user.realnameStatus=='T'}">
 					<span class="position-ab"><div id="verifyDiv" class="tan">你已通过先锋支付实名认证</br><span class="gray">点击图标查看详情</span></a><div class="tri"></div></div>
-					<img src="${staticMemberPath}/images/user-sm.png" id="verifyImg"></span>
+					<img src="${staticbase_platformPath}/images/user-sm.png" id="verifyImg"></span>
 				</c:if>
 				<c:if test="${user.realnameStatus!='T'}">
 					<span class="position-ab"><div id="verifyDiv" class="tan">申请实名认证后，可享受更多特权</br>
 					<span class="gray">点击图标立即认证</span></a><div class="tri"></div></div>
-					<img id="verifyImg" status="0" src="${staticMemberPath}/images/user-sm_unable.png">
+					<img id="verifyImg" status="0" src="${staticbase_platformPath}/images/user-sm_unable.png">
 				</c:if>
 				<c:if test="${user.pinAnsw!=null && user.pinAnsw!=''}">
 					<span class="position-ab"><div id="ansDiv" class="tan">你已通过先锋支付实名认证</br>
 					<span class="gray">点击图标查看详情</span></a><div class="tri"></div></div>
-					<img src="${staticMemberPath}/images/bao.png" id="ansImg"></span>
+					<img src="${staticbase_platformPath}/images/bao.png" id="ansImg"></span>
 				</c:if>
 				<c:if test="${user.pinAnsw==null || user.pinAnsw==''}">
-					<img src="${staticMemberPath}/images/bao_unable.png">
+					<img src="${staticbase_platformPath}/images/bao_unable.png">
 				</c:if>
 				<c:if test="${user.enabledStatus=='phone_active'}">
 					<span class="position-ab">
@@ -61,11 +61,11 @@
 							</a><div class="tri">
 							</div>
 						</div>
-						<img src="${staticMemberPath}/images/phone.png" id="enabledStatusImg">
+						<img src="${staticbase_platformPath}/images/phone.png" id="enabledStatusImg">
 					</span>
 				</c:if>
 				<c:if test="${user.enabledStatus!='phone_active'}">
-					<img src="${staticMemberPath}/images/phone_unable.png">
+					<img src="${staticbase_platformPath}/images/phone_unable.png">
 				</c:if>
 				</span>
 				<span class="user-shotline">|</span>
@@ -178,7 +178,7 @@
 													<div class="tan2" style="position:static;">点击查看明细</div>
 													<div class="tri2" style="position:static;"></div>
 				                            	</div>
-				                            	<img src="${staticMemberPath}/images/jt2.jpg" class="no-mgl" onmousemove="showDetail(${order.index});">
+				                            	<img src="${staticbase_platformPath}/images/jt2.jpg" class="no-mgl" onmousemove="showDetail(${order.index});">
 				                            </span>
 				                            </a>
 				                    	</td>
@@ -193,7 +193,7 @@
 		                                            <li>删除</li>
 		                                        </ul>
 		                                    </div>
-		                                    <img src="${staticMemberPath}/images/jt3.jpg">
+		                                    <img src="${staticbase_platformPath}/images/jt3.jpg">
 		                                </span>
 		                            	</a>
 		                       		</td>
@@ -284,7 +284,7 @@
        </div> 
 	</div>
 	<div class="container ad">
-    	<img src="${staticMemberPath}/images/ad.jpg">	
+    	<img src="${staticbase_platformPath}/images/ad.jpg">	
     </div>
 	<c:import url="/WEB-INF/views/jsp/common/newfooter.jsp"></c:import>
   </body>

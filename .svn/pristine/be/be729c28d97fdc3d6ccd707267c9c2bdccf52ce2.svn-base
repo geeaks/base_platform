@@ -2,16 +2,16 @@
 <c:set var="basePath" value="${pageContext.request.contextPath }" scope="application"/>
 <jsp:include page="./resource_meta.jsp"/>
 <jsp:include page="./resource_css.jsp"/>
-<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
-  <script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
-<script src="${staticMemberPath}/js/bootstrap.min.js"></script>
-  <link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
+  <script src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
+<script src="${staticbase_platformPath}/js/bootstrap.min.js"></script>
+  <link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet">
 <jsp:include page="./resource_js.jsp"/>
-<script src="${staticMemberPath}/js/commons/holder.min.js"></script>
-<script type="text/javascript" src="${staticMemberPath}/new/js/widget/placeholder/placeholder.v1.js"></script>
+<script src="${staticbase_platformPath}/js/commons/holder.min.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/new/js/widget/placeholder/placeholder.v1.js"></script>
 <!--[if lte IE 9]>
-<script src="${staticMemberPath}/js/commons/respond.min.js">
-<script src="${staticMemberPath}/js/commons/html5shiv.min.js"></script>
+<script src="${staticbase_platformPath}/js/commons/respond.min.js">
+<script src="${staticbase_platformPath}/js/commons/html5shiv.min.js"></script>
 <![endif]-->
 <script type="text/javascript">
 <!--

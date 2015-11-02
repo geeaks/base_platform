@@ -2,7 +2,7 @@ package com.ucf.customer.utils.enums;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：EnumConfirmStatus      <br>
 * 类描述： 银行卡实名认证状态  				  <br>
 * 创建人：许浩				  <br>

@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.ucf.member</groupId>
-		<artifactId>member-parent</artifactId>
+		<groupId>com.ucf.base_platform</groupId>
+		<artifactId>base_platform-parent</artifactId>
 		<version>1.5.5-SNAPSHOT</version>
 	</parent>
-	<artifactId>member-client</artifactId>
-	<name>member-client</name>
+	<artifactId>base_platform-client</artifactId>
+	<name>base_platform-client</name>
 	<packaging>jar</packaging>
 	<dependencies>
 		<dependency>

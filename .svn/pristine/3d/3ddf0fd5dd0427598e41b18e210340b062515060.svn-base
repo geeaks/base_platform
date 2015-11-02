@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <!-- Bootstrap -->
-<link rel="stylesheet" href="${staticMemberPath}/css/commons/bootstrap.min.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/css/commons/bootstrap.min.css">
 
 
 <style type="text/css">
@@ -59,10 +59,10 @@ p.tip span {font-weight:130px;
                    
 					<!--  
 						<span  class="help-block" contenteditable="true">通过安全保护问题</span> 
-						<a href="${staticMemberPath}/login/findPwdByEmail.do?picna=${picna }">马上找回</a><br><br><br><br><br>
+						<a href="${staticbase_platformPath}/login/findPwdByEmail.do?picna=${picna }">马上找回</a><br><br><br><br><br>
 						
 						<span 	class="help-block" contenteditable="true">通过“手机验证码+证件号码”</span>
-						<a href="${staticMemberPath}/login/findPwdByPhonePre.do?picna=${picna }">马上找回</a><br><br><br><br><br>
+						<a href="${staticbase_platformPath}/login/findPwdByPhonePre.do?picna=${picna }">马上找回</a><br><br><br><br><br>
 						-->
 						<p class="tip"><span > ${msg } </span></p>
 
@@ -76,8 +76,8 @@ p.tip span {font-weight:130px;
 	<!-- /.container -->
 
 		<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="${staticMemberPath}/js/commons/jquery.min.js"></script>
+	<script src="${staticbase_platformPath}/js/commons/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script	 src="${staticMemberPath}/js/commons/bootstrap.min.js"></script>
+	<script	 src="${staticbase_platformPath}/js/commons/bootstrap.min.js"></script>
 </body>
 </html>

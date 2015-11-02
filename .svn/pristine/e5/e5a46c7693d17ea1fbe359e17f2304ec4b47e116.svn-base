@@ -13,12 +13,12 @@ import org.springframework.test.annotation.Rollback;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.rocketmq.client.producer.SendResult;
-import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.base_platformService;
 import com.ucf.customer.api.bo.BankCardBo;
 import com.ucf.customer.api.bo.BankCardModifyBo;
 import com.ucf.customer.api.bo.BaseResultBO;
-import com.ucf.customer.api.bo.MemberCommonResult;
-import com.ucf.customer.api.bo.MemberRegisterBO;
+import com.ucf.customer.api.bo.base_platformCommonResult;
+import com.ucf.customer.api.bo.base_platformRegisterBO;
 import com.ucf.customer.api.bo.PageRs;
 import com.ucf.customer.api.bo.PhoneModifyBo;
 import com.ucf.customer.api.bo.PhotoAuthApplyBo;
@@ -34,7 +34,7 @@ import com.ucf.customer.api.enums.EnumStatus;
 import com.ucf.customer.dao.UcfCardDao;
 import com.ucf.customer.dao.UcfUserDao;
 import com.ucf.customer.dao.plugin.Page;
-import com.ucf.customer.mq.MemberMQConsumerService;
+import com.ucf.customer.mq.base_platformMQConsumerService;
 import com.ucf.customer.pojo.UcfUser;
 import com.ucf.customer.service.UserService;
 import com.ucf.customer.test.BaseTest;
@@ -46,15 +46,15 @@ import com.ucf.platform.framework.mq.enums.UcfMQConsumeStatus;
 import com.ucf.platform.framework.mq.producer.UcfMQProducer;
 
 /**
- * @ClassName: MemberServiceTest
- * @Description: MemberServiceTest 单元测试类
+ * @ClassName: base_platformServiceTest
+ * @Description: base_platformServiceTest 单元测试类
  * @author gaoxiang
  * @date 2014年9月23日 下午6:17:01
  */ 
-public class MemberServiceTest extends BaseTest {
+public class base_platformServiceTest extends BaseTest {
 	
 	@Autowired
-	private MemberService memberService;
+	private base_platformService base_platformService;
 	
 	@Resource(name = "ucfMQProducer")
 	private UcfMQProducer ucfMQProducer;
@@ -72,7 +72,7 @@ public class MemberServiceTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void testMq() throws Exception{
-		MemberMQConsumerService memberMQConsumerService=new MemberMQConsumerService();
+		base_platformMQConsumerService base_platformMQConsumerService=new base_platformMQConsumerService();
 		UcfReceiveMessage msg = new UcfReceiveMessage();
 		Map<Object, Object> mqReturnMap = new HashMap<Object, Object>();
 		mqReturnMap.put("userId","10000009711");
@@ -90,7 +90,7 @@ public class MemberServiceTest extends BaseTest {
 		mqReturnMap.put("cvn2","521");
 		mqReturnMap.put("validDate","2019/05/20");
 		msg.setBizValue(mqReturnMap);
-		UcfMQConsumeStatus doConsume = memberMQConsumerService.doConsume(msg);
+		UcfMQConsumeStatus doConsume = base_platformMQConsumerService.doConsume(msg);
 		System.err.println(doConsume);
 	}
 	
@@ -99,7 +99,7 @@ public class MemberServiceTest extends BaseTest {
 		String userId = "10000008723";
 		String payPassword = "123456ff";
 		byte[] payPwd = payPassword.getBytes();
-		BaseResultBO verifyPayPwd = memberService.verifyPayPwd(userId, payPwd);
+		BaseResultBO verifyPayPwd = base_platformService.verifyPayPwd(userId, payPwd);
 		System.err.println(verifyPayPwd);
 	}
 
@@ -108,14 +108,14 @@ public class MemberServiceTest extends BaseTest {
 		String loginName = "18811511061";
 		String payPassword = "123456ff";
 		byte[] payPwd = payPassword.getBytes();
-		BaseResultBO checkVfyCode = memberService.verifyPayPwdByLoginName(loginName, payPwd);
+		BaseResultBO checkVfyCode = base_platformService.verifyPayPwdByLoginName(loginName, payPwd);
 		System.err.println(checkVfyCode);
 	}
 	
 	@Test
 	public void sendVfyCodeSMS() throws Exception{
 		String phone = "15010630961";
-		BaseResultBO baseResultBO = memberService.sendVfyCodeSMS(phone);
+		BaseResultBO baseResultBO = base_platformService.sendVfyCodeSMS(phone);
 		System.err.println(baseResultBO);
 	}
 	
@@ -123,7 +123,7 @@ public class MemberServiceTest extends BaseTest {
 	public void checkVfyCode() throws Exception{
 		String phone = "15010630961";
 		String code = "203515";
-		BaseResultBO checkVfyCode = memberService.checkVfyCode(phone, code);
+		BaseResultBO checkVfyCode = base_platformService.checkVfyCode(phone, code);
 		System.err.println(checkVfyCode);
 	}
 	
@@ -135,7 +135,7 @@ public class MemberServiceTest extends BaseTest {
 		bo.setMerchantId("10010");
 		bo.setPhone("15010620844");
 		bo.setType(EnumAuthType.NAME_CERT_BANK_CELL);
-		BaseResultBO rs = memberService.userAuth(bo);
+		BaseResultBO rs = base_platformService.userAuth(bo);
 		System.err.println(rs);
 	}
 	
@@ -143,28 +143,28 @@ public class MemberServiceTest extends BaseTest {
 	@Rollback(false)
 	public void createFundSubCard() throws Exception{
 		String userId = "10000008723";
-		BaseResultBO checkVfyCode = memberService.createFundSubCard(userId);
+		BaseResultBO checkVfyCode = base_platformService.createFundSubCard(userId);
 		System.err.println(checkVfyCode);
 	}
 	
 	@Test
 	public void isExistFundSubCard() throws Exception{
 		String userId = "10000008723";
-		BaseResultBO bo = memberService.isExistFundSubCard(userId);
+		BaseResultBO bo = base_platformService.isExistFundSubCard(userId);
 		System.err.println(bo);
 	}
 	
 	@Test
 	public void findUserCardAccount() throws Exception{
 		String userId = "10000008723";
-		UserCardAccountRsBo findUserCardAccount = memberService.findUserCardAccount(userId,"01");
+		UserCardAccountRsBo findUserCardAccount = base_platformService.findUserCardAccount(userId,"01");
 		System.err.println(findUserCardAccount);
 	}
 	
 	@Test
 	public void testfindUserRealnameStatus(){	
 		//
-		UserRealNamedStatusRsBO  returnBo = memberService.findUserRealnameStatus("10000003813");
+		UserRealNamedStatusRsBO  returnBo = base_platformService.findUserRealnameStatus("10000003813");
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -181,7 +181,7 @@ public class MemberServiceTest extends BaseTest {
 		paramBo.setUserId("10000003813");
 		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
 		paramBo.setStatus(EnumStatus.FAI.getCode());
-		BaseResultBO  returnBo = memberService.realName(paramBo);
+		BaseResultBO  returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -207,7 +207,7 @@ public class MemberServiceTest extends BaseTest {
 		paramBo.setCity("北京");
 		paramBo.setBranchBankId("110454543");
 		paramBo.setBranchBankName("工商xx银行3");
-		BaseResultBO  returnBo = memberService.realName(paramBo);
+		BaseResultBO  returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -224,8 +224,8 @@ public class MemberServiceTest extends BaseTest {
 		String userId = "10000009710";
 		String oldPwd = "123456f";
 		String newPwd = "123456a";
-		MemberCommonResult<String> modfiyLoginPwd = 
-				memberService.modifyLoginPwd(userId, oldPwd.getBytes(), newPwd.getBytes());
+		base_platformCommonResult<String> modfiyLoginPwd = 
+				base_platformService.modifyLoginPwd(userId, oldPwd.getBytes(), newPwd.getBytes());
 		System.err.println(JSON.toJSON(modfiyLoginPwd));
 	}
 	
@@ -238,8 +238,8 @@ public class MemberServiceTest extends BaseTest {
 	@Test
 	public void findUserById(){
 		String userId = "10000004332";
-		MemberCommonResult<UserInfoBo> findUserById = 
-				memberService.findUserById(userId);
+		base_platformCommonResult<UserInfoBo> findUserById = 
+				base_platformService.findUserById(userId);
 		System.err.println(JSON.toJSON(findUserById));
 	}
 	
@@ -253,8 +253,8 @@ public class MemberServiceTest extends BaseTest {
 	public void findUserInfo(){
 		String refUserId = "10000004332";
 		String merchantId = "testmerchantId";
-		MemberCommonResult<UserInfoBo> findUserById = 
-				memberService.findUserInfo(merchantId,refUserId);
+		base_platformCommonResult<UserInfoBo> findUserById = 
+				base_platformService.findUserInfo(merchantId,refUserId);
 		System.err.println(JSON.toJSON(findUserById));
 	}
 	
@@ -268,16 +268,16 @@ public class MemberServiceTest extends BaseTest {
 	@Rollback(false)
 	public void registerManagedUser(){
 //		userId:10000009711
-		MemberRegisterBO memberBo = new MemberRegisterBO();
-		memberBo.setRefUserId("10000000000");
-		memberBo.setMerchantId("testmerchantId");
-		memberBo.setCertType("IDC");
-		memberBo.setCertNo("130406198912130915");
-		memberBo.setPhone("10000000000");
-		memberBo.setEmail("vsflyhigh@qq.com");
+		base_platformRegisterBO base_platformBo = new base_platformRegisterBO();
+		base_platformBo.setRefUserId("10000000000");
+		base_platformBo.setMerchantId("testmerchantId");
+		base_platformBo.setCertType("IDC");
+		base_platformBo.setCertNo("130406198912130915");
+		base_platformBo.setPhone("10000000000");
+		base_platformBo.setEmail("vsflyhigh@qq.com");
 		
-		MemberCommonResult<String> registerManagedUser = 
-				memberService.registerManagedUser(memberBo);
+		base_platformCommonResult<String> registerManagedUser = 
+				base_platformService.registerManagedUser(base_platformBo);
 		System.err.println(JSON.toJSON(registerManagedUser));
 	}
 	
@@ -292,8 +292,8 @@ public class MemberServiceTest extends BaseTest {
 	public void delUserBankCard(){
 //		String userId = "10000009711";
 		String bankCardId = "20000007030";
-		MemberCommonResult<String> delUserBankCard = 
-				memberService.delUserBankCard(null,bankCardId);
+		base_platformCommonResult<String> delUserBankCard = 
+				base_platformService.delUserBankCard(null,bankCardId);
 		System.err.println(JSON.toJSON(delUserBankCard));
 	}
 	
@@ -305,7 +305,7 @@ public class MemberServiceTest extends BaseTest {
 	 */
 	@Test
 	public void findUserBankCards(){
-		MemberCommonResult<List<BankCardBo>> findUserBankCards = memberService.findUserBankCards("50000015521");
+		base_platformCommonResult<List<BankCardBo>> findUserBankCards = base_platformService.findUserBankCards("50000015521");
 		System.err.println(JSON.toJSON(findUserBankCards));
 	}
 	
@@ -317,8 +317,8 @@ public class MemberServiceTest extends BaseTest {
 	 */
 	@Test
 	public void findUserBankCardsByUseType(){
-		MemberCommonResult<List<BankCardBo>> resultBo = 
-				memberService.findUserBankCardsByUseType("50000015521",EnumBankCardUseType.CONSUME.getCode());
+		base_platformCommonResult<List<BankCardBo>> resultBo = 
+				base_platformService.findUserBankCardsByUseType("50000015521",EnumBankCardUseType.CONSUME.getCode());
 		System.err.println(JSON.toJSON(resultBo));
 	}
 	
@@ -331,8 +331,8 @@ public class MemberServiceTest extends BaseTest {
 	@Test
 	public void findBankCardById(){
 		String bankCardId = "20000012421";
-		MemberCommonResult<BankCardBo> resultBo = 
-				memberService.findBankCardById(bankCardId);
+		base_platformCommonResult<BankCardBo> resultBo = 
+				base_platformService.findBankCardById(bankCardId);
 		System.err.println(JSON.toJSON(resultBo));
 	}
 	
@@ -372,14 +372,14 @@ public class MemberServiceTest extends BaseTest {
 		bo.setBankCardNo("25548784545");
 		bo.setImgPath("fseff");
 		bo.setUserId("10000005301");
-		MemberCommonResult<String> rs = memberService.photoAuthApply(bo);
+		base_platformCommonResult<String> rs = base_platformService.photoAuthApply(bo);
 		System.err.println(JSON.toJSON(rs));
 	}
 	
 	@Test
 	@Rollback(false)
 	public void testfindPhotoAuthApply(){
-		MemberCommonResult<String> rs = memberService.findPhotoAuthApply("10000005301");
+		base_platformCommonResult<String> rs = base_platformService.findPhotoAuthApply("10000005301");
 		System.err.println(JSON.toJSON(rs));
 	}
 	
@@ -392,7 +392,7 @@ public class MemberServiceTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void testAuditPhotoAuthFail(){
-		MemberCommonResult<String> rs = memberService.auditPhotoAuth("201412091000000022","F","FA");
+		base_platformCommonResult<String> rs = base_platformService.auditPhotoAuth("201412091000000022","F","FA");
 		System.err.println(JSON.toJSON(rs));
 	}
 	
@@ -405,7 +405,7 @@ public class MemberServiceTest extends BaseTest {
 	@Test
 	@Rollback(false)
 	public void testAuditPhotoAuthSuc(){
-		MemberCommonResult<String> rs = memberService.auditPhotoAuth("201412091000000024","S","xxxx","geeaks");
+		base_platformCommonResult<String> rs = base_platformService.auditPhotoAuth("201412091000000024","S","xxxx","geeaks");
 		System.err.println(JSON.toJSON(rs));
 	}
 	
@@ -418,7 +418,7 @@ public class MemberServiceTest extends BaseTest {
 	@Test
 	@Rollback(true)
 	public void registerGZBUser(){
-		MemberRegisterBO userBo = new MemberRegisterBO();
+		base_platformRegisterBO userBo = new base_platformRegisterBO();
 		userBo.setMerchantId("M26011112121");
 		userBo.setRefUserId("T260235687");
 		userBo.setBankCardNo("6212260200024937523");
@@ -435,7 +435,7 @@ public class MemberServiceTest extends BaseTest {
 		userBo.setEmail("vsgaoxiang@126.com");
 		userBo.setName("毕云涛");
 		userBo.setPhone("18811511066");
-		MemberCommonResult<String> rs = memberService.registerGZBUser(userBo);
+		base_platformCommonResult<String> rs = base_platformService.registerGZBUser(userBo);
 		System.err.println(JSON.toJSONString(rs));
 	}
 	
@@ -452,7 +452,7 @@ public class MemberServiceTest extends BaseTest {
 		phoneModifyBo.setUserId("50000015533");
 		phoneModifyBo.setOldPhone("18811511066");
 		phoneModifyBo.setPhone("18811511067");
-		MemberCommonResult<String> rs = memberService.modifyUserPhone(phoneModifyBo);
+		base_platformCommonResult<String> rs = base_platformService.modifyUserPhone(phoneModifyBo);
 		System.err.println(JSON.toJSONString(rs));
 	}
 	
@@ -469,7 +469,7 @@ public class MemberServiceTest extends BaseTest {
 		bankCardModifyBo.setUserId("50000015533");
 		bankCardModifyBo.setOldBankCardNo("6212260200024937523");
 		bankCardModifyBo.setBankCardNo("6212260200024937526");
-		MemberCommonResult<String> rs = memberService.modifyUserBankCard(bankCardModifyBo);
+		base_platformCommonResult<String> rs = base_platformService.modifyUserBankCard(bankCardModifyBo);
 		System.err.println(JSON.toJSONString(rs));
 	}
 	
@@ -481,7 +481,7 @@ public class MemberServiceTest extends BaseTest {
 	 */
 	@Test
 	public void findAnonymousUser(){
-		MemberCommonResult<UserInfoBo> findAnonymousUser = memberService.findAnonymousUser();
+		base_platformCommonResult<UserInfoBo> findAnonymousUser = base_platformService.findAnonymousUser();
 		System.err.println(JSON.toJSONString(findAnonymousUser));
 	}
 	
@@ -496,7 +496,7 @@ public class MemberServiceTest extends BaseTest {
 	public void checkUserInfo(){
 		String merchantId = "10010";
 		String phone = "18811511061";
-		MemberCommonResult<UserInfoBo> checkUserInfo = memberService.checkUserInfo(merchantId, phone);
+		base_platformCommonResult<UserInfoBo> checkUserInfo = base_platformService.checkUserInfo(merchantId, phone);
 		System.err.println(JSON.toJSONString(checkUserInfo));
 	}
 	
@@ -511,32 +511,32 @@ public class MemberServiceTest extends BaseTest {
 	public void checkUserSms(){
 		String userId = "10000004332";
 		String code = "953483";
-		MemberCommonResult<String> checkUserSms = memberService.checkUserSms(userId, code);
+		base_platformCommonResult<String> checkUserSms = base_platformService.checkUserSms(userId, code);
 		System.err.println(JSON.toJSONString(checkUserSms));
 	}
 	
 	@Test
 	@Rollback(true)
 	public void registerP2PUser(){
-		MemberRegisterBO memberBo = new MemberRegisterBO();
-		memberBo.setBankCardNo("622522235495468");
-		memberBo.setBankCardType("1");
-		memberBo.setBankCode("ICBC");
-		memberBo.setProvince("北京");
-		memberBo.setCity("北京");
-		memberBo.setBankName("昭阳区");
-		memberBo.setBranchId("123456");
-		memberBo.setCertStatus("P2P_CERT");
-		memberBo.setCertType("IDC");
-		memberBo.setEmail("vsflyhigh@qq.com");
-		memberBo.setMerchantId("merchantId");
-		memberBo.setRefUserId("refUserId");
-		memberBo.setName("气门芯");
-		memberBo.setCertNo("456987132");
-		memberBo.setPhone("18811511061");
-		memberBo.setRegisterFrom("P2B");
-		memberBo.setSource("PC");
-		MemberCommonResult<String> result = memberService.registerP2PUser(memberBo);
+		base_platformRegisterBO base_platformBo = new base_platformRegisterBO();
+		base_platformBo.setBankCardNo("622522235495468");
+		base_platformBo.setBankCardType("1");
+		base_platformBo.setBankCode("ICBC");
+		base_platformBo.setProvince("北京");
+		base_platformBo.setCity("北京");
+		base_platformBo.setBankName("昭阳区");
+		base_platformBo.setBranchId("123456");
+		base_platformBo.setCertStatus("P2P_CERT");
+		base_platformBo.setCertType("IDC");
+		base_platformBo.setEmail("vsflyhigh@qq.com");
+		base_platformBo.setMerchantId("merchantId");
+		base_platformBo.setRefUserId("refUserId");
+		base_platformBo.setName("气门芯");
+		base_platformBo.setCertNo("456987132");
+		base_platformBo.setPhone("18811511061");
+		base_platformBo.setRegisterFrom("P2B");
+		base_platformBo.setSource("PC");
+		base_platformCommonResult<String> result = base_platformService.registerP2PUser(base_platformBo);
 		System.err.println(JSON.toJSONString(result));
 	}
 	
@@ -582,7 +582,7 @@ public class MemberServiceTest extends BaseTest {
 		UserInfoBo userInfoBo = new UserInfoBo();
 		userInfoBo.setUserId("10000003823");
 		userInfoBo.setRealName("SX");
-		MemberCommonResult<String> userInfo = memberService.modifyUserInfo(userInfoBo);
+		base_platformCommonResult<String> userInfo = base_platformService.modifyUserInfo(userInfoBo);
 		System.err.println(userInfo);
 	}
 	
@@ -599,7 +599,7 @@ public class MemberServiceTest extends BaseTest {
 		userInfoBo.setPageNo(1);
 		userInfoBo.setPageSize(100);
 		userInfoBo.setRealName("张文婧");
-		MemberCommonResult<PageRs<UserInfoBo>> findUsersInfo = memberService.findUsersInfo(userInfoBo);
+		base_platformCommonResult<PageRs<UserInfoBo>> findUsersInfo = base_platformService.findUsersInfo(userInfoBo);
 		System.err.println(JSON.toJSONString(findUsersInfo));
 	}
 	
@@ -611,7 +611,7 @@ public class MemberServiceTest extends BaseTest {
 	 */
 	@Test
 	public void refreshUserCache(){
-		MemberCommonResult<String> refreshUserCache = memberService.refreshUserCache("10000003823");
+		base_platformCommonResult<String> refreshUserCache = base_platformService.refreshUserCache("10000003823");
 		System.err.println(refreshUserCache);
 	}
 	

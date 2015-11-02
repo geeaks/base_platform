@@ -108,7 +108,7 @@ public class SMSServiceImpl implements SMSService {
 				bo.setResultObject(value);
 			} else {
 				// TODO 下次上线删除兼容以前代码*****begin******
-				String oldkey = "MEMBER_VERIFY_CODE" + "_" + phone;
+				String oldkey = "base_platform_VERIFY_CODE" + "_" + phone;
 				if (RedisUtils.hasKey(oldkey)) {
 					String value = RedisUtils.getVaueByKey(oldkey);
 					if (value.equals(code)) {

@@ -53,7 +53,7 @@ public class RealAuthServiceImpl implements RealAuthService{
 		influx.setCardType(Constants.CARD_TYPE_STRING);//银行卡类型 (  类型也没有，这个有校验)
 		influx.setCertificateType(ID_TYPE);
 		influx.setBusinessType(BusinessType.REALNAME.getCode());
-		influx.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+		influx.setBizProduct(BizProduct.BIZ_PRODUCT_base_platform.getCode());
 		
 		LOGGER.debug("TradeUcfRealNameServiceWs:[cell~"+SensitiveInfoUtils.mobilePhone(cell)+",userId~"+userId+",userName~"+SensitiveInfoUtils.chineseName(userName)+",certNo~"+SensitiveInfoUtils.idCardNum(certNo)+",BankCardNo~"+SensitiveInfoUtils.bankCard(realAuthBO.getBankCardNo())+",AccountType~"
 				+influx.getAccountType()+",Amount~"+influx.getAmount()+",Issuer~"+SensitiveInfoUtils.cnapsCode(influx.getIssuer())+",BankNo~"+influx.getBankNo()+",CardType~"+influx.getCardType()

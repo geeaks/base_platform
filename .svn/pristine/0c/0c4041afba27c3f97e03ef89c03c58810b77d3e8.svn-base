@@ -45,7 +45,7 @@ import com.ucf.customer.utils.enums.EnumVerifyLevle;
 import com.ucf.customer.ws.bo.BaseBO;
 import com.ucf.customer.ws.enums.EnumCertFrom;
 import com.ucf.customer.ws.enums.EnumCertStatus;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.enums.EnumRegisterFrom;
 import com.ucf.customer.ws.service.UserServiceWS;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -58,7 +58,7 @@ import com.ucf.platform.framework.redis.support.IAtomic;
 import com.ucf.platform.framework.redis.support.ICache;
 
 /**
- * 项目名称：member <br>
+ * 项目名称：base_platform <br>
  * 类名称：IndividualAccountController <br>
  * 类描述： 个人账户开户 <br>
  * 创建人：geeaks <br>
@@ -245,8 +245,8 @@ public class IndividualAccountController {
 			//实名认证
 			BaseBO bo = userServiceWS.individualUserAuth(ucfUser.getRealName(),ucfUser.getCertNo(),cardNo.replace(" ", ""));
 			//假装成功
-//			bo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			if (!bo.getRespCode().equals(EnumMemberCode.SUCCESS.getCode())) {// 实名认证成功
+//			bo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			if (!bo.getRespCode().equals(Enumbase_platformCode.SUCCESS.getCode())) {// 实名认证成功
 				LOGGER.info("认证失败！");
 				model.addAttribute("msg", "认证失败，请核实信息后重新填写！");
 				model.addAttribute("backUrl", "openAccount/individualAccount.htm");

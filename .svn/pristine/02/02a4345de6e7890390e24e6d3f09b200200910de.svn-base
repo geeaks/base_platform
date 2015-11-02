@@ -3,7 +3,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
  * 
- * 项目名称：member 类名称：EnumAccountType 类描述： 账户类型枚举 创建人：李文静 创建时间：2014-5-4 下午5:55:14
+ * 项目名称：base_platform 类名称：EnumAccountType 类描述： 账户类型枚举 创建人：李文静 创建时间：2014-5-4 下午5:55:14
  * 修改人：李文静 修改时间：2014-5-4 下午5:55:14 修改备注：
  * 
  * @version

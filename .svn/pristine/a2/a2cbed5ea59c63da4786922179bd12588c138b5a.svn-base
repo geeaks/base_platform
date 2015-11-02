@@ -5,17 +5,17 @@ import java.util.Date;
 
 import com.ucf.customer.pojo.UcfUser;
 
-public class MemberAgent implements Serializable {
+public class base_platformAgent implements Serializable {
 	private static final long serialVersionUID = -5549570252858013318L;
 
-	public static final String MemberAgentTag = "memberAgent";
+	public static final String base_platformAgentTag = "base_platformAgent";
 
 	private String id;
 	private String loginId;
 	private String realName;
 	private String certNo;
 	private String mobile;
-	private EnumMemberUserType userType;
+	private Enumbase_platformUserType userType;
 	
 	private Date lastLoginTime;
 	
@@ -59,7 +59,7 @@ public class MemberAgent implements Serializable {
 
 
 
-	public MemberAgent() {
+	public base_platformAgent() {
 		super();
 	}
 
@@ -104,12 +104,12 @@ public class MemberAgent implements Serializable {
 
 
 
-	public MemberAgent(UcfUser ucfUser) {
+	public base_platformAgent(UcfUser ucfUser) {
 		super();
 		this.id = ucfUser.getUserId();
 		this.loginId = ucfUser.getLoginId();
 		this.realName = ucfUser.getRealName();
-		this.userType = EnumMemberUserType.Logined; //目前默认普通用户
+		this.userType = Enumbase_platformUserType.Logined; //目前默认普通用户
 		if (this.userType == null) {
 			throw new IllegalArgumentException("unknow user type:"
 					+ ucfUser.getUserType());
@@ -140,11 +140,11 @@ public class MemberAgent implements Serializable {
 		this.realName = realName;
 	}
 
-	public EnumMemberUserType getUserType() {
+	public Enumbase_platformUserType getUserType() {
 		return userType;
 	}
 
-	public void setUserType(EnumMemberUserType userType) {
+	public void setUserType(Enumbase_platformUserType userType) {
 		this.userType = userType;
 	}
 
@@ -152,8 +152,8 @@ public class MemberAgent implements Serializable {
 		return serialVersionUID;
 	}
 
-	public static String getMemberagenttag() {
-		return MemberAgentTag;
+	public static String getbase_platformagenttag() {
+		return base_platformAgentTag;
 	}
 	
 	

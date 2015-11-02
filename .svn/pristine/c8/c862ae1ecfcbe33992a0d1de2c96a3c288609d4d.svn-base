@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.ucf.platform.framework.core.annotation.SensitiveInfo;
 import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
 
-public class UpdateMemberInfoRequestBO implements Serializable{
+public class Updatebase_platformInfoRequestBO implements Serializable{
 
 	private static final long serialVersionUID = -4648119691519952588L;
 	//平台商id

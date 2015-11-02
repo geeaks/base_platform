@@ -10,7 +10,7 @@ import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
  * @author zhanglei
  *
  */
-public class EnterpriseMemberInfoBO implements Serializable {
+public class Enterprisebase_platformInfoBO implements Serializable {
 
 	private static final long serialVersionUID = -1372437893334495901L;
 	

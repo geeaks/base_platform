@@ -1,10 +1,10 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!--public js&css start-->
 <c:set var="basePath" value="${pageContext.request.contextPath }" />
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/base.css">
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/common.css">
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/jquery.validator.css">
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/jquery-ui-1.10.3.custom.min.css">
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/edit-trader-password.css">
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/set-pay-telephone.css">
-<link rel="stylesheet" href="${staticMemberPath}/p2p/css/host_del.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/base.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/common.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/jquery.validator.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/jquery-ui-1.10.3.custom.min.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/edit-trader-password.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/set-pay-telephone.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/p2p/css/host_del.css">

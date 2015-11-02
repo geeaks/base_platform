@@ -1,16 +1,16 @@
 ﻿POM配置文件说明：
 
 数据库驱动：
-member.jdbc.driver
+base_platform.jdbc.driver
 
 数据库地址
-member.jdbc.url
+base_platform.jdbc.url
 
 数据库用户名
-member.jdbc.username
+base_platform.jdbc.username
 
 数据库密码
-member.jdbc.password
+base_platform.jdbc.password
 
 连接池的最大数据库连接数，设为0表示无限制
 oracle.jdbc.maxActive
@@ -38,9 +38,9 @@ dubbo.service.timeout
 重试次数
 dubbo.service.retries
 dubbo注册端口
-dubbo.member.service.port
+dubbo.base_platform.service.port
 会员dubbo服务版本
-dubbo.member.service.version
+dubbo.base_platform.service.version
 
 账户dubbo服务版本
 dubbo.account.service.version
@@ -58,11 +58,11 @@ dubbo.account.service.version
 <dubbo.gateway.service.version
 				
 p2p会员服务版本
-<dubbo.p2p.member.service.version
+<dubbo.p2p.base_platform.service.version
 		
 
 会员ip
-member.host
+base_platform.host
 	
 交易ip
 trade.host

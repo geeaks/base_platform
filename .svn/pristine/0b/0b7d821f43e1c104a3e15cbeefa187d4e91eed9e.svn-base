@@ -8,7 +8,7 @@ import com.ucf.onlinepay.framework.common.util.StringUtil;
 /**
  * 
  * 
- * 项目名称：member 类名称：MobileUtil 类描述： 手机号码工具类 创建人：李文静 创建时间：2014-4-24 下午5:42:00
+ * 项目名称：base_platform 类名称：MobileUtil 类描述： 手机号码工具类 创建人：李文静 创建时间：2014-4-24 下午5:42:00
  * 修改人：李文静 修改时间：2014-4-24 下午5:42:00 修改备注：
  * 
  * @version

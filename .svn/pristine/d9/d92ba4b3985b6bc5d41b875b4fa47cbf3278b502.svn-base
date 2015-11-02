@@ -4,27 +4,27 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <c:set var="basePath" value="${pageContext.request.contextPath }" scope="application" />
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.min.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery-migrate-1.2.1.min.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.easyui.min.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.blockUI.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/local/easyui-lang-zh_CN.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/html5shiv.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/new/js/common/common.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/customer/com.ucf.customer.base.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/customer/com.ucf.customer.sms.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/jquery.validator.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/commons/local/zh_CN.js" ></script>
-<script type="text/javascript" src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" ></script>
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/css/commons/jquery.validator.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/base.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/css/bootstrap.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/person_login.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/frist-register.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/themes/bootstrap/easyui.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/themes/icon.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/css/customer/com.ucf.customer.commons.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/common.css">
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/user.css" />
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/host_findpassword.css"/>
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" />
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.min.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery-migrate-1.2.1.min.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.easyui.min.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.blockUI.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/local/easyui-lang-zh_CN.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/html5shiv.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/new/js/common/common.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/customer/com.ucf.customer.base.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/customer/com.ucf.customer.sms.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/jquery.validator.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/commons/local/zh_CN.js" ></script>
+<script type="text/javascript" src="${staticbase_platformPath}/js/ucfgroup-nicevalidator-extends.js" ></script>
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/css/commons/jquery.validator.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/base.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/css/bootstrap.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/person_login.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/frist-register.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/themes/bootstrap/easyui.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/themes/icon.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/css/customer/com.ucf.customer.commons.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/common.css">
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/user.css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/host_findpassword.css"/>
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/css/ucfgroup-nicevalidator-extends.css" />

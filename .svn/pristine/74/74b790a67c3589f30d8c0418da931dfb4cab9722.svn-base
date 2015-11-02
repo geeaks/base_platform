@@ -21,7 +21,7 @@ import com.ucf.trade.ws.bo.TradeUcfWsSearchOrderParamBo;
 import com.ucf.trade.ws.service.TradeUcfSearchOrderServiceWs;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = {"classpath:/spring/applicationContext.xml"})
-public class MemberTest {
+public class base_platformTest {
 	@Autowired
 	private UserService userInnerService;
 	
@@ -43,7 +43,7 @@ public class MemberTest {
 //		tradeSearchOrderParamBO.setUserId("10000003834");
 //		tradeSearchOrderParamBO.setStartDate(dstartDate);
 //		tradeSearchOrderParamBO.setEndDate(dendDate);
-//		tradeSearchOrderParamBO.setBizProduct(BizProduct.BIZ_PRODUCT_MEMBER.getCode());
+//		tradeSearchOrderParamBO.setBizProduct(BizProduct.BIZ_PRODUCT_base_platform.getCode());
 //		if(tradeType!=null && !tradeType.trim().equals("")){
 //			tradeSearchOrderParamBO.setBusinessType(tradeType);
 //		}

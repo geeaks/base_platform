@@ -4,11 +4,11 @@
 <head>
 <title>先锋支付--修改登录密码</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
-<link href="${staticMemberPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css" />
-<link href="${staticMemberPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet">
+<link href="${staticbase_platformPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css" />
+<link href="${staticbase_platformPath}/css/ucfgroup-nicevalidator-extends.css" rel="stylesheet">
 <script src="${basePath}/passwordControl/index.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
 <style>
 	p label{
 		font-weight:400;
@@ -80,7 +80,7 @@ $(document).ready(function() {
 /////
 
 </script>
-<script src="${staticMemberPath}/js/jquery.validator.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/zh_CN.js" type="text/javascript"></script>
-<script src="${staticMemberPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/jquery.validator.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/zh_CN.js" type="text/javascript"></script>
+<script src="${staticbase_platformPath}/js/ucfgroup-nicevalidator-extends.js" type="text/javascript"></script>
 </html>

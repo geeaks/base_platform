@@ -9,12 +9,12 @@
         http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd"
 	default-autowire="byName" default-lazy-init="false">
 	<!-- 提供方应用信息，用于计算依赖关系 -->
-	<dubbo:application name="member-provider-app" />
+	<dubbo:application name="base_platform-provider-app" />
 	<dubbo:monitor protocol="registry"/>
 	<!-- 使用zookeeper注册中心暴露服务地址 -->
 	<dubbo:registry protocol="zookeeper" address="${dubbo.registry}"  file="dubbo-registry.cache"/>
 	<!-- 用dubbo协议暴露服务 -->
-	<dubbo:protocol name="dubbo" port="${dubbo.member.service.port}"
+	<dubbo:protocol name="dubbo" port="${dubbo.base_platform.service.port}"
 		server="netty" client="netty" serialization="java" charset="UTF-8"
 		threadpool="fixed" threads="400" accesslog="true"/>
 	<!-- 声明需要暴露的服务接口 -->
@@ -23,7 +23,7 @@
 		class="com.ucf.customer.ws.service.impl.SearchTransactionWSImpl" />
 	
 	<dubbo:service interface="com.ucf.customer.ws.service.SearchTransactionWS"
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}"
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}"
 		ref="apiSearchTransactionService" />
 		
 	
@@ -31,51 +31,51 @@
 	<bean id="apiUserRealNameService"
 		class="com.ucf.customer.ws.service.impl.UserRealNameServiceImpl" />
 	<dubbo:service interface="com.ucf.customer.ws.service.UserRealNameService"
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}"
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}"
 		ref="apiUserRealNameService" />
 	
 	<!-- 用户信息查询 -->
 	<bean id="apiUserService"
 		class="com.ucf.customer.ws.service.impl.UserServiceWSImpl" />
 	<dubbo:service interface="com.ucf.customer.ws.service.UserServiceWS"
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}"
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}"
 		ref="apiUserService" />	
 		
 		
 	<!-- 查询用户卡号配置 -->
 	<bean id="apiCardInfoService" class="com.ucf.customer.ws.service.impl.CardInfoWSImpl" />
 	<dubbo:service interface="com.ucf.customer.ws.service.CardInfoWS"
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}"
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}"
 		ref="apiCardInfoService" />
 		
 	<bean id="apiServiceInterfaceService" class="com.ucf.customer.ws.service.impl.ServiceInterfaceWSImpl" />
 	<dubbo:service interface="com.ucf.customer.ws.service.ServiceInterfaceWS" 
-		version="${dubbo.p2p.member.service.version}" timeout="${dubbo.service.timeout}" 
+		version="${dubbo.p2p.base_platform.service.version}" timeout="${dubbo.service.timeout}" 
 		ref="apiServiceInterfaceService" />
 		
 	<bean id="apiQueryBankCardsService" class="com.ucf.customer.ws.service.impl.QueryBankCardsImpl" />
 	<dubbo:service interface="com.ucf.customer.ws.service.QueryBankCards" 
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}" 
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}" 
 		ref="apiQueryBankCardsService" />
 	<!-- 公安部实名认证信息 -->
 	<bean id="apiCheckAutherRealNameService" class="com.ucf.customer.ws.service.impl.CheckAutherRealNameWSImpl" />
 	<dubbo:service interface="com.ucf.customer.ws.service.CheckAutherRealNameWS"
-	 	version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}"  ref="apiCheckAutherRealNameService" />
+	 	version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}"  ref="apiCheckAutherRealNameService" />
 	
 	<!-- 企业会员 -->
-	<bean id="apiEnterpriseMemberServiceService" class="com.ucf.customer.ws.enterprise.impl.EnterpriseMemberServiceImpl" />
-	<dubbo:service interface="com.ucf.customer.ws.service.enterprise.EnterpriseMemberService"
-	 	version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}"  ref="apiEnterpriseMemberServiceService" />
+	<bean id="apiEnterprisebase_platformServiceService" class="com.ucf.customer.ws.enterprise.impl.Enterprisebase_platformServiceImpl" />
+	<dubbo:service interface="com.ucf.customer.ws.service.enterprise.Enterprisebase_platformService"
+	 	version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}"  ref="apiEnterprisebase_platformServiceService" />
 	
-	<bean id="apiMemberService" class="com.ucf.customer.api.impl.MemberServiceImpl" />
-	<dubbo:service interface="com.ucf.customer.api.MemberService" 
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}" 
-		ref="apiMemberService" />
+	<bean id="apibase_platformService" class="com.ucf.customer.api.impl.base_platformServiceImpl" />
+	<dubbo:service interface="com.ucf.customer.api.base_platformService" 
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}" 
+		ref="apibase_platformService" />
 	 	
-	<bean id="apiBizMemberService" class="com.ucf.customer.api.impl.EnterpriseMemberServiceImpl" />
-	<dubbo:service interface="com.ucf.customer.api.IEnterpriseMemberService" 
-		version="${dubbo.member.service.version}" timeout="${dubbo.service.timeout}" 
-		ref="apiBizMemberService" />
+	<bean id="apiBizbase_platformService" class="com.ucf.customer.api.impl.Enterprisebase_platformServiceImpl" />
+	<dubbo:service interface="com.ucf.customer.api.IEnterprisebase_platformService" 
+		version="${dubbo.base_platform.service.version}" timeout="${dubbo.service.timeout}" 
+		ref="apiBizbase_platformService" />
 		
 	<!-- 账务 -->
 	<!-- 开户 -->

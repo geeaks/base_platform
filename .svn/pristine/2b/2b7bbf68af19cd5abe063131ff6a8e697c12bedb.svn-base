@@ -1,6 +1,6 @@
 package com.ucf.customer.ws.enums;
 
-public enum EnumMemberCode {
+public enum Enumbase_platformCode {
 	SUCCESS("00", "成功"),
 	ERROR("01", "失败"),
 	PARAM_ERROR("02","参数错误"),
@@ -37,7 +37,7 @@ public enum EnumMemberCode {
 	AGENTPERSONPHONE_IS_FAIL_RULES("034","代理人手机号不符合规则"),
 	AGENTPERSONNO_IS_FAIL_RULES("035","代理人身份证号不符合规则"),
 	ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME("036","企业全称与账户名称不一致"),
-	MEMBER_NOT_HAVE_BANKCARD("037","该会员没有绑定银行卡"),
+	base_platform_NOT_HAVE_BANKCARD("037","该会员没有绑定银行卡"),
 	LEGALPERSONNO_IS_FAIL_RULES("038","法人身份证号不符合规则，不得大于30位"),
 	DATE_PARSE_ERROR("039","日期格式不正确"),
 	EMAIL_IS_FAIL_RULES("040","邮箱不符合规则"),
@@ -56,7 +56,7 @@ public enum EnumMemberCode {
 	private String code;
 	private String msgS;
 
-	EnumMemberCode(String code, String msg) {
+	Enumbase_platformCode(String code, String msg) {
 		this.code = code;
 		this.msgS = msg;
 	}

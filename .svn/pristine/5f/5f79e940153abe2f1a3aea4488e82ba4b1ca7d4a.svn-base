@@ -7,8 +7,8 @@
 
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
 <!--private js&css start-->
-<link rel="stylesheet" type="text/css" href="${staticMemberPath}/new/css/host_findpassword.css"/>
-<link href="${staticMemberPath}/new/css/person_login.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/new/css/host_findpassword.css"/>
+<link href="${staticbase_platformPath}/new/css/person_login.css" rel="stylesheet" type="text/css" />
 <script src="${basePath}/jsp/p2p/passwordControl/index.js" type="text/javascript"></script>
 <style type="text/css">
 p.tip span {font-weight:130px;
@@ -69,7 +69,7 @@ p.tippp span {font-weight:130px;
                                 <td>
                                     <input type="text" id="checkCode" name="checkCode" maxlength="4" class="idbox w123" placeholder="请输入提示验证码" />
                                     <div class="login_code">
-                                        <img id="J-checkcode-img" title="点击图片刷新验证码"	onclick="myReload()" class="checkcode-img" complete="complete" src="${staticMemberPath}/idcode.do"
+                                        <img id="J-checkcode-img" title="点击图片刷新验证码"	onclick="myReload()" class="checkcode-img" complete="complete" src="${staticbase_platformPath}/idcode.do"
 											alt="输入验证码" style="cursor: pointer;"	seed="JIndexForm-J-checkcode-img" smartracker="on"> 
 										<a href="#" onClick="myReload()">看不清，换一个</a>
 										<span class="msg-box" for="checkCode"></span>

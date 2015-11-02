@@ -4,7 +4,7 @@
 <head>
 <title>先锋支付--会员中心</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/css/bootstrap.css" rel="stylesheet"/>
+<link href="${staticbase_platformPath}/css/bootstrap.css" rel="stylesheet"/>
 
 </head>
 <body>
@@ -37,7 +37,7 @@
 					</ul>
 					<div class="info-basic">
 						<h1>基本信息</h1>
-						<img src="${staticMemberPath}/images/info-people.png" />
+						<img src="${staticbase_platformPath}/images/info-people.png" />
 						<ul class="mgl40">
 							<li>姓名：</li>
 							<li>账户名：</li>

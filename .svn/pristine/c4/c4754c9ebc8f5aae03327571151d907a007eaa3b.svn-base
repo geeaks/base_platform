@@ -11,7 +11,7 @@
 <c:set var="basePath" value="${pageContext.request.contextPath }" />
 <jsp:include page="../../common/resource_css.jsp"/>
 <!--private js&css start-->
-<link href="${staticMemberPath}/new/css/host_open.css" rel="stylesheet" type="text/css">
+<link href="${staticbase_platformPath}/new/css/host_open.css" rel="stylesheet" type="text/css">
 <!--private js&css end-->
 <script type="text/javascript">
 	

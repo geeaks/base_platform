@@ -4,8 +4,8 @@
 <head>
 <title>先锋支付--用户注册</title>
 <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-<link href="${staticMemberPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
-<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
+<link href="${staticbase_platformPath}/new/css/host_addbank.css" rel="stylesheet" type="text/css"/>
+<link href="${staticbase_platformPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
   </head>
 <body>
 <c:import url="/common/head.htm"></c:import>
@@ -37,7 +37,7 @@
             <div class="pt10 pb100">
             <div class="u_txtiptx mauto">
            	 为了给您提供更完善便捷的提现和金融服务，<span class="color-yellow1 mr20">需要您设置提现银行卡（包含实名认证）。</span>
-            <p><span class="color-yellow1 mr20">成功后就能立刻开始付款，同时享受各种先锋支付提供的提现和充值服务。</span><a href="${staticMemberPath}/reg/regFinish.do" class="ml10">跳过完成支付</a></p>
+            <p><span class="color-yellow1 mr20">成功后就能立刻开始付款，同时享受各种先锋支付提供的提现和充值服务。</span><a href="${staticbase_platformPath}/reg/regFinish.do" class="ml10">跳过完成支付</a></p>
         </div> 
               <form action="${basePath}/reg/realNameAuth.htm" id="realNameAuthForm" name="realNameAuthForm" method="post">
               <input type="hidden" name="token" value="${requestScope.token}" />

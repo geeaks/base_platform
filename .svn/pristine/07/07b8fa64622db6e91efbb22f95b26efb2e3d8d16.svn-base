@@ -22,7 +22,7 @@ import com.ucf.customer.ws.enums.EnumUserType;
 /**
  * 
 *    
-* 项目名称：member   
+* 项目名称：base_platform   
 * 类名称：UserServiceWS   
 * 类描述：   会员提供的dubbo服务接口
 * 创建人：李文静 
@@ -134,7 +134,7 @@ public interface UserServiceWS {
 	/**
 	 * 
 	* 创建时间：2014-6-17 下午5:50:50  
-	* 项目名称：member-client  
+	* 项目名称：base_platform-client  
 	* @author limeng3@ucfgroup.com  
 	* 方法说明：解除用户银行卡关联
 	 */

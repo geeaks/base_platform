@@ -4,13 +4,13 @@
   <head>
     <title>先锋支付--用户注册</title>
     <jsp:include page="/WEB-INF/views/jsp/common/common.jsp"/>
-    <link rel="stylesheet" href="${staticMemberPath}/css/commons/bootstrap.min.css">
+    <link rel="stylesheet" href="${staticbase_platformPath}/css/commons/bootstrap.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-        <script src="${staticMemberPath}/js/commons/html5shiv.min.js"></script>
-        <script src="${staticMemberPath}/js/commons/respond.min.js"></script>
+        <script src="${staticbase_platformPath}/js/commons/html5shiv.min.js"></script>
+        <script src="${staticbase_platformPath}/js/commons/respond.min.js"></script>
     <![endif]-->
   </head>
   <body>
@@ -66,8 +66,8 @@
     </div><!-- /.container -->
 
     	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-	<script src="${staticMemberPath}/js/commons/jquery.min.js"></script>
+	<script src="${staticbase_platformPath}/js/commons/jquery.min.js"></script>
 	<!-- Include all compiled plugins (below), or include individual files as needed -->
-	<script	 src="${staticMemberPath}/js/commons/bootstrap.min.js"></script>
+	<script	 src="${staticbase_platformPath}/js/commons/bootstrap.min.js"></script>
   </body>
 </html>

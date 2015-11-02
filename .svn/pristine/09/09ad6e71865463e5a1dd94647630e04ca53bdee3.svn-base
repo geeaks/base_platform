@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.ucf.platform.framework.core.annotation.SensitiveInfo;
 import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
 
-public class EnterpriseMemberBankCardBO implements Serializable{
+public class Enterprisebase_platformBankCardBO implements Serializable{
 
 	private static final long serialVersionUID = 4731506151758190143L;
 
@@ -131,7 +131,7 @@ public class EnterpriseMemberBankCardBO implements Serializable{
 
 	@Override
 	public String toString() {
-		return 	"EnterpriseMemberBankCardBO [" +
+		return 	"Enterprisebase_platformBankCardBO [" +
 				" respCode=" + respCode + ", respMsg=" + respMsg + ", status=" + status + ", bankCardNo=" + bankCardNo + ", bankCardName=" + bankCardName +
 				" bankName=" + bankName + ", bankCode=" + bankCode + ", cartType=" + cartType + ", branchName=" + branchName +
 				" issuer=" + issuer + ", city=" + city + ", province=" + province + 

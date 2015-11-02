@@ -14,7 +14,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
-import com.ucf.customer.api.bo.MemberCommonResult;
+import com.ucf.customer.api.bo.base_platformCommonResult;
 import com.ucf.customer.api.enums.EnumBankCardType;
 import com.ucf.customer.api.enums.EnumBankCardUseType;
 import com.ucf.customer.api.enums.EnumCertStatus;
@@ -558,7 +558,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 			//生成用户ID
 			String userId = userService.queryUcfUserId();
 			if("Y".equals(registerBo.getIsSignCustomer())){
-				userId = userService.getEnterpriseMemberNO();
+				userId = userService.getEnterprisebase_platformNO();
 			}
 			// 此时生成用户信息
 			final UcfUser ucfUser = new UcfUser();
@@ -735,32 +735,32 @@ public class UserInfoServiceImpl implements UserInfoService {
 		return bo;
 	}
 	
-	public MemberCommonResult<String> registerManagedUser(final RegisterParamBO memberBo){
+	public base_platformCommonResult<String> registerManagedUser(final RegisterParamBO base_platformBo){
 		synchronized (this) {
-			UcfUser u = isExistsMerchantUser(memberBo.getRefMerchant(),memberBo.getRefUser());
+			UcfUser u = isExistsMerchantUser(base_platformBo.getRefMerchant(),base_platformBo.getRefUser());
 			if(u != null){
-				return  new  MemberCommonResult<String>(EnumRespStatusCode.EXIST_USER.getCode(),EnumRespStatusCode.EXIST_USER.getMsg(),u.getUserId());
+				return  new  base_platformCommonResult<String>(EnumRespStatusCode.EXIST_USER.getCode(),EnumRespStatusCode.EXIST_USER.getMsg(),u.getUserId());
 			}	
-			MemberCommonResult<String>  result = null;
+			base_platformCommonResult<String>  result = null;
 			try {
 				final String userId = userService.queryUcfUserId();
 				final UcfUser user = new UcfUser();
 				user.setUserId(userId);
-				user.setCell(memberBo.getPhoneNo());
-				user.setEmail(memberBo.getEmail());
-				user.setRealName(memberBo.getRealName());
-				user.setRefMerchant(memberBo.getRefMerchant());
-				user.setRefUser(memberBo.getRefUser());
-				user.setCertType(memberBo.getCertType());
-				user.setCertNo(memberBo.getCertNo());
-				user.setPinQues(memberBo.getQues());
-				user.setPinAnsw(memberBo.getAnsw());
-				user.setUserType(BigDecimal.valueOf(memberBo.getUserType()));
+				user.setCell(base_platformBo.getPhoneNo());
+				user.setEmail(base_platformBo.getEmail());
+				user.setRealName(base_platformBo.getRealName());
+				user.setRefMerchant(base_platformBo.getRefMerchant());
+				user.setRefUser(base_platformBo.getRefUser());
+				user.setCertType(base_platformBo.getCertType());
+				user.setCertNo(base_platformBo.getCertNo());
+				user.setPinQues(base_platformBo.getQues());
+				user.setPinAnsw(base_platformBo.getAnsw());
+				user.setUserType(BigDecimal.valueOf(base_platformBo.getUserType()));
 				user.setRealnameStatus(EnumRealnameStatus.NOT_REALNAMED.getCode());
-				user.setCertValidBeginDate(memberBo.getCertValidBeginDate());
-				user.setCertValidEndDate(memberBo.getCertValidEndDate());
-				if(memberBo.getLoginPwd()!=null){
-					user.setLgnPwd(Cryptos.encrypt(new String(memberBo.getLoginPwd()),userId));
+				user.setCertValidBeginDate(base_platformBo.getCertValidBeginDate());
+				user.setCertValidEndDate(base_platformBo.getCertValidEndDate());
+				if(base_platformBo.getLoginPwd()!=null){
+					user.setLgnPwd(Cryptos.encrypt(new String(base_platformBo.getLoginPwd()),userId));
 				}
 				user.setEnabledStatus(EnumUserEnabledStatus.T.getCode());//W：注册未激活
 				user.setVerifyStatus(EnumVerifyLevle.REGISTER.getCode());//注册实名认证级别
@@ -768,11 +768,11 @@ public class UserInfoServiceImpl implements UserInfoService {
 				card.setCardNo(userId);
 				card.setUserId(userId);
 				card.setCardType(EnumsUserCardType.PERSON_CARD.getCode());
-				card.setRegisterFrom(memberBo.getRegFrom());
-				card.setCertFrom(memberBo.getSource());
+				card.setRegisterFrom(base_platformBo.getRegFrom());
+				card.setCertFrom(base_platformBo.getSource());
 				card.setCertStatus(EnumCertStatus.NO_CERT.getCode());
-				if(memberBo.getPayPwd()!=null){
-					card.setPaymentPassword(Cryptos.encrypt(new String(memberBo.getPayPwd()),userId));
+				if(base_platformBo.getPayPwd()!=null){
+					card.setPaymentPassword(Cryptos.encrypt(new String(base_platformBo.getPayPwd()),userId));
 				}
 				
 				ResultBo rsBo = accountService.createAcccount(card.getCardNo(), EnumsUserCardType.PERSON_CARD.getAccountCode());
@@ -780,7 +780,7 @@ public class UserInfoServiceImpl implements UserInfoService {
 				if (EnumResultCode.SUCCESS.getCode().equals(rsBo.getResult())) {
 					card.setAccountId(rsBo.getResultObject().toString());
 				}else{
-					result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"帐务开户失败","");
+					result = new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"帐务开户失败","");
 					return result;
 				}
 				boolean commit = (Boolean)transactionTemplate.execute(new TransactionCallback<Object>() {
@@ -800,13 +800,13 @@ public class UserInfoServiceImpl implements UserInfoService {
 					}
 				});
 				if(!commit){
-					result = new  MemberCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"数据库操作异常","");
+					result = new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR_DB_OPERATE.getCode(),"数据库操作异常","");
 				}else{
-					result = new  MemberCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
+					result = new  base_platformCommonResult<String>(EnumRespStatusCode.SUCCESS.getCode(),"注册成功",userId);
 				}
 			} catch (Exception e) {
 				 LOGGER.error(e.getMessage(),e);
-				 result =  new  MemberCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
+				 result =  new  base_platformCommonResult<String>(EnumRespStatusCode.ERROR.getCode(),"系统异常","S");
 			}
 			return result;
 		}

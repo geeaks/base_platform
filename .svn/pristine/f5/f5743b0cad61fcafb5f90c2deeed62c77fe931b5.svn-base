@@ -2,7 +2,7 @@ package com.ucf.customer.ws.bo.enterprise;
 
 import java.io.Serializable;
 
-public class MemberReviewRequestBO implements Serializable{
+public class base_platformReviewRequestBO implements Serializable{
 
 	private static final long serialVersionUID = -4121927659275744984L;
 	

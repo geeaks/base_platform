@@ -7,7 +7,7 @@ import com.ucf.customer.ws.enums.EnumsSubCardType;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：AccountInfoParamBD      <br>
 * 类描述： 查询主卡accountId 和子卡 accountId  				  <br>
 * 创建人：李文静 				  <br>

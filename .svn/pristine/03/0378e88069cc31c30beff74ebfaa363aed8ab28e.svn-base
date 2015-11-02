@@ -3,7 +3,7 @@ package com.ucf.customer.api.bo;
 import com.ucf.platform.framework.core.annotation.SensitiveInfo;
 import com.ucf.platform.framework.core.util.SensitiveInfoUtils.SensitiveType;
 
-public class MemberRegisterBO  implements java.io.Serializable{
+public class base_platformRegisterBO  implements java.io.Serializable{
 	
 	private static final long serialVersionUID = -1330031225803010685L;
 	

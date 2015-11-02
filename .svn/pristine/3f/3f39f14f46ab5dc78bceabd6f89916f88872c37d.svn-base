@@ -44,8 +44,8 @@ public class WhiteListMQConsumerService extends AbstractUcfMQSyncConsumerConcurr
 	@Override
 	public UcfTopicTagAssemble getTopicAndTagExpress() {
 		UcfTopicTagAssemble assemble = new UcfTopicTagAssemble();
-		assemble.setTopic(RocketMQTopicEnum.ROCKETMQ_MEMBER_WHITE_LIST_TOPICANDTAG.getTopic());
-		assemble.setTag(RocketMQTopicEnum.ROCKETMQ_MEMBER_WHITE_LIST_TOPICANDTAG.getTag());
+		assemble.setTopic(RocketMQTopicEnum.ROCKETMQ_base_platform_WHITE_LIST_TOPICANDTAG.getTopic());
+		assemble.setTag(RocketMQTopicEnum.ROCKETMQ_base_platform_WHITE_LIST_TOPICANDTAG.getTag());
 		return assemble;
 	}
 

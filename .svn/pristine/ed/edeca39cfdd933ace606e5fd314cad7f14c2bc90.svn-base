@@ -8,32 +8,32 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAccess;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAccess;
+import com.ucf.customer.security.base_platformAgent;
 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 	
 	
 	
 	@Value("#{settings['static.res.path']}")
-	private String staticMemberPath;
+	private String staticbase_platformPath;
 	
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 		HandlerMethod handler2 = (HandlerMethod) handler;
-		MemberAccess memberAccess = handler2.getMethodAnnotation(MemberAccess.class);
+		base_platformAccess base_platformAccess = handler2.getMethodAnnotation(base_platformAccess.class);
 		HttpSession session  = request.getSession();
-		session.setAttribute("staticMemberPath", staticMemberPath);
-		if (null == memberAccess) {
+		session.setAttribute("staticbase_platformPath", staticbase_platformPath);
+		if (null == base_platformAccess) {
 			return true;
 		}
-		MemberAgent memberAgent = (MemberAgent) session.getAttribute("MemberAgent");
+		base_platformAgent base_platformAgent = (base_platformAgent) session.getAttribute("base_platformAgent");
 
-		if (memberAgent == null) {
-			// 未登录，则除非包含MemberUserType.Visitor,否则抛出需要登录异常
-			for (EnumMemberUserType t : memberAccess.value()) {
-				if (t == EnumMemberUserType.Visitor) {
+		if (base_platformAgent == null) {
+			// 未登录，则除非包含base_platformUserType.Visitor,否则抛出需要登录异常
+			for (Enumbase_platformUserType t : base_platformAccess.value()) {
+				if (t == Enumbase_platformUserType.Visitor) {
 					// 可以访问
 					return true;
 				}
@@ -41,10 +41,10 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 			response.sendRedirect("../login/index.htm?redirectUrl="	+ request.getRequestURL());
 			return false;
 		} else {
-			for (EnumMemberUserType t : memberAccess.value()) {
-				if (t == memberAgent.getUserType()) {
+			for (Enumbase_platformUserType t : base_platformAccess.value()) {
+				if (t == base_platformAgent.getUserType()) {
 					
-//					if (!request.getRequestURI().matches(".*/bank/firstaddbank.htm") && !memberAgent.isBindCard()) {
+//					if (!request.getRequestURI().matches(".*/bank/firstaddbank.htm") && !base_platformAgent.isBindCard()) {
 //						response.sendRedirect("../bank/firstaddbank.htm");
 //						return false;
 //					}
@@ -64,7 +64,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	// response.setCharacterEncoding("UTF-8");
 	// response.setContentType("text/html;charset=UTF-8");
 	// RedisSession session = redisSessionFactory.getSession(request, response);
-	// String project = "/member/";
+	// String project = "/base_platform/";
 	// // 后台session控制
 	// String[] noFilters = new String[] {
 	// "p2p" ,
@@ -94,7 +94,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 	// Constants.USER_LOGIIN_STATUS);
 	// if (null == obj || Constants.USER_LOGIIN_STATUS_NO.equals(obj)) {
 	// // 未登录
-	// response.sendRedirect("/member/login/?redirectUrl="+request.getRequestURL());
+	// response.sendRedirect("/base_platform/login/?redirectUrl="+request.getRequestURL());
 	// return false;
 	// }
 	// }

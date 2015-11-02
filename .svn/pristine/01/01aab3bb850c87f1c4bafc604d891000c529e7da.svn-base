@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 
 import com.alibaba.fastjson.JSON;
-import com.ucf.customer.api.MemberService;
+import com.ucf.customer.api.base_platformService;
 import com.ucf.customer.api.bo.BaseResultBO;
 import com.ucf.customer.api.bo.RealNameParamBO;
 import com.ucf.customer.api.bo.UserRealNamedStatusRsBO;
@@ -30,7 +30,7 @@ import com.ucf.customer.ws.bo.UserInfoBO;
 import com.ucf.customer.ws.bo.VerifyBO;
 import com.ucf.customer.ws.enums.EnumBindCardType;
 import com.ucf.customer.ws.enums.EnumIdCardType;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.enums.EnumUserType;
 import com.ucf.customer.ws.service.CardInfoWS;
 import com.ucf.customer.ws.service.UserServiceWS;
@@ -45,7 +45,7 @@ public class UserServiceWSTest extends BaseTest {
 	private CardInfoWS cardInfoWS;
 	
 	@Autowired
-	private MemberService memberService;
+	private base_platformService base_platformService;
 	
 	/**
 	 * 身份证和用户名存在，返回登录URL
@@ -60,7 +60,7 @@ public class UserServiceWSTest extends BaseTest {
 		// 用户名 未使用
 		String userName = "牟少杰";
 		UserCheckResultBO result = userService.checkUserByIdNum(certNo, userName);
-		System.out.println("dubbo调用状态:" + result.getEnumMemberCode().getMsgS());
+		System.out.println("dubbo调用状态:" + result.getEnumbase_platformCode().getMsgS());
 		System.out.println("会员是否注册：" + result.getEnumUserRegisterStatus().getMsgS());
 		System.out.println("登录URL:" + result.getReturnUrl());
 	}
@@ -78,7 +78,7 @@ public class UserServiceWSTest extends BaseTest {
 		// 用户名
 		String userName = "牟少杰";
 		UserCheckResultBO result = userService.checkUserByIdNum(certNo, userName);
-		System.out.println("dubbo调用状态:" + result.getEnumMemberCode().getMsgS());
+		System.out.println("dubbo调用状态:" + result.getEnumbase_platformCode().getMsgS());
 		System.out.println("会员是否注册：" + result.getEnumUserRegisterStatus().getMsgS());
 		System.out.println("登录URL:" + result.getReturnUrl());
 	}
@@ -139,7 +139,7 @@ public class UserServiceWSTest extends BaseTest {
 		AccountInfoParamBO accountInfoParamBD = new AccountInfoParamBO();
 		accountInfoParamBD.setUserId("10000003027");
 		AccountInfoBO result = userService.queryAccountNo(accountInfoParamBD);
-		System.out.println("dubbo调用状态：" + result.getEnumMemberCode());
+		System.out.println("dubbo调用状态：" + result.getEnumbase_platformCode());
 		System.out.println("主卡帐户ID:" + result.getMainCardAccountId());
 		System.out.println("子帐户ID:" + result.getSubCardAccountId());
 	}
@@ -347,7 +347,7 @@ public class UserServiceWSTest extends BaseTest {
 	@Rollback(false)
 	public void testfindUserRealnameStatus() {
 		// 10000003813
-		UserRealNamedStatusRsBO returnBo = memberService.findUserRealnameStatus("10000004008");
+		UserRealNamedStatusRsBO returnBo = base_platformService.findUserRealnameStatus("10000004008");
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -358,7 +358,7 @@ public class UserServiceWSTest extends BaseTest {
 		paramBo.setUserId("10000008719");// 10000003813
 		paramBo.setCertType(EnumCertStatus.REMIT_CERT.getCode());
 		paramBo.setStatus(EnumStatus.FAI.getCode());
-		BaseResultBO returnBo = memberService.realName(paramBo);
+		BaseResultBO returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 	
@@ -378,7 +378,7 @@ public class UserServiceWSTest extends BaseTest {
 		paramBo.setCity("北京");
 		paramBo.setBranchBankId("110454543");
 		paramBo.setBranchBankName("工商xx银行3");
-		BaseResultBO returnBo = memberService.realName(paramBo);
+		BaseResultBO returnBo = base_platformService.realName(paramBo);
 		System.err.println(JSON.toJSON(returnBo));
 	}
 }

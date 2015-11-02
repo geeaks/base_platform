@@ -48,28 +48,28 @@ import com.ucf.customer.utils.enums.EnumUserEnabledStatus;
 import com.ucf.customer.utils.exception.CustomerErrorCode;
 import com.ucf.customer.utils.exception.CustomerException;
 import com.ucf.customer.ws.bo.BaseBO;
-import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberBankCardBO;
-import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberInfoResultBO;
-import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberRegRequestBO;
-import com.ucf.customer.ws.bo.enterprise.EnterpriseMemberSearchReqBo;
+import com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformBankCardBO;
+import com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.Enterprisebase_platformSearchReqBo;
 import com.ucf.customer.ws.bo.enterprise.EnterpriseStatusReturnValueBo;
 import com.ucf.customer.ws.bo.enterprise.GroupAccountBo;
 import com.ucf.customer.ws.bo.enterprise.MainAccountListBO;
-import com.ucf.customer.ws.bo.enterprise.MemberRegisterResultBO;
-import com.ucf.customer.ws.bo.enterprise.MemberReviewRequestBO;
-import com.ucf.customer.ws.bo.enterprise.MemberReviewResultBO;
-import com.ucf.customer.ws.bo.enterprise.OuterEnterpriseMemberRegRequestBO;
-import com.ucf.customer.ws.bo.enterprise.PageEnterpriseMemberResultBo;
-import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoRequestBO;
-import com.ucf.customer.ws.bo.enterprise.UpdateMemberInfoResultBO;
+import com.ucf.customer.ws.bo.enterprise.base_platformRegisterResultBO;
+import com.ucf.customer.ws.bo.enterprise.base_platformReviewRequestBO;
+import com.ucf.customer.ws.bo.enterprise.base_platformReviewResultBO;
+import com.ucf.customer.ws.bo.enterprise.OuterEnterprisebase_platformRegRequestBO;
+import com.ucf.customer.ws.bo.enterprise.PageEnterprisebase_platformResultBo;
+import com.ucf.customer.ws.bo.enterprise.Updatebase_platformInfoRequestBO;
+import com.ucf.customer.ws.bo.enterprise.Updatebase_platformInfoResultBO;
 import com.ucf.customer.ws.bo.enterprise.VerifyEmailRequestBO;
 import com.ucf.customer.ws.bo.enterprise.VerifyEmailResultBO;
 import com.ucf.customer.ws.enums.EnumCertFrom;
 import com.ucf.customer.ws.enums.EnumCertStatus;
-import com.ucf.customer.ws.enums.EnumMemberCode;
+import com.ucf.customer.ws.enums.Enumbase_platformCode;
 import com.ucf.customer.ws.enums.EnumMerchantExtra;
 import com.ucf.customer.ws.enums.EnumRegisterFrom;
-import com.ucf.customer.ws.service.enterprise.EnterpriseMemberService;
+import com.ucf.customer.ws.service.enterprise.Enterprisebase_platformService;
 import com.ucf.onlinepay.framework.common.util.DateUtil;
 import com.ucf.onlinepay.framework.common.util.StringUtil;
 import com.ucf.platform.framework.core.log.UcfLogger;
@@ -81,9 +81,9 @@ import com.ucf.platform.framework.mq.UcfSendMessage;
 import com.ucf.platform.framework.mq.enums.RocketMQTopicEnum;
 import com.ucf.platform.framework.mq.producer.UcfMQProducer;
 
-public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
+public class Enterprisebase_platformServiceImpl implements Enterprisebase_platformService {
 
-	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(EnterpriseMemberServiceImpl.class);
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(Enterprisebase_platformServiceImpl.class);
 	@Autowired
 	private LoginService loginService;
 	@Autowired
@@ -107,69 +107,69 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberRegisterResultBO register(OuterEnterpriseMemberRegRequestBO registerRequestBO) {
+	public base_platformRegisterResultBO register(OuterEnterprisebase_platformRegRequestBO registerRequestBO) {
 		LOGGER.info("企业会员注册：[" + SensitiveInfoUtils.getJson(registerRequestBO) + "] ");
-		MemberRegisterResultBO memberRegisterResultBO = new MemberRegisterResultBO();
+		base_platformRegisterResultBO base_platformRegisterResultBO = new base_platformRegisterResultBO();
 		try {
 			if (registerRequestBO.getMerchantId() == null || "".equals(registerRequestBO.getMerchantId()) || registerRequestBO.getEndDate() == null || "".equals(registerRequestBO.getEndDate()) || registerRequestBO.getOuterUserId() == null || "".equals(registerRequestBO.getOuterUserId())
 					|| registerRequestBO.getAgentPersonNo() == null || "".equals(registerRequestBO.getAgentPersonNo()) || registerRequestBO.getBusinessLicense() == null || "".equals(registerRequestBO.getBusinessLicense()) || registerRequestBO.getLegalPersonNo() == null
 					|| "".equals(registerRequestBO.getLegalPersonNo())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
+				return base_platformRegisterResultBO;
 			}
 			Pattern endDatePattern = Pattern.compile("^[0-9]{4}(((0[13578]|(10|12))(0[1-9]|[1-2][0-9]|3[0-1]))|(02(0[1-9]|[1-2][0-9]))|((0[469]|11)(0[1-9]|[1-2][0-9]|30)))$");
 			Matcher endDateMatcher = endDatePattern.matcher(registerRequestBO.getEndDate());
 			if (!endDateMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.DATE_PARSE_ERROR.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.DATE_PARSE_ERROR.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.DATE_PARSE_ERROR.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.DATE_PARSE_ERROR.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.DATE_PARSE_ERROR.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.DATE_PARSE_ERROR.getCode());
+				return base_platformRegisterResultBO;
 			}
 
 			if (registerRequestBO.getAgentPersonPhone() == null || "".equals(registerRequestBO.getAgentPersonPhone())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 			Pattern agentPersonPhonePattern = Pattern.compile("^1[3|4|5|8][0-9]\\d{8}$");
 			Matcher agentPersonPhoneMatcher = agentPersonPhonePattern.matcher(registerRequestBO.getAgentPersonPhone());
 			if (!agentPersonPhoneMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 
 			if (registerRequestBO.getAgentPersonNo() == null || "".equals(registerRequestBO.getAgentPersonNo())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.AGENTPERSONNO_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 
 			Pattern agentPersonNoPattern = Pattern.compile("(^\\d{15}$)|(^\\d{17}([0-9]|X)$)");
 			Matcher agentPersonNoMatcher = agentPersonNoPattern.matcher(registerRequestBO.getAgentPersonNo());
 			if (!agentPersonNoMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.AGENTPERSONNO_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.AGENTPERSONNO_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 			Matcher legalPersonNoMatcher = agentPersonNoPattern.matcher(registerRequestBO.getLegalPersonNo());
 			if (!legalPersonNoMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.LEGALPERSONNO_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 			if (registerRequestBO.getEnterpriseFullName() == null || !registerRequestBO.getEnterpriseFullName().equals(registerRequestBO.getBankCardName())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.ENTERPRISEFULLNAME_NOT_EQUEL_BANKCARDNAME.getCode());
+				return base_platformRegisterResultBO;
 			}
 
 			UcfUser user = new UcfUser();
@@ -177,10 +177,10 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 			user.setRefMerchant(registerRequestBO.getMerchantId());
 			List<UcfUser> userList = this.loginService.queryUcfUser(user);
 			if (!userList.isEmpty()) {
-				memberRegisterResultBO.setStatus(EnumMemberCode.CELL_EXIST.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.CELL_EXIST.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.CELL_EXIST.getMsgS());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.CELL_EXIST.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.CELL_EXIST.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.CELL_EXIST.getMsgS());
+				return base_platformRegisterResultBO;
 			}
 
 			// 生成用户ID
@@ -282,10 +282,10 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 
 			String result = loginService.createAcccount(null, EnumAccountType.MERCHANT, ucfCard);
 			if (!result.equals("success")) {
-				memberRegisterResultBO.setStatus(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.OPEN_ACCOUNT_FAIL.getMsgS());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getMsgS());
+				return base_platformRegisterResultBO;
 			}
 
 			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
@@ -325,122 +325,122 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 				}
 			});
 			if (commit) {
-				memberRegisterResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-				memberRegisterResultBO.setUserId(userId);
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+				base_platformRegisterResultBO.setUserId(userId);
+				return base_platformRegisterResultBO;
 			} else {
-				memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+				return base_platformRegisterResultBO;
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-			memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			return memberRegisterResultBO;
+			base_platformRegisterResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			return base_platformRegisterResultBO;
 		}
 
 	}
 
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public UpdateMemberInfoResultBO updateMemberInfo(UpdateMemberInfoRequestBO updateMemberInfoRequestBO) {
-		UpdateMemberInfoResultBO updateMemberInfoResultBO = new UpdateMemberInfoResultBO();
-		if (updateMemberInfoRequestBO.getMerchantId() == null || "".equals(updateMemberInfoRequestBO.getMerchantId())) {
-			updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
-			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
-			updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
-			return updateMemberInfoResultBO;
+	public Updatebase_platformInfoResultBO updatebase_platformInfo(Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO) {
+		Updatebase_platformInfoResultBO updatebase_platformInfoResultBO = new Updatebase_platformInfoResultBO();
+		if (updatebase_platformInfoRequestBO.getMerchantId() == null || "".equals(updatebase_platformInfoRequestBO.getMerchantId())) {
+			updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
+			updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
+			return updatebase_platformInfoResultBO;
 		}
-		if (updateMemberInfoRequestBO.getUserId() == null || "".equals(updateMemberInfoRequestBO.getUserId())) {
-			updateMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
-			updateMemberInfoResultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			return updateMemberInfoResultBO;
+		if (updatebase_platformInfoRequestBO.getUserId() == null || "".equals(updatebase_platformInfoRequestBO.getUserId())) {
+			updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.USER_ID_NOT_NULL.getMsgS());
+			updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			return updatebase_platformInfoResultBO;
 		}
 		UcfUser user = new UcfUser();
-		user.setUserId(updateMemberInfoRequestBO.getUserId());
-		user.setRefMerchant(updateMemberInfoRequestBO.getMerchantId());
+		user.setUserId(updatebase_platformInfoRequestBO.getUserId());
+		user.setRefMerchant(updatebase_platformInfoRequestBO.getMerchantId());
 		try {
 			UcfUser queryUser = new UcfUser();
-			queryUser.setCell(updateMemberInfoRequestBO.getAgentPersonPhone());
-			queryUser.setRefMerchant(updateMemberInfoRequestBO.getMerchantId());
+			queryUser.setCell(updatebase_platformInfoRequestBO.getAgentPersonPhone());
+			queryUser.setRefMerchant(updatebase_platformInfoRequestBO.getMerchantId());
 			List<UcfUser> userList = this.loginService.queryUcfUser(queryUser);
 			if (!userList.isEmpty()) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.CELL_EXIST.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.CELL_EXIST.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.CELL_EXIST.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.CELL_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.CELL_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.CELL_EXIST.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
 			final UcfUser userinfo = this.loginService.queryUcfUserInfo(user);
 			if (userinfo == null) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
-			if (updateMemberInfoRequestBO.getAgentPersonPhone() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonPhone().trim())) {
-				userinfo.setCell(updateMemberInfoRequestBO.getAgentPersonPhone());
+			if (updatebase_platformInfoRequestBO.getAgentPersonPhone() != null && !"".equals(updatebase_platformInfoRequestBO.getAgentPersonPhone().trim())) {
+				userinfo.setCell(updatebase_platformInfoRequestBO.getAgentPersonPhone());
 			}
-			if (updateMemberInfoRequestBO.getAgentPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonNo().trim())) {
-				userinfo.setCertNo(updateMemberInfoRequestBO.getAgentPersonNo().trim());
+			if (updatebase_platformInfoRequestBO.getAgentPersonNo() != null && !"".equals(updatebase_platformInfoRequestBO.getAgentPersonNo().trim())) {
+				userinfo.setCertNo(updatebase_platformInfoRequestBO.getAgentPersonNo().trim());
 			}
-			if (updateMemberInfoRequestBO.getAgentPersonName() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonName().trim())) {
-				userinfo.setRealName(updateMemberInfoRequestBO.getAgentPersonName().trim());
+			if (updatebase_platformInfoRequestBO.getAgentPersonName() != null && !"".equals(updatebase_platformInfoRequestBO.getAgentPersonName().trim())) {
+				userinfo.setRealName(updatebase_platformInfoRequestBO.getAgentPersonName().trim());
 			}
-			if (updateMemberInfoRequestBO.getEnterpriseShortName() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseShortName().trim())) {
-				userinfo.setFirmName(updateMemberInfoRequestBO.getEnterpriseShortName().trim());// 企业简称
+			if (updatebase_platformInfoRequestBO.getEnterpriseShortName() != null && !"".equals(updatebase_platformInfoRequestBO.getEnterpriseShortName().trim())) {
+				userinfo.setFirmName(updatebase_platformInfoRequestBO.getEnterpriseShortName().trim());// 企业简称
 			}
 			userinfo.setGmtLastModified(new Date());
 			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(userinfo.getUserId());
 			if (ucfOrg == null) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
-			if (updateMemberInfoRequestBO.getLegalPersonName() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonName().trim())) {
-				ucfOrg.setCoperation(updateMemberInfoRequestBO.getLegalPersonName());
+			if (updatebase_platformInfoRequestBO.getLegalPersonName() != null && !"".equals(updatebase_platformInfoRequestBO.getLegalPersonName().trim())) {
+				ucfOrg.setCoperation(updatebase_platformInfoRequestBO.getLegalPersonName());
 			}
-			if (updateMemberInfoRequestBO.getAgentPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonNo().trim())) {
-				ucfOrg.setAgentCard(updateMemberInfoRequestBO.getAgentPersonNo());// 代理人证件号码
+			if (updatebase_platformInfoRequestBO.getAgentPersonNo() != null && !"".equals(updatebase_platformInfoRequestBO.getAgentPersonNo().trim())) {
+				ucfOrg.setAgentCard(updatebase_platformInfoRequestBO.getAgentPersonNo());// 代理人证件号码
 			}
-			if (updateMemberInfoRequestBO.getAgentPersonName() != null && !"".equals(updateMemberInfoRequestBO.getAgentPersonName().trim())) {
-				ucfOrg.setAgentName(updateMemberInfoRequestBO.getAgentPersonName());// 代理人姓名
+			if (updatebase_platformInfoRequestBO.getAgentPersonName() != null && !"".equals(updatebase_platformInfoRequestBO.getAgentPersonName().trim())) {
+				ucfOrg.setAgentName(updatebase_platformInfoRequestBO.getAgentPersonName());// 代理人姓名
 			}
-			if (updateMemberInfoRequestBO.getLegalPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonNo().trim())) {
-				ucfOrg.setCoperationCard(updateMemberInfoRequestBO.getLegalPersonNo());
+			if (updatebase_platformInfoRequestBO.getLegalPersonNo() != null && !"".equals(updatebase_platformInfoRequestBO.getLegalPersonNo().trim())) {
+				ucfOrg.setCoperationCard(updatebase_platformInfoRequestBO.getLegalPersonNo());
 			}
-			if (updateMemberInfoRequestBO.getEnterpriseAddress() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseAddress().trim())) {
-				ucfOrg.setAddress(updateMemberInfoRequestBO.getEnterpriseAddress());
+			if (updatebase_platformInfoRequestBO.getEnterpriseAddress() != null && !"".equals(updatebase_platformInfoRequestBO.getEnterpriseAddress().trim())) {
+				ucfOrg.setAddress(updatebase_platformInfoRequestBO.getEnterpriseAddress());
 			}
-			if (updateMemberInfoRequestBO.getEnterprisePhone() != null && !"".equals(updateMemberInfoRequestBO.getEnterprisePhone().trim())) {
-				ucfOrg.setCell(updateMemberInfoRequestBO.getEnterprisePhone());
+			if (updatebase_platformInfoRequestBO.getEnterprisePhone() != null && !"".equals(updatebase_platformInfoRequestBO.getEnterprisePhone().trim())) {
+				ucfOrg.setCell(updatebase_platformInfoRequestBO.getEnterprisePhone());
 			}
-			if (updateMemberInfoRequestBO.getEnterpriseFullName() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseFullName().trim())) {
-				ucfOrg.setCompanyFullName(updateMemberInfoRequestBO.getEnterpriseFullName());
+			if (updatebase_platformInfoRequestBO.getEnterpriseFullName() != null && !"".equals(updatebase_platformInfoRequestBO.getEnterpriseFullName().trim())) {
+				ucfOrg.setCompanyFullName(updatebase_platformInfoRequestBO.getEnterpriseFullName());
 			}
-			if (updateMemberInfoRequestBO.getEnterpriseShortName() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseShortName().trim())) {
-				ucfOrg.setCompanyName(updateMemberInfoRequestBO.getEnterpriseShortName());
+			if (updatebase_platformInfoRequestBO.getEnterpriseShortName() != null && !"".equals(updatebase_platformInfoRequestBO.getEnterpriseShortName().trim())) {
+				ucfOrg.setCompanyName(updatebase_platformInfoRequestBO.getEnterpriseShortName());
 			}
-			if (updateMemberInfoRequestBO.getBusinessLicense() != null && !"".equals(updateMemberInfoRequestBO.getBusinessLicense().trim())) {
-				ucfOrg.setCharetNo(updateMemberInfoRequestBO.getBusinessLicense());
+			if (updatebase_platformInfoRequestBO.getBusinessLicense() != null && !"".equals(updatebase_platformInfoRequestBO.getBusinessLicense().trim())) {
+				ucfOrg.setCharetNo(updatebase_platformInfoRequestBO.getBusinessLicense());
 			}
-			if (updateMemberInfoRequestBO.getEndDate() != null && !"".equals(updateMemberInfoRequestBO.getEndDate().trim())) {
-				ucfOrg.setCharetExpire(DateUtil.formatStringToDate(updateMemberInfoRequestBO.getEndDate().trim(), "yyyyMMdd"));
+			if (updatebase_platformInfoRequestBO.getEndDate() != null && !"".equals(updatebase_platformInfoRequestBO.getEndDate().trim())) {
+				ucfOrg.setCharetExpire(DateUtil.formatStringToDate(updatebase_platformInfoRequestBO.getEndDate().trim(), "yyyyMMdd"));
 			}
-			if (updateMemberInfoRequestBO.getLegalPersonName() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonName().trim())) {
-				ucfOrg.setLegalPerson(updateMemberInfoRequestBO.getLegalPersonName());
+			if (updatebase_platformInfoRequestBO.getLegalPersonName() != null && !"".equals(updatebase_platformInfoRequestBO.getLegalPersonName().trim())) {
+				ucfOrg.setLegalPerson(updatebase_platformInfoRequestBO.getLegalPersonName());
 			}
-			if (updateMemberInfoRequestBO.getLegalPersonNo() != null && !"".equals(updateMemberInfoRequestBO.getLegalPersonNo().trim())) {
-				ucfOrg.setLegalIdentity(updateMemberInfoRequestBO.getLegalPersonNo());
+			if (updatebase_platformInfoRequestBO.getLegalPersonNo() != null && !"".equals(updatebase_platformInfoRequestBO.getLegalPersonNo().trim())) {
+				ucfOrg.setLegalIdentity(updatebase_platformInfoRequestBO.getLegalPersonNo());
 			}
-			if (updateMemberInfoRequestBO.getEnterpriseAddress() != null && !"".equals(updateMemberInfoRequestBO.getEnterpriseAddress().trim())) {
-				ucfOrg.setCompanyAdd(updateMemberInfoRequestBO.getEnterpriseAddress());
+			if (updatebase_platformInfoRequestBO.getEnterpriseAddress() != null && !"".equals(updatebase_platformInfoRequestBO.getEnterpriseAddress().trim())) {
+				ucfOrg.setCompanyAdd(updatebase_platformInfoRequestBO.getEnterpriseAddress());
 			}
 			ucfOrg.setGmtModified(new Date());
 			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
@@ -457,31 +457,31 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 				}
 			});
 			if (commit) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-				updateMemberInfoResultBO.setUserId(userinfo.getUserId());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+				updatebase_platformInfoResultBO.setUserId(userinfo.getUserId());
+				return updatebase_platformInfoResultBO;
 			} else {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-			updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			return updateMemberInfoResultBO;
+			updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			return updatebase_platformInfoResultBO;
 		}
 	}
 
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public MemberRegisterResultBO merchantRegister(EnterpriseMemberRegRequestBO registerRequestBO) {
+	public base_platformRegisterResultBO merchantRegister(Enterprisebase_platformRegRequestBO registerRequestBO) {
 		LOGGER.info("商户注册：[" + SensitiveInfoUtils.getJson(registerRequestBO) + "] ");
-		MemberRegisterResultBO memberRegisterResultBO = new MemberRegisterResultBO();
+		base_platformRegisterResultBO base_platformRegisterResultBO = new base_platformRegisterResultBO();
 		try {
 			if (StringUtil.isEmpty(registerRequestBO.getEndDate()) 
 					|| StringUtil.isEmpty(registerRequestBO.getBusinessLicense()) 
@@ -490,53 +490,53 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 					|| registerRequestBO.getLoginPassword() == null
 					|| registerRequestBO.getLoginPassword().length == 0 
 					|| StringUtil.isEmpty(registerRequestBO.getMerchantType())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
+				return base_platformRegisterResultBO;
 			}
 			Pattern endDatePattern = Pattern.compile("^[0-9]{4}(((0[13578]|(10|12))(0[1-9]|[1-2][0-9]|3[0-1]))|(02(0[1-9]|[1-2][0-9]))|((0[469]|11)(0[1-9]|[1-2][0-9]|30)))$");
 			Matcher endDateMatcher = endDatePattern.matcher(registerRequestBO.getEndDate());
 			if (!endDateMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.DATE_PARSE_ERROR.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.DATE_PARSE_ERROR.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.DATE_PARSE_ERROR.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.DATE_PARSE_ERROR.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.DATE_PARSE_ERROR.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.DATE_PARSE_ERROR.getCode());
+				return base_platformRegisterResultBO;
 			}
 			if (StringUtils.isEmpty(registerRequestBO.getBankCardNo())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.BANKCARDNO_NOT_NULL.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.BANKCARDNO_NOT_NULL.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.BANKCARDNO_NOT_NULL.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.BANKCARDNO_NOT_NULL.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.BANKCARDNO_NOT_NULL.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.BANKCARDNO_NOT_NULL.getCode());
+				return base_platformRegisterResultBO;
 			}
 			if (registerRequestBO.getAgentPersonPhone() == null || "".equals(registerRequestBO.getAgentPersonPhone())) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 			Pattern agentPersonPhonePattern = Pattern.compile("^1\\d{10}$");
 			Matcher agentPersonPhoneMatcher = agentPersonPhonePattern.matcher(registerRequestBO.getAgentPersonPhone());
 			if (!agentPersonPhoneMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.AGENTPERSONPHONE_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 
 			if (registerRequestBO.getLegalPersonNo().length() > 30) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.LEGALPERSONNO_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.LEGALPERSONNO_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 			Pattern emailPattern = Pattern.compile("\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*");
 			Matcher emailMatcher = emailPattern.matcher(registerRequestBO.getEmail());
 			if (!emailMatcher.matches()) {
-				memberRegisterResultBO.setRespCode(EnumMemberCode.EMAIL_IS_FAIL_RULES.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.EMAIL_IS_FAIL_RULES.getMsgS());
-				memberRegisterResultBO.setStatus(EnumMemberCode.EMAIL_IS_FAIL_RULES.getCode());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.EMAIL_IS_FAIL_RULES.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.EMAIL_IS_FAIL_RULES.getMsgS());
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.EMAIL_IS_FAIL_RULES.getCode());
+				return base_platformRegisterResultBO;
 			}
 
 			UcfUser user = new UcfUser();
@@ -544,14 +544,14 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 			user.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.ENTERPRISE.getCode())));
 			List<UcfUser> userList = this.loginService.queryUcfUser(user);
 			if (!userList.isEmpty()) {
-				memberRegisterResultBO.setStatus(EnumMemberCode.CELL_EXIST.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.CELL_EXIST.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.CELL_EXIST.getMsgS());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.CELL_EXIST.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.CELL_EXIST.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.CELL_EXIST.getMsgS());
+				return base_platformRegisterResultBO;
 			}
 
 			// 生成用户ID
-			String userId = userRegService.getEnterpriseMemberNO();
+			String userId = userRegService.getEnterprisebase_platformNO();
 
 			// 此时生成用户信息
 			final UcfUser ucfUser = new UcfUser();
@@ -689,10 +689,10 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 			ucfOrg.setLegalIdentityCop(registerRequestBO.getLegalIdentityCopy());
 			String result = loginService.createAcccount(null, EnumAccountType.MERCHANT, ucfCard);
 			if (!result.equals("success")) {
-				memberRegisterResultBO.setStatus(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.OPEN_ACCOUNT_FAIL.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.OPEN_ACCOUNT_FAIL.getMsgS());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.OPEN_ACCOUNT_FAIL.getMsgS());
+				return base_platformRegisterResultBO;
 			}
 			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
 				public Object doInTransaction(final TransactionStatus status) {
@@ -730,204 +730,204 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 				}
 			});
 			if (commit) {
-				memberRegisterResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-				memberRegisterResultBO.setUserId(userId);
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+				base_platformRegisterResultBO.setUserId(userId);
+				return base_platformRegisterResultBO;
 			} else {
-				memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-				memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-				memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-				return memberRegisterResultBO;
+				base_platformRegisterResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+				base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+				base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+				return base_platformRegisterResultBO;
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			memberRegisterResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-			memberRegisterResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			memberRegisterResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			return memberRegisterResultBO;
+			base_platformRegisterResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			base_platformRegisterResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			base_platformRegisterResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			return base_platformRegisterResultBO;
 		}
 
 	}
 
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "1006", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO, isSensitiveInfo=true)
-	public UpdateMemberInfoResultBO updateMerchantMemberInfo(final UpdateMemberInfoRequestBO updateMemberInfoRequestBO) {
-		UpdateMemberInfoResultBO updateMemberInfoResultBO = new UpdateMemberInfoResultBO();
-		if (updateMemberInfoRequestBO.getUserId() == null || "".equals(updateMemberInfoRequestBO.getUserId())) {
-			updateMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
-			updateMemberInfoResultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			return updateMemberInfoResultBO;
+	public Updatebase_platformInfoResultBO updateMerchantbase_platformInfo(final Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO) {
+		Updatebase_platformInfoResultBO updatebase_platformInfoResultBO = new Updatebase_platformInfoResultBO();
+		if (updatebase_platformInfoRequestBO.getUserId() == null || "".equals(updatebase_platformInfoRequestBO.getUserId())) {
+			updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.USER_ID_NOT_NULL.getMsgS());
+			updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			return updatebase_platformInfoResultBO;
 		}
 		UcfUser user = new UcfUser();
-		user.setUserId(updateMemberInfoRequestBO.getUserId());
+		user.setUserId(updatebase_platformInfoRequestBO.getUserId());
 		try {
 			final UcfUser userinfo = this.loginService.queryUcfUserInfo(user);
 			if (userinfo == null) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
 			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(userinfo.getUserId());
 			if (ucfOrg == null) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
 			UcfCustomer queryCustomer = new UcfCustomer();
 			queryCustomer.setCustomerId(ucfOrg.getCustomerId());
 			final UcfCustomer customer = loginService.queryUcfCustomerInfo(queryCustomer);
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseFullName())) {
-				userinfo.setRealName(updateMemberInfoRequestBO.getEnterpriseFullName());// 企业全称
-				ucfOrg.setRealName(updateMemberInfoRequestBO.getEnterpriseFullName());
-				ucfOrg.setCompanyFullName(updateMemberInfoRequestBO.getEnterpriseFullName());
-				customer.setName(updateMemberInfoRequestBO.getEnterpriseFullName());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEnterpriseFullName())) {
+				userinfo.setRealName(updatebase_platformInfoRequestBO.getEnterpriseFullName());// 企业全称
+				ucfOrg.setRealName(updatebase_platformInfoRequestBO.getEnterpriseFullName());
+				ucfOrg.setCompanyFullName(updatebase_platformInfoRequestBO.getEnterpriseFullName());
+				customer.setName(updatebase_platformInfoRequestBO.getEnterpriseFullName());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBusinessLicense())) {
-				userinfo.setCertNo(updateMemberInfoRequestBO.getBusinessLicense());// 营业执照
-				customer.setCertNo(updateMemberInfoRequestBO.getBusinessLicense());
-				ucfOrg.setCharetNo(updateMemberInfoRequestBO.getBusinessLicense());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBusinessLicense())) {
+				userinfo.setCertNo(updatebase_platformInfoRequestBO.getBusinessLicense());// 营业执照
+				customer.setCertNo(updatebase_platformInfoRequestBO.getBusinessLicense());
+				ucfOrg.setCharetNo(updatebase_platformInfoRequestBO.getBusinessLicense());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseShortName())) {
-				userinfo.setFirmName(updateMemberInfoRequestBO.getEnterpriseShortName().trim());// 企业简称
-				ucfOrg.setCompanyName(updateMemberInfoRequestBO.getEnterpriseShortName());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEnterpriseShortName())) {
+				userinfo.setFirmName(updatebase_platformInfoRequestBO.getEnterpriseShortName().trim());// 企业简称
+				ucfOrg.setCompanyName(updatebase_platformInfoRequestBO.getEnterpriseShortName());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getAgentPersonPhone())) {
-				userinfo.setPhone(updateMemberInfoRequestBO.getAgentPersonPhone());
-				userinfo.setLoginId(updateMemberInfoRequestBO.getAgentPersonPhone());
-				userinfo.setCell(updateMemberInfoRequestBO.getAgentPersonPhone());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getAgentPersonPhone())) {
+				userinfo.setPhone(updatebase_platformInfoRequestBO.getAgentPersonPhone());
+				userinfo.setLoginId(updatebase_platformInfoRequestBO.getAgentPersonPhone());
+				userinfo.setCell(updatebase_platformInfoRequestBO.getAgentPersonPhone());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnabledStatus())) {
-				userinfo.setEnabledStatus(updateMemberInfoRequestBO.getEnabledStatus().trim());// 开户状态
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEnabledStatus())) {
+				userinfo.setEnabledStatus(updatebase_platformInfoRequestBO.getEnabledStatus().trim());// 开户状态
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getZipCode())) {
-				userinfo.setZipCode(updateMemberInfoRequestBO.getZipCode().trim());
-				ucfOrg.setZip(updateMemberInfoRequestBO.getZipCode());
-				ucfOrg.setPost(updateMemberInfoRequestBO.getZipCode());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getZipCode())) {
+				userinfo.setZipCode(updatebase_platformInfoRequestBO.getZipCode().trim());
+				ucfOrg.setZip(updatebase_platformInfoRequestBO.getZipCode());
+				ucfOrg.setPost(updatebase_platformInfoRequestBO.getZipCode());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseURL())) {
-				userinfo.setReturnUrl(updateMemberInfoRequestBO.getEnterpriseURL().trim());
-				ucfOrg.setMallUrl(updateMemberInfoRequestBO.getEnterpriseURL().trim());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEnterpriseURL())) {
+				userinfo.setReturnUrl(updatebase_platformInfoRequestBO.getEnterpriseURL().trim());
+				ucfOrg.setMallUrl(updatebase_platformInfoRequestBO.getEnterpriseURL().trim());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterpriseAddress())) {
-				userinfo.setAddress(updateMemberInfoRequestBO.getEnterpriseAddress().trim());// 企业地址
-				ucfOrg.setAddress(updateMemberInfoRequestBO.getEnterpriseAddress());
-				ucfOrg.setCompanyAdd(updateMemberInfoRequestBO.getEnterpriseAddress());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEnterpriseAddress())) {
+				userinfo.setAddress(updatebase_platformInfoRequestBO.getEnterpriseAddress().trim());// 企业地址
+				ucfOrg.setAddress(updatebase_platformInfoRequestBO.getEnterpriseAddress());
+				ucfOrg.setCompanyAdd(updatebase_platformInfoRequestBO.getEnterpriseAddress());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEndDate())) {
-				userinfo.setCertValidEndDate(DateUtil.formatStringToDate(updateMemberInfoRequestBO.getEndDate(), "yyyyMMdd"));// 证件有效期
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEndDate())) {
+				userinfo.setCertValidEndDate(DateUtil.formatStringToDate(updatebase_platformInfoRequestBO.getEndDate(), "yyyyMMdd"));// 证件有效期
 			}
 			// 增加 修改商户登录信息表 登录密码
 			final UcfUserLoginApp loginApp = this.loginService.queryUserAppInfo(userinfo.getEmail());
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLoginPassword())) {
-				String loginPassword = Cryptos.encrypt(updateMemberInfoRequestBO.getLoginPassword().trim(), user.getUserId());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getLoginPassword())) {
+				String loginPassword = Cryptos.encrypt(updatebase_platformInfoRequestBO.getLoginPassword().trim(), user.getUserId());
 				userinfo.setLgnPwd(loginPassword);
 				if (loginApp != null) {
 					loginApp.setLoginPwd(loginPassword);
 				}
 			}
 			// 增加 如果入参有支付密码 则设置支付密码
-			final UcfCard ucfCard = loginService.queryUcfCardByUserId(updateMemberInfoRequestBO.getUserId());
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getPayPassword()) && ucfCard != null) {
-				String payPassword = Cryptos.encrypt(updateMemberInfoRequestBO.getPayPassword().trim(), user.getUserId());
+			final UcfCard ucfCard = loginService.queryUcfCardByUserId(updatebase_platformInfoRequestBO.getUserId());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getPayPassword()) && ucfCard != null) {
+				String payPassword = Cryptos.encrypt(updatebase_platformInfoRequestBO.getPayPassword().trim(), user.getUserId());
 				ucfCard.setPaymentPassword(payPassword);
 			}
 			userinfo.setGmtLastModified(new Date());
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalPersonName())) {
-				ucfOrg.setCoperation(updateMemberInfoRequestBO.getLegalPersonName());
-				ucfOrg.setLegalPerson(updateMemberInfoRequestBO.getLegalPersonName());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getLegalPersonName())) {
+				ucfOrg.setCoperation(updatebase_platformInfoRequestBO.getLegalPersonName());
+				ucfOrg.setLegalPerson(updatebase_platformInfoRequestBO.getLegalPersonName());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getAgentPersonName())) {
-				ucfOrg.setAgentName(updateMemberInfoRequestBO.getAgentPersonName());// 代理人姓名
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getAgentPersonName())) {
+				ucfOrg.setAgentName(updatebase_platformInfoRequestBO.getAgentPersonName());// 代理人姓名
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getAgentPersonNo())) {
-				ucfOrg.setAgentCard(updateMemberInfoRequestBO.getAgentPersonNo());// 代理人号码
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getAgentPersonNo())) {
+				ucfOrg.setAgentCard(updatebase_platformInfoRequestBO.getAgentPersonNo());// 代理人号码
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalPersonNo())) {
-				ucfOrg.setCoperationCard(updateMemberInfoRequestBO.getLegalPersonNo());
-				ucfOrg.setLegalIdentity(updateMemberInfoRequestBO.getLegalPersonNo());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getLegalPersonNo())) {
+				ucfOrg.setCoperationCard(updatebase_platformInfoRequestBO.getLegalPersonNo());
+				ucfOrg.setLegalIdentity(updatebase_platformInfoRequestBO.getLegalPersonNo());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEnterprisePhone())) {
-				ucfOrg.setCell(updateMemberInfoRequestBO.getEnterprisePhone());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEnterprisePhone())) {
+				ucfOrg.setCell(updatebase_platformInfoRequestBO.getEnterprisePhone());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getFax())) {
-				ucfOrg.setFax(updateMemberInfoRequestBO.getFax());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getFax())) {
+				ucfOrg.setFax(updatebase_platformInfoRequestBO.getFax());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getProvinces())) {
-				ucfOrg.setProvince(updateMemberInfoRequestBO.getProvinces());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getProvinces())) {
+				ucfOrg.setProvince(updatebase_platformInfoRequestBO.getProvinces());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getCity())) {
-				ucfOrg.setCity(updateMemberInfoRequestBO.getCity());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getCity())) {
+				ucfOrg.setCity(updatebase_platformInfoRequestBO.getCity());
 			}
 
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEndDate())) {
-				ucfOrg.setCharetExpire(DateUtil.formatStringToDate(updateMemberInfoRequestBO.getEndDate(), "yyyyMMdd"));
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEndDate())) {
+				ucfOrg.setCharetExpire(DateUtil.formatStringToDate(updatebase_platformInfoRequestBO.getEndDate(), "yyyyMMdd"));
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLicenseCopy())) {
-				ucfOrg.setLicenseCopy(updateMemberInfoRequestBO.getLicenseCopy());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getLicenseCopy())) {
+				ucfOrg.setLicenseCopy(updatebase_platformInfoRequestBO.getLicenseCopy());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getOrgCertificate())) {
-				ucfOrg.setOrgCertificate(updateMemberInfoRequestBO.getOrgCertificate());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getOrgCertificate())) {
+				ucfOrg.setOrgCertificate(updatebase_platformInfoRequestBO.getOrgCertificate());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getTaxCertificate())) {
-				ucfOrg.setTaxCertificate(updateMemberInfoRequestBO.getTaxCertificate());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getTaxCertificate())) {
+				ucfOrg.setTaxCertificate(updatebase_platformInfoRequestBO.getTaxCertificate());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalIdentityCopy())) {
-				ucfOrg.setLegalIdentityCop(updateMemberInfoRequestBO.getLegalIdentityCopy());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getLegalIdentityCopy())) {
+				ucfOrg.setLegalIdentityCop(updatebase_platformInfoRequestBO.getLegalIdentityCopy());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getLegalIdentityType())) {
-				ucfOrg.setLegalIdentityType(updateMemberInfoRequestBO.getLegalIdentityType());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getLegalIdentityType())) {
+				ucfOrg.setLegalIdentityType(updatebase_platformInfoRequestBO.getLegalIdentityType());
 			}
-			if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getEmail())) {
-				userinfo.setEmail(updateMemberInfoRequestBO.getEmail());
+			if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getEmail())) {
+				userinfo.setEmail(updatebase_platformInfoRequestBO.getEmail());
 				if (loginApp != null) {
-					loginApp.setEmail(updateMemberInfoRequestBO.getEmail());
-					loginApp.setLoginId(updateMemberInfoRequestBO.getEmail());
+					loginApp.setEmail(updatebase_platformInfoRequestBO.getEmail());
+					loginApp.setLoginId(updatebase_platformInfoRequestBO.getEmail());
 				}
-				ucfOrg.setEmail(updateMemberInfoRequestBO.getEmail());
+				ucfOrg.setEmail(updatebase_platformInfoRequestBO.getEmail());
 			}
 			ucfOrg.setGmtModified(new Date());
 			//修改商户补充属性信息
 			final UcfMerchantExtra ucfMerchantExtra = ucfMerchantExtraService.queryUcfMerchantExtraById(userinfo.getUserId());
 			if(ucfMerchantExtra!=null){
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getMerchantType())){
-					ucfMerchantExtra.setMerchantType(updateMemberInfoRequestBO.getMerchantType());
-					if(EnumMerchantExtra.ORDINARY_MERCHANT.getCode().equals(updateMemberInfoRequestBO.getMerchantType())){
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getMerchantType())){
+					ucfMerchantExtra.setMerchantType(updatebase_platformInfoRequestBO.getMerchantType());
+					if(EnumMerchantExtra.ORDINARY_MERCHANT.getCode().equals(updatebase_platformInfoRequestBO.getMerchantType())){
 						ucfMerchantExtra.setAccountType("");
 						ucfMerchantExtra.setParentUserId("");
 					}
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getAccountType())){
-					ucfMerchantExtra.setAccountType(updateMemberInfoRequestBO.getAccountType());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getAccountType())){
+					ucfMerchantExtra.setAccountType(updatebase_platformInfoRequestBO.getAccountType());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getParentUserId())){
-					ucfMerchantExtra.setParentUserId(updateMemberInfoRequestBO.getParentUserId());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getParentUserId())){
+					ucfMerchantExtra.setParentUserId(updatebase_platformInfoRequestBO.getParentUserId());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getFirstBusinessCode())){
-					ucfMerchantExtra.setFirstBusinessCode(updateMemberInfoRequestBO.getFirstBusinessCode());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getFirstBusinessCode())){
+					ucfMerchantExtra.setFirstBusinessCode(updatebase_platformInfoRequestBO.getFirstBusinessCode());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getFirstBusinessName())){
-					ucfMerchantExtra.setFirstBusinessName(updateMemberInfoRequestBO.getFirstBusinessName());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getFirstBusinessName())){
+					ucfMerchantExtra.setFirstBusinessName(updatebase_platformInfoRequestBO.getFirstBusinessName());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getSecondBusinessCode())){
-					ucfMerchantExtra.setSecondBusinessCode(updateMemberInfoRequestBO.getSecondBusinessCode());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getSecondBusinessCode())){
+					ucfMerchantExtra.setSecondBusinessCode(updatebase_platformInfoRequestBO.getSecondBusinessCode());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getSecondBusinessName())){
-					ucfMerchantExtra.setSecondBusinessName(updateMemberInfoRequestBO.getSecondBusinessName());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getSecondBusinessName())){
+					ucfMerchantExtra.setSecondBusinessName(updatebase_platformInfoRequestBO.getSecondBusinessName());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getProductCode())){
-					ucfMerchantExtra.setProductCode(updateMemberInfoRequestBO.getProductCode());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getProductCode())){
+					ucfMerchantExtra.setProductCode(updatebase_platformInfoRequestBO.getProductCode());
 				}
-				if(org.apache.commons.lang.StringUtils.isNotEmpty(updateMemberInfoRequestBO.getProductName())){
-					ucfMerchantExtra.setProductName(updateMemberInfoRequestBO.getProductName());
+				if(org.apache.commons.lang.StringUtils.isNotEmpty(updatebase_platformInfoRequestBO.getProductName())){
+					ucfMerchantExtra.setProductName(updatebase_platformInfoRequestBO.getProductName());
 				}
 			}
 			UcfBankCard queryUcfBankCard = new UcfBankCard();
-			queryUcfBankCard.setUserId(updateMemberInfoRequestBO.getUserId());
+			queryUcfBankCard.setUserId(updatebase_platformInfoRequestBO.getUserId());
 			final UcfBankCard bankCard = ucfBankCardDao.queryUcfBankCard(queryUcfBankCard);
 			boolean commit = (Boolean) transactionTemplate.execute(new TransactionCallback<Object>() {
 				public Object doInTransaction(final TransactionStatus status) {
@@ -944,12 +944,12 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 						if (loginApp != null) {
 							loginService.updateUcfUserApp(loginApp);
 						}
-						if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCardNo())) {
+						if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankCardNo())) {
 							if (bankCard == null) {
-								UcfBankCard add = addBankCard(updateMemberInfoRequestBO);
+								UcfBankCard add = addBankCard(updatebase_platformInfoRequestBO);
 								ucfBankCardDao.insertUcfBankCard(add);
 							} else {
-								updateBankCard(bankCard, updateMemberInfoRequestBO);
+								updateBankCard(bankCard, updatebase_platformInfoRequestBO);
 								ucfBankCardDao.updateUcfBankCard(bankCard);
 							}
 						}
@@ -962,55 +962,55 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 				}
 			});
 			if (commit) {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-				updateMemberInfoResultBO.setUserId(userinfo.getUserId());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+				updatebase_platformInfoResultBO.setUserId(userinfo.getUserId());
+				return updatebase_platformInfoResultBO;
 			} else {
-				updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-				updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-				updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-				return updateMemberInfoResultBO;
+				updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+				updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+				updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+				return updatebase_platformInfoResultBO;
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			updateMemberInfoResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-			updateMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			updateMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			return updateMemberInfoResultBO;
+			updatebase_platformInfoResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			updatebase_platformInfoResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			updatebase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			return updatebase_platformInfoResultBO;
 		}
 	}
 
-	private UcfBankCard addBankCard(UpdateMemberInfoRequestBO updateMemberInfoRequestBO) throws AccountException {
+	private UcfBankCard addBankCard(Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO) throws AccountException {
 		final UcfBankCard insertBankCard = new UcfBankCard();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 		StringBuffer bankCardId = new StringBuffer();
 		bankCardId.append(sdf.format(new Date()));
 		bankCardId.append(ucfBankCardDao.getBankCardSeq());
 		insertBankCard.setId(bankCardId.toString());
-		insertBankCard.setUserId(updateMemberInfoRequestBO.getUserId());
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankName())) {
-			insertBankCard.setBankName(updateMemberInfoRequestBO.getBankName());
+		insertBankCard.setUserId(updatebase_platformInfoRequestBO.getUserId());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankName())) {
+			insertBankCard.setBankName(updatebase_platformInfoRequestBO.getBankName());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCode())) {
-			insertBankCard.setBankId(updateMemberInfoRequestBO.getBankCode());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankCode())) {
+			insertBankCard.setBankId(updatebase_platformInfoRequestBO.getBankCode());
 		}
-		insertBankCard.setCardNo(updateMemberInfoRequestBO.getBankCardNo());
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCardName())) {
-			insertBankCard.setCardName(updateMemberInfoRequestBO.getBankCardName());
+		insertBankCard.setCardNo(updatebase_platformInfoRequestBO.getBankCardNo());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankCardName())) {
+			insertBankCard.setCardName(updatebase_platformInfoRequestBO.getBankCardName());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuerName())) {
-			insertBankCard.setBranchname(updateMemberInfoRequestBO.getIssuerName());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getIssuerName())) {
+			insertBankCard.setBranchname(updatebase_platformInfoRequestBO.getIssuerName());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuer())) {
-			insertBankCard.setIssuer(updateMemberInfoRequestBO.getIssuer());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getIssuer())) {
+			insertBankCard.setIssuer(updatebase_platformInfoRequestBO.getIssuer());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getCity())) {
-			insertBankCard.setCity(updateMemberInfoRequestBO.getCity());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getCity())) {
+			insertBankCard.setCity(updatebase_platformInfoRequestBO.getCity());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getProvinces())) {
-			insertBankCard.setProvince(updateMemberInfoRequestBO.getProvinces());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getProvinces())) {
+			insertBankCard.setProvince(updatebase_platformInfoRequestBO.getProvinces());
 		}
 		insertBankCard.setCardType(EnumBankCardType.BUSINESS_ACCOUNT.getCode());
 		insertBankCard.setCertFrom("system");
@@ -1021,44 +1021,44 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 		return insertBankCard;
 	}
 
-	private void updateBankCard(final UcfBankCard updateBankCard, UpdateMemberInfoRequestBO updateMemberInfoRequestBO) {
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankName())) {
-			updateBankCard.setBankName(updateMemberInfoRequestBO.getBankName());
+	private void updateBankCard(final UcfBankCard updateBankCard, Updatebase_platformInfoRequestBO updatebase_platformInfoRequestBO) {
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankName())) {
+			updateBankCard.setBankName(updatebase_platformInfoRequestBO.getBankName());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCode())) {
-			updateBankCard.setBankId(updateMemberInfoRequestBO.getBankCode());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankCode())) {
+			updateBankCard.setBankId(updatebase_platformInfoRequestBO.getBankCode());
 		}
-		updateBankCard.setCardNo(updateMemberInfoRequestBO.getBankCardNo());
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getBankCardName())) {
-			updateBankCard.setCardName(updateMemberInfoRequestBO.getBankCardName());
+		updateBankCard.setCardNo(updatebase_platformInfoRequestBO.getBankCardNo());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getBankCardName())) {
+			updateBankCard.setCardName(updatebase_platformInfoRequestBO.getBankCardName());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuerName())) {
-			updateBankCard.setBranchname(updateMemberInfoRequestBO.getIssuerName());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getIssuerName())) {
+			updateBankCard.setBranchname(updatebase_platformInfoRequestBO.getIssuerName());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getIssuer())) {
-			updateBankCard.setIssuer(updateMemberInfoRequestBO.getIssuer());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getIssuer())) {
+			updateBankCard.setIssuer(updatebase_platformInfoRequestBO.getIssuer());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getCity())) {
-			updateBankCard.setCity(updateMemberInfoRequestBO.getCity());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getCity())) {
+			updateBankCard.setCity(updatebase_platformInfoRequestBO.getCity());
 		}
-		if (!StringUtil.isEmpty(updateMemberInfoRequestBO.getProvinces())) {
-			updateBankCard.setProvince(updateMemberInfoRequestBO.getProvinces());
+		if (!StringUtil.isEmpty(updatebase_platformInfoRequestBO.getProvinces())) {
+			updateBankCard.setProvince(updatebase_platformInfoRequestBO.getProvinces());
 		}
 	}
 
 	@Override
-	public EnterpriseMemberInfoResultBO queryEnterpriseMember(String merchantId, String userId) {
+	public Enterprisebase_platformInfoResultBO queryEnterprisebase_platform(String merchantId, String userId) {
 		LOGGER.info("查询企业会员审核状态：merchantId[" + merchantId + "] userId[" + userId + "] ");
-		EnterpriseMemberInfoResultBO selectMemberInfoResultBO = new EnterpriseMemberInfoResultBO();
+		Enterprisebase_platformInfoResultBO selectbase_platformInfoResultBO = new Enterprisebase_platformInfoResultBO();
 		if (StringUtil.isEmpty(merchantId)) {
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			return selectbase_platformInfoResultBO;
 		}
 		if (StringUtil.isEmpty(userId)) {
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.USER_ID_NOT_NULL.getMsgS());
+			return selectbase_platformInfoResultBO;
 		}
 		UcfUser user = new UcfUser();
 		user.setUserId(userId);
@@ -1066,172 +1066,172 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 		try {
 			user = this.loginService.queryUcfUserInfo(user);
 			if (user == null) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
 			List<UcfBankCard> bankCardList = loginService.queryUcfBankCardByUserId(user.getUserId());
 			if (bankCardList.isEmpty()) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_BANKCARD_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_BANKCARD_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
 			UcfBankCard bankCard = bankCardList.get(0);
 			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(user.getUserId());
 			if (ucfOrg == null) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
 			UcfMerchantExtra ucfMerchantExtra = ucfMerchantExtraService.queryUcfMerchantExtraById(userId);
 			if (ucfMerchantExtra == null) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
-			selectMemberInfoResultBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
-			selectMemberInfoResultBO.setEnterpriseShortName(ucfOrg.getCompanyName());
-			selectMemberInfoResultBO.setBusinessLicense(ucfOrg.getCharetNo());
-			selectMemberInfoResultBO.setEndDate(DateUtil.formatDateToString(ucfOrg.getCharetExpire(), "yyyyMMdd"));
+			selectbase_platformInfoResultBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
+			selectbase_platformInfoResultBO.setEnterpriseShortName(ucfOrg.getCompanyName());
+			selectbase_platformInfoResultBO.setBusinessLicense(ucfOrg.getCharetNo());
+			selectbase_platformInfoResultBO.setEndDate(DateUtil.formatDateToString(ucfOrg.getCharetExpire(), "yyyyMMdd"));
 			
-			selectMemberInfoResultBO.setLegalPersonName(ucfOrg.getLegalPerson());
-			selectMemberInfoResultBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
-			selectMemberInfoResultBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
-			selectMemberInfoResultBO.setEnterprisePhone(ucfOrg.getCell());
+			selectbase_platformInfoResultBO.setLegalPersonName(ucfOrg.getLegalPerson());
+			selectbase_platformInfoResultBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
+			selectbase_platformInfoResultBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
+			selectbase_platformInfoResultBO.setEnterprisePhone(ucfOrg.getCell());
 			
-			selectMemberInfoResultBO.setBankName(bankCard.getBankName());
-			selectMemberInfoResultBO.setBankCode(bankCard.getBankId());
-			selectMemberInfoResultBO.setBankCardNo(bankCard.getCardNo());
-			selectMemberInfoResultBO.setProvinces(ucfOrg.getProvince());
+			selectbase_platformInfoResultBO.setBankName(bankCard.getBankName());
+			selectbase_platformInfoResultBO.setBankCode(bankCard.getBankId());
+			selectbase_platformInfoResultBO.setBankCardNo(bankCard.getCardNo());
+			selectbase_platformInfoResultBO.setProvinces(ucfOrg.getProvince());
 			
-			selectMemberInfoResultBO.setCity(ucfOrg.getCity());
-			selectMemberInfoResultBO.setIssuerName(ucfOrg.getBranchName());
-			selectMemberInfoResultBO.setIssuer(bankCard.getIssuer());
-			selectMemberInfoResultBO.setBankCardName(bankCard.getCardName());
+			selectbase_platformInfoResultBO.setCity(ucfOrg.getCity());
+			selectbase_platformInfoResultBO.setIssuerName(ucfOrg.getBranchName());
+			selectbase_platformInfoResultBO.setIssuer(bankCard.getIssuer());
+			selectbase_platformInfoResultBO.setBankCardName(bankCard.getCardName());
 			// add by gaoxiang 增加代理人信息
-			selectMemberInfoResultBO.setAgentPersonName(ucfOrg.getAgentName());
-			selectMemberInfoResultBO.setAgentPersonNo(ucfOrg.getAgentCard());
-			selectMemberInfoResultBO.setAgentPersonPhone(user.getCell());
-			selectMemberInfoResultBO.setMerchantType(ucfMerchantExtra.getMerchantType());
-			selectMemberInfoResultBO.setAccountType(ucfMerchantExtra.getAccountType());
-			selectMemberInfoResultBO.setParentUserId(ucfMerchantExtra.getParentUserId());
+			selectbase_platformInfoResultBO.setAgentPersonName(ucfOrg.getAgentName());
+			selectbase_platformInfoResultBO.setAgentPersonNo(ucfOrg.getAgentCard());
+			selectbase_platformInfoResultBO.setAgentPersonPhone(user.getCell());
+			selectbase_platformInfoResultBO.setMerchantType(ucfMerchantExtra.getMerchantType());
+			selectbase_platformInfoResultBO.setAccountType(ucfMerchantExtra.getAccountType());
+			selectbase_platformInfoResultBO.setParentUserId(ucfMerchantExtra.getParentUserId());
 			
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+			return selectbase_platformInfoResultBO;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			return selectbase_platformInfoResultBO;
 		}
 	}
 	
 	@Override
-	public EnterpriseMemberInfoResultBO queryMerchantInfo(String userId) {
+	public Enterprisebase_platformInfoResultBO queryMerchantInfo(String userId) {
 		LOGGER.info("查询商户信息 userId[" + userId + "] ");
-		EnterpriseMemberInfoResultBO selectMemberInfoResultBO = new EnterpriseMemberInfoResultBO();
+		Enterprisebase_platformInfoResultBO selectbase_platformInfoResultBO = new Enterprisebase_platformInfoResultBO();
 		if (StringUtil.isEmpty(userId)) {
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.USER_ID_NOT_NULL.getMsgS());
+			return selectbase_platformInfoResultBO;
 		}
 		UcfUser user = new UcfUser();
 		user.setUserId(userId);
 		try {
 			user = this.loginService.queryUcfUserInfo(user);
 			if (user == null) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
 			final UcfOrg ucfOrg = ucfOrgDao.quertUcfByUserId(user.getUserId());
 			if (ucfOrg == null) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
 			List<UcfBankCard> bankCardList = loginService.queryUcfBankCardByUserId(user.getUserId());
 			if (bankCardList.isEmpty()) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_BANKCARD_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_BANKCARD_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_BANKCARD_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
 			UcfBankCard bankCard = bankCardList.get(0);
 			UcfMerchantExtra ucfMerchantExtra = ucfMerchantExtraService.queryUcfMerchantExtraById(userId);
 			if (ucfMerchantExtra == null) {
-				selectMemberInfoResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				selectMemberInfoResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return selectMemberInfoResultBO;
+				selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return selectbase_platformInfoResultBO;
 			}
-			selectMemberInfoResultBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
-			selectMemberInfoResultBO.setEnterpriseShortName(ucfOrg.getCompanyName());
-			selectMemberInfoResultBO.setOrgId(ucfOrg.getId());
-			selectMemberInfoResultBO.setBusinessLicense(ucfOrg.getCharetNo());
-			selectMemberInfoResultBO.setEndDate(DateUtil.formatDateToString(ucfOrg.getCharetExpire(), "yyyyMMdd"));
-			selectMemberInfoResultBO.setLegalIdentityType(ucfOrg.getLegalIdentityType());
-			selectMemberInfoResultBO.setLegalPersonName(ucfOrg.getLegalPerson());
-			selectMemberInfoResultBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
-			selectMemberInfoResultBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
-			selectMemberInfoResultBO.setEnterprisePhone(ucfOrg.getCell());
-			selectMemberInfoResultBO.setProvinces(ucfOrg.getProvince());
-			selectMemberInfoResultBO.setFax(ucfOrg.getFax());
-			selectMemberInfoResultBO.setCity(ucfOrg.getCity());
-			selectMemberInfoResultBO.setEnterpriseUrl(ucfOrg.getMallUrl());
-			selectMemberInfoResultBO.setIssuerName(bankCard.getBranchname());
-			selectMemberInfoResultBO.setZipCode(ucfOrg.getZip());
-			selectMemberInfoResultBO.setAgentPersonName(ucfOrg.getAgentName());
-			selectMemberInfoResultBO.setAgentPersonNo(ucfOrg.getAgentCard());
-			selectMemberInfoResultBO.setAgentPersonPhone(user.getPhone());
-			selectMemberInfoResultBO.setEmail(user.getEmail());
-			selectMemberInfoResultBO.setEnabledStatus(user.getEnabledStatus());
+			selectbase_platformInfoResultBO.setEnterpriseFullName(ucfOrg.getCompanyFullName());
+			selectbase_platformInfoResultBO.setEnterpriseShortName(ucfOrg.getCompanyName());
+			selectbase_platformInfoResultBO.setOrgId(ucfOrg.getId());
+			selectbase_platformInfoResultBO.setBusinessLicense(ucfOrg.getCharetNo());
+			selectbase_platformInfoResultBO.setEndDate(DateUtil.formatDateToString(ucfOrg.getCharetExpire(), "yyyyMMdd"));
+			selectbase_platformInfoResultBO.setLegalIdentityType(ucfOrg.getLegalIdentityType());
+			selectbase_platformInfoResultBO.setLegalPersonName(ucfOrg.getLegalPerson());
+			selectbase_platformInfoResultBO.setLegalPersonNo(ucfOrg.getLegalIdentity());
+			selectbase_platformInfoResultBO.setEnterpriseAddress(ucfOrg.getCompanyAdd());
+			selectbase_platformInfoResultBO.setEnterprisePhone(ucfOrg.getCell());
+			selectbase_platformInfoResultBO.setProvinces(ucfOrg.getProvince());
+			selectbase_platformInfoResultBO.setFax(ucfOrg.getFax());
+			selectbase_platformInfoResultBO.setCity(ucfOrg.getCity());
+			selectbase_platformInfoResultBO.setEnterpriseUrl(ucfOrg.getMallUrl());
+			selectbase_platformInfoResultBO.setIssuerName(bankCard.getBranchname());
+			selectbase_platformInfoResultBO.setZipCode(ucfOrg.getZip());
+			selectbase_platformInfoResultBO.setAgentPersonName(ucfOrg.getAgentName());
+			selectbase_platformInfoResultBO.setAgentPersonNo(ucfOrg.getAgentCard());
+			selectbase_platformInfoResultBO.setAgentPersonPhone(user.getPhone());
+			selectbase_platformInfoResultBO.setEmail(user.getEmail());
+			selectbase_platformInfoResultBO.setEnabledStatus(user.getEnabledStatus());
 			//商户拓展属性
-			selectMemberInfoResultBO.setMerchantType(ucfMerchantExtra.getMerchantType());
-			selectMemberInfoResultBO.setAccountType(ucfMerchantExtra.getAccountType());
-			selectMemberInfoResultBO.setParentUserId(ucfMerchantExtra.getParentUserId());
-			selectMemberInfoResultBO.setFirstBusinessCode(ucfMerchantExtra.getFirstBusinessCode());
-			selectMemberInfoResultBO.setFirstBusinessName(ucfMerchantExtra.getFirstBusinessName());
-			selectMemberInfoResultBO.setSecondBusinessCode(ucfMerchantExtra.getSecondBusinessCode());
-			selectMemberInfoResultBO.setSecondBusinessName(ucfMerchantExtra.getSecondBusinessName());
-			selectMemberInfoResultBO.setProductCode(ucfMerchantExtra.getProductCode());
-			selectMemberInfoResultBO.setProductName(ucfMerchantExtra.getProductName());
+			selectbase_platformInfoResultBO.setMerchantType(ucfMerchantExtra.getMerchantType());
+			selectbase_platformInfoResultBO.setAccountType(ucfMerchantExtra.getAccountType());
+			selectbase_platformInfoResultBO.setParentUserId(ucfMerchantExtra.getParentUserId());
+			selectbase_platformInfoResultBO.setFirstBusinessCode(ucfMerchantExtra.getFirstBusinessCode());
+			selectbase_platformInfoResultBO.setFirstBusinessName(ucfMerchantExtra.getFirstBusinessName());
+			selectbase_platformInfoResultBO.setSecondBusinessCode(ucfMerchantExtra.getSecondBusinessCode());
+			selectbase_platformInfoResultBO.setSecondBusinessName(ucfMerchantExtra.getSecondBusinessName());
+			selectbase_platformInfoResultBO.setProductCode(ucfMerchantExtra.getProductCode());
+			selectbase_platformInfoResultBO.setProductName(ucfMerchantExtra.getProductName());
 			//银行卡信息
-			selectMemberInfoResultBO.setBankName(bankCard.getBankName());
-			selectMemberInfoResultBO.setBankCode(bankCard.getBankId());
-			selectMemberInfoResultBO.setBankCardNo(bankCard.getCardNo());
-			selectMemberInfoResultBO.setBankCardName(bankCard.getCardName());
-			selectMemberInfoResultBO.setIssuer(bankCard.getIssuer());
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setBankName(bankCard.getBankName());
+			selectbase_platformInfoResultBO.setBankCode(bankCard.getBankId());
+			selectbase_platformInfoResultBO.setBankCardNo(bankCard.getCardNo());
+			selectbase_platformInfoResultBO.setBankCardName(bankCard.getCardName());
+			selectbase_platformInfoResultBO.setIssuer(bankCard.getIssuer());
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+			return selectbase_platformInfoResultBO;
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			selectMemberInfoResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			selectMemberInfoResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			return selectMemberInfoResultBO;
+			selectbase_platformInfoResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			selectbase_platformInfoResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			return selectbase_platformInfoResultBO;
 		}
 	}
 
 	@Override
-	public EnterpriseStatusReturnValueBo queryEnterpriseMemberStatus(String merchantId, String userId, String userType) {
+	public EnterpriseStatusReturnValueBo queryEnterprisebase_platformStatus(String merchantId, String userId, String userType) {
 		LOGGER.info("查询企业会员审核状态：merchantId[" + merchantId + "] userId[" + userId + "] userType [" + userType + "]");
 		EnterpriseStatusReturnValueBo resultBO = new EnterpriseStatusReturnValueBo();
 		if (merchantId == null || "".equals(merchantId)) {
-			resultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
-			resultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
-			resultBO.setStatus(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
+			resultBO.setRespCode(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
+			resultBO.setRespMsg(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			resultBO.setStatus(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
 			return resultBO;
 		}
 		if (userId == null || "".equals(userId)) {
-			resultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			resultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
-			resultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
+			resultBO.setRespCode(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			resultBO.setRespMsg(Enumbase_platformCode.USER_ID_NOT_NULL.getMsgS());
+			resultBO.setStatus(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
 			return resultBO;
 		}
 		if (userType == null || "".equals(userType)) {
-			resultBO.setRespCode(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
-			resultBO.setRespMsg(EnumMemberCode.USER_TYPE_NO_NULL.getMsgS());
-			resultBO.setStatus(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
+			resultBO.setRespCode(Enumbase_platformCode.USER_TYPE_NO_NULL.getCode());
+			resultBO.setRespMsg(Enumbase_platformCode.USER_TYPE_NO_NULL.getMsgS());
+			resultBO.setStatus(Enumbase_platformCode.USER_TYPE_NO_NULL.getCode());
 			return resultBO;
 		}
 		UcfUser user = new UcfUser();
@@ -1241,12 +1241,12 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 		try {
 			user = this.loginService.queryUcfUserInfo(user);
 			if (user == null) {
-				resultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				resultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				resultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
+				resultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				resultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				resultBO.setStatus(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
 				return resultBO;
 			}
-			resultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+			resultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
 			if (user.getEnabledStatus().equals(EnumUserEnabledStatus.W.getCode()) || user.getEnabledStatus().equals(EnumUserEnabledStatus.Q.getCode())) {
 				resultBO.setStatus("99");
 			} else if (user.getEnabledStatus().equals(EnumUserEnabledStatus.T.getCode())) {
@@ -1258,66 +1258,66 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			resultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			resultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			resultBO.setStatus(EnumMemberCode.ERROR.getCode());
+			resultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			resultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			resultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
 			return resultBO;
 		}
 	}
 
 	@Override
-	public MemberReviewResultBO memberReview(MemberReviewRequestBO memberReviewRequestBO) {
-		MemberReviewResultBO memberReviewResultBO = new MemberReviewResultBO();
+	public base_platformReviewResultBO base_platformReview(base_platformReviewRequestBO base_platformReviewRequestBO) {
+		base_platformReviewResultBO base_platformReviewResultBO = new base_platformReviewResultBO();
 
-		if (memberReviewRequestBO.getMerchantId() == null || "".equals(memberReviewRequestBO.getMerchantId())) {
-			memberReviewResultBO.setRespCode(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
-			memberReviewResultBO.setRespMsg(EnumMemberCode.MERCHANT_ID_NOT_NULL.getMsgS());
-			memberReviewResultBO.setStatus(EnumMemberCode.MERCHANT_ID_NOT_NULL.getCode());
-			return memberReviewResultBO;
+		if (base_platformReviewRequestBO.getMerchantId() == null || "".equals(base_platformReviewRequestBO.getMerchantId())) {
+			base_platformReviewResultBO.setRespCode(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
+			base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getMsgS());
+			base_platformReviewResultBO.setStatus(Enumbase_platformCode.MERCHANT_ID_NOT_NULL.getCode());
+			return base_platformReviewResultBO;
 		}
-		if (memberReviewRequestBO.getUserId() == null || "".equals(memberReviewRequestBO.getUserId())) {
-			memberReviewResultBO.setRespCode(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			memberReviewResultBO.setRespMsg(EnumMemberCode.USER_ID_NOT_NULL.getMsgS());
-			memberReviewResultBO.setStatus(EnumMemberCode.USER_ID_NOT_NULL.getCode());
-			return memberReviewResultBO;
+		if (base_platformReviewRequestBO.getUserId() == null || "".equals(base_platformReviewRequestBO.getUserId())) {
+			base_platformReviewResultBO.setRespCode(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.USER_ID_NOT_NULL.getMsgS());
+			base_platformReviewResultBO.setStatus(Enumbase_platformCode.USER_ID_NOT_NULL.getCode());
+			return base_platformReviewResultBO;
 		}
-		if (memberReviewRequestBO.getUserType() == null || "".equals(memberReviewRequestBO.getUserType())) {
-			memberReviewResultBO.setRespCode(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
-			memberReviewResultBO.setRespMsg(EnumMemberCode.USER_TYPE_NO_NULL.getMsgS());
-			memberReviewResultBO.setStatus(EnumMemberCode.USER_TYPE_NO_NULL.getCode());
-			return memberReviewResultBO;
+		if (base_platformReviewRequestBO.getUserType() == null || "".equals(base_platformReviewRequestBO.getUserType())) {
+			base_platformReviewResultBO.setRespCode(Enumbase_platformCode.USER_TYPE_NO_NULL.getCode());
+			base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.USER_TYPE_NO_NULL.getMsgS());
+			base_platformReviewResultBO.setStatus(Enumbase_platformCode.USER_TYPE_NO_NULL.getCode());
+			return base_platformReviewResultBO;
 		}
-		if (memberReviewRequestBO.getReviewType() == null || "".equals(memberReviewRequestBO.getReviewType())) {
-			memberReviewResultBO.setRespCode(EnumMemberCode.REVIEW_TYPE_NO_NULL.getCode());
-			memberReviewResultBO.setRespMsg(EnumMemberCode.REVIEW_TYPE_NO_NULL.getMsgS());
-			memberReviewResultBO.setStatus(EnumMemberCode.REVIEW_TYPE_NO_NULL.getCode());
-			return memberReviewResultBO;
+		if (base_platformReviewRequestBO.getReviewType() == null || "".equals(base_platformReviewRequestBO.getReviewType())) {
+			base_platformReviewResultBO.setRespCode(Enumbase_platformCode.REVIEW_TYPE_NO_NULL.getCode());
+			base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.REVIEW_TYPE_NO_NULL.getMsgS());
+			base_platformReviewResultBO.setStatus(Enumbase_platformCode.REVIEW_TYPE_NO_NULL.getCode());
+			return base_platformReviewResultBO;
 		}
 		UcfUser user = new UcfUser();
-		user.setUserId(memberReviewRequestBO.getUserId());
-		user.setRefMerchant(memberReviewRequestBO.getMerchantId());
-		user.setUserType(BigDecimal.valueOf(Integer.valueOf(memberReviewRequestBO.getUserType())));
+		user.setUserId(base_platformReviewRequestBO.getUserId());
+		user.setRefMerchant(base_platformReviewRequestBO.getMerchantId());
+		user.setUserType(BigDecimal.valueOf(Integer.valueOf(base_platformReviewRequestBO.getUserType())));
 		try {
 			user = this.loginService.queryUcfUserInfo(user);
 			if (user == null) {
-				memberReviewResultBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				memberReviewResultBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				memberReviewResultBO.setStatus(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				return memberReviewResultBO;
+				base_platformReviewResultBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				base_platformReviewResultBO.setStatus(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				return base_platformReviewResultBO;
 			}
 			user.setEnabledStatus("T");// T：正常
 			userRegService.updateUserInfo(user);
-			memberReviewResultBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			memberReviewResultBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-			memberReviewResultBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-			return memberReviewResultBO;
+			base_platformReviewResultBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+			base_platformReviewResultBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			return base_platformReviewResultBO;
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
-			memberReviewResultBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			memberReviewResultBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
-			memberReviewResultBO.setStatus(EnumMemberCode.ERROR.getCode());
-			return memberReviewResultBO;
+			base_platformReviewResultBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			base_platformReviewResultBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
+			base_platformReviewResultBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			return base_platformReviewResultBO;
 		}
 	}
 
@@ -1328,7 +1328,7 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 	}
 
 	@Override
-	public BaseBO auditEnterpriseMember(String userId, String status) {
+	public BaseBO auditEnterprisebase_platform(String userId, String status) {
 		BaseBO bo = new BaseBO();
 		try {
 			UcfUser ucfUser = new UcfUser();
@@ -1336,9 +1336,9 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 			ucfUser.setUserType(BigDecimal.valueOf(Integer.valueOf(EnumUserType.ENTERPRISE.getCode())));
 			List<UcfUser> users = ucfUserDao.queryUcfUserListByWhere(ucfUser);
 			if (users == null || users.size() == 0) {
-				bo.setRespCode(EnumMemberCode.NO_EXIST_USER.getCode());
-				bo.setStatus(EnumMemberCode.NO_EXIST_USER.getCode());
-				bo.setRespMsg(EnumMemberCode.NO_EXIST_USER.getMsgS());
+				bo.setRespCode(Enumbase_platformCode.NO_EXIST_USER.getCode());
+				bo.setStatus(Enumbase_platformCode.NO_EXIST_USER.getCode());
+				bo.setRespMsg(Enumbase_platformCode.NO_EXIST_USER.getMsgS());
 				return bo;
 			}
 			UcfUser user = users.get(0);
@@ -1357,72 +1357,72 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 
 			UcfSendMessage mqmsg = new UcfSendMessage();
 			mqmsg.setBizValue(params);
-			SendResult rocketResult = ucfMQProducer.sendMessage(RocketMQTopicEnum.ROCKETMQ_MEMBER_CORP_P2P_TOPICANDTAG.getTopic(), RocketMQTopicEnum.ROCKETMQ_MEMBER_CORP_P2P_TOPICANDTAG.getTag(), mqmsg);
+			SendResult rocketResult = ucfMQProducer.sendMessage(RocketMQTopicEnum.ROCKETMQ_base_platform_CORP_P2P_TOPICANDTAG.getTopic(), RocketMQTopicEnum.ROCKETMQ_base_platform_CORP_P2P_TOPICANDTAG.getTag(), mqmsg);
 			LOGGER.info("【企业会员审核】发送RocketMQ消息成功：" + rocketResult.toString());
-			bo.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			bo.setStatus(EnumMemberCode.SUCCESS.getCode());
-			bo.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
+			bo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			bo.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			bo.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
 		} catch (Exception e) {
 			LOGGER.error("【企业会员审核】:", e);
-			bo.setRespCode(EnumMemberCode.ERROR.getCode());
-			bo.setStatus(EnumMemberCode.ERROR.getCode());
-			bo.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			bo.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			bo.setStatus(Enumbase_platformCode.ERROR.getCode());
+			bo.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 		}
 		return bo;
 	}
 
 	@Override
-	public PageEnterpriseMemberResultBo searchEnterpriseMembers(EnterpriseMemberSearchReqBo searchBo) {
+	public PageEnterprisebase_platformResultBo searchEnterprisebase_platforms(Enterprisebase_platformSearchReqBo searchBo) {
 
 		return null;
 	}
 
 	@Override
-	public EnterpriseMemberBankCardBO queryEnterpriseMemberBankCard(String merchantId, String userId) {
-		EnterpriseMemberBankCardBO enterpriseMemberBankCardBO = new EnterpriseMemberBankCardBO();
+	public Enterprisebase_platformBankCardBO queryEnterprisebase_platformBankCard(String merchantId, String userId) {
+		Enterprisebase_platformBankCardBO enterprisebase_platformBankCardBO = new Enterprisebase_platformBankCardBO();
 		try {
 			if (userId == null || "".equals(userId) || merchantId == null || "".equals(merchantId)) {
-				enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.PARAM_ERROR.getCode());
-				enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.PARAM_ERROR.getMsgS());
-				enterpriseMemberBankCardBO.setStatus(EnumMemberCode.PARAM_ERROR.getCode());
-				return enterpriseMemberBankCardBO;
+				enterprisebase_platformBankCardBO.setRespCode(Enumbase_platformCode.PARAM_ERROR.getCode());
+				enterprisebase_platformBankCardBO.setRespMsg(Enumbase_platformCode.PARAM_ERROR.getMsgS());
+				enterprisebase_platformBankCardBO.setStatus(Enumbase_platformCode.PARAM_ERROR.getCode());
+				return enterprisebase_platformBankCardBO;
 			}
 			UcfUser user = new UcfUser();
 			user.setUserId(userId);
 			user = this.loginService.queryUcfUserInfo(user);
 			if (user == null) {
-				enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.MERCHANT_NO_EXIST.getCode());
-				enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.MERCHANT_NO_EXIST.getMsgS());
-				return enterpriseMemberBankCardBO;
+				enterprisebase_platformBankCardBO.setRespCode(Enumbase_platformCode.MERCHANT_NO_EXIST.getCode());
+				enterprisebase_platformBankCardBO.setRespMsg(Enumbase_platformCode.MERCHANT_NO_EXIST.getMsgS());
+				return enterprisebase_platformBankCardBO;
 			}
 
 			List<UcfBankCard> bankCardList = this.loginService.queryUcfBankCardByUserId(userId);
 			if (bankCardList.isEmpty()) {
-				enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.MEMBER_NOT_HAVE_BANKCARD.getCode());
-				enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.MEMBER_NOT_HAVE_BANKCARD.getMsgS());
-				return enterpriseMemberBankCardBO;
+				enterprisebase_platformBankCardBO.setRespCode(Enumbase_platformCode.base_platform_NOT_HAVE_BANKCARD.getCode());
+				enterprisebase_platformBankCardBO.setRespMsg(Enumbase_platformCode.base_platform_NOT_HAVE_BANKCARD.getMsgS());
+				return enterprisebase_platformBankCardBO;
 			}
 			UcfBankCard bankCard = bankCardList.get(0);
-			enterpriseMemberBankCardBO.setBankCardNo(bankCard.getCardNo());
-			enterpriseMemberBankCardBO.setBankCardName(bankCard.getCardName());
-			enterpriseMemberBankCardBO.setBankName(bankCard.getBankName());
-			enterpriseMemberBankCardBO.setBankCode(bankCard.getBankId());
-			enterpriseMemberBankCardBO.setCartType(bankCard.getCardType());
-			enterpriseMemberBankCardBO.setBranchName(bankCard.getBranchname());
-			enterpriseMemberBankCardBO.setIssuer(bankCard.getIssuer());
-			enterpriseMemberBankCardBO.setCity(bankCard.getCity());
-			enterpriseMemberBankCardBO.setProvince(bankCard.getProvince());
-			enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
-			enterpriseMemberBankCardBO.setStatus(EnumMemberCode.SUCCESS.getCode());
-			enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.SUCCESS.getMsgS());
-			return enterpriseMemberBankCardBO;
+			enterprisebase_platformBankCardBO.setBankCardNo(bankCard.getCardNo());
+			enterprisebase_platformBankCardBO.setBankCardName(bankCard.getCardName());
+			enterprisebase_platformBankCardBO.setBankName(bankCard.getBankName());
+			enterprisebase_platformBankCardBO.setBankCode(bankCard.getBankId());
+			enterprisebase_platformBankCardBO.setCartType(bankCard.getCardType());
+			enterprisebase_platformBankCardBO.setBranchName(bankCard.getBranchname());
+			enterprisebase_platformBankCardBO.setIssuer(bankCard.getIssuer());
+			enterprisebase_platformBankCardBO.setCity(bankCard.getCity());
+			enterprisebase_platformBankCardBO.setProvince(bankCard.getProvince());
+			enterprisebase_platformBankCardBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
+			enterprisebase_platformBankCardBO.setStatus(Enumbase_platformCode.SUCCESS.getCode());
+			enterprisebase_platformBankCardBO.setRespMsg(Enumbase_platformCode.SUCCESS.getMsgS());
+			return enterprisebase_platformBankCardBO;
 		} catch (Exception e) {
 			LOGGER.error("【查询企业会员银行卡信息】:", e);
-			enterpriseMemberBankCardBO.setRespCode(EnumMemberCode.ERROR.getCode());
-			enterpriseMemberBankCardBO.setStatus(EnumMemberCode.ERROR.getCode());
-			enterpriseMemberBankCardBO.setRespMsg(EnumMemberCode.ERROR.getMsgS());
+			enterprisebase_platformBankCardBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
+			enterprisebase_platformBankCardBO.setStatus(Enumbase_platformCode.ERROR.getCode());
+			enterprisebase_platformBankCardBO.setRespMsg(Enumbase_platformCode.ERROR.getMsgS());
 		}
-		return enterpriseMemberBankCardBO;
+		return enterprisebase_platformBankCardBO;
 	}
 	
 	@Override
@@ -1439,16 +1439,16 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 					BeanUtilEx.copyProperties(mainAccount, ucfUser);
 					mainAccountList.add(mainAccount);
 				}
-				mainAccountListBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				mainAccountListBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
 				mainAccountListBO.setRespMsg("成功");
 				mainAccountListBO.setUserlist(mainAccountList);
 			}else{
-				mainAccountListBO.setRespCode(EnumMemberCode.SUCCESS.getCode());
+				mainAccountListBO.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
 				mainAccountListBO.setRespMsg("未找到主账户");
 			}
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(),e);
-			mainAccountListBO.setRespCode(EnumMemberCode.ERROR.getCode());
+			mainAccountListBO.setRespCode(Enumbase_platformCode.ERROR.getCode());
 			mainAccountListBO.setRespMsg("系统异常");
 		}
 		return mainAccountListBO;
@@ -1459,7 +1459,7 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 	public GroupAccountBo queryGroupAccount(String childUserId) {
 		GroupAccountBo groupAccountBo = new GroupAccountBo();
 		if(StringUtils.isEmpty(childUserId)){
-			groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+			groupAccountBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 			groupAccountBo.setRespMsg("子商户ID为空");
 		}else{
 			try {
@@ -1480,19 +1480,19 @@ public class EnterpriseMemberServiceImpl implements EnterpriseMemberService {
 						groupAccountBo.setParentMerchantName(ucfUserParent.getRealName());
 						groupAccountBo.setParentAccountNo(ucfCardParent.getAccountId());
 						
-						groupAccountBo.setRespCode(EnumMemberCode.SUCCESS.getCode());
+						groupAccountBo.setRespCode(Enumbase_platformCode.SUCCESS.getCode());
 						groupAccountBo.setRespMsg("成功");
 					}else{
-						groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+						groupAccountBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 						groupAccountBo.setRespMsg("未找到用户["+childUserId+"]的集团主商户");
 					}
 				}else{
-					groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+					groupAccountBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 					groupAccountBo.setRespMsg("用户["+childUserId+"]不存在");
 				}
 			} catch (Exception e) {
 				LOGGER.error("查询商户["+childUserId+"]信息异常",e);
-				groupAccountBo.setRespCode(EnumMemberCode.ERROR.getCode());
+				groupAccountBo.setRespCode(Enumbase_platformCode.ERROR.getCode());
 				groupAccountBo.setRespMsg("系统异常");
 			}
 		}

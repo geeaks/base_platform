@@ -2,7 +2,7 @@ package com.ucf.customer.utils;
 
 public enum BizProduct {
 	
-	BIZ_PRODUCT_MEMBER("100","会员");
+	BIZ_PRODUCT_base_platform("100","会员");
 	
 	private String code;
 	private String name;

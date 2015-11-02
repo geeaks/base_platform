@@ -29,7 +29,7 @@ import com.ucf.customer.api.enums.EnumBankCardType;
 import com.ucf.customer.bo.ResultBo;
 import com.ucf.customer.pojo.UcfBankCard;
 import com.ucf.customer.pojo.UcfUserLoginApp;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.service.SMSService;
 import com.ucf.customer.service.UserService;
 import com.ucf.customer.utils.Constants;
@@ -79,9 +79,9 @@ public class CommonController extends BaseController {
 	@RequestMapping({ "/head.htm" })
 	public String head(HttpServletRequest request,
 			HttpServletResponse response, Model model) throws Exception {
-		MemberAgent memberAgent = getMemberAgent(request);
-		if (memberAgent!=null) {
-			model.addAttribute("userName", memberAgent.getRealName());
+		base_platformAgent base_platformAgent = getbase_platformAgent(request);
+		if (base_platformAgent!=null) {
+			model.addAttribute("userName", base_platformAgent.getRealName());
 		}
 		return "common/head";
 	}
@@ -442,12 +442,12 @@ public class CommonController extends BaseController {
 			HttpSession session  = request.getSession();
 			String cellNo = null;
 			if("User".equals(smsType)){
-				MemberAgent memberAgent = (MemberAgent) session.getAttribute("MemberAgent");
-				cellNo = memberAgent.getMobile();
+				base_platformAgent base_platformAgent = (base_platformAgent) session.getAttribute("base_platformAgent");
+				cellNo = base_platformAgent.getMobile();
 			}else{
 				cellNo = (String)session.getAttribute(EnumSessionKey.SMS_PHONE.getKey());
 			}
-			ResultBo bo =  smsService.sendVfyCodeSMS("M100",cellNo, EnumSMSTemplate.MemberVfyCode.getContent());
+			ResultBo bo =  smsService.sendVfyCodeSMS("M100",cellNo, EnumSMSTemplate.base_platformVfyCode.getContent());
 			if(EnumResultCode.SUCCESS.getCode().equals(bo.getResult())){
 				map.put("result", "S");
 				map.put("msg", "短信已发送");

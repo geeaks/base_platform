@@ -173,7 +173,7 @@ public class FundRegisterController extends BaseController {
 		paramBo.setCertType(EnumIdCardType.CERT_NO.getCode());
 		paramBo.setPayPwd(registerBo.getPaymentPassword().getBytes());
 		paramBo.setLoginPwd(registerBo.getLgnPwd().getBytes());
-		paramBo.setRegFrom(EnumRegisterFrom.MEMBER_FROM.getCode());
+		paramBo.setRegFrom(EnumRegisterFrom.base_platform_FROM.getCode());
 		paramBo.setSource(EnumCertFrom.WEB_FROM.getCode());
 		paramBo.setType(RegisterParamBO.COMMON_ACCOUNT);
 		//注册

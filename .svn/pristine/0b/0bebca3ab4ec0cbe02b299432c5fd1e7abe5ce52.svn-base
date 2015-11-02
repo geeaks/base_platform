@@ -34,8 +34,8 @@ public class CheckPasswordInterceptor extends HandlerInterceptorAdapter {
 			RedisSession session = redisSessionFactory.getSession(request, response);
 			Boolean p2p_flag_user_password = (Boolean)session.getAttribute(key);*/
 			
-			String[] noFilters = new String[] {"/member/p2p/setFirstPayPwd","/member/p2p/pwd/check.do","/member/bank/checkCardBIN.do","/member/p2p/addBankCard.do","/member/p2p/sendSms.htm"};
-			String[] isFilters = new String[] {"/member/p2p/setFirstPayPwd","/member/p2p/toSetFirstPayPwd"};
+			String[] noFilters = new String[] {"/base_platform/p2p/setFirstPayPwd","/base_platform/p2p/pwd/check.do","/base_platform/bank/checkCardBIN.do","/base_platform/p2p/addBankCard.do","/base_platform/p2p/sendSms.htm"};
+			String[] isFilters = new String[] {"/base_platform/p2p/setFirstPayPwd","/base_platform/p2p/toSetFirstPayPwd"};
 			boolean beFilter = true;
 			
 			for (String s : noFilters) {
@@ -69,7 +69,7 @@ public class CheckPasswordInterceptor extends HandlerInterceptorAdapter {
 							m.put("returnUrl", request.getRequestURL().toString());
 							m.put("backUrl", backUrl);
 							HttpUtils.URLPost(customerServiceImpl.getCustomerRegUrl()+"/p2p/toSetFirstPayPwd", m);*/
-//							if (!uri.equals("/member/p2p/toSetFirstPayPwd")&&!uri.equals("/member/p2p/setFirstPayPwd")) {
+//							if (!uri.equals("/base_platform/p2p/toSetFirstPayPwd")&&!uri.equals("/base_platform/p2p/setFirstPayPwd")) {
 //								response.sendRedirect(customerService.getCustomerRegUrl()+"/p2p/toSetFirstPayPwd?merchantId="+merchantId+"&userId="+userId+"&returnUrl="+request.getRequestURL()+"&backUrl="+backUrl);
 //								return false;
 //							}

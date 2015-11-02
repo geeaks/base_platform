@@ -9,14 +9,14 @@
 	<meta name="description" content="">
 	<meta name="author" content="">
 	<META http-equiv="X-UA-Compatible" content="edge" >
-	<link href="${staticMemberPath}/css/shouyintai.css" rel="stylesheet">
-	<script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
-	<script src="${staticMemberPath}/js/bootstrap.js"></script>
+	<link href="${staticbase_platformPath}/css/shouyintai.css" rel="stylesheet">
+	<script src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
+	<script src="${staticbase_platformPath}/js/bootstrap.js"></script>
   </head>
   <body>
     <div class="head">
     	<div class="container">
-        	<img src="${staticMemberPath}/images/zgpt.png" alt="...">
+        	<img src="${staticbase_platformPath}/images/zgpt.png" alt="...">
         </div>
     </div>
   	<div class="container">

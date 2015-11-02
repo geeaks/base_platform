@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * 
 *    
-* 项目名称：member-client   
+* 项目名称：base_platform-client   
 * 类名称：FieldAccess   
 * 类描述：  接口参数类型控制，校验为空等
 * 创建人：李文静  

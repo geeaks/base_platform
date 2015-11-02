@@ -84,8 +84,8 @@
 		</layout>
 	</appender>
 	<!-- [业务Appender] 会员业务日志输出 -->
-	<appender name="MEMBER-BIZ" class="org.apache.log4j.DailyRollingFileAppender">
-		<param name="file" value="${loggingRoot}/member-biz.log" />
+	<appender name="base_platform-BIZ" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="${loggingRoot}/base_platform-biz.log" />
 		<param name="append" value="true" />
 		<param name="encoding" value="UTF-8" />
 		<param name="threshold" value="info" />
@@ -165,7 +165,7 @@
 	<!-- [公共业务日志] -->
 	<logger name="com.ucf.customer" additivity="false">
 		<level value="INFO" />
-		<appender-ref ref="MEMBER-BIZ" />
+		<appender-ref ref="base_platform-BIZ" />
 		<appender-ref ref="ERROR-APPENDER" />
 	</logger>
 	<!-- [框架Logger] 数据 DAO -->

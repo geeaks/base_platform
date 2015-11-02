@@ -50,9 +50,9 @@ public class UserRegServiceImp implements UserRegService {
 	}
 	
 	@Override
-	public String getEnterpriseMemberNO() throws Exception {
-		String enterpriseMemberNO_SEQ = this.userDao.getEnterpriseMemberNO_SEQ();
-		return "M" + enterpriseMemberNO_SEQ;
+	public String getEnterprisebase_platformNO() throws Exception {
+		String enterprisebase_platformNO_SEQ = this.userDao.getEnterprisebase_platformNO_SEQ();
+		return "M" + enterprisebase_platformNO_SEQ;
 	}
 
 

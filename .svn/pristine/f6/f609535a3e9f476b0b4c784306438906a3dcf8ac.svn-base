@@ -34,7 +34,7 @@ import com.ucf.customer.utils.MD5Util;
 /**
  * 
 *    
-* 项目名称：member  <br>
+* 项目名称：base_platform  <br>
 * 类名称：DepositAction      <br>
 * 类描述：充值   				  <br>
 * 创建人：李文静 				  <br>
@@ -59,7 +59,7 @@ public class RechargeController extends BaseAction{
 	public String toRecharge(
 			HttpServletRequest request,
 			HttpServletResponse response,Model model) throws Exception {
-		UcfUser user = loginService.queryUserInfo(getMemberAgent(request, response).getId());
+		UcfUser user = loginService.queryUserInfo(getbase_platformAgent(request, response).getId());
 		// 判断用户是否绑卡
 		UcfBankCard verifyBank = new UcfBankCard();
 		verifyBank.setUserId(user.getUserId());
@@ -87,7 +87,7 @@ public class RechargeController extends BaseAction{
 		String host = tradeService.getTradeRechargeUrl();
 		
 		String url = host+"?businessType="+BusinessType.DEPOSIT.getCode()
-				+"&userId="+userId+"&bizProduct="+BizProduct.BIZ_PRODUCT_MEMBER.getCode();
+				+"&userId="+userId+"&bizProduct="+BizProduct.BIZ_PRODUCT_base_platform.getCode();
 		LOGGER.info("url="+url);
 		
 		//收银柜所需的对象在访问时候放进去，不在登录的时候放进去

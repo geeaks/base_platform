@@ -12,8 +12,8 @@
 <c:set var="basePath" value="${pageContext.request.contextPath }" />
 <jsp:include page="../common/resource_css.jsp"/>
 <!--private js&css start-->
-    <link href="${staticMemberPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
-    <link href="${staticMemberPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css">
+    <link href="${staticbase_platformPath}/new/css/set-pay-password.css" rel="stylesheet" type="text/css" />
+    <link href="${staticbase_platformPath}/new/css/host_newuser.css" rel="stylesheet" type="text/css">
     <!--private js&css end-->
     <style type="text/css">
 p.tip span {font-weight:130px;

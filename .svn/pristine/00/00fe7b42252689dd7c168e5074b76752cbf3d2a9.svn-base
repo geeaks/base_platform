@@ -3,10 +3,10 @@
 <jsp:include page="./resource_meta.jsp"/>
 <jsp:include page="./resource_css.jsp"/>
 <c:set var="basePath" value="${pageContext.request.contextPath }" scope="application"/>
-<link href="${staticMemberPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
+<link href="${staticbase_platformPath}/new/css/user.css" rel="stylesheet" type="text/css"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<script src="${staticMemberPath}/js/jquery-1.11.1.min.js"></script>
-<script	 src="${staticMemberPath}/js/commons/bootstrap.min.js"></script>
+<script src="${staticbase_platformPath}/js/jquery-1.11.1.min.js"></script>
+<script	 src="${staticbase_platformPath}/js/commons/bootstrap.min.js"></script>
 <jsp:include page="./resource_js.jsp"/>
 <script>
 function sendSMS(cellNo,smsType) {

@@ -3,7 +3,7 @@ package com.ucf.customer.ws.enums;
 /**
  * 
 *    
-* 项目名称：member-client  	<br/>
+* 项目名称：base_platform-client  	<br/>
 * 类名称：EnumBindCardType      	<br/>
 * 类描述：   绑卡类型	 P 预绑卡 O 正式绑卡 U 修改  W 提现银行卡				<br/>
 * 创建人：李文静  				<br/>

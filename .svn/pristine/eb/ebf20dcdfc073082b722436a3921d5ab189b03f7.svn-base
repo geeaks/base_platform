@@ -14,7 +14,7 @@
 	default-lazy-init="false">
 
 	<!-- 会员系统消费者 -->
-	<bean id="memberMQConsumerService" class="com.ucf.customer.mq.MemberMQConsumerService" init-method="init" destroy-method="destroy">
+	<bean id="base_platformMQConsumerService" class="com.ucf.customer.mq.base_platformMQConsumerService" init-method="init" destroy-method="destroy">
 		<property name="namesrvAddr" value="${rocketmq.namesrv.addr}"></property>
 		<property name="instanceName" value="${rocketmq.consumer.instance.name}"></property>
 		<property name="pullIntervalInMillis" value="${rocketmq.consumer.pullIntervalInMillis}"></property>
@@ -32,7 +32,7 @@
 		<property name="pullIntervalInMillis" value="${rocketmq.consumer.pullIntervalInMillis}"></property>
 	</bean>
 	<!-- 代扣统计 -->
-	<bean id="memberDKStatisticsMQConsumerService" class="com.ucf.customer.mq.DKStatisticsMQConsumerService" init-method="init" destroy-method="destroy">
+	<bean id="base_platformDKStatisticsMQConsumerService" class="com.ucf.customer.mq.DKStatisticsMQConsumerService" init-method="init" destroy-method="destroy">
 		<property name="namesrvAddr" value="${rocketmq.namesrv.addr}"></property>
 		<property name="instanceName" value="${rocketmq.consumer.instance.name}"></property>
 		<property name="pullIntervalInMillis" value="${rocketmq.consumer.pullIntervalInMillis}"></property>

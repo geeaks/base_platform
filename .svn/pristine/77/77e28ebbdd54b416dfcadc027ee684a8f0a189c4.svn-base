@@ -7,15 +7,15 @@ import com.ucf.platform.framework.core.runtime.CommonResult;
  * @author 
  *
  */
-public class MemberCommonResult<T> extends CommonResult<T> {
+public class base_platformCommonResult<T> extends CommonResult<T> {
 
 	private static final long serialVersionUID = -6076276477397685907L;
 
-	public MemberCommonResult(String resultCode, T businessObject) {
+	public base_platformCommonResult(String resultCode, T businessObject) {
 		super(resultCode, businessObject);
 	}
 	
-	 public MemberCommonResult(String resultCode, String resultCodeMsg, T businessObject) {
+	 public base_platformCommonResult(String resultCode, String resultCodeMsg, T businessObject) {
 		  this(resultCode, businessObject);
 	      this.resultCodeMsg = resultCodeMsg;
 	 }

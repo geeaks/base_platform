@@ -9,7 +9,7 @@
 	<div id="myTip"
 		style="width:227px;height:28px;border:1px solid #888888;background:#FFFFFF;display:none;"
 		align="center" valign="middle">
-		<a id='downLink' href="${staticMemberPath}/${myexe}"
+		<a id='downLink' href="${staticbase_platformPath}/${myexe}"
 			class="mylink"> <font face="宋体" size="-1">点此下载控件</font>
 		</a>
 	</div>

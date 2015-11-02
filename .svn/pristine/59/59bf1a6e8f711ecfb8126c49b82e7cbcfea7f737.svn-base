@@ -9,10 +9,10 @@
 <jsp:include page="commons/resource_js.jsp"/>
 <c:set var="basePath" value="${pageContext.request.contextPath }" />
 <%-- <c:if test="${'common' == p2p_type }">
-<script type="text/javascript" src="${staticMemberPath}/p2p/js/edit-trader-password/index_common.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/p2p/js/edit-trader-password/index_common.js"></script>
 </c:if>
 <c:if test="${'common' != p2p_type }">
-<script type="text/javascript" src="${staticMemberPath}/p2p/js/edit-trader-password/index.js"></script>
+<script type="text/javascript" src="${staticbase_platformPath}/p2p/js/edit-trader-password/index.js"></script>
 </c:if> --%>
 <c:if test="${'common' == p2p_type }">
 <script type="text/javascript" src="${basePath}/passwordControl/individual_index.js"></script>

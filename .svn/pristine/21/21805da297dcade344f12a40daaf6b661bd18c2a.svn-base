@@ -3,7 +3,7 @@ package com.ucf.customer.ws.bo.enterprise;
 import java.io.Serializable;
 import java.util.List;
 
-public class PageEnterpriseMemberResultBo  implements Serializable{
+public class PageEnterprisebase_platformResultBo  implements Serializable{
 
 	private static final long serialVersionUID = 1268186033715790993L;
 
@@ -27,7 +27,7 @@ public class PageEnterpriseMemberResultBo  implements Serializable{
 	private int count;
 	
 	
-	private List<EnterpriseMemberInfoBO> results;
+	private List<Enterprisebase_platformInfoBO> results;
 
 
 	public String getRespCode() {
@@ -80,12 +80,12 @@ public class PageEnterpriseMemberResultBo  implements Serializable{
 	}
 
 
-	public List<EnterpriseMemberInfoBO> getResults() {
+	public List<Enterprisebase_platformInfoBO> getResults() {
 		return results;
 	}
 
 
-	public void setResults(List<EnterpriseMemberInfoBO> results) {
+	public void setResults(List<Enterprisebase_platformInfoBO> results) {
 		this.results = results;
 	}
 

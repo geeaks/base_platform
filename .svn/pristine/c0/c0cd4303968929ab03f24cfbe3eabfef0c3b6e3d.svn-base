@@ -2,17 +2,17 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>com.ucf.member</groupId>
-		<artifactId>member-parent</artifactId>
+		<groupId>com.ucf.base_platform</groupId>
+		<artifactId>base_platform-parent</artifactId>
 		<version>1.5.6-SNAPSHOT</version>
 	</parent>
-	<artifactId>member-resources</artifactId>
+	<artifactId>base_platform-resources</artifactId>
 	<name>${project.artifactId}</name>
 	<packaging>war</packaging>
 	<dependencies>
 		<dependency>
-			<groupId>com.ucf.member</groupId>
-			<artifactId>member</artifactId>
+			<groupId>com.ucf.base_platform</groupId>
+			<artifactId>base_platform</artifactId>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
@@ -29,8 +29,8 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>com.ucf.member</groupId>
-			<artifactId>member-client</artifactId>
+			<groupId>com.ucf.base_platform</groupId>
+			<artifactId>base_platform-client</artifactId>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-logging</artifactId>
@@ -207,7 +207,7 @@
 		</pluginManagement>
     </build>
 	<!-- <build>
-		<finalName>member</finalName>
+		<finalName>base_platform</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.mortbay.jetty</groupId>
@@ -222,7 +222,7 @@
 					</systemProperties>
 					<scanIntervalSeconds>10</scanIntervalSeconds>
 					<webAppConfig>
-						<contextPath>/member</contextPath>
+						<contextPath>/base_platform</contextPath>
 					</webAppConfig>
 				</configuration>
 			</plugin>

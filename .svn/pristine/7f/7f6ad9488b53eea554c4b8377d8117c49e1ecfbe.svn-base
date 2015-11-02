@@ -2,7 +2,7 @@ package com.ucf.customer.ws.bo.enterprise;
 
 import java.io.Serializable;
 
-public class MemberRegisterResultBO implements Serializable{
+public class base_platformRegisterResultBO implements Serializable{
 
 	private static final long serialVersionUID = 7540405464703516852L;
 	

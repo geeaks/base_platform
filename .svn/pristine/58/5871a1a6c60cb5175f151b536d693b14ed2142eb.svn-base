@@ -2,7 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 										<div class="input-block-level add-mgt10">
 											<div id="myTip1" style="width:228px;height:30px;border:1px solid #888888;background:#FFFFFF;display:none" align="center" valign="top">
-												<a id='downLink1' href="${staticMemberPath}/${myexe}" class="mylink">
+												<a id='downLink1' href="${staticbase_platformPath}/${myexe}" class="mylink">
 													<font face="宋体" size="-1">点此下载控件</font>
 												</a>
 											</div>
@@ -14,7 +14,7 @@
 													width="235px"
 													height="28px"
 													onblur="loseFocus1()" 
-													codebase="${staticMemberPath}/${mycab}#Version=${myVersion}">
+													codebase="${staticbase_platformPath}/${mycab}#Version=${myVersion}">
 													<param name="width" value="200">
 													<param name="height" value="40">	
 													<param name="textsize" value="45"> 

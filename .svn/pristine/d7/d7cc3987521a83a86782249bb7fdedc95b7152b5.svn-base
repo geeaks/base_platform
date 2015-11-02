@@ -4,7 +4,7 @@
 		 xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" 
 		 xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
 		 version="2.5">
-	<display-name>member</display-name>
+	<display-name>base_platform</display-name>
 	<!-- 配置Context上下文 Add by qtw -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>

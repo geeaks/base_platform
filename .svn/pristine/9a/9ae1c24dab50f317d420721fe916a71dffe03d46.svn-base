@@ -30,13 +30,13 @@ import com.ucf.platform.framework.mq.enums.UcfMQConsumeStatus;
 
 /**
  * @Description: 会员接收mq消息进行绑卡
- * @ClassName: MemberMQConsumerService
+ * @ClassName: base_platformMQConsumerService
  * @author gaoxiang
  * @date 2015-1-22 下午4:09:55
  */ 
-public class MemberMQConsumerService extends AbstractUcfMQSyncConsumerConcurrently {
+public class base_platformMQConsumerService extends AbstractUcfMQSyncConsumerConcurrently {
 
-	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(MemberMQConsumerService.class);
+	private static final UcfLogger LOGGER = UcfLoggerFactory.getLogger(base_platformMQConsumerService.class);
 	
 	@Resource(name="mqConsumeService")
 	private MQConsumeService mqConsumeService;
@@ -91,7 +91,7 @@ public class MemberMQConsumerService extends AbstractUcfMQSyncConsumerConcurrent
 			LOGGER.info("有效日期格式非法！");
 			return UcfMQConsumeStatus.SUCCESS;
 		}
-		Lock lock = LockHolder.createLock("MEMBER_BIND_BANK_CARD", "USER_BANKCARD_" + userId + "_" + bankAccountNo ,10*1000,30*1000);
+		Lock lock = LockHolder.createLock("base_platform_BIND_BANK_CARD", "USER_BANKCARD_" + userId + "_" + bankAccountNo ,10*1000,30*1000);
 		try {
 			if (lock.tryLock()) {
 				final UcfUser ucfUser = userService.queryUserInfoById(userId);

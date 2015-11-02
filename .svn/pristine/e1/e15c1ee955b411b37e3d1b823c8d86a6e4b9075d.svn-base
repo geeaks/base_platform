@@ -23,7 +23,7 @@
                 <span class="icon-bar"></span>
               </button>
               <a href="${basePath}/login/index.htm">
-	              <img src="${staticMemberPath}/images/REGISTER_LOGO.png" alt="...">
+	              <img src="${staticbase_platformPath}/images/REGISTER_LOGO.png" alt="...">
               </a>
             </div>
             <div class="navbar-collapse collapse " >
@@ -34,7 +34,7 @@
                 <li class="login-line">|</li>
                 <li class="dropdown"><a class="dropdown-toggle" href="${basePath}/">先锋支付首页</a> </li>
                 <li class="login-line">|</li>
-                <li class="dropdown"><a class="dropdown-toggle" href="${staticMemberPath}/help/anquanzhongxin.html">安全中心</a></li>
+                <li class="dropdown"><a class="dropdown-toggle" href="${staticbase_platformPath}/help/anquanzhongxin.html">安全中心</a></li>
               </ul>
             </div>
           </div>

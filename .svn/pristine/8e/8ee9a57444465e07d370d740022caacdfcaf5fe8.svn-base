@@ -5,13 +5,13 @@
     <title>先锋支付--用户注册</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Bootstrap -->
-    <link rel="stylesheet" href="${staticMemberPath}/css/commons/bootstrap.min.css">
+    <link rel="stylesheet" href="${staticbase_platformPath}/css/commons/bootstrap.min.css">
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
-        <script src="${staticMemberPath}/js/commons/html5shiv.min.js"></script>
-        <script src="${staticMemberPath}/js/commons/respond.min.js"></script>
+        <script src="${staticbase_platformPath}/js/commons/html5shiv.min.js"></script>
+        <script src="${staticbase_platformPath}/js/commons/respond.min.js"></script>
     <![endif]-->
   </head>
   <body>

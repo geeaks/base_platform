@@ -5,13 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <!-- Bootstrap -->
-<link rel="stylesheet" href="${staticMemberPath}/css/commons/bootstrap.min.css">
+<link rel="stylesheet" href="${staticbase_platformPath}/css/commons/bootstrap.min.css">
 
 <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 <!--[if lt IE 9]>
-    <script src="${staticMemberPath}/js/commons/html5shiv.min.js"></script>
-    <script src="${staticMemberPath}/js/commons/respond.min.js"></script>
+    <script src="${staticbase_platformPath}/js/commons/html5shiv.min.js"></script>
+    <script src="${staticbase_platformPath}/js/commons/respond.min.js"></script>
 <![endif]-->
 </head>
 <body>
@@ -98,7 +98,7 @@
 
 	<div align="left" style="margin-left: 30px;">
 		<h3>后台下发起充值请求，不需要进入收银台</h3>
-		<form action="${staticMemberPath}/payController/submit3.do" method="post">
+		<form action="${staticbase_platformPath}/payController/submit3.do" method="post">
 			商户ID：<input type="text" name="merchantId" value="123"><br />
 			商户流水号：<input type="text" name="merchantNo" value="123"><br />
 			业务单据号：<input type="text" name="bizNo" value="123"><br />

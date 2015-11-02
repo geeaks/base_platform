@@ -17,9 +17,9 @@ oracle.jdbc.removeAbandonedTimeout=1800
 dubbo.registry=10.20.5.224:2181
 dubbo.service.timeout=2000
 dubbo.service.retries=0
-dubbo.member.service.port=4025
-dubbo.member.service.version=1.0.0
-dubbo.p2p.member.service.version=1.0.0-DEV
+dubbo.base_platform.service.port=4025
+dubbo.base_platform.service.version=1.0.0
+dubbo.p2p.base_platform.service.version=1.0.0-DEV
 dubbo.account.service.version=1.0.0-DEV
 dubbo.payment.service.version=1.0.0-DEV
 dubbo.trade.service.version=1.0.0-DEV
@@ -27,7 +27,7 @@ dubbo.channel.service.version=1.0.0-DEV
 dubbo.gateway.service.version=2.0.0-DEV
 dubbo.message.service.version=1.0.0-DEV
 
-com.ucf.member.url=http://10.20.5.221:8083
+com.ucf.base_platform.url=http://10.20.5.221:8083
 com.ucf.cashier.url=http://10.20.5.221:8085
 com.ucf.trade.url=http://10.20.5.241:8084
 com.ucf.payment.url=http://10.20.5.241:8081
@@ -35,10 +35,10 @@ com.ucf.account.url=http://10.20.5.241:8082
 com.ucf.channel.url=http://10.20.5.241:8086
 com.ucf.gateway.url=http://10.20.5.241:8080
 
-com.ucf.customer.uri=/member
+com.ucf.customer.uri=/base_platform
 
 com.ucf.trade.recharge.uri=http://10.20.5.241:8084/trade/ucfTradeOrderRechargeController/recharge
-com.ucf.member.uniologin.host=http://10.20.5.221:8083
+com.ucf.base_platform.uniologin.host=http://10.20.5.221:8083
 
 # redis configration
 #redis.pool.host=10.20.5.224
@@ -73,12 +73,12 @@ protection.system.host.port=5000
 
 #rocketMQ configration
 rocketmq.namesrv.addr=10.20.5.224:9876
-rocketmq.producer.group=ucfMemberProducerGroup
-rocketmq.producer.instance.name=ucfMemberProducer
+rocketmq.producer.group=ucfbase_platformProducerGroup
+rocketmq.producer.instance.name=ucfbase_platformProducer
 #consumer configration
-rocketmq.consumer.instance.name=ucfMemberConsumer
+rocketmq.consumer.instance.name=ucfbase_platformConsumer
 rocketmq.consumer.pullIntervalInMillis=10000
 
 #会员静态资源
-static.res.path=http://10.20.5.241:8082/member-static
+static.res.path=http://10.20.5.241:8082/base_platform-static
 devmode=true

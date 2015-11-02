@@ -23,8 +23,8 @@ import com.ucf.customer.pojo.UcfBankCard;
 import com.ucf.customer.pojo.UcfCustomer;
 import com.ucf.customer.pojo.UcfUser;
 import com.ucf.customer.pojo.UcfUserLoginApp;
-import com.ucf.customer.security.EnumMemberUserType;
-import com.ucf.customer.security.MemberAgent;
+import com.ucf.customer.security.Enumbase_platformUserType;
+import com.ucf.customer.security.base_platformAgent;
 import com.ucf.customer.service.LoginService;
 import com.ucf.customer.service.UserInfoService;
 import com.ucf.customer.utils.BeanUtilEx;
@@ -38,8 +38,8 @@ import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
 /**
  * 
  * 
- * 项目名称：member <br>
- * 类名称：MemberLogAction <br>
+ * 项目名称：base_platform <br>
+ * 类名称：base_platformLogAction <br>
  * 类描述： 用户登录退出 Action <br>
  * 创建人：李文静 <br>
  * 创建时间：2014-5-7 上午11:46:50 <br>
@@ -52,7 +52,7 @@ import com.ucf.platform.framework.core.util.SensitiveInfoUtils;
  */
 @Controller
 @RequestMapping({ "/login" })
-public class MemberLogController extends BaseAction {
+public class base_platformLogController extends BaseAction {
 	
 	@Autowired
 	private LoginService loginService;
@@ -144,17 +144,17 @@ public class MemberLogController extends BaseAction {
 		HttpServletResponse response, UcfUser user,
 		UcfUserLoginApp userApp, boolean isBindCard, boolean isCustomer) {
 		HttpSession session  = request.getSession();
-		MemberAgent memberAgent = new MemberAgent();
-		memberAgent.setId(user.getUserId());
-		memberAgent.setLoginId(userApp.getLoginId());
-		memberAgent.setRealName(user.getRealName());
-		memberAgent.setCertNo(user.getCertNo());
-		memberAgent.setMobile(user.getCell());
-		memberAgent.setUserType(EnumMemberUserType.Logined);
-		memberAgent.setBindCard(isBindCard);
-		memberAgent.setCustomer(isCustomer);
-		memberAgent.setLastLoginTime(userApp.getLastLoginTime());
-		session.setAttribute("MemberAgent", memberAgent);
+		base_platformAgent base_platformAgent = new base_platformAgent();
+		base_platformAgent.setId(user.getUserId());
+		base_platformAgent.setLoginId(userApp.getLoginId());
+		base_platformAgent.setRealName(user.getRealName());
+		base_platformAgent.setCertNo(user.getCertNo());
+		base_platformAgent.setMobile(user.getCell());
+		base_platformAgent.setUserType(Enumbase_platformUserType.Logined);
+		base_platformAgent.setBindCard(isBindCard);
+		base_platformAgent.setCustomer(isCustomer);
+		base_platformAgent.setLastLoginTime(userApp.getLastLoginTime());
+		session.setAttribute("base_platformAgent", base_platformAgent);
 		session.setAttribute(EnumSessionKey.SMS_PHONE.getKey(), user.getCell());
 		// TODO 老代码支持userredis 暂时不删除
 		com.ucf.customer.ws.bo.UcfUser ucfUserBo = new com.ucf.customer.ws.bo.UcfUser();
