@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
 	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance http://www.springmodules.org/schema/cache/springmodules-cache.xsd" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:jdbc="http://www.springframework.org/schema/jdbc" xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:jpa="http://www.springframework.org/schema/data/jpa" xmlns:task="http://www.springframework.org/schema/task"
@@ -23,6 +23,8 @@
 	<!-- 初始化配置文件 -->
 	<util:properties id="settings" location="classpath:/app.properties" />
 	
+	<import resource="applicationContext-datasource.xml" />
+	
 	<!-- 占位符表达式替换 -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
 		<property name="locations"> 
@@ -39,8 +41,7 @@
 	<context:component-scan base-package="com.gts.base.platform">
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 	</context:component-scan>
-	<mvc:annotation-driven />
-	<context:component-scan base-package="com.gts.base.platform"></context:component-scan>
+	
 	<mvc:interceptors>
 		<!-- 多个拦截器,顺序执行 -->
 		<mvc:interceptor>
@@ -72,6 +73,6 @@
 		<property name="defaultStatusCode" value="500"></property>
 	</bean>
 	
-	<import resource="applicationContext-datasource.xml" />
+	<import resource="classpath:spring/applicationContext-datasource.xml" />
 	
 </beans>

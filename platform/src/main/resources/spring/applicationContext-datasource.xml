@@ -30,9 +30,9 @@
 	<!-- 配置数据库会话工厂 -->
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="dataSource" ref="dataSource" />
-		<property name="configLocation" value="/mybatis/mybatis_config.xml" />
+		<property name="configLocation" value="classpath:/mybatis/mybatis_config.xml" />
 		<!-- 显式指定Mapper文件位置 -->
-		<property name="mapperLocations" value="/mybatis/*_sql.xml" />
+		<property name="mapperLocations" value="classpath:/mybatis/*_sql.xml" />
 	</bean>
 
 	<!-- 配置sqlSessionTemplate -->
