@@ -35,7 +35,7 @@ public class TestController extends BaseController {
 			return map;
 		}
 		map.put("success", true);
-		map.put("msg", "登录成功，登录名:【"+userName+"】 登录密码:【"+password+"】");
+		map.put("msg", "登录成功，登录名:【"+userName+"】   登录密码:【"+password+"】");
 		return map;
 	}
 	
