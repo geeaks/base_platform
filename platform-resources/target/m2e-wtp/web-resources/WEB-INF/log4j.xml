@@ -36,8 +36,4 @@
 		<level value="DEBUG" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</logger>
-	<logger name="org.springframework" additivity="false">
-		<level value="DEBUG" />
-		<appender-ref ref="STDOUT-APPENDER" />
-	</logger>
 </log4j:configuration>
