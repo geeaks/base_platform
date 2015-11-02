@@ -8,7 +8,7 @@
 <title>首页</title>
 </head>
 <body>
-	<form method="post" action="/login">
+	<form method="post" action="login">
 		<table style="border: 0px;left: 300px;top: 100px;" >
 			<tr>
 				<td>登录名</td>
