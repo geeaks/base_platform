@@ -10,6 +10,10 @@
 	<name>${project.artifactId}</name>
 	<packaging>jar</packaging>
 	<dependencies>
+			<dependency>
+				<groupId>redis.clients</groupId>
+				<artifactId>jedis</artifactId>
+			</dependency>
 			<!-- spring依赖 -->
 			<dependency>
 				<groupId>org.springframework</groupId>
