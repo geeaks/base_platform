@@ -74,5 +74,6 @@
 	</bean>
 	
 	<import resource="classpath:spring/applicationContext-datasource.xml" />
+	<import resource="classpath:spring/applicationContext-redis.xml" />
 	
 </beans>
