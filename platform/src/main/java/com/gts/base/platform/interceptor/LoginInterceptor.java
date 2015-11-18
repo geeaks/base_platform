@@ -5,6 +5,12 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+/**
+ * @Description: 登录拦截器
+ * @ClassName: LoginInterceptor
+ * @author gaoxiang
+ * @date 2015年11月17日 下午11:24:13
+ */ 
 public class LoginInterceptor extends HandlerInterceptorAdapter {
 	
 	@Override

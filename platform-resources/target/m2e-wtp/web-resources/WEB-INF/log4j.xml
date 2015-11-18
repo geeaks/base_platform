@@ -36,4 +36,9 @@
 		<level value="DEBUG" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</logger>
+	
+	<logger name="DEFAULT.DIG" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="STDOUT-APPENDER" />
+	</logger>
 </log4j:configuration>

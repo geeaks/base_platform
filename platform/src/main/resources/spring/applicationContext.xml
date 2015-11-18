@@ -75,5 +75,6 @@
 	
 	<import resource="classpath:spring/applicationContext-datasource.xml" />
 	<import resource="classpath:spring/applicationContext-redis.xml" />
+	<import resource="classpath:spring/gts-framework-conf.xml" />
 	
 </beans>

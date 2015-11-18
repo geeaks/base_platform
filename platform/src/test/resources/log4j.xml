@@ -1,6 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+	<!-- [公共Appender] 错误信息统计  -->
+	<!-- <appender name="ERROR-APPENDER" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="${loggingRoot}/common-error.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<param name="threshold" value="error" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d [%X{MDC_CLIENT_IP}/%X{MDC_SERVER_IP}/%X{MDC_REQUEST_ID}/%X{MDC_SESSION} - %X{requestURIWithQueryString}] %-5p %c{1} - %m%n" />
+		</layout>
+	</appender> -->
 	<!-- [公共Appender] 控制台STDOUT -->
 	<appender name="STDOUT-APPENDER" class="org.apache.log4j.ConsoleAppender">
 		<param name="encoding" value="UTF-8" />
@@ -9,8 +20,24 @@
 			<param name="ConversionPattern" value="%-5p %c{2} - %m%n" />
 		</layout>
 	</appender>
+	<!-- [业务Appender] 会员业务日志输出 -->
+	<!-- <appender name="GTS-BIZ" class="org.apache.log4j.DailyRollingFileAppender">
+		<param name="file" value="${loggingRoot}/platform-biz.log" />
+		<param name="append" value="true" />
+		<param name="encoding" value="UTF-8" />
+		<param name="threshold" value="info" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern"
+				value="%d [%X{MDC_CLIENT_IP}/%X{MDC_SERVER_IP}/%X{MDC_REQUEST_ID}/%X{MDC_SESSION} - %X{requestURIWithQueryString}] %-5p %c{1} - %m%n" />
+		</layout>
+	</appender> -->
 	<!-- [公共业务日志] -->
 	<logger name="com.gts.base.platform" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="STDOUT-APPENDER" />
+	</logger>
+	
+	<logger name="DEFAULT.DIG" additivity="false">
 		<level value="DEBUG" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</logger>
