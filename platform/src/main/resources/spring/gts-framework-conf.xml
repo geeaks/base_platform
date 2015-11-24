@@ -12,7 +12,7 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd"
 	default-lazy-init="true">
 	
-	<!-- 拦截service -->
+	<!-- 拦截service 和 dao -->
 	<bean id="serviceProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
 		<property name="interceptorNames">
 			<list>
@@ -22,6 +22,8 @@
 		<property name="beanNames">
 			<list>
 				<value>*ServiceImpl</value>
+				<value>*Dao</value>
+				<value>*DaoImpl</value>
 			</list>
 		</property>
 	</bean>
@@ -30,12 +32,23 @@
 	<bean id="interceptorChain" class="com.gts.framework.core.aop.InterceptorChain">
 		<property name="chains">
 			<list>
+				<ref bean="performanceInstrument" />
+				<ref bean="performanceMonitor" />
 				<ref bean="logInitInterceptor" />
 			</list>
 		</property>
 	</bean>
 	
+	<!-- dao层方法性能拦截 -->
+	<bean id="performanceInstrument" class="com.gts.framework.log.aop.PerformanceInstrumentInterceptor" />
+	
+	<!-- 性能拦截 -->
+	<bean id="performanceMonitor" class="com.gts.framework.log.aop.PerformanceMonitorInterceptor">
+		<property name="threshold">
+			<value>1</value>
+		</property>
+	</bean>
+	
 	<!-- 日志代理 -->
 	<bean id="logInitInterceptor" class="com.gts.framework.log.aop.AnnotationLogInterceptor" />
-	
 </beans>

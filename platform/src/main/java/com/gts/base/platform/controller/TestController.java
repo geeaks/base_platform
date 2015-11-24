@@ -2,21 +2,24 @@ package com.gts.base.platform.controller;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.gts.base.platform.service.CommentService;
 
 @Controller
 public class TestController extends BaseController {
 	
 	public static Logger LOGGER = Logger.getLogger(TestController.class);
+	
+	@Autowired
+	CommentService testService;
 	
 	@RequestMapping("/index")
 	public String index(HttpServletRequest request, HttpServletResponse response, Model model){

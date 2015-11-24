@@ -58,7 +58,6 @@ public final class Profiler {
 	
 	public static void enter(String message) {
 		Entry currentEntry = getCurrentEntry();
-		
 		if (currentEntry != null) {
 			currentEntry.enterSubEntry(message);
 		}

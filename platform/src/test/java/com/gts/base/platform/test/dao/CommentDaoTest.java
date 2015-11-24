@@ -2,28 +2,26 @@ package com.gts.base.platform.test.dao;
 
 import java.util.List;
 import java.util.UUID;
-
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import com.alibaba.fastjson.JSON;
-import com.gts.base.platform.dao.TestDao;
-import com.gts.base.platform.dao.entity.Test_table;
+import com.gts.base.platform.dao.CommentDao;
+import com.gts.base.platform.dao.entity.Comment;
 import com.gts.base.platform.dao.plugin.Page;
 import com.gts.base.platform.test.BaseTest;
 
-public class TestDaoTest extends BaseTest {
+public class CommentDaoTest extends BaseTest {
 	
 	@Autowired
-	private TestDao testDao;
+	private CommentDao commentDao;
 	
 	@Test
-	public void insertTest(){
-		Test_table test = new Test_table();
-		test.setId(UUID.randomUUID().toString());
-		test.setName("SDD");
+	public void insertComment(){
+		Comment comment = new Comment();
+		comment.setCommentId(UUID.randomUUID().toString());
+		comment.setComment("SDD");
 		try {
-			int rows = testDao.insertTest(test);
+			int rows = commentDao.insertComment(comment);
 			System.err.println(rows);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -31,18 +29,18 @@ public class TestDaoTest extends BaseTest {
 	}
 	 
 	@Test
-	public void listPageTest(){
+	public void listPageComment(){
 		Page page = new Page();
 		
 		page.setCurrentPage(1);
 		page.setShowCount(3);
 		
-		Test_table test = new Test_table();
-		test.setName("SDD");
-		test.setPage(page);
+		Comment comment = new Comment();
+		comment.setComment("SDD");
+		comment.setPage(page);
 		try {
-			List<Test_table> list = testDao.listPageTest(test);
-			System.err.println(JSON.toJSONString(test.getPage()));
+			List<Comment> list = commentDao.listPageComment(comment);
+			System.err.println(JSON.toJSONString(comment.getPage()));
 			System.err.println(JSON.toJSONString(list));
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,4 +1,4 @@
-package com.gts.framework.core.model;
+package com.gts.framework.core.context;
 
 /**
  * @Description: 需要关注ProductContext远程传输时，潜在发生泄漏的可能性？

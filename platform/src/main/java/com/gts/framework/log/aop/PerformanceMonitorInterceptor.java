@@ -62,11 +62,8 @@ public class PerformanceMonitorInterceptor extends BaseInterceptor {
 		
 	}
 	
-	// ----- 容器方法 ------
-	
 	/**
-	 * @param threshold
-	 *            The threshold to set.
+	 * @param threshold The threshold to set.
 	 */
 	public void setThreshold(int threshold) {
 		this.threshold = threshold;

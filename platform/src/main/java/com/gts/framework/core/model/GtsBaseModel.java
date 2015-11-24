@@ -5,7 +5,7 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 
 /**
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: 基础model
  * @ClassName: UcfBaseModel
  * @author gaoxiang
  * @date 2015年11月17日 下午10:50:24
@@ -14,11 +14,6 @@ public abstract class GtsBaseModel implements Serializable {
 	
 	private static final long serialVersionUID = 8102332839758942806L;
 	
-	/**
-	 * @return
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	public String toString() {
 		try {
 			return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);

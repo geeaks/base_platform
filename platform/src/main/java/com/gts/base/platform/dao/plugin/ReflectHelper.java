@@ -3,19 +3,20 @@ package com.gts.base.platform.dao.plugin;
 import java.lang.reflect.Field;
 
 /**
- * @author Administrator
- *	反射工具
+ * @author Administrator 反射工具
  */
 public class ReflectHelper {
+	
 	/**
 	 * 获取obj对象fieldName的Field
+	 * 
 	 * @param obj
 	 * @param fieldName
 	 * @return
 	 */
 	public static Field getFieldByFieldName(Object obj, String fieldName) {
 		for (Class<?> superClass = obj.getClass(); superClass != Object.class; superClass = superClass
-				.getSuperclass()) {
+		        .getSuperclass()) {
 			try {
 				return superClass.getDeclaredField(fieldName);
 			} catch (NoSuchFieldException e) {
@@ -23,9 +24,10 @@ public class ReflectHelper {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * 获取obj对象fieldName的属性值
+	 * 
 	 * @param obj
 	 * @param fieldName
 	 * @return
@@ -35,11 +37,10 @@ public class ReflectHelper {
 	 * @throws IllegalAccessException
 	 */
 	public static Object getValueByFieldName(Object obj, String fieldName)
-			throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException {
+	        throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
 		Field field = getFieldByFieldName(obj, fieldName);
 		Object value = null;
-		if(field!=null){
+		if (field != null) {
 			if (field.isAccessible()) {
 				value = field.get(obj);
 			} else {
@@ -50,9 +51,10 @@ public class ReflectHelper {
 		}
 		return value;
 	}
-
+	
 	/**
 	 * 设置obj对象fieldName的属性值
+	 * 
 	 * @param obj
 	 * @param fieldName
 	 * @param value
@@ -61,10 +63,9 @@ public class ReflectHelper {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
-	public static void setValueByFieldName(Object obj, String fieldName,
-			Object value) throws SecurityException, NoSuchFieldException,
-			IllegalArgumentException, IllegalAccessException {
-		Field field = obj.getClass().getDeclaredField(fieldName);
+	public static void setValueByFieldName(Object obj, String fieldName, Object value)
+	        throws SecurityException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+		Field field = getFieldByFieldName(obj, fieldName);
 		if (field.isAccessible()) {
 			field.set(obj, value);
 		} else {

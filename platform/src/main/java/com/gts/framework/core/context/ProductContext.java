@@ -1,4 +1,4 @@
-package com.gts.framework.core.model;
+package com.gts.framework.core.context;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -9,9 +9,12 @@ import java.util.Map;
 import java.util.UUID;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.gts.framework.core.model.GtsBaseModel;
+import com.gts.framework.core.model.ProductEnvironment;
+import com.gts.framework.core.model.ProductUser;
 
 /**
- * @Description: TODO(这里用一句话描述这个类的作用)
+ * @Description: 产品上下文
  * @ClassName: ProductContext
  * @author gaoxiang
  * @date 2015年11月18日 下午9:48:03
@@ -58,7 +61,6 @@ public class ProductContext extends GtsBaseModel {
 	@Expose
 	private Date time;
 	
-	// ------- 运营信息
 	/** 运营活动ID */
 	@Expose
 	private String activityId;

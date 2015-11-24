@@ -88,7 +88,10 @@
 				<artifactId>aopalliance</artifactId>
 			</dependency>
 			<!-- spring end -->
-
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+			</dependency>
 			<!-- Other Web dependencies -->
 			<dependency>
 				<groupId>javax.servlet</groupId>

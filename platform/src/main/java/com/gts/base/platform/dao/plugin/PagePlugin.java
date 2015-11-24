@@ -37,7 +37,6 @@ import com.gts.base.platform.dao.plugin.util.MySql5PageHepler;
 import com.gts.base.platform.dao.plugin.util.OracleDialect;
 
 
-@SuppressWarnings("restriction")
 @Intercepts({@Signature(type=StatementHandler.class,method="prepare",args={Connection.class})})
 public class PagePlugin implements Interceptor {
 	
@@ -58,7 +57,7 @@ public class PagePlugin implements Interceptor {
 				//分页SQL<select>中parameterType属性对应的实体参数，即Mapper接口中执行分页方法的参数,该参数不得为空
 				Object parameterObject = boundSql.getParameterObject();
 				if(parameterObject==null){
-					throw new NullPointerException("parameterObject尚未实例化！");
+					logger.warn("parameterObject未实例化，不会进行分页查询");
 				}else{
 					Dialect.Type databaseType = Dialect.Type.valueOf(dialect.toUpperCase());
 					if(databaseType == null) throw new RuntimeException("the value of the dialect property in configuration is not defined : " + dialect);

@@ -5,6 +5,12 @@ import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
 
+/**
+ * @Description: 基础数据访问功能
+ * @ClassName: BaseDao
+ * @author gaoxiang
+ * @date 2015年11月25日 上午12:04:24
+ */ 
 public class BaseDao extends SqlSessionDaoSupport {
 
 	@Autowired
@@ -26,8 +32,8 @@ public class BaseDao extends SqlSessionDaoSupport {
 	 * @param statementName SQL语句的ID
 	 * @param object 参数
 	 */
-	public void update(String statementName, Object object) {
-		getSqlSession().update(statementName, object);
+	public int update(String statementName, Object object) {
+		return getSqlSession().update(statementName, object);
 	}
 
 	/**

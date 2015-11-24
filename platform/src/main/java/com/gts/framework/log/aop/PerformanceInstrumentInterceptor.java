@@ -14,12 +14,9 @@ public class PerformanceInstrumentInterceptor extends BaseInterceptor {
 	
 	/**
 	 * 判断方法调用的时间是否超过阈值，如果是，则打印性能日志.
-	 * 
-	 * @see org.aopalliance.intercept.MethodInterceptor#invoke(org.aopalliance.intercept.MethodInvocation)
 	 */
 	@Override
 	public Object bizInvoke(MethodInvocation invocation) throws Throwable {
-		
 		StringBuilder builder = new StringBuilder(64);
 		builder.append("Invoking method: ");
 		builder.append(invocation.getMethod().getDeclaringClass().getName());
@@ -30,7 +27,6 @@ public class PerformanceInstrumentInterceptor extends BaseInterceptor {
 			return invocation.proceed();
 		} finally {
 			Profiler.release();
-			
 		}
 	}
 }

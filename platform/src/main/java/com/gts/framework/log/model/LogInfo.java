@@ -2,8 +2,8 @@ package com.gts.framework.log.model;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.StopWatch;
-import com.gts.framework.core.model.ProductContext;
-import com.gts.framework.core.model.ProductContextHolder;
+import com.gts.framework.core.context.ProductContext;
+import com.gts.framework.core.context.ProductContextHolder;
 import com.gts.framework.core.model.GtsBaseModel;
 import com.gts.framework.log.enums.LoggerLevel;
 
@@ -70,8 +70,7 @@ public abstract class LogInfo extends GtsBaseModel {
 	}
 	
 	/**
-	 * @param interceptorMethod
-	 *            The interceptorMethod to set.
+	 * @param interceptorMethod The interceptorMethod to set.
 	 */
 	public void setInterceptorMethod(String interceptorMethod) {
 		this.interceptorMethod = interceptorMethod;
@@ -107,17 +106,10 @@ public abstract class LogInfo extends GtsBaseModel {
 		this.loggerLevel = loggerLevel;
 	}
 	
-	/**
-	 * @return Returns the logFileName.
-	 */
 	public String getLogFileName() {
 		return logFileName;
 	}
 	
-	/**
-	 * @param logFileName
-	 *            The logFileName to set.
-	 */
 	public void setLogFileName(String logFileName) {
 		this.logFileName = logFileName;
 	}
@@ -132,13 +124,11 @@ public abstract class LogInfo extends GtsBaseModel {
 	
 	/**
 	 * 生成日志信息 各业务自己负责自己的日志信息
-	 * 
 	 */
 	public abstract String toLogString();
 	
 	/**
 	 * 获取环境数据
-	 * 
 	 * @return
 	 */
 	protected String getEnvironmentInfo() {
@@ -147,8 +137,8 @@ public abstract class LogInfo extends GtsBaseModel {
 		/**
 		 * logId[(客户端IP,服务端IP)(SessionId)(referer)]
 		 */
-		sb.append("[(").append(StringUtils.trimToEmpty(productContext.getEnvironment().getClientIp())).append(",")// 客户端IP
-		        .append(StringUtils.trimToEmpty(productContext.getEnvironment().getServerIp())).append(")");// 服务端IP
+		sb.append("[(").append(StringUtils.trimToEmpty(productContext.getEnvironment().getClientIp())).append(",");// 客户端IP
+		sb.append(StringUtils.trimToEmpty(productContext.getEnvironment().getServerIp())).append(")");// 服务端IP
 		sb.append("(").append(StringUtils.trimToEmpty(productContext.getEnvironment().getSessionId())).append(")");// 用户会话
 		sb.append("(").append(StringUtils.trimToEmpty(productContext.getReferer())).append(")]-");// referer
 		return sb.toString();

@@ -10,7 +10,6 @@ import com.google.gson.annotations.Expose;
  */ 
 public class ProductEnvironment extends GtsBaseModel {
 	
-	/** serialVersionUID */
 	private static final long serialVersionUID = -4693571050861188847L;
 	
 	/** 客户端IP */
@@ -81,8 +80,7 @@ public class ProductEnvironment extends GtsBaseModel {
 	}
 	
 	/**
-	 * @param clientIp
-	 *            The clientIp to set.
+	 * @param clientIp The clientIp to set.
 	 */
 	public void setClientIp(String clientIp) {
 		this.clientIp = clientIp;
@@ -96,8 +94,7 @@ public class ProductEnvironment extends GtsBaseModel {
 	}
 	
 	/**
-	 * @param serverIp
-	 *            The serverIp to set.
+	 * @param serverIp The serverIp to set.
 	 */
 	public void setServerIp(String serverIp) {
 		this.serverIp = serverIp;
@@ -111,8 +108,7 @@ public class ProductEnvironment extends GtsBaseModel {
 	}
 	
 	/**
-	 * @param serverName
-	 *            The serverName to set.
+	 * @param serverName The serverName to set.
 	 */
 	public void setServerName(String serverName) {
 		this.serverName = serverName;
