@@ -32,7 +32,12 @@
 		</layout>
 	</appender> -->
 	<!-- [公共业务日志] -->
-	<logger name="com.gts.base.platform" additivity="false">
+	<logger name="com.gts" additivity="false">
+		<level value="DEBUG" />
+		<appender-ref ref="STDOUT-APPENDER" />
+	</logger>
+	
+	<logger name="DEFAULT.DIG" additivity="false">
 		<level value="DEBUG" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</logger>
