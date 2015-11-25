@@ -11,17 +11,17 @@ import com.gts.base.platform.dao.base.BaseEntity;
  */
 public class UserLoginInfo extends BaseEntity {
 	
-	private String id;
+	private Integer id;
 	
 	/**
 	 * @Fields loginId : 登录名
 	 */
-	private String loginId;
+	private Integer loginId;
 	
 	/**
 	 * @Fields userId : 用户ID
 	 */
-	private String userId;
+	private Integer userId;
 	
 	/**
 	 * @Fields loginType : 登录类型
@@ -43,27 +43,27 @@ public class UserLoginInfo extends BaseEntity {
 	 */
 	private Date lastLoginTime;
 	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	public String getLoginId() {
+	public Integer getLoginId() {
 		return loginId;
 	}
 	
-	public void setLoginId(String loginId) {
+	public void setLoginId(Integer loginId) {
 		this.loginId = loginId;
 	}
 	
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 	
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	

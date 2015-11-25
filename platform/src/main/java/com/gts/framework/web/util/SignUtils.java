@@ -134,46 +134,4 @@ public class SignUtils {
 		return new String(decryptData);
 	}
 	
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static void main(String[] args) {
-		// String key = "6b880312f5f90eb2272369eccbec4e97";
-		// Map<String, String> m = new HashMap();
-		// try {
-		//
-		// m.put("t", "");
-		// System.out.println("key : [" + key + "],sign :["
-		// + SignUtils.createSign(key, "sign", m, CodeType.AES) + "]");
-		// } catch (Exception e) {
-		// // TODO Auto-generated catch block
-		// e.printStackTrace();
-		// }
-		// try {
-		// // 测试String 逻辑
-		// String sKey = AESCoder.createKey();
-		// String sData = "加密我---------------------------------";
-		// System.out.println("Key:" + sKey);
-		// System.out.println("加密前数据: string:" + sData);
-		// String eData = SignUtils.encode(sKey, sData, CodeType.AES);
-		// System.out.println("加密后数据: String:" + eData);
-		// System.out.println("解密后数据: string:" + SignUtils.decodeByAes(sKey, eData));
-		// } catch (Exception e) {
-		// // TODO: handle exception
-		// }
-		
-		// try {
-		// System.out.println(HttpUtils.doGetBySign("https://github.com/","12345678","sign",
-		// "UTF-8",CodeType.MD5,false));
-		// System.out.println(HttpUtils.doPost("http://www.baidu.com", "", "UTF-8"));
-		// } catch (Exception e) {
-		// System.out.print(e.getMessage());
-		// }
-		
-		try {
-			for (int i = 0; i < 100; i++) {
-				System.out.println(AESCoder.createKey());
-			}
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-	}
 }

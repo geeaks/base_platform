@@ -13,12 +13,12 @@ public class Student extends BaseEntity {
 	/**
 	 * @Fields studentId : 学生ID
 	 */
-	private String studentId;
+	private Integer studentId;
 	
 	/**
 	 * @Fields userId : 用户ID
 	 */
-	private String userId;
+	private Integer userId;
 	
 	/**
 	 * @Fields school : 学校
@@ -50,19 +50,19 @@ public class Student extends BaseEntity {
 	 */
 	private String level;
 	
-	public String getStudentId() {
+	public Integer getStudentId() {
 		return studentId;
 	}
 	
-	public void setStudentId(String studentId) {
+	public void setStudentId(Integer studentId) {
 		this.studentId = studentId;
 	}
 	
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 	
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	

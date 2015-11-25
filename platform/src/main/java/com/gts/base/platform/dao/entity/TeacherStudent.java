@@ -11,39 +11,39 @@ public class TeacherStudent {
 	/**
 	 * @Fields id : 主键
 	 */
-	private String id;
+	private Integer id;
 	
 	/**
 	 * @Fields teacherId : 教师ID
 	 */
-	private String teacherId;
+	private Integer teacherId;
 	
 	/**
 	 * @Fields studentId : 学生ID
 	 */
-	private String studentId;
+	private Integer studentId;
 	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	public String getTeacherId() {
+	public Integer getTeacherId() {
 		return teacherId;
 	}
 	
-	public void setTeacherId(String teacherId) {
+	public void setTeacherId(Integer teacherId) {
 		this.teacherId = teacherId;
 	}
 	
-	public String getStudentId() {
+	public Integer getStudentId() {
 		return studentId;
 	}
 	
-	public void setStudentId(String studentId) {
+	public void setStudentId(Integer studentId) {
 		this.studentId = studentId;
 	}
 	

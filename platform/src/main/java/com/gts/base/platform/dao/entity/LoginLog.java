@@ -14,12 +14,12 @@ public class LoginLog extends BaseEntity {
 	/**
 	 * @Fields logId : 日志信息 主键
 	 */
-	private String logId;
+	private Integer logId;
 	
 	/**
 	 * @Fields userId : 用户ID
 	 */
-	private String userId;
+	private Integer userId;
 	
 	/**
 	 * @Fields loginTime : 登录时间
@@ -36,19 +36,19 @@ public class LoginLog extends BaseEntity {
 	 */
 	private String loginIP;
 	
-	public String getLogId() {
+	public Integer getLogId() {
 		return logId;
 	}
 	
-	public void setLogId(String logId) {
+	public void setLogId(Integer logId) {
 		this.logId = logId;
 	}
 	
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 	
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	

@@ -11,44 +11,44 @@ public class GenearchStudent {
 	/**
 	 * @Fields id : 主键
 	 */
-	private String id;
+	private Integer id;
 	
 	/**
 	 * @Fields teacherId : 家长ID
 	 */
-	private String genearchId;
+	private Integer genearchId;
 	
 	/**
 	 * @Fields studentId : 学生ID
 	 */
-	private String studentId;
+	private Integer studentId;
 	
 	/**
 	 * @Fields valid : 是否可用
 	 */
 	private String valid;
 	
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 	
-	public void setId(String id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 	
-	public String getGenearchId() {
+	public Integer getGenearchId() {
 		return genearchId;
 	}
 	
-	public void setGenearchId(String genearchId) {
+	public void setGenearchId(Integer genearchId) {
 		this.genearchId = genearchId;
 	}
 	
-	public String getStudentId() {
+	public Integer getStudentId() {
 		return studentId;
 	}
 	
-	public void setStudentId(String studentId) {
+	public void setStudentId(Integer studentId) {
 		this.studentId = studentId;
 	}
 	

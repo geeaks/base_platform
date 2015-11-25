@@ -13,12 +13,12 @@ public class User extends BaseEntity {
 	/**
 	 * @Fields userId : 用户ID
 	 */
-	private String userId;
+	private Integer userId;
 	
 	/**
 	 * @Fields roleId : 角色ID
 	 */
-	private String roleId;
+	private Integer roleId;
 	
 	/**
 	 * @Fields userType : 用户类型
@@ -28,7 +28,7 @@ public class User extends BaseEntity {
 	/**
 	 * @Fields customerId : 客户ID
 	 */
-	private String customerId;
+	private Integer customerId;
 	
 	/**
 	 * @Fields certType : 证件类型
@@ -38,7 +38,7 @@ public class User extends BaseEntity {
 	/**
 	 * @Fields certNO : 证件号
 	 */
-	private String certNO;
+	private String certNo;
 	
 	/**
 	 * @Fields name : 用户姓名
@@ -53,7 +53,7 @@ public class User extends BaseEntity {
 	/**
 	 * @Fields age : 年龄
 	 */
-	private String age;
+	private Integer age;
 	
 	/**
 	 * @Fields gender : 性别
@@ -105,22 +105,6 @@ public class User extends BaseEntity {
 	 */
 	private String securityCode;
 	
-	public String getUserId() {
-		return userId;
-	}
-	
-	public void setUserId(String userId) {
-		this.userId = userId;
-	}
-	
-	public String getRoleId() {
-		return roleId;
-	}
-	
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
-	}
-	
 	public String getUserType() {
 		return userType;
 	}
@@ -129,11 +113,27 @@ public class User extends BaseEntity {
 		this.userType = userType;
 	}
 	
-	public String getCustomerId() {
+	public Integer getUserId() {
+		return userId;
+	}
+	
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+	
+	public Integer getRoleId() {
+		return roleId;
+	}
+	
+	public void setRoleId(Integer roleId) {
+		this.roleId = roleId;
+	}
+	
+	public Integer getCustomerId() {
 		return customerId;
 	}
 	
-	public void setCustomerId(String customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 	
@@ -145,12 +145,12 @@ public class User extends BaseEntity {
 		this.certType = certType;
 	}
 	
-	public String getCertNO() {
-		return certNO;
+	public String getCertNo() {
+		return certNo;
 	}
 	
-	public void setCertNO(String certNO) {
-		this.certNO = certNO;
+	public void setCertNo(String certNo) {
+		this.certNo = certNo;
 	}
 	
 	public String getName() {
@@ -161,11 +161,11 @@ public class User extends BaseEntity {
 		this.name = name;
 	}
 	
-	public String getAge() {
+	public Integer getAge() {
 		return age;
 	}
 	
-	public void setAge(String age) {
+	public void setAge(Integer age) {
 		this.age = age;
 	}
 	

@@ -13,12 +13,12 @@ public class Comment extends BaseEntity {
 	/**
 	 * @Fields commentId : 评定ID
 	 */
-	private String commentId;
+	private Integer commentId;
 	
 	/**
 	 * @Fields studentId : 学生ID
 	 */
-	private String studentId;
+	private Integer studentId;
 	
 	/**
 	 * @Fields comment : 评语
@@ -26,7 +26,7 @@ public class Comment extends BaseEntity {
 	private String comment;
 	
 	/**
-	 * @Fields certNo : 评定人
+	 * @Fields commentPerson : 评定人
 	 */
 	private String commentPerson;
 	
@@ -35,19 +35,19 @@ public class Comment extends BaseEntity {
 	 */
 	private String gradeStage;
 	
-	public String getCommentId() {
+	public Integer getCommentId() {
 		return commentId;
 	}
 	
-	public void setCommentId(String commentId) {
+	public void setCommentId(Integer commentId) {
 		this.commentId = commentId;
 	}
 	
-	public String getStudentId() {
+	public Integer getStudentId() {
 		return studentId;
 	}
 	
-	public void setStudentId(String studentId) {
+	public void setStudentId(Integer studentId) {
 		this.studentId = studentId;
 	}
 	

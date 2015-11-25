@@ -13,26 +13,26 @@ public class Genearch extends BaseEntity {
 	/**
 	 * @Fields generachId : 家长ID
 	 */
-	private String generachId;
+	private Integer generachId;
 	
 	/**
 	 * @Fields userId : 用户ID
 	 */
-	private String userId;
+	private Integer userId;
 	
-	public String getGenerachId() {
+	public Integer getGenerachId() {
 		return generachId;
 	}
 	
-	public void setGenerachId(String generachId) {
+	public void setGenerachId(Integer generachId) {
 		this.generachId = generachId;
 	}
 	
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 	
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	

@@ -4,23 +4,24 @@ import java.util.List;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
-import com.gts.base.platform.dao.CommentDao;
-import com.gts.base.platform.dao.entity.Comment;
+import com.gts.base.platform.dao.UserDao;
+import com.gts.base.platform.dao.entity.User;
 import com.gts.base.platform.dao.plugin.Page;
 import com.gts.base.platform.test.BaseTest;
 
-public class CommentDaoTest extends BaseTest {
+public class UserDaoTest extends BaseTest {
 	
 	@Autowired
-	private CommentDao commentDao;
+	private UserDao userDao;
 	
 	@Test
-	public void insertComment(){
-		Comment comment = new Comment();
-		comment.setCommentId(1);
-		comment.setComment("SDD");
+	
+	public void insertUser(){
+		User user = new User();
+		user.setUserId(1);
 		try {
-			int rows = commentDao.insertComment(comment);
+			int rows = userDao.insertUser(user);
+			System.err.println(user.getUserId());
 			System.err.println(rows);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -28,18 +29,17 @@ public class CommentDaoTest extends BaseTest {
 	}
 	 
 	@Test
-	public void listPageComment(){
+	public void listPageUser(){
 		Page page = new Page();
 		
 		page.setCurrentPage(1);
 		page.setShowCount(3);
 		
-		Comment comment = new Comment();
-		comment.setComment("SDD");
-		comment.setPage(page);
+		User user = new User();
+		user.setPage(page);
 		try {
-			List<Comment> list = commentDao.listPageComment(comment);
-			System.err.println(JSON.toJSONString(comment.getPage()));
+			List<User> list = userDao.listPageUser(user);
+			System.err.println(JSON.toJSONString(user.getPage()));
 			System.err.println(JSON.toJSONString(list));
 		} catch (Exception e) {
 			e.printStackTrace();

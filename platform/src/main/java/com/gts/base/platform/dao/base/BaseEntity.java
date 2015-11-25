@@ -19,6 +19,16 @@ public class BaseEntity {
 	private Date gmtCreate;
 	
 	/**
+	 * @Fields startCreateDate : 开始创建时间
+	 */
+	private Date startCreateDate;
+	
+	/**
+	 * @Fields endCreateDate : 最后创建时间
+	 */
+	private Date endCreateDate;
+	
+	/**
 	 * @Fields gmtModify : 修改时间
 	 */
 	private Date gmtModify;
@@ -47,6 +57,22 @@ public class BaseEntity {
 	
 	public void setPage(Page page) {
 		this.page = page;
+	}
+	
+	public Date getStartCreateDate() {
+		return startCreateDate;
+	}
+	
+	public void setStartCreateDate(Date startCreateDate) {
+		this.startCreateDate = startCreateDate;
+	}
+	
+	public Date getEndCreateDate() {
+		return endCreateDate;
+	}
+	
+	public void setEndCreateDate(Date endCreateDate) {
+		this.endCreateDate = endCreateDate;
 	}
 	
 	public String toString() {

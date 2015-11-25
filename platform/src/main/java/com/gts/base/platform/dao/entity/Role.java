@@ -13,7 +13,7 @@ public class Role extends BaseEntity {
 	/**
 	 * @Fields roleId : 角色信息 主键
 	 */
-	private String roleId;
+	private Integer roleId;
 	
 	/**
 	 * @Fields roleName : 角色名称
@@ -25,11 +25,11 @@ public class Role extends BaseEntity {
 	 */
 	private String privilege;
 	
-	public String getRoleId() {
+	public Integer getRoleId() {
 		return roleId;
 	}
 	
-	public void setRoleId(String roleId) {
+	public void setRoleId(Integer roleId) {
 		this.roleId = roleId;
 	}
 	

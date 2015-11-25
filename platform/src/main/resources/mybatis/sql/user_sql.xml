@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.user">
+	
+	<resultMap id="userMap" type="com.gts.base.platform.dao.entity.User" >
+		<id property="userId" column="USER_ID" jdbcType="INTEGER" />
+		<result property="userType" column="USER_TYPE" jdbcType="VARCHAR" />
+		<result property="roleId" column="ROLE_ID" jdbcType="INTEGER" />
+		<result property="customerId" column="CUSTOMER_ID" jdbcType="INTEGER" />
+		<result property="certType" column="CERT_TYPE" jdbcType="VARCHAR" />
+		<result property="certNo" column="CERT_NO" jdbcType="VARCHAR" />
+		<result property="name" column="NAME" jdbcType="VARCHAR" />
+		<result property="nickName" column="NICK_NAME" jdbcType="VARCHAR" />
+		<result property="age" column="AGE" jdbcType="INTEGER" />
+		<result property="gender" column="GENDER" jdbcType="VARCHAR" />
+		<result property="email" column="EMAIL" jdbcType="VARCHAR" />
+		<result property="phone" column="PHONE" jdbcType="VARCHAR" />
+		<result property="mobile" column="MOBILE" jdbcType="VARCHAR" />
+		<result property="job" column="JOB" jdbcType="VARCHAR" />
+		<result property="province" column="PROVINCE" jdbcType="VARCHAR" />
+		<result property="city" column="CITY" jdbcType="VARCHAR" />
+		<result property="area" column="AREA" jdbcType="VARCHAR" />
+		<result property="address" column="ADRESS" jdbcType="VARCHAR" />
+		<result property="securityCode" column="SERCURITY_CODE" jdbcType="VARCHAR" />
+		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
+		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
+		<result property="startCreateDate" column="startCreateDate" jdbcType="TIMESTAMP" />
+		<result property="endCreateDate" column="endCreateDate" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="user_column">
+		ROLE_ID,USER_TYPE,CUSTOMER_ID,CERT_TYPE,CERT_NO,NAME,NICK_NAME,AGE,GENDER,EMAIL,PHONE,MOBILE,
+		JOB,PROVINCE,CITY,AREA,ADRESS,SERCURITY_CODE,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="userId != null">
+			AND USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="userType != null">
+			AND USER_TYPE=#{userType,jdbcType=VARCHAR} 
+		</if>
+		<if test="roleId != null">
+			AND ROLE_ID=#{roleId,jdbcType=INTEGER} 
+		</if>
+		<if test="customerId != null">
+			AND CUSTOMER_ID=#{customerId,jdbcType=INTEGER} 
+		</if>
+		<if test="certType != null">
+			AND CERT_TYPE=#{certType,jdbcType=VARCHAR} 
+		</if>
+		<if test="certNo != null">
+			AND CERT_NO=#{certNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="name != null">
+			AND NAME=#{name,jdbcType=VARCHAR} 
+		</if>
+		<if test="nickName != null">
+			AND NICK_NAME=#{nickName,jdbcType=VARCHAR} 
+		</if>
+		<if test="age != null">
+			AND AGE=#{age,jdbcType=VARCHAR} 
+		</if>
+		<if test="gender != null">
+			AND GENDER=#{gender,jdbcType=VARCHAR} 
+		</if>
+		<if test="email != null">
+			AND EMAIL=#{email,jdbcType=VARCHAR} 
+		</if>
+		<if test="phone != null">
+			AND PHONE=#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="mobile != null">
+			AND MOBILE=#{mobile,jdbcType=VARCHAR} 
+		</if>
+		<if test="job != null">
+			AND JOB=#{job,jdbcType=VARCHAR} 
+		</if>
+		<if test="province != null">
+			AND PROVINCE=#{province,jdbcType=VARCHAR} 
+		</if>
+		<if test="city != null">
+			AND CITY=#{city,jdbcType=VARCHAR} 
+		</if>
+		<if test="area != null">
+			AND AREA=#{area,jdbcType=VARCHAR} 
+		</if>
+		<if test="address != null">
+			AND ADRESS=#{address,jdbcType=VARCHAR} 
+		</if>
+		<if test="securityCode != null">
+			AND SERCURITY_CODE=#{securityCode,jdbcType=VARCHAR} 
+		</if>
+		<if test="startCreateDate != null">
+			AND GMT_CREATE &gt; #{startCreateDate,jdbcType=TIMESTAMP} 
+		</if>
+		<if test="endCreateDate != null">
+			AND GMT_CREATE &lt; #{endCreateDate,jdbcType=TIMESTAMP} 
+		</if>
+	</sql>
+	
+	<insert id="insertUser" parameterType="com.gts.base.platform.dao.entity.User" keyProperty="userId" useGeneratedKeys="true">
+		INSERT INTO GTS_USER (<include refid="user_column" />) VALUES 
+		<![CDATA[
+		(#{userType,jdbcType=VARCHAR},#{roleId,jdbcType=INTEGER},#{customerId,jdbcType=INTEGER},#{certType,jdbcType=VARCHAR},#{certNo,jdbcType=VARCHAR},
+		#{name,jdbcType=VARCHAR},#{nickName,jdbcType=VARCHAR},#{age,jdbcType=INTEGER},#{gender,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},
+		#{phone,jdbcType=VARCHAR},#{mobile,jdbcType=VARCHAR},#{job,jdbcType=VARCHAR},#{province,jdbcType=VARCHAR},#{city,jdbcType=VARCHAR},
+		#{area,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{securityCode,jdbcType=VARCHAR},now(),now())
+		]]>
+	</insert>
+	
+	<update id="updateUser" parameterType="com.gts.base.platform.dao.entity.User">
+		UPDATE GTS_USER SET GMT_MODIFY=now() 
+		<if test="userType != null">
+			AND USER_TYPE=#{userType,jdbcType=VARCHAR} 
+		</if>
+		<if test="roleId != null">
+			,ROLE_ID=#{roleId,jdbcType=INTEGER} 
+		</if>
+		<if test="customerId != null">
+			,CUSTOMER_ID=#{customerId,jdbcType=INTEGER} 
+		</if>
+		<if test="certType != null">
+			,CERT_TYPE=#{certType,jdbcType=VARCHAR} 
+		</if>
+		<if test="certNo != null">
+			,CERT_NO=#{certNo,jdbcType=VARCHAR} 
+		</if>
+		<if test="name != null">
+			,NAME=#{name,jdbcType=VARCHAR} 
+		</if>
+		<if test="nickName != null">
+			,NICK_NAME=#{nickName,jdbcType=VARCHAR} 
+		</if>
+		<if test="age != null">
+			,AGE=#{age,jdbcType=VARCHAR} 
+		</if>
+		<if test="gender != null">
+			,GENDER=#{gender,jdbcType=VARCHAR} 
+		</if>
+		<if test="email != null">
+			,EMAIL=#{email,jdbcType=VARCHAR} 
+		</if>
+		<if test="phone != null">
+			,PHONE=#{phone,jdbcType=VARCHAR} 
+		</if>
+		<if test="mobile != null">
+			,MOBILE=#{mobile,jdbcType=VARCHAR} 
+		</if>
+		<if test="job != null">
+			,JOB=#{job,jdbcType=VARCHAR} 
+		</if>
+		<if test="province != null">
+			,PROVINCE=#{province,jdbcType=VARCHAR} 
+		</if>
+		<if test="city != null">
+			,CITY=#{city,jdbcType=VARCHAR} 
+		</if>
+		<if test="area != null">
+			,AREA=#{area,jdbcType=VARCHAR} 
+		</if>
+		<if test="address != null">
+			,ADRESS=#{address,jdbcType=VARCHAR} 
+		</if>
+		<if test="securityCode != null">
+			,SERCURITY_CODE=#{securityCode,jdbcType=VARCHAR} 
+		</if>
+		WHERE USER_ID = #{userId}
+	</update>
+	
+	<select id="queryUser" resultMap="userMap" parameterType="com.gts.base.platform.dao.entity.User">
+		SELECT USER_ID,<include refid="user_column" /> FROM GTS_USER 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageUser" resultMap="userMap" parameterType="com.gts.base.platform.dao.entity.User" flushCache="true" >
+		SELECT USER_ID,<include refid="user_column" /> FROM GTS_USER 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getUser" resultMap="userMap" parameterType="com.gts.base.platform.dao.entity.User" >
+		SELECT USER_ID,<include refid="user_column" /> FROM GTS_USER WHERE USER_ID = #{userId}
+	</select>
+	
+</mapper>

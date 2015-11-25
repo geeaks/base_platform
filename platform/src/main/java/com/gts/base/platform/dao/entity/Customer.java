@@ -13,7 +13,7 @@ public class Customer extends BaseEntity {
 	/**
 	 * @Fields customerId : 客户ID
 	 */
-	private String customerId;
+	private Integer customerId;
 	
 	/**
 	 * @Fields name : 客户姓名
@@ -31,12 +31,12 @@ public class Customer extends BaseEntity {
 	private String certNo;
 
 	
-	public String getCustomerId() {
+	public Integer getCustomerId() {
 		return customerId;
 	}
 
 	
-	public void setCustomerId(String customerId) {
+	public void setCustomerId(Integer customerId) {
 		this.customerId = customerId;
 	}
 

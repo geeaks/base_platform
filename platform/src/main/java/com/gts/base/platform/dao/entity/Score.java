@@ -13,17 +13,17 @@ public class Score extends BaseEntity {
 	/**
 	 * @Fields scoreId : 成绩信息 主键
 	 */
-	private String scoreId;
+	private Integer scoreId;
 	
 	/**
 	 * @Fields studentId : 学生ID
 	 */
-	private String studentId;
+	private Integer studentId;
 	
 	/**
 	 * @Fields teacherId : 评分老师ID
 	 */
-	private String teacherId;
+	private Integer teacherId;
 	
 	/**
 	 * @Fields subject : 科目
@@ -40,27 +40,27 @@ public class Score extends BaseEntity {
 	 */
 	private String gradeStage;
 	
-	public String getScoreId() {
+	public Integer getScoreId() {
 		return scoreId;
 	}
 	
-	public void setScoreId(String scoreId) {
+	public void setScoreId(Integer scoreId) {
 		this.scoreId = scoreId;
 	}
 	
-	public String getStudentId() {
+	public Integer getStudentId() {
 		return studentId;
 	}
 	
-	public void setStudentId(String studentId) {
+	public void setStudentId(Integer studentId) {
 		this.studentId = studentId;
 	}
 	
-	public String getTeacherId() {
+	public Integer getTeacherId() {
 		return teacherId;
 	}
 	
-	public void setTeacherId(String teacherId) {
+	public void setTeacherId(Integer teacherId) {
 		this.teacherId = teacherId;
 	}
 	
