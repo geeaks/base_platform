@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.gts.base.platform.service.CommentService;
 
 @Controller
-public class TestController extends BaseController {
+public class TestController {
 	
 	public static Logger LOGGER = Logger.getLogger(TestController.class);
 	
