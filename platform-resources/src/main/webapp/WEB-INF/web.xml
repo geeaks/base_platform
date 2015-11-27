@@ -94,11 +94,11 @@
 
 	<error-page>
 		<exception-type>java.lang.Exception</exception-type>
-		<location>/WEB-INF/views/jsp/common/500.jsp</location>
+		<location>/WEB-INF/views/errorpage/500.jsp</location>
 	</error-page>
 	<error-page>
 		<error-code>404</error-code>
-		<location>/WEB-INF/views/jsp/common/404.jsp</location>
+		<location>/WEB-INF/views/errorpage/404.jsp</location>
 	</error-page>
 	
 	<session-config>

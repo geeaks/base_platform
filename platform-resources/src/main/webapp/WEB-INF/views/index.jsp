@@ -2,53 +2,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
 <jsp:include page="common/common-header.jsp" />
+<script src="${basePath}/js/index.js" ></script>
 <title>首页</title>
-<script type="text/javascript">
-	
-	function reloadImgCode(){
-		document.getElementById("imgCode").src=document.getElementById("imgCode").src + "?nocache="+new Date().getTime();
-	}
-</script>
 </head>
 <body style="margin-top:80px;">
+<!-- 顶部导航栏 -->
+<jsp:include page="common/common-topnav.jsp" />
 	<div class="container">
 	<div class="row clearfix">
 		<div class="col-md-12 column">
-			<!-- 顶端导航栏目 -->
-			<nav class="navbar navbar-default navbar-inverse navbar-fixed-top" role="navigation">
-				<div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-					</button>
-					<a class="navbar-brand" href="#">GTS Platform</a>
-				</div>
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav navbar-right" style="margin-right: 100px;">
-						<li>
-							<a href="#">登录</a>
-						</li>
-						<li>
-							<a href="#">注册</a>
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-								客户服务<strong class="caret"></strong>
-							</a>
-							<ul class="dropdown-menu">
-								<li><a href="#">服务大厅</a></li>
-								<li class="divider"></li>
-								<li><a href="#">自助服务</a></li>
-								<li class="divider"></li>
-								<li><a href="#">提建议</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div>
-			</nav>
-			
 			<!-- 导航栏 -->
 			<nav class="navbar navbar-default" role="navigation">
 				<div class="navbar-header">
@@ -148,7 +111,7 @@
 						<div class="form-group">
 							<div class="col-sm-10">
 								<div class="checkbox">
-									<label><input type="checkbox" />记住用户名</label>
+									<label><input id="rememberMe" type="checkbox" />记住用户名</label>
 								</div>
 							</div>
 						</div>
@@ -186,29 +149,7 @@
 			<p><a class="btn" href="#">View details »</a></p>
 		</div>
 	</div>
-	<div class="row clearfix">
-		<div class="col-md-12 column">
-			<nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
-				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav" style="position:absolute;left:39%;">
-						<li>
-							<a href="#">关于GTS</a>
-						</li>
-						<li>
-							<a href="#">官方博客</a>
-						</li>
-						<li>
-							<a href="#">诚聘英才</a>
-						</li>
-						<li>
-							<a href="#">联系我们</a>
-						</li>
-					</ul>
-				</div>
-				
-			</nav>
-		</div>
-	</div>
 </div>
+<jsp:include page="common/common-footnav.jsp" />
 </body>
 </html>
