@@ -29,13 +29,13 @@ public class LoginController extends BaseController {
 	public static Logger LOGGER = Logger.getLogger(LoginController.class);
 	
 	@RequestMapping("")
-	public String index(HttpServletRequest request, HttpServletResponse response, Model model){
+	public String index(Model model){
+		
 		return "index";
 	}
 	
 	@RequestMapping("/login")
-	@ResponseBody
-	public Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, Model model){
+	public @ResponseBody Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, Model model){
 		Map<String, Object> map = new HashMap<String,Object>();
 		String userName = request.getParameter("userName");
 		String password = request.getParameter("password");
