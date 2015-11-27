@@ -2,6 +2,7 @@ package com.gts.base.platform.service;
 
 import java.util.List;
 import com.gts.base.platform.dao.entity.User;
+import com.gts.base.platform.service.bo.UserBo;
 
 /**
  * @Description: 用户信息 业务接口
@@ -11,14 +12,14 @@ import com.gts.base.platform.dao.entity.User;
  */ 
 public interface UserService {
 	
-	public int insertUser(User user) throws Exception;
+	public int insertUser(User user);
 	
-	public int updateUser(User user) throws Exception;
+	public int updateUser(User user);
 	
-	public List<User> listPageUser(User user) throws Exception;
+	public List<UserBo> listPageUser(User user);
 	
-	public List<User> queryUser(User user) throws Exception;
+	public List<UserBo> queryUser(User user);
 	
-	public User getUser(String userId) throws Exception;
+	public UserBo getUser(String userId);
 	
 }

@@ -15,7 +15,7 @@ public class IdentifyingCode {
 	/**
 	 * @Fields height : 验证码图片的高度
 	 */ 
-	private int height = 34;
+	private int height = 28;
 	
 	/**
 	 * @Fields random : 验证码的数量

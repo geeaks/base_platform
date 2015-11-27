@@ -9,13 +9,11 @@ import org.apache.commons.lang.StringUtils;
 import com.gts.framework.core.context.ProductContextHolder;
 
 /**
- * @Title: HttpHeaderUtils.java
- * @Copyright: Copyright (c) 2011
- * @Description: 该类提供对Http Header的一些操作和访问 <br>
- * @Company: renren.com
- * @Created on 2012-10-22 下午2:54:05
- * @author 刘文涛 [wentao.liu@renren-inc.com]
- */
+ * @Description: 该类提供对Http Header的一些操作和访问
+ * @ClassName: HttpHeaderUtils
+ * @author gaoxiang
+ * @date 2015年11月28日 上午3:15:42
+ */ 
 public final class HttpHeaderUtils {
 	
 	private final static String HTT_REQUEST_COOKIE_THREAD_CACHE = "_http_request_cookie_thread_cache_";

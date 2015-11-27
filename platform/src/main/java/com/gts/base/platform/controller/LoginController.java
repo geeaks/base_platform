@@ -4,51 +4,98 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
-
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import com.google.common.collect.Maps;
+import com.gts.base.platform.service.LoginInfoService;
+import com.gts.base.platform.service.LoginLogService;
+import com.gts.base.platform.service.bo.LoginInfoBo;
+import com.gts.base.platform.service.bo.UserBo;
 import com.gts.base.platform.utils.IdentifyingCode;
 import com.gts.base.platform.utils.enums.EnumSessionKey;
+import com.gts.framework.web.util.HttpHeaderUtils;
 
 @Controller
 public class LoginController extends BaseController {
 	
 	public static Logger LOGGER = Logger.getLogger(LoginController.class);
 	
+	@Autowired
+	private LoginInfoService loginInfoService;
+	
+	@Autowired
+	private LoginLogService loginLogService;
+	
 	@RequestMapping("")
-	public String index(Model model){
-		
+	public String index(HttpSession session,Model model){
+		UserBo user = super.getUser(session);
+		if(user != null){
+			model.addAttribute("isLogin",true);
+			model.addAttribute("user",user);
+		}
 		return "index";
 	}
 	
 	@RequestMapping("/login")
-	public @ResponseBody Map<String, Object> login(HttpServletRequest request, HttpServletResponse response, Model model){
-		Map<String, Object> map = new HashMap<String,Object>();
-		String userName = request.getParameter("userName");
-		String password = request.getParameter("password");
-		if(StringUtils.isBlank(userName) || StringUtils.isBlank(password)){
-			map.put("success", false);
-			map.put("msg", "登录名或密码输入错误");
-			return map;
+	public String login(String loginId,String password,String checkCode,HttpSession session,HttpServletRequest request,Model model){
+		if(!verifyLogin(loginId,password,checkCode,session,model)){
+			return "index";
 		}
-		map.put("success", true);
-		map.put("msg", "登录成功，登录名:【"+userName+"】 登录密码:【"+password+"】");
-		return map;
+		//校验成功，记录登录日志
+		loginLogService.recordLoginLog(getLoginInfo(session).getUserId(),HttpHeaderUtils.getClientIP(request),"");
+		return "redirect:/home";
 	}
 	
+	/**
+	 * @Description: 登录校验
+	 * @param userName
+	 * @param password
+	 * @param checkCode
+	 * @return boolean 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月28日 上午3:04:25
+	 */
+	private boolean verifyLogin(String userName, String password, String checkCode,HttpSession session, Model model) {
+		//校验登录名和 登录密码
+		if(StringUtils.isBlank(userName) || StringUtils.isBlank(password)){
+			model.addAttribute("success", false);
+			model.addAttribute("msg", "登录名或密码输入错误");
+			return false;
+		}
+		//校验 图片验证码
+		Map<String, Object> result = verifyCheckCode(session,checkCode);
+		if(!(Boolean) result.get("success")){
+			model.addAttribute("success", false);
+			model.addAttribute("msg", result.get("msg"));
+			return false;
+		}
+		//校验用户是否存在
+		LoginInfoBo loginInfo = loginInfoService.getLoginInfoByLoginId(userName);
+		session.setAttribute(EnumSessionKey.LOGIN_INFO_KEY.getKey(), loginInfo);
+		if(loginInfo == null){
+			model.addAttribute("success", false);
+			model.addAttribute("msg", "用户不存在");
+			return false;
+		}
+		//校验登录密码是否正确
+		Map<String,Object> verifyPwdResult = loginInfoService.verifyLoginPassword(loginInfo.getLoginPassword(),password);
+		if(!(Boolean) verifyPwdResult.get("success")){
+			model.addAttribute("success", false);
+			model.addAttribute("msg", verifyPwdResult.get("msg"));
+			return false;
+		}
+		return true;
+	}
+
 	/**
 	 * @Description: 登出
 	 * @param session
@@ -110,24 +157,7 @@ public class LoginController extends BaseController {
 	 */
 	@RequestMapping(value = "/checkImgCode")
 	public @ResponseBody Map<String,Object> checkCode(HttpSession session, String checkCode) throws Exception {
-		Map<String,Object> map = Maps.newHashMap();
-		String idCode = (String) session.getAttribute(EnumSessionKey.IMG_CODE_KEY.getKey());
-		if (StringUtils.isNotBlank(checkCode)) {
-			if (idCode == null) {
-				map.put("success", false);
-				map.put("msg","验证码过期");
-			} else if (!idCode.equalsIgnoreCase(checkCode.trim())) {
-				map.put("success", false);
-				map.put("msg","请输入正确的验证码");
-			} else {
-				map.put("success", true);
-				map.put("msg","输入正确");
-			}
-		} else {
-			map.put("success", true);
-			map.put("msg","验证码不可为空");
-		}
-		return map;
+		return verifyCheckCode(session,checkCode);
 	}
 	
 }

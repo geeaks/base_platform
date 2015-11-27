@@ -9,7 +9,7 @@ import com.gts.base.platform.dao.base.BaseEntity;
  * @author gaoxiang
  * @date 2015年11月24日 下午11:00:24
  */
-public class UserLoginInfoBo extends BaseEntity {
+public class LoginInfoBo extends BaseEntity {
 	
 	private String id;
 	
@@ -21,7 +21,7 @@ public class UserLoginInfoBo extends BaseEntity {
 	/**
 	 * @Fields userId : 用户ID
 	 */
-	private String userId;
+	private Integer userId;
 	
 	/**
 	 * @Fields loginType : 登录类型
@@ -59,11 +59,11 @@ public class UserLoginInfoBo extends BaseEntity {
 		this.loginId = loginId;
 	}
 	
-	public String getUserId() {
+	public Integer getUserId() {
 		return userId;
 	}
 	
-	public void setUserId(String userId) {
+	public void setUserId(Integer userId) {
 		this.userId = userId;
 	}
 	

@@ -4,12 +4,12 @@
 	<div class="navbar-header">
 		<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 		</button>
-		<a class="navbar-brand" href="#">GTS Platform</a>
+		<a class="navbar-brand" href="${basePath}/">GTS Platform</a>
 	</div>
 	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		<ul class="nav navbar-nav navbar-right" style="margin-right: 100px;">
 			<li>
-				<a href="#">登录</a>
+				<a href="${basePath}/">登录</a>
 			</li>
 			<li>
 				<a href="#">注册</a>

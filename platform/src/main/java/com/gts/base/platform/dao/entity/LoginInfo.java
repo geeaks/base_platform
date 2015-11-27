@@ -9,7 +9,7 @@ import com.gts.base.platform.dao.base.BaseEntity;
  * @author gaoxiang
  * @date 2015年11月24日 下午11:00:24
  */
-public class UserLoginInfo extends BaseEntity {
+public class LoginInfo extends BaseEntity {
 	
 	private Integer id;
 	

@@ -10,12 +10,16 @@ import java.util.regex.Pattern;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
-
+import com.google.common.collect.Maps;
+import com.gts.base.platform.dao.entity.LoginInfo;
+import com.gts.base.platform.service.UserService;
+import com.gts.base.platform.service.bo.UserBo;
+import com.gts.base.platform.utils.enums.EnumSessionKey;
 import com.gts.framework.core.util.FtpHelper;
 import com.gts.framework.log.service.GtsLogger;
 import com.gts.framework.log.util.GtsLoggerFactory;
@@ -33,6 +37,9 @@ public class BaseController {
 	
 	@Autowired
 	public FtpHelper ftpHelper;
+	
+	@Autowired
+	public UserService userService;
 	
 	/**
 	 * @Description: 正则匹配
@@ -68,6 +75,28 @@ public class BaseController {
 	}
 	
 	/**
+	 * @Description: 获取用户信息
+	 * @param session
+	 * @return UserBo 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月28日 上午12:00:32
+	 */
+	public UserBo getUser(HttpSession session) {
+		return getSessionObject(session,EnumSessionKey.USER_KEY.getKey());
+	}
+	
+	/**
+	 * @Description: 获取用户登录信息
+	 * @param session
+	 * @return LoginInfo 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月28日 上午12:00:32
+	 */
+	public LoginInfo getLoginInfo(HttpSession session) {
+		return getSessionObject(session,EnumSessionKey.LOGIN_INFO_KEY.getKey());
+	}
+	
+	/**
 	 * @Description: 获取map里的某个对象
 	 * @param map 
 	 * @param key
@@ -84,6 +113,35 @@ public class BaseController {
 			LOGGER.error("类型转换异常",e);
 		}
 		return t;
+	}
+	
+	/**
+	 * @Description: 校验图片验证码
+	 * @param session
+	 * @param checkCode
+	 * @return Map<String,Object> 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月28日 上午1:28:20
+	 */
+	public Map<String,Object> verifyCheckCode(HttpSession session,String checkCode){
+		Map<String,Object> map = Maps.newHashMap();
+		String idCode = (String) session.getAttribute(EnumSessionKey.IMG_CODE_KEY.getKey());
+		if (StringUtils.isNotBlank(checkCode)) {
+			if (idCode == null) {
+				map.put("success", false);
+				map.put("msg","验证码过期");
+			} else if (!idCode.equalsIgnoreCase(checkCode.trim())) {
+				map.put("success", false);
+				map.put("msg","请输入正确的验证码");
+			} else {
+				map.put("success", true);
+				map.put("msg","输入正确");
+			}
+		} else {
+			map.put("success", true);
+			map.put("msg","验证码不可为空");
+		}
+		return map;
 	}
 	
 	/**
@@ -124,4 +182,5 @@ public class BaseController {
 			LOGGER.error("从FTP下载文件异常：", e);
 		}
 	}
+	
 }
