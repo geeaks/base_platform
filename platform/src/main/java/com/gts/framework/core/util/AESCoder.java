@@ -4,6 +4,7 @@ import java.security.GeneralSecurityException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
@@ -11,7 +12,11 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
+
 import org.apache.commons.codec.binary.Hex;
+
+import com.gts.framework.log.service.GtsLogger;
+import com.gts.framework.log.util.GtsLoggerFactory;
 
 /**
  * @Description: AES加密工具类
@@ -21,12 +26,16 @@ import org.apache.commons.codec.binary.Hex;
  */ 
 public class AESCoder {
 	
+	private static final GtsLogger LOGGER = GtsLoggerFactory.getLogger(AESCoder.class);
+	
 	/**
 	 * 密钥算法
 	 */
 	private static final String KEY_ALGORITHM = "AES";
 	
 	private static final String DEFAULT_CIPHER_ALGORITHM = "AES/ECB/PKCS5Padding";
+	
+	private static final String GTSKEY = "GTS-MAIL-PWD-KEY";
 	
 	/**
 	 * 生成密钥
@@ -139,6 +148,40 @@ public class AESCoder {
 	}
 	
 	/**
+	 * @Description: 解密
+	 * @param data 要解密的字符串
+	 * @throws GeneralSecurityException
+	 * @return String 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月27日 上午11:57:32
+	 */
+	public static String gtsDecrypt(String data) {
+		try {
+			return new String(decrypt(data.getBytes(), GTSKEY.getBytes(), DEFAULT_CIPHER_ALGORITHM));
+		} catch (Exception e) {
+			LOGGER.error("AES加密异常", e);
+			return data;
+		}
+	}
+	
+	/**
+	 * @Description: 加密
+	 * @param data 要加密的字符串
+	 * @throws GeneralSecurityException
+	 * @return String 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月27日 上午11:59:54
+	 */
+	public static String gtsEncrypt(String data) {
+		try {
+			return new String(encrypt(data.getBytes(), GTSKEY.getBytes(), DEFAULT_CIPHER_ALGORITHM));
+		} catch (Exception e) {
+			LOGGER.error("AES解密异常", e);
+			return data;
+		}
+	}
+	
+	/**
 	 * 解密
 	 * @param data 待解密数据
 	 * @param key 密钥
@@ -180,39 +223,14 @@ public class AESCoder {
 		return cipher.doFinal(data);
 	}
 	
-	private static String showByteArray(byte[] data) {
-		if (null == data) {
-			return null;
-		}
-		StringBuilder sb = new StringBuilder("{");
-		for (byte b : data) {
-			sb.append(b).append(",");
-		}
-		sb.deleteCharAt(sb.length() - 1);
-		sb.append("}");
-		return sb.toString();
-	}
-	
 	public static void main(String[] args) throws Exception {
-		byte[] key = initSecretKey();
-		System.out.println("key：" + showByteArray(key));
-		System.out.println("key：" + Hex.encodeHexString(key));
-		System.out.println("key：" + showByteArray(Hex.decodeHex(Hex.encodeHexString(key).toCharArray())));
-		key = Hex.decodeHex(Hex.encodeHexString(key).toCharArray());
-		Key k = toKey(key);
-		
+		Key k = toKey(GTSKEY.getBytes());
 		String data = "AES数据";
 		System.out.println("加密前数据: string:" + data);
-		System.out.println("加密前数据: byte[]:" + showByteArray(data.getBytes()));
-		System.out.println();
 		byte[] encryptData = encrypt(data.getBytes(), k);
-		System.out.println("加密后数据: byte[]:" + showByteArray(encryptData));
 		System.out.println("加密后数据: hexStr:" + Hex.encodeHexString(encryptData));
-		System.out.println();
 		byte[] decryptData = decrypt(encryptData, k);
-		System.out.println("解密后数据: byte[]:" + showByteArray(decryptData));
 		System.out.println("解密后数据: string:" + new String(decryptData));
 		
-		System.out.println();
 	}
 }
