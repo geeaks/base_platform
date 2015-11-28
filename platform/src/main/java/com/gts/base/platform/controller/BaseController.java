@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -16,8 +15,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 import com.google.common.collect.Maps;
-import com.gts.base.platform.dao.entity.LoginInfo;
 import com.gts.base.platform.service.UserService;
+import com.gts.base.platform.service.bo.LoginInfoBo;
 import com.gts.base.platform.service.bo.UserBo;
 import com.gts.base.platform.utils.enums.EnumSessionKey;
 import com.gts.framework.core.util.FtpHelper;
@@ -92,7 +91,7 @@ public class BaseController {
 	 * @author gaoxiang
 	 * @date 2015年11月28日 上午12:00:32
 	 */
-	public LoginInfo getLoginInfo(HttpSession session) {
+	public LoginInfoBo getLoginInfo(HttpSession session) {
 		return getSessionObject(session,EnumSessionKey.LOGIN_INFO_KEY.getKey());
 	}
 	

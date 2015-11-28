@@ -20,6 +20,6 @@ public interface UserService {
 	
 	public List<UserBo> queryUser(User user);
 	
-	public UserBo getUser(String userId);
+	public UserBo getUser(Integer userId);
 	
 }

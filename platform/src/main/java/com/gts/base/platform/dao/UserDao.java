@@ -19,6 +19,6 @@ public interface UserDao {
 	
 	public List<User> queryUser(User user) throws Exception;
 	
-	public User getUser(String userId) throws Exception;
+	public User getUser(Integer userId) throws Exception;
 	
 }

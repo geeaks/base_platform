@@ -3,10 +3,12 @@ package com.gts.base.platform.service.impl;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.gts.base.platform.dao.LoginInfoDao;
 import com.gts.base.platform.dao.entity.LoginInfo;
 import com.gts.base.platform.service.LoginInfoService;
@@ -47,8 +49,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 		List<LoginInfoBo> listBo = Lists.newArrayList();
 		try {
 			for (LoginInfo loginInfoOrig : loginInfoDao.listPageLoginInfo(loginInfo)) {
+				if(loginInfoOrig == null ){
+					return listBo;
+				}
 				LoginInfoBo loginInfoBo = new LoginInfoBo();
-				BeanUtils.copyProperties(loginInfoOrig, loginInfoBo);
+				BeanUtils.copyProperties(loginInfoBo, loginInfoOrig);
 				listBo.add(loginInfoBo);
 			}
 		} catch (Exception e) {
@@ -62,8 +67,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 		List<LoginInfoBo> listBo = Lists.newArrayList();
 		try {
 			for (LoginInfo loginInfoOrig : loginInfoDao.queryLoginInfo(loginInfo)) {
+				if(loginInfoOrig == null ){
+					return listBo;
+				}
 				LoginInfoBo loginInfoBo = new LoginInfoBo();
-				BeanUtils.copyProperties(loginInfoOrig, loginInfoBo);
+				BeanUtils.copyProperties(loginInfoBo, loginInfoOrig);
 				listBo.add(loginInfoBo);
 			}
 		} catch (Exception e) {
@@ -76,8 +84,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	public LoginInfoBo getLoginInfo(String id) {
 		try {
 			LoginInfo loginInfo = loginInfoDao.getLoginInfo(id);
+			if(loginInfo == null){
+				return null;
+			}
 			LoginInfoBo loginInfoBo = new LoginInfoBo();
-			BeanUtils.copyProperties(loginInfo, loginInfoBo);
+			BeanUtils.copyProperties(loginInfoBo, loginInfo);
 			return loginInfoBo;
 		} catch (Exception e) {
 			LOGGER.error("获取用户登录信息系统异常", e);
@@ -89,8 +100,11 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	public LoginInfoBo getLoginInfoByLoginId(String loginId) {
 		try {
 			LoginInfo loginInfo = loginInfoDao.getLoginInfoByLoginId(loginId);
+			if(loginInfo == null){
+				return null;
+			}
 			LoginInfoBo loginInfoBo = new LoginInfoBo();
-			BeanUtils.copyProperties(loginInfo, loginInfoBo);
+			BeanUtils.copyProperties(loginInfoBo, loginInfo);
 			return loginInfoBo;
 		} catch (Exception e) {
 			LOGGER.error("获取用户登录信息系统异常", e);
@@ -100,7 +114,19 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 
 	@Override
 	public Map<String, Object> verifyLoginPassword(String loginPassword, String password) {
-		return null;
+		Map<String, Object> map = Maps.newHashMap();
+		if(StringUtils.isBlank(loginPassword) || StringUtils.isBlank(password)){
+			map.put("success", false);
+			map.put("msg", "入参不可为空");
+			return map;
+		}
+		if(loginPassword.equals(password)){
+			map.put("success", true);
+		}else{
+			map.put("success", false);
+			map.put("msg", "密码错误");
+		}
+		return map;
 	}
 	
 }

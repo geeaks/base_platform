@@ -3,6 +3,7 @@ package com.gts.base.platform.utils.enums;
 public enum EnumSessionKey {
 	
 	USER_KEY("session_user","用户信息"),
+	REDIRECT_URL("redirect_url","重定向链接"),
 	LOGIN_INFO_KEY("session_login_info","用户登录信息"),
 	IMG_CODE_KEY("session_img_code","图片验证码");
 	

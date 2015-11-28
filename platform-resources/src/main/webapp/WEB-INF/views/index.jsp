@@ -4,7 +4,7 @@
 <head>
 <jsp:include page="common/common-header.jsp" />
 <script src="${basePath}/js/index.js" ></script>
-<title>首页</title>
+<title>欢迎光临</title>
 </head>
 <body style="margin-top:80px;">
 <!-- 顶部导航栏 -->

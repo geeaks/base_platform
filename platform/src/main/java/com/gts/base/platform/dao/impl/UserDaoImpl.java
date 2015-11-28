@@ -34,7 +34,7 @@ public class UserDaoImpl extends BaseDao implements UserDao {
 	}
 
 	@Override
-	public User getUser(String userId) throws Exception {
+	public User getUser(Integer userId) throws Exception {
 		User user = this.getOne("com.gts.base.platform.user.getUser", userId);
 		return user;
 	}

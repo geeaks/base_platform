@@ -35,12 +35,19 @@ public class LoginController extends BaseController {
 	@Autowired
 	private LoginLogService loginLogService;
 	
-	@RequestMapping("")
-	public String index(HttpSession session,Model model){
+	@RequestMapping({"","index"})
+	public String index(HttpServletRequest request,HttpSession session,Model model){
+		//判断用户时否已登录
 		UserBo user = super.getUser(session);
 		if(user != null){
 			model.addAttribute("isLogin",true);
 			model.addAttribute("user",user);
+		}
+		//判断用户是否是登录失效重定向 
+		String redirectUrl = request.getParameter("redirectUrl");
+		if(StringUtils.isNotBlank(redirectUrl)){
+			model.addAttribute("msg","请先登陆");
+			session.setAttribute("redirectUrl", redirectUrl);
 		}
 		return "index";
 	}
@@ -51,7 +58,16 @@ public class LoginController extends BaseController {
 			return "index";
 		}
 		//校验成功，记录登录日志
-		loginLogService.recordLoginLog(getLoginInfo(session).getUserId(),HttpHeaderUtils.getClientIP(request),"");
+		Integer userId = getLoginInfo(session).getUserId();
+		session.setAttribute(EnumSessionKey.USER_KEY.getKey(), userService.getUser(userId));
+		loginLogService.recordLoginLog(userId,HttpHeaderUtils.getClientIP(request),"");
+		//重定向到要访问的页面
+		String redirectUrl = getSessionObject(session, EnumSessionKey.REDIRECT_URL.getKey());
+		if(StringUtils.isNotBlank(redirectUrl)){
+			return "redirect:/"+redirectUrl;
+		}
+		session.removeAttribute(EnumSessionKey.REDIRECT_URL.getKey());
+		//正常跳转首页
 		return "redirect:/home";
 	}
 	

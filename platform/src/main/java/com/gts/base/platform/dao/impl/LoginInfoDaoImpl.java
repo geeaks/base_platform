@@ -41,7 +41,7 @@ public class LoginInfoDaoImpl extends BaseDao implements LoginInfoDao {
 
 	@Override
 	public LoginInfo getLoginInfoByLoginId(String loginId) throws Exception {
-		LoginInfo loginInfo = this.getOne("com.gts.base.platform.loginInfo.getUserLoginInfo", loginId);
+		LoginInfo loginInfo = this.getOne("com.gts.base.platform.loginInfo.getLoginInfoByLoginId", loginId);
 		return loginInfo;
 	}
 

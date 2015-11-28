@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			for (User userInfo : userDao.listPageUser(user)) {
 				UserBo userBo = new UserBo();
-				BeanUtils.copyProperties(userInfo, userBo);
+				BeanUtils.copyProperties(userBo,userInfo);
 				listBo.add(userBo);
 			}
 		} catch (Exception e) {
@@ -62,7 +62,7 @@ public class UserServiceImpl implements UserService {
 		try {
 			for (User userInfo : userDao.listPageUser(user)) {
 				UserBo userBo = new UserBo();
-				BeanUtils.copyProperties(userInfo, userBo);
+				BeanUtils.copyProperties(userBo,userInfo);
 				listBo.add(userBo);
 			}
 		} catch (Exception e) {
@@ -72,11 +72,14 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserBo getUser(String userId) {
+	public UserBo getUser(Integer userId) {
 		try {
 			User user = userDao.getUser(userId);
+			if(user == null){
+				return null;
+			}
 			UserBo userBo = new UserBo();
-			BeanUtils.copyProperties(user, userBo);
+			BeanUtils.copyProperties(userBo, user);
 			return userBo;
 		} catch (Exception e) {
 			LOGGER.error("获取用户信息系统异常", e);

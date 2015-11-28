@@ -16,7 +16,7 @@ public class LoginInfo extends BaseEntity {
 	/**
 	 * @Fields loginId : 登录名
 	 */
-	private Integer loginId;
+	private String loginId;
 	
 	/**
 	 * @Fields userId : 用户ID
@@ -51,11 +51,11 @@ public class LoginInfo extends BaseEntity {
 		this.id = id;
 	}
 	
-	public Integer getLoginId() {
+	public String getLoginId() {
 		return loginId;
 	}
 	
-	public void setLoginId(Integer loginId) {
+	public void setLoginId(String loginId) {
 		this.loginId = loginId;
 	}
 	

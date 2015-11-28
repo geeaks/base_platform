@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.loginInfo">
+	
+	<resultMap id="loginInfoMap" type="com.gts.base.platform.dao.entity.LoginInfo" >
+		<id property="id" column="id" jdbcType="INTEGER" />
+		<result property="loginId" column="LOGIN_ID" jdbcType="VARCHAR" />
+		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
+		<result property="loginType" column="LOGIN_TYPE" jdbcType="INTEGER" />
+		<result property="loginPassword" column="LOGIN_PASSWORD" jdbcType="INTEGER" />
+		<result property="userType" column="USER_TYPE" jdbcType="VARCHAR" />
+		<result property="lastLoginTime" column="LAST_LOGIN_TIME " jdbcType="TIMESTAMP" />
+		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
+		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="loginInfo_column">
+		LOGIN_ID,USER_ID,LOGIN_TYPE,LOGIN_PASSWORD,USER_TYPE,LAST_LOGIN_TIME,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="id != null">
+			AND ID=#{id,jdbcType=INTEGER} 
+		</if>
+		<if test="loginId != null">
+			AND LOGIN_ID=#{loginId,jdbcType=VARCHAR} 
+		</if>
+		<if test="userId != null">
+			AND USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="loginType != null">
+			AND LOGIN_TYPE=#{loginType,jdbcType=VARCHAR} 
+		</if>
+		<if test="loginPassword != null">
+			AND LOGIN_PASSWORD=#{loginPassword,jdbcType=VARCHAR} 
+		</if>
+		<if test="userType != null">
+			AND USER_TYPE=#{userType,jdbcType=VARCHAR} 
+		</if>
+	</sql>
+	
+	<insert id="insertLoginInfo" parameterType="com.gts.base.platform.dao.entity.LoginInfo" keyProperty="loginInfoId" useGeneratedKeys="true">
+		INSERT INTO GTS_USER_LOGIN_INFO_LOGIN_INFO (<include refid="loginInfo_column" />) VALUES 
+		<![CDATA[
+		(#{loginId,jdbcType=VARCHAR},#{userId,jdbcType=INTEGER},#{loginType,jdbcType=VARCHAR},#{loginPassword,jdbcType=VARCHAR},#{userType,jdbcType=VARCHAR},
+		now(),now(),now())
+		]]>
+	</insert>
+	
+	<update id="updateLoginInfo" parameterType="com.gts.base.platform.dao.entity.LoginInfo">
+		UPDATE GTS_USER_LOGIN_INFO SET GMT_MODIFY=now() 
+		<if test="loginId != null">
+			,LOGIN_ID=#{loginId,jdbcType=VARCHAR} 
+		</if>
+		<if test="userId != null">
+			,USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="loginType != null">
+			,LOGIN_TYPE=#{loginType,jdbcType=VARCHAR} 
+		</if>
+		<if test="loginPassword != null">
+			,LOGIN_PASSWORD=#{loginPassword,jdbcType=VARCHAR} 
+		</if>
+		<if test="userType != null">
+			,USER_TYPE=#{userType,jdbcType=VARCHAR} 
+		</if>
+		<if test="name != null">
+			,LAST_LOGIN_TIME=now() 
+		</if>
+		WHERE ID = #{id}
+	</update>
+	
+	<select id="queryLoginInfo" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo">
+		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageLoginInfo" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo" flushCache="true" >
+		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getLoginInfo" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo" >
+		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO WHERE ID = #{id}
+	</select>
+	
+	<select id="getLoginInfoByLoginId" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo" >
+		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO WHERE LOGIN_ID = #{loginId}
+	</select>
+	
+</mapper>

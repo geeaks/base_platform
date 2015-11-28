@@ -43,10 +43,13 @@
 	</context:component-scan>
 	
 	<mvc:interceptors>
-		<!-- 多个拦截器,顺序执行 -->
 		<mvc:interceptor>
 			<mvc:mapping path="/**" />
 			<mvc:exclude-mapping path="/" />
+			<mvc:exclude-mapping path="/index" />
+			<mvc:exclude-mapping path="/login" />
+			<mvc:exclude-mapping path="/getImgCode" />
+			<mvc:exclude-mapping path="/checkImgCode" />
 			<bean class="com.gts.base.platform.interceptor.LoginInterceptor" />
 		</mvc:interceptor>
 	</mvc:interceptors>
