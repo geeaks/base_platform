@@ -143,7 +143,7 @@ public class BaseController {
 				map.put("msg","输入正确");
 			}
 		} else {
-			map.put("success", true);
+			map.put("success", false);
 			map.put("msg","验证码不可为空");
 		}
 		return map;

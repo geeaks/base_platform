@@ -1,6 +1,5 @@
 ﻿<%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
-<jsp:include page="common-resource.jsp" />
-<div class="container">
+<div class="container" style="width: 104.6%; margin-left: -10px;">
 	<div class="row clearfix">
 		<div class="col-md-12 column">
 			<!-- 导航栏 -->
@@ -13,7 +12,7 @@
 						<h3 style="display:inline">学生管理服务平台</h3>
 					</span>
 				</div>
-				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-1">
+				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-2">
 					<ul class="nav navbar-nav navbar-left">
 						<li>
 							<a href="#">学生信息管理</a>
@@ -30,9 +29,9 @@
 					</ul>
 				</div>
 				<div class="navbar-header navbar-right">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1"> 
+					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2"> 
 					</button>
-					<a class="navbar-brand" href="#">我的首页</a>
+					<a class="navbar-brand" href="home">我的首页</a>
 				</div>
 			</nav>
 		</div>
