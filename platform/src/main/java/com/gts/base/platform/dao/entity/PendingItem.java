@@ -38,7 +38,7 @@ public class PendingItem extends BaseEntity {
 	/**
 	 * @Fields applicantUserId : 请求发起用户ID
 	 */ 
-	private String applicantUserId;
+	private Integer applicantUserId;
 	
 	/**
 	 * @Fields applicantName : 请求发起人
@@ -48,7 +48,7 @@ public class PendingItem extends BaseEntity {
 	/**
 	 * @Fields handlerUserId : 处理人用户ID
 	 */ 
-	private String handlerUserId;
+	private Integer handlerUserId;
 	
 	/**
 	 * @Fields handlerName : 处理人
@@ -87,11 +87,11 @@ public class PendingItem extends BaseEntity {
 		this.handlerStatus = handlerStatus;
 	}
 	
-	public String getApplicantUserId() {
+	public Integer getApplicantUserId() {
 		return applicantUserId;
 	}
 	
-	public void setApplicantUserId(String applicantUserId) {
+	public void setApplicantUserId(Integer applicantUserId) {
 		this.applicantUserId = applicantUserId;
 	}
 	
@@ -103,11 +103,11 @@ public class PendingItem extends BaseEntity {
 		this.applicantName = applicantName;
 	}
 	
-	public String getHandlerUserId() {
+	public Integer getHandlerUserId() {
 		return handlerUserId;
 	}
 	
-	public void setHandlerUserId(String handlerUserId) {
+	public void setHandlerUserId(Integer handlerUserId) {
 		this.handlerUserId = handlerUserId;
 	}
 	

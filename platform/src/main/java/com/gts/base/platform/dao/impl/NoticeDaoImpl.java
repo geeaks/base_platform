@@ -34,7 +34,7 @@ public class NoticeDaoImpl extends BaseDao implements NoticeDao {
 	}
 
 	@Override
-	public Notice getNotice(String noticeId) throws Exception {
+	public Notice getNotice(Integer noticeId) throws Exception {
 		Notice notice = this.getOne("com.gts.base.platform.notice.getNotice", noticeId);
 		return notice;
 	}

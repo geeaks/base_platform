@@ -5,25 +5,15 @@
 	<div class="col-md-12 column">
 		<ul class="pagination">
 			<li>
-				 <a href="#">上一页</a>
+				<a href="#">上一页</a>
 			</li>
+			<c:forEach var="item" begin="1" end="${page.showPageCount}" step="1" varStatus="index">
+				<li>
+					<a href="#">${index.index}</a>
+				</li>
+			</c:forEach>
 			<li>
-				 <a href="#">1</a>
-			</li>
-			<li>
-				 <a href="#">2</a>
-			</li>
-			<li>
-				 <a href="#">3</a>
-			</li>
-			<li>
-				 <a href="#">4</a>
-			</li>
-			<li>
-				 <a href="#">5</a>
-			</li>
-			<li>
-				 <a href="#">下一页</a>
+				<a href="#">下一页</a>
 			</li>
 		</ul>
 	</div>

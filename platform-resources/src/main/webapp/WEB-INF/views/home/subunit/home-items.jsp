@@ -5,7 +5,7 @@
 	<div class="col-md-12 column">
 		<h3>待办事项</h3>
 		<div style="text-align: right;" >
-			<form class="form-search " style="margin-right: 100px;margin-bottom: 20px;">
+			<form action="" class="form-search " style="margin-right: 100px;margin-bottom: 20px;">
 				<span>发起人:</span>
 				<input class="input-medium search-query" type="text" />
 				<button type="submit" class="btn" style="margin-left: 20px; border-top-width: 0px; padding-top: 3px;">查找</button>
@@ -15,9 +15,9 @@
 			<thead>
 				<tr>
 					<th>编号</th>
-					<th>类型</th>
 					<th>名称</th>
 					<th>内容</th>
+					<th>类型</th>
 					<th>状态</th>
 					<th>发起人</th>
 					<th>处理人</th>
@@ -27,33 +27,38 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr>
-					<td>1</td>
-					<td>请假</td>
-					<td>躺好被插</td>
-					<td>躺好被强势插入了</td>
-					<td>成功</td>
-					<td>躺好</td>
-					<td>祥爷</td>
-					<td>2015-11-28 14:47:48</td>
-					<td>2015-11-29 15:11:20</td>
-					<td>
-						<a href="#">处理</a>
-					</td>
-				</tr>
-				<tr class="success">
-					<td>2</td>
-					<td>交费</td>
-					<td>交补课费</td>
-					<td>学习了xxx，交补课费</td>
-					<td>成功</td>
-					<td>躺好</td>
-					<td>祥爷</td>
-					<td>2015-11-28 14:47:48</td>
-					<td>2015-11-29 15:11:20</td>
-					<td>
-					</td>
-				</tr>
+				<c:forEach var="pendingItem" items="${pendingItems}" varStatus="index" >
+					<tr <c:if test="${index.index % 2 == 0}"> class="success" </c:if>
+					<c:if test="${index.index % 2 == 1}"> class="warning" </c:if>>
+						<td>${pendingItem.itemId}</td>
+						<td>${pendingItem.itemName}</td>
+						<td>${pendingItem.itemContent}</td>
+						<td>${pendingItem.itemType}</td>
+						<td>
+							<c:choose>
+								<c:when test="${pendingItem.handlerStatus eq 'S'}">
+									成功
+								</c:when>
+								<c:when test="${pendingItem.handlerStatus eq 'F'}">
+									失败
+								</c:when>
+								<c:when test="${pendingItem.handlerStatus eq 'I'}">
+									处理中
+								</c:when>
+							</c:choose>
+							
+						</td>
+						<td>${pendingItem.applicantName}</td>
+						<td>${pendingItem.handlerName}</td>
+						<td>${pendingItem.strGmtCreate}</td>
+						<td>${pendingItem.strGmtModify}</td>
+						<td>
+							<c:if test="${pendingItem.handlerStatus eq 'I'}">
+								<a href="#">处理</a>
+							</c:if>
+						</td>
+					</tr>
+				</c:forEach>
 			</tbody>
 		</table>
 	</div>

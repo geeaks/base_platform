@@ -19,6 +19,6 @@ public interface NoticeDao {
 	
 	public List<Notice> queryNotice(Notice notice) throws Exception;
 	
-	public Notice getNotice(String noticeId) throws Exception;
+	public Notice getNotice(Integer noticeId) throws Exception;
 	
 }

@@ -1,7 +1,9 @@
 package com.gts.base.platform.service;
 
 import java.util.List;
+import java.util.Map;
 import com.gts.base.platform.dao.entity.Notice;
+import com.gts.base.platform.service.bo.NoticeBo;
 
 /**
  * @Description: 公告信息 业务处理接口
@@ -11,14 +13,16 @@ import com.gts.base.platform.dao.entity.Notice;
  */ 
 public interface NoticeService {
 	
-	public int insertNotice(Notice notice) throws Exception;
+	public int insertNotice(Notice notice);
 	
-	public int updateNotice(Notice notice) throws Exception;
+	public int updateNotice(Notice notice);
 	
-	public List<Notice> listPageNotice(Notice notice) throws Exception;
+	public List<NoticeBo> listPageNotice(Notice notice);
 	
-	public List<Notice> queryNotice(Notice notice) throws Exception;
+	public List<NoticeBo> queryNotice(Notice notice);
 	
-	public Notice getNotice(String noticeId) throws Exception;
+	public NoticeBo getNotice(Integer noticeId);
+
+	public Map<String, Object> listPageNotice();
 	
 }

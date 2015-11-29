@@ -19,6 +19,11 @@ public class BaseEntity {
 	private Date gmtCreate;
 	
 	/**
+	 * @Fields gmtModify : 修改时间
+	 */
+	private Date gmtModify;
+	
+	/**
 	 * @Fields startCreateDate : 开始创建时间
 	 */
 	private Date startCreateDate;
@@ -27,11 +32,6 @@ public class BaseEntity {
 	 * @Fields endCreateDate : 最后创建时间
 	 */
 	private Date endCreateDate;
-	
-	/**
-	 * @Fields gmtModify : 修改时间
-	 */
-	private Date gmtModify;
 	
 	private Page page;
 	

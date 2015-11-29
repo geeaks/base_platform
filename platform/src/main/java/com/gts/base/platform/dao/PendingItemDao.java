@@ -19,6 +19,6 @@ public interface PendingItemDao {
 	
 	public List<PendingItem> queryPendingItem(PendingItem PendingItem) throws Exception;
 	
-	public PendingItem getPendingItem(String PendingItemId) throws Exception;
+	public PendingItem getPendingItem(Integer PendingItemId) throws Exception;
 	
 }

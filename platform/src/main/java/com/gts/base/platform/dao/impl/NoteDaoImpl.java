@@ -34,7 +34,7 @@ public class NoteDaoImpl extends BaseDao implements NoteDao {
 	}
 
 	@Override
-	public Note getNote(String noteId) throws Exception {
+	public Note getNote(Integer noteId) throws Exception {
 		Note note = this.getOne("com.gts.base.platform.note.getNote", noteId);
 		return note;
 	}

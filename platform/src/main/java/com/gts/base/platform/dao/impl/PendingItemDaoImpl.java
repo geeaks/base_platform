@@ -34,7 +34,7 @@ public class PendingItemDaoImpl extends BaseDao implements PendingItemDao {
 	}
 
 	@Override
-	public PendingItem getPendingItem(String pendingItemId) throws Exception {
+	public PendingItem getPendingItem(Integer pendingItemId) throws Exception {
 		PendingItem pendingItem = this.getOne("com.gts.base.platform.pendingItem.getPendingItem", pendingItemId);
 		return pendingItem;
 	}

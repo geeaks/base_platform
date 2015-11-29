@@ -97,7 +97,7 @@ public class PagePlugin implements Interceptor {
 						throw new NoSuchFieldException(parameterObject.getClass().getName()+"不存在 page属性！");
 					}
 					page.setTotalResult(count);
-					String pageSql=dialect.getLimitString(sql, page.getCurrentResult(), page.getShowCount());
+					String pageSql=dialect.getLimitString(sql, page.getBeginIndex()-1, page.getShowCount());
 					//将分页sql语句反射回BoundSql.
 					ReflectHelper.setValueByFieldName(boundSql, "sql", pageSql); 
 				}

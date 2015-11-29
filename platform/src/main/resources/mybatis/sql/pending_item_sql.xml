@@ -2,19 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.pendingItem">
 	
-	<resultMap id="pendingItemMap" type="com.gts.base.platform.dao.entity.PendingItem" >
-		<id property="itemId" column="ITEM_ID" jdbcType="INTEGER" />
-		<result property="itemName" column="ITEM_NAME" jdbcType="VARCHAR" />
-		<result property="itemContent" column="ITEM_CONTENT" jdbcType="VARCHAR" />
-		<result property="itemType" column="ITEM_TYPE" jdbcType="VARCHAR" />
-		<result property="handlerStatus" column="HANDLER_STATUS" jdbcType="VARCHAR" />
-		<result property="applicantUserId" column="APPLICANT_USER_ID" jdbcType="VARCHAR" />
-		<result property="applicantName" column="APPLICANT_NAME" jdbcType="VARCHAR" />
-		<result property="handlerUserId" column="HANDLER_USER_ID" jdbcType="VARCHAR" />
-		<result property="handlerName" column="HANDLER_NAME" jdbcType="VARCHAR" />
-		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
-		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
-	</resultMap>
+	<sql id="select_column">
+		ITEM_ID itemId,ITEM_NAME itemName,ITEM_CONTENT itemContent,ITEM_TYPE itemType,HANDLER_STATUS handlerStatus,APPLICANT_USER_ID applicantUserId,
+		APPLICANT_NAME applicantName,HANDLER_USER_ID handlerUserId,HANDLER_NAME handlerName,GMT_CREATE gmtCreate,GMT_MODIFY gmtModify
+	</sql>
 	
 	<sql id="pendingItem_column">
 		ITEM_NAME,ITEM_CONTENT,ITEM_TYPE,HANDLER_STATUS,APPLICANT_USER_ID,APPLICANT_NAME,HANDLER_USER_ID,HANDLER_NAME,GMT_CREATE,GMT_MODIFY
@@ -33,13 +24,16 @@
 		<if test="handlerStatus != null">
 			AND HANDLER_STATUS=#{handlerStatus,jdbcType=VARCHAR} 
 		</if>
-		<if test="applicantUserId != null">
-			AND APPLICANT_USER_ID=#{applicantUserId,jdbcType=VARCHAR} 
-		</if>
 		<if test="applicantName != null">
 			AND APPLICANT_NAME=#{applicantName,jdbcType=VARCHAR} 
 		</if>
-		<if test="handlerUserId != null">
+		<if test="applicantUserId != null and handlerUserId != null">
+			AND (APPLICANT_USER_ID=#{applicantUserId,jdbcType=VARCHAR} OR HANDLER_USER_ID=#{handlerUserId,jdbcType=VARCHAR} )
+		</if>
+		<if test="applicantUserId != null and handlerUserId == null">
+			AND APPLICANT_USER_ID=#{applicantUserId,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerUserId != null and applicantUserId == null">
 			AND HANDLER_USER_ID=#{handlerUserId,jdbcType=VARCHAR} 
 		</if>
 		<if test="handlerName != null">
@@ -84,24 +78,24 @@
 		WHERE ITEM_ID = #{itemId}
 	</update>
 	
-	<select id="queryPendingItem" resultMap="pendingItemMap" parameterType="com.gts.base.platform.dao.entity.PendingItem">
-		SELECT ITEM_ID,<include refid="pendingItem_column" /> FROM GTS_PENDING_ITEM 
+	<select id="queryPendingItem" resultType="com.gts.base.platform.dao.entity.PendingItem" parameterType="com.gts.base.platform.dao.entity.PendingItem">
+		SELECT <include refid="select_column" /> FROM GTS_PENDING_ITEM 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="listPagePendingItem" resultMap="pendingItemMap" parameterType="com.gts.base.platform.dao.entity.PendingItem" flushCache="true" >
-		SELECT ITEM_ID,<include refid="pendingItem_column" /> FROM GTS_PENDING_ITEM 
+	<select id="listPagePendingItem" resultType="com.gts.base.platform.dao.entity.PendingItem" parameterType="com.gts.base.platform.dao.entity.PendingItem" flushCache="true" >
+		SELECT <include refid="select_column" /> FROM GTS_PENDING_ITEM 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="getPendingItem" resultMap="pendingItemMap" parameterType="com.gts.base.platform.dao.entity.PendingItem" >
-		SELECT ITEM_ID,<include refid="pendingItem_column" /> FROM GTS_PENDING_ITEM WHERE ITEM_ID = #{itemId}
+	<select id="getPendingItem" resultType="com.gts.base.platform.dao.entity.PendingItem" parameterType="com.gts.base.platform.dao.entity.PendingItem" >
+		SELECT <include refid="select_column" /> FROM GTS_PENDING_ITEM WHERE ITEM_ID = #{itemId}
 	</select>
 	
 </mapper>

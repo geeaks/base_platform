@@ -1,30 +1,58 @@
 package com.gts.base.platform.dao.plugin;
 
+/**
+ * @Description: 分页实体类
+ * @ClassName: Page
+ * @author gaoxiang
+ * @date 2015年11月29日 下午11:13:58
+ */
 public class Page {
 	
-	// 分页标签显示10个页码
-	private int showPageCount = 10;
+	/**
+	 * @Fields showPageCount : 分页标签显示(默认5个页码)
+	 */
+	private int showPageCount = 5;
 	
-	// 每页显示记录数
-	private int showCount = 20;
+	/**
+	 * @Fields showCount : 每页显示记录数(默认10条)
+	 */
+	private int showCount = 10;
 	
-	// 总页数
-	private int totalPage;
+	/**
+	 * @Fields totalPage : 总页数
+	 */
+	protected int totalPage;
 	
-	// 总记录数
+	/**
+	 * @Fields totalResult : 总记录数
+	 */
 	private int totalResult;
 	
-	// 当前页
+	/**
+	 * @Fields currentPage : 当前页
+	 */
 	private int currentPage;
 	
-	// 当前记录起始索引
-	private int currentResult;
+	/**
+	 * @Fields currentResult : 当前记录起始索引
+	 */
+	private int beginIndex;
 	
-	// true:需要分页的地方，传入的参数就是Page实体；false:需要分页的地方，传入的参数所代表的实体拥有Page属性
+	private int endIndex;
+	
+	/**
+	 * @Fields entityOrField : true:需要分页的地方，传入的参数就是Page实体；false:需要分页的地方，传入的参数所代表的实体拥有Page属性
+	 */
 	private boolean entityOrField;
 	
+	/**
+	 * @Description: 如果
+	 * @return int 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月29日 下午11:35:19
+	 */
 	public int getShowPageCount() {
-		return showPageCount;
+		return getTotalPage() < showPageCount ? getTotalPage() : showPageCount;
 	}
 	
 	public void setShowPageCount(int showPageCount) {
@@ -32,11 +60,7 @@ public class Page {
 	}
 	
 	public int getTotalPage() {
-		if (totalResult % showCount == 0)
-			totalPage = totalResult / showCount;
-		else
-			totalPage = totalResult / showCount + 1;
-		return totalPage;
+		return totalResult % showCount == 0 ? totalResult / showCount : totalResult / showCount + 1;
 	}
 	
 	public void setTotalPage(int totalPage) {
@@ -52,10 +76,7 @@ public class Page {
 	}
 	
 	public int getCurrentPage() {
-		if (currentPage <= 0)
-			currentPage = 1;
-		if (currentPage > getTotalPage())
-			currentPage = getTotalPage();
+		currentPage = currentPage <=0 ? 1 : currentPage > getTotalPage() ? getTotalPage() : currentPage;
 		return currentPage;
 	}
 	
@@ -71,15 +92,8 @@ public class Page {
 		this.showCount = showCount;
 	}
 	
-	public int getCurrentResult() {
-		currentResult = (getCurrentPage() - 1) * getShowCount();
-		if (currentResult < 0)
-			currentResult = 0;
-		return currentResult;
-	}
-	
 	public void setCurrentResult(int currentResult) {
-		this.currentResult = currentResult;
+		this.beginIndex = currentResult;
 	}
 	
 	public boolean isEntityOrField() {
@@ -89,4 +103,23 @@ public class Page {
 	public void setEntityOrField(boolean entityOrField) {
 		this.entityOrField = entityOrField;
 	}
+	
+	public int getBeginIndex() {
+		beginIndex = (getCurrentPage() - 1) * getShowCount()+1;
+		return beginIndex < 0 ? 0 : beginIndex;
+	}
+	
+	public void setBeginIndex(int beginIndex) {
+		this.beginIndex = beginIndex;
+	}
+	
+	public int getEndIndex() {
+		endIndex = getCurrentPage() * getShowCount();
+		return endIndex;
+	}
+	
+	public void setEndIndex(int endIndex) {
+		this.endIndex = endIndex;
+	}
+	
 }

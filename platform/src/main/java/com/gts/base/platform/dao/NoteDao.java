@@ -19,6 +19,6 @@ public interface NoteDao {
 	
 	public List<Note> queryNote(Note note) throws Exception;
 	
-	public Note getNote(String noteId) throws Exception;
+	public Note getNote(Integer noteId) throws Exception;
 	
 }

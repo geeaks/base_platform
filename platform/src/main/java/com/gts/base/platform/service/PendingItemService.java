@@ -1,7 +1,9 @@
 package com.gts.base.platform.service;
 
 import java.util.List;
+import java.util.Map;
 import com.gts.base.platform.dao.entity.PendingItem;
+import com.gts.base.platform.service.bo.PendingItemBo;
 
 /**
  * @Description: 待办事项业务处理接口
@@ -11,14 +13,23 @@ import com.gts.base.platform.dao.entity.PendingItem;
  */ 
 public interface PendingItemService {
 	
-	public int insertPendingItem(PendingItem PendingItem) throws Exception;
+	public int insertPendingItem(PendingItem pendingItem);
 	
-	public int updatePendingItem(PendingItem PendingItem) throws Exception;
+	public int updatePendingItem(PendingItem pendingItem);
 	
-	public List<PendingItem> listPagePendingItem(PendingItem PendingItem) throws Exception;
+	public List<PendingItemBo> listPagePendingItem(PendingItem  pendingItem);
 	
-	public List<PendingItem> queryPendingItem(PendingItem PendingItem) throws Exception;
+	/**
+	 * @Description: 获取所有 与登录用户相关的代办事项
+	 * @param userId 登录用户ID
+	 * @return Map<String,Object> 返回类型
+	 * @author gaoxiang
+	 * @date 2015年11月29日 下午11:51:17
+	 */
+	public Map<String,Object> listPagePendingItem(Integer userId);
 	
-	public PendingItem getPendingItem(String PendingItemId) throws Exception;
+	public List<PendingItemBo> queryPendingItem(PendingItem pendingItem);
+	
+	public PendingItemBo getPendingItem(Integer pendingItemId);
 	
 }
