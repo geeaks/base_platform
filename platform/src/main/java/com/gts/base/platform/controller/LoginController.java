@@ -16,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import com.gts.base.platform.controller.base.BaseController;
 import com.gts.base.platform.service.LoginInfoService;
 import com.gts.base.platform.service.LoginLogService;
 import com.gts.base.platform.service.bo.LoginInfoBo;

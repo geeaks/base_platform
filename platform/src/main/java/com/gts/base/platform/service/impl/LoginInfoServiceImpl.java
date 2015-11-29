@@ -12,10 +12,13 @@ import com.google.common.collect.Maps;
 import com.gts.base.platform.dao.LoginInfoDao;
 import com.gts.base.platform.dao.entity.LoginInfo;
 import com.gts.base.platform.service.LoginInfoService;
+import com.gts.base.platform.service.base.BaseService;
 import com.gts.base.platform.service.bo.LoginInfoBo;
+import com.gts.framework.log.annotation.DigestLogAnnotated;
+import com.gts.framework.log.enums.LoggerLevel;
 
 @Service
-public class LoginInfoServiceImpl implements LoginInfoService {
+public class LoginInfoServiceImpl extends BaseService implements LoginInfoService {
 	
 	public static Logger LOGGER = Logger.getLogger(LoginInfoServiceImpl.class);
 	
@@ -23,6 +26,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	private LoginInfoDao loginInfoDao;
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public int insertLoginInfo(LoginInfo loginInfo) {
 		int affectRow = 0;
 		try {
@@ -34,6 +38,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public int updateLoginInfo(LoginInfo loginInfo) {
 		int affectRow = 0;
 		try {
@@ -45,6 +50,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public List<LoginInfoBo> listPageLoginInfo(LoginInfo loginInfo) {
 		List<LoginInfoBo> listBo = Lists.newArrayList();
 		try {
@@ -63,6 +69,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public List<LoginInfoBo> queryLoginInfo(LoginInfo loginInfo) {
 		List<LoginInfoBo> listBo = Lists.newArrayList();
 		try {
@@ -81,6 +88,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public LoginInfoBo getLoginInfo(String id) {
 		try {
 			LoginInfo loginInfo = loginInfoDao.getLoginInfo(id);
@@ -97,6 +105,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	}
 
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public LoginInfoBo getLoginInfoByLoginId(String loginId) {
 		try {
 			LoginInfo loginInfo = loginInfoDao.getLoginInfoByLoginId(loginId);
@@ -113,6 +122,7 @@ public class LoginInfoServiceImpl implements LoginInfoService {
 	}
 
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public Map<String, Object> verifyLoginPassword(String loginPassword, String password) {
 		Map<String, Object> map = Maps.newHashMap();
 		if(StringUtils.isBlank(loginPassword) || StringUtils.isBlank(password)){

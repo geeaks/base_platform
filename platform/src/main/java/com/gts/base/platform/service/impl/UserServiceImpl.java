@@ -9,10 +9,11 @@ import com.google.common.collect.Lists;
 import com.gts.base.platform.dao.UserDao;
 import com.gts.base.platform.dao.entity.User;
 import com.gts.base.platform.service.UserService;
+import com.gts.base.platform.service.base.BaseService;
 import com.gts.base.platform.service.bo.UserBo;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends BaseService implements UserService {
 	
 	public static Logger LOGGER = Logger.getLogger(UserServiceImpl.class);
 	

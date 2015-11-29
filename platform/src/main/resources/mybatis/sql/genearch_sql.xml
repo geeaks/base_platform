@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.genearch">
+	
+	<resultMap id="genearchMap" type="com.gts.base.platform.dao.entity.Genearch" >
+		<id property="genearchId" column="GENEARCH_ID" jdbcType="INTEGER" />
+		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<sql id="genearch_column">
+		USER_ID,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="userId != null">
+			AND USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+	</sql>
+	
+	<insert id="insertGenearch" parameterType="com.gts.base.platform.dao.entity.Genearch" keyProperty="genearchId" useGeneratedKeys="true">
+		INSERT INTO GTS_GENEARCH <include refid="genearch_column" /> VALUES 
+		<![CDATA[
+		(#{userId,jdbcType=INTEGER},now(),now())
+		]]>
+	</insert>
+	
+	<update id="updateGenearch" parameterType="com.gts.base.platform.dao.entity.Genearch">
+		UPDATE GTS_GENEARCH SET GMT_MODIFY=now() 
+		<if test="userId != null">
+			,USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		WHERE GENEARCH_ID = #{genearchId}
+	</update>
+	
+	<select id="queryGenearch" resultMap="genearchMap" parameterType="com.gts.base.platform.dao.entity.Genearch">
+		SELECT GENEARCH_ID,<include refid="genearch_column" /> FROM GTS_GENEARCH 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageGenearch" resultMap="genearchMap" parameterType="com.gts.base.platform.dao.entity.Genearch" flushCache="true" >
+		SELECT GENEARCH_ID,<include refid="genearch_column" /> FROM GTS_GENEARCH 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getGenearch" resultMap="genearchMap" parameterType="com.gts.base.platform.dao.entity.Genearch" >
+		SELECT GENEARCH_ID,<include refid="genearch_column" /> FROM GTS_GENEARCH WHERE GENEARCH_ID = #{genearchId}
+	</select>
+	
+</mapper>

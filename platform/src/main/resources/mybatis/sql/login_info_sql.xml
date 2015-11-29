@@ -6,8 +6,8 @@
 		<id property="id" column="id" jdbcType="INTEGER" />
 		<result property="loginId" column="LOGIN_ID" jdbcType="VARCHAR" />
 		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
-		<result property="loginType" column="LOGIN_TYPE" jdbcType="INTEGER" />
-		<result property="loginPassword" column="LOGIN_PASSWORD" jdbcType="INTEGER" />
+		<result property="loginType" column="LOGIN_TYPE" jdbcType="VARCHAR" />
+		<result property="loginPassword" column="LOGIN_PASSWORD" jdbcType="VARCHAR" />
 		<result property="userType" column="USER_TYPE" jdbcType="VARCHAR" />
 		<result property="lastLoginTime" column="LAST_LOGIN_TIME " jdbcType="TIMESTAMP" />
 		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
@@ -71,7 +71,7 @@
 	</update>
 	
 	<select id="queryLoginInfo" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo">
-		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO 
+		SELECT ID,<include refid="select_column" /> FROM GTS_USER_LOGIN_INFO 
 		<where>
 			<include refid="where_condition" />
 		</where>
@@ -79,7 +79,7 @@
 	</select>
 	
 	<select id="listPageLoginInfo" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo" flushCache="true" >
-		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO 
+		SELECT ID,<include refid="select_column" /> FROM GTS_USER_LOGIN_INFO 
 		<where>
 			<include refid="where_condition" />
 		</where>
@@ -87,11 +87,15 @@
 	</select>
 	
 	<select id="getLoginInfo" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo" >
-		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO WHERE ID = #{id}
+		SELECT ID,<include refid="select_column" /> FROM GTS_USER_LOGIN_INFO WHERE ID = #{id}
 	</select>
 	
 	<select id="getLoginInfoByLoginId" resultMap="loginInfoMap" parameterType="com.gts.base.platform.dao.entity.LoginInfo" >
-		SELECT ID,<include refid="loginInfo_column" /> FROM GTS_USER_LOGIN_INFO WHERE LOGIN_ID = #{loginId}
+		SELECT ID,<include refid="select_column" /> FROM GTS_USER_LOGIN_INFO WHERE LOGIN_ID = #{loginId}
 	</select>
 	
+	<sql id="select_column">
+		ID id,LOGIN_ID loginId,USER_ID userId,LOGIN_TYPE loginType,LOGIN_PASSWORD loginPassword,USER_TYPE userType,
+		LAST_LOGIN_TIME lastLoginTime,GMT_CREATE gmtCreate,GMT_MODIFY gmtModify
+	</sql>
 </mapper>

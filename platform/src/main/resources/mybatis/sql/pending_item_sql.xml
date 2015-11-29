@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.pendingItem">
+	
+	<resultMap id="pendingItemMap" type="com.gts.base.platform.dao.entity.PendingItem" >
+		<id property="itemId" column="ITEM_ID" jdbcType="INTEGER" />
+		<result property="itemName" column="ITEM_NAME" jdbcType="VARCHAR" />
+		<result property="itemContent" column="ITEM_CONTENT" jdbcType="VARCHAR" />
+		<result property="itemType" column="ITEM_TYPE" jdbcType="VARCHAR" />
+		<result property="handlerStatus" column="HANDLER_STATUS" jdbcType="VARCHAR" />
+		<result property="applicantUserId" column="APPLICANT_USER_ID" jdbcType="VARCHAR" />
+		<result property="applicantName" column="APPLICANT_NAME" jdbcType="VARCHAR" />
+		<result property="handlerUserId" column="HANDLER_USER_ID" jdbcType="VARCHAR" />
+		<result property="handlerName" column="HANDLER_NAME" jdbcType="VARCHAR" />
+		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
+		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="pendingItem_column">
+		ITEM_NAME,ITEM_CONTENT,ITEM_TYPE,HANDLER_STATUS,APPLICANT_USER_ID,APPLICANT_NAME,HANDLER_USER_ID,HANDLER_NAME,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="itemId != null">
+			AND ITEM_ID=#{itemId,jdbcType=INTEGER} 
+		</if>
+		<if test="itemName != null">
+			AND ITEM_NAME=#{itemName,jdbcType=VARCHAR} 
+		</if>
+		<if test="itemType != null">
+			AND ITEM_TYPE=#{itemType,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerStatus != null">
+			AND HANDLER_STATUS=#{handlerStatus,jdbcType=VARCHAR} 
+		</if>
+		<if test="applicantUserId != null">
+			AND APPLICANT_USER_ID=#{applicantUserId,jdbcType=VARCHAR} 
+		</if>
+		<if test="applicantName != null">
+			AND APPLICANT_NAME=#{applicantName,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerUserId != null">
+			AND HANDLER_USER_ID=#{handlerUserId,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerName != null">
+			AND HANDLER_NAME=#{handlerName,jdbcType=VARCHAR} 
+		</if>
+	</sql>
+	
+	<insert id="insertPendingItem" parameterType="com.gts.base.platform.dao.entity.PendingItem" keyProperty="itemId" useGeneratedKeys="true">
+		INSERT INTO GTS_PENDING_ITEM <include refid="pendingItem_column" /> VALUES 
+		<![CDATA[
+		(#{itemName,jdbcType=INTEGER},#{itemType,jdbcType=INTEGER},#{handlerStatus,jdbcType=VARCHAR},
+		#{applicantUserId,jdbcType=VARCHAR},#{applicantName,jdbcType=VARCHAR},#{handlerUserId,jdbcType=VARCHAR},#{handlerName,jdbcType=VARCHAR},now(),now())
+		]]>
+	</insert>
+	
+	<update id="updatePendingItem" parameterType="com.gts.base.platform.dao.entity.PendingItem">
+		UPDATE GTS_PENDING_ITEM SET GMT_MODIFY=now() 
+		<if test="itemContent != null">
+			AND ITEM_CONTENT=#{itemContent,jdbcType=VARCHAR} 
+		</if>
+		<if test="itemName != null">
+			AND ITEM_NAME=#{itemName,jdbcType=VARCHAR} 
+		</if>
+		<if test="itemType != null">
+			AND ITEM_TYPE=#{itemType,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerStatus != null">
+			AND HANDLER_STATUS=#{handlerStatus,jdbcType=VARCHAR} 
+		</if>
+		<if test="applicantUserId != null">
+			AND APPLICANT_USER_ID=#{applicantUserId,jdbcType=VARCHAR} 
+		</if>
+		<if test="applicantName != null">
+			AND APPLICANT_NAME=#{applicantName,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerUserId != null">
+			AND HANDLER_USER_ID=#{handlerUserId,jdbcType=VARCHAR} 
+		</if>
+		<if test="handlerName != null">
+			AND HANDLER_NAME=#{handlerName,jdbcType=VARCHAR} 
+		</if>
+		WHERE ITEM_ID = #{itemId}
+	</update>
+	
+	<select id="queryPendingItem" resultMap="pendingItemMap" parameterType="com.gts.base.platform.dao.entity.PendingItem">
+		SELECT ITEM_ID,<include refid="pendingItem_column" /> FROM GTS_PENDING_ITEM 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPagePendingItem" resultMap="pendingItemMap" parameterType="com.gts.base.platform.dao.entity.PendingItem" flushCache="true" >
+		SELECT ITEM_ID,<include refid="pendingItem_column" /> FROM GTS_PENDING_ITEM 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getPendingItem" resultMap="pendingItemMap" parameterType="com.gts.base.platform.dao.entity.PendingItem" >
+		SELECT ITEM_ID,<include refid="pendingItem_column" /> FROM GTS_PENDING_ITEM WHERE ITEM_ID = #{itemId}
+	</select>
+	
+</mapper>

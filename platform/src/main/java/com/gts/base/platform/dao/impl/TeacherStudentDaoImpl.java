@@ -33,10 +33,4 @@ public class TeacherStudentDaoImpl extends BaseDao implements TeacherStudentDao 
 		return list;
 	}
 
-	@Override
-	public TeacherStudent getTeacherStudent(String teacherStudentId) throws Exception {
-		TeacherStudent teacherStudent = this.getOne("com.gts.base.platform.teacherStudent.getTeacherStudent", teacherStudentId);
-		return teacherStudent;
-	}
-
 }

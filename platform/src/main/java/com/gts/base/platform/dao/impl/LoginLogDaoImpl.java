@@ -39,4 +39,10 @@ public class LoginLogDaoImpl extends BaseDao implements LoginLogDao {
 		return loginLog;
 	}
 
+	@Override
+	public LoginLog getLoginLogByLoginId(String loginLogId) throws Exception {
+		LoginLog loginLog = this.getOne("com.gts.base.platform.loginLog.getLoginLogByLoginId", loginLogId);
+		return loginLog;
+	}
+
 }

@@ -4,6 +4,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import com.gts.base.platform.controller.base.BaseController;
 
 @Controller
 @RequestMapping("/home")
@@ -13,7 +14,6 @@ public class HomeController extends BaseController {
 	
 	@RequestMapping("")
 	public String index(HttpSession session){
-		System.out.println(getUser(session).getName());
 		return "home/index";
 	}
 	

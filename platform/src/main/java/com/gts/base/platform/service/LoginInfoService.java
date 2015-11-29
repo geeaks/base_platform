@@ -5,6 +5,12 @@ import java.util.Map;
 import com.gts.base.platform.dao.entity.LoginInfo;
 import com.gts.base.platform.service.bo.LoginInfoBo;
 
+/**
+ * @Description: 用户登录信息业务处理接口
+ * @ClassName: LoginInfoService
+ * @author gaoxiang
+ * @date 2015年11月29日 下午3:31:36
+ */ 
 public interface LoginInfoService {
 	
 	public int insertLoginInfo(LoginInfo loginInfoBo);

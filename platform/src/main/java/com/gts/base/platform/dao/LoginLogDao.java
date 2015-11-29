@@ -21,4 +21,6 @@ public interface LoginLogDao {
 	
 	public LoginLog getLoginLog(String loginLogId) throws Exception;
 	
+	public LoginLog getLoginLogByLoginId(String loginLogId) throws Exception;
+	
 }

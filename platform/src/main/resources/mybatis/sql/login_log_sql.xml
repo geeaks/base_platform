@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.loginLog">
+	
+	<resultMap id="loginLogMap" type="com.gts.base.platform.dao.entity.LoginLog" >
+		<id property="logId" column="LOG_ID" jdbcType="INTEGER" />
+		<result property="loginId" column="LOGIN_ID" jdbcType="INTEGER" />
+		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
+		<result property="loginTime" column="LOGIN_TIME" jdbcType="INTEGER" />
+		<result property="loginPlace" column="LOGIN_PLACE" jdbcType="INTEGER" />
+		<result property="loginIP" column="LOGIN_IP" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<sql id="loginLog_column">
+		LOGIN_ID,USER_ID,LOGIN_TIME,LOGIN_PLACE,LOGIN_IP
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="logId != null">
+			AND LOG_ID=#{logId,jdbcType=INTEGER} 
+		</if>
+		<if test="loginId != null">
+			AND LOGIN_ID=#{loginId,jdbcType=VARCHAR} 
+		</if>
+		<if test="userId != null">
+			AND USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="loginPlace != null">
+			AND LOGIN_PLACE=#{loginPlace,jdbcType=VARCHAR} 
+		</if>
+		<if test="loginIP != null">
+			AND LOGIN_IP=#{loginIP,jdbcType=VARCHAR} 
+		</if>
+	</sql>
+	
+	<insert id="insertLoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog" keyProperty="loginLogId" useGeneratedKeys="true">
+		INSERT INTO GTS_LOGIN_LOG (<include refid="loginLog_column" />) VALUES 
+		<![CDATA[
+		(#{loginId,jdbcType=VARCHAR},#{userId,jdbcType=INTEGER},now(),#{loginPlace,jdbcType=VARCHAR},#{loginIP,jdbcType=VARCHAR})
+		]]>
+	</insert>
+	
+	<update id="updateLoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog">
+		UPDATE GTS_LOGIN_LOG SET GMT_MODIFY=now() 
+		<if test="loginId != null">
+			,LOGIN_ID=#{loginId,jdbcType=VARCHAR} 
+		</if>
+		<if test="userId != null">
+			,USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="loginPlace != null">
+			,LOGIN_PLACE=#{loginPlace,jdbcType=VARCHAR} 
+		</if>
+		<if test="loginIP != null">
+			,LOGIN_IP=#{loginIP,jdbcType=VARCHAR} 
+		</if>
+		WHERE LOG_ID = #{logId}
+	</update>
+	
+	<select id="queryLoginLog" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog">
+		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageLoginLog" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog" flushCache="true" >
+		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getLoginLog" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog" >
+		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG WHERE LOG_ID = #{logId}
+	</select>
+	
+	<select id="getLoginLogByLoginId" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog" >
+		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG WHERE LOGIN_ID = #{loginId}
+	</select>
+	
+</mapper>

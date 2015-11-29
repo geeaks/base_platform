@@ -33,10 +33,4 @@ public class GenearchStudentDaoImpl extends BaseDao implements GenearchStudentDa
 		return list;
 	}
 
-	@Override
-	public GenearchStudent getGenearchStudent(String genearchStudentId) throws Exception {
-		GenearchStudent genearchStudent = this.getOne("com.gts.base.platform.genearchStudent.getGenearchStudent", genearchStudentId);
-		return genearchStudent;
-	}
-
 }

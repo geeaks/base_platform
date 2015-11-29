@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.role">
+	
+	<resultMap id="roleMap" type="com.gts.base.platform.dao.entity.Role" >
+		<id property="roleId" column="ROLE_ID" jdbcType="INTEGER" />
+		<result property="roleName" column="ROLE_NAME" jdbcType="VARCHAR" />
+		<result property="privilege" column="PRIVILEGE" jdbcType="VARCHAR" />
+		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
+		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="role_column">
+		ROLE_NAME,PRIVILEGE,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="roleName != null">
+			AND ROLE_NAME=#{roleName,jdbcType=VARCHAR} 
+		</if>
+	</sql>
+	
+	<insert id="insertRole" parameterType="com.gts.base.platform.dao.entity.Role" keyProperty="roleId" useGeneratedKeys="true">
+		INSERT INTO GTS_ROLE <include refid="role_column" /> VALUES (#{roleName,jdbcType=VARCHAR},#{privilege,jdbcType=VARCHAR},now(),now())
+	</insert>
+	
+	<update id="updateRole" parameterType="com.gts.base.platform.dao.entity.Role">
+		UPDATE GTS_ROLE SET GMT_MODIFY=now() 
+		<if test="roleName != null">
+			,ROLE_NAME=#{roleName,jdbcType=VARCHAR} 
+		</if>
+		<if test="privilege != null">
+			,PRIVILEGE=#{privilege,jdbcType=VARCHAR} 
+		</if>
+		WHERE ROLE_ID = #{roleId}
+	</update>
+	
+	<select id="queryRole" resultMap="roleMap" parameterType="com.gts.base.platform.dao.entity.Role">
+		SELECT ROLE_ID,<include refid="role_column" /> FROM GTS_ROLE 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageRole" resultMap="roleMap" parameterType="com.gts.base.platform.dao.entity.Role" flushCache="true" >
+		SELECT ROLE_ID,<include refid="role_column" /> FROM GTS_ROLE 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getRole" resultMap="roleMap" parameterType="com.gts.base.platform.dao.entity.Role" >
+		SELECT ROLE_ID,<include refid="role_column" /> FROM GTS_ROLE WHERE ROLE_ID = #{roleId}
+	</select>
+	
+</mapper>

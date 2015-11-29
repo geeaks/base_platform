@@ -19,6 +19,4 @@ public interface TeacherStudentDao {
 	
 	public List<TeacherStudent> queryTeacherStudent(TeacherStudent teacherStudent) throws Exception;
 	
-	public TeacherStudent getTeacherStudent(String id) throws Exception;
-	
 }

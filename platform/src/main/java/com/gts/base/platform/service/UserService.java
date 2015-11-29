@@ -5,7 +5,7 @@ import com.gts.base.platform.dao.entity.User;
 import com.gts.base.platform.service.bo.UserBo;
 
 /**
- * @Description: 用户信息 业务接口
+ * @Description: 用户信息 业务处理接口
  * @ClassName: UserDao
  * @author gaoxiang
  * @date 2015年11月25日 下午11:12:43

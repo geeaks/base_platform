@@ -11,31 +11,31 @@ public class LoginInfoDaoImpl extends BaseDao implements LoginInfoDao {
 
 	@Override
 	public int insertLoginInfo(LoginInfo loginInfo) throws Exception {
-		int row = this.insert("com.gts.base.platform.loginInfo.insertUserLoginInfo", loginInfo);
+		int row = this.insert("com.gts.base.platform.loginInfo.insertLoginInfo", loginInfo);
 		return row;
 	}
 
 	@Override
 	public int updateLoginInfo(LoginInfo loginInfo) throws Exception {
-		int row = this.update("com.gts.base.platform.loginInfo.updateUserLoginInfo", loginInfo);
+		int row = this.update("com.gts.base.platform.loginInfo.updateLoginInfo", loginInfo);
 		return row;
 	}
 
 	@Override
 	public List<LoginInfo> listPageLoginInfo(LoginInfo loginInfo) throws Exception {
-		List<LoginInfo> list = this.queryForList("com.gts.base.platform.loginInfo.listPageUserLoginInfo", loginInfo);
+		List<LoginInfo> list = this.queryForList("com.gts.base.platform.loginInfo.listPageLoginInfo", loginInfo);
 		return list;
 	}
 
 	@Override
 	public List<LoginInfo> queryLoginInfo(LoginInfo loginInfo) throws Exception {
-		List<LoginInfo> list = this.queryForList("com.gts.base.platform.loginInfo.queryUserLoginInfo", loginInfo);
+		List<LoginInfo> list = this.queryForList("com.gts.base.platform.loginInfo.queryLoginInfo", loginInfo);
 		return list;
 	}
 
 	@Override
 	public LoginInfo getLoginInfo(String loginInfoId) throws Exception {
-		LoginInfo loginInfo = this.getOne("com.gts.base.platform.loginInfo.getUserLoginInfo", loginInfoId);
+		LoginInfo loginInfo = this.getOne("com.gts.base.platform.loginInfo.getLoginInfo", loginInfoId);
 		return loginInfo;
 	}
 

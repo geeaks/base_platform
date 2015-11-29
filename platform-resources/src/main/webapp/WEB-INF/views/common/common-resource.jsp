@@ -4,3 +4,4 @@
 <script src="${basePath}/plugin/jquery/jquery-2.1.4.min.js" ></script>
 <script src="${basePath}/plugin/bootstrap-3.3.6/js/bootstrap.min.js" ></script>
 <link href="${basePath}/plugin/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet" />
+<link href="${basePath}/css/common.css" rel="stylesheet" />

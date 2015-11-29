@@ -17,6 +17,11 @@ public class LoginLog extends BaseEntity {
 	private Integer logId;
 	
 	/**
+	 * @Fields loginId : 登录名
+	 */
+	private String loginId;
+	
+	/**
 	 * @Fields userId : 用户ID
 	 */
 	private Integer userId;
@@ -74,6 +79,14 @@ public class LoginLog extends BaseEntity {
 	
 	public void setLoginIP(String loginIP) {
 		this.loginIP = loginIP;
+	}
+	
+	public String getLoginId() {
+		return loginId;
+	}
+	
+	public void setLoginId(String loginId) {
+		this.loginId = loginId;
 	}
 	
 }

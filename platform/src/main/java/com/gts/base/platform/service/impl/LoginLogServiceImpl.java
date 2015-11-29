@@ -10,10 +10,13 @@ import com.google.common.collect.Lists;
 import com.gts.base.platform.dao.LoginLogDao;
 import com.gts.base.platform.dao.entity.LoginLog;
 import com.gts.base.platform.service.LoginLogService;
+import com.gts.base.platform.service.base.BaseService;
 import com.gts.base.platform.service.bo.LoginLogBo;
+import com.gts.framework.log.annotation.DigestLogAnnotated;
+import com.gts.framework.log.enums.LoggerLevel;
 
 @Service
-public class LoginLogServiceImpl implements LoginLogService {
+public class LoginLogServiceImpl extends BaseService implements LoginLogService {
 	
 	public static Logger LOGGER = Logger.getLogger(LoginLogServiceImpl.class);
 	
@@ -21,6 +24,7 @@ public class LoginLogServiceImpl implements LoginLogService {
 	private LoginLogDao loginLogDao;
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public int insertLoginLog(LoginLog loginLog) {
 		int affectRow = 0;
 		try {
@@ -32,6 +36,7 @@ public class LoginLogServiceImpl implements LoginLogService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public List<LoginLogBo> listPageLoginLog(LoginLog loginLog) {
 		List<LoginLogBo> listBo = Lists.newArrayList();
 		try {
@@ -47,6 +52,7 @@ public class LoginLogServiceImpl implements LoginLogService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public List<LoginLogBo> queryLoginLog(LoginLog loginLog) {
 		List<LoginLogBo> listBo = Lists.newArrayList();
 		try {
@@ -62,6 +68,7 @@ public class LoginLogServiceImpl implements LoginLogService {
 	}
 	
 	@Override
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public LoginLogBo getLoginLog(String id) {
 		try {
 			LoginLog loginLog = loginLogDao.getLoginLog(id);

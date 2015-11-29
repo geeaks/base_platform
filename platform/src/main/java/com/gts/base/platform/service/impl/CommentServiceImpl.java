@@ -7,30 +7,31 @@ import com.google.common.collect.Lists;
 import com.gts.base.platform.dao.CommentDao;
 import com.gts.base.platform.dao.entity.Comment;
 import com.gts.base.platform.service.CommentService;
+import com.gts.base.platform.service.base.BaseService;
 import com.gts.base.platform.service.bo.CommentBo;
 import com.gts.framework.log.annotation.DigestLogAnnotated;
 import com.gts.framework.log.enums.LoggerLevel;
 
 @Service 
-public class CommentServiceImpl implements CommentService {
+public class CommentServiceImpl extends BaseService implements CommentService {
 	
 	@Autowired
 	private CommentDao commentDao;
 
 	@Override
-	@DigestLogAnnotated(digestIdentificationCode = "gts_platform", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public int insertCommentBo(CommentBo comment) throws Exception {
 		return commentDao.insertComment(comment);
 	}
 
 	@Override
-	@DigestLogAnnotated(digestIdentificationCode = "gts_platform", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public int updateCommentBo(CommentBo comment) throws Exception {
 		return commentDao.updateComment(comment);
 	}
 
 	@Override
-	@DigestLogAnnotated(digestIdentificationCode = "gts_platform", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public List<CommentBo> listPageComment(CommentBo commentBo) throws Exception {
 		List<CommentBo> listBo = Lists.newArrayList();
 		List<Comment> list = commentDao.listPageComment(commentBo);
@@ -41,7 +42,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	@DigestLogAnnotated(digestIdentificationCode = "gts_platform", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public List<CommentBo> queryComment(CommentBo commentBo) throws Exception {
 		List<CommentBo> listBo = Lists.newArrayList();
 		List<Comment> list = commentDao.queryComment(commentBo);
@@ -52,7 +53,7 @@ public class CommentServiceImpl implements CommentService {
 	}
 
 	@Override
-	@DigestLogAnnotated(digestIdentificationCode = "gts_platform", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
+	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public CommentBo getComment(String commentId) throws Exception {
 		return (CommentBo) commentDao.getComment(commentId);
 	}

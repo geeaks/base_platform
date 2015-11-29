@@ -77,6 +77,14 @@ public class DateUtils extends org.apache.commons.lang.time.DateUtils {
 		return new SimpleDateFormat(shortFormat).format(date);
 	}
 	
+	public static String formatDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+		
+		return new SimpleDateFormat(newFormat).format(date);
+	}
+	
 	public static Date parseDateNoTime(String sDate) throws ParseException {
 		DateFormat dateFormat = new SimpleDateFormat(shortFormat);
 		

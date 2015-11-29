@@ -1,102 +1,30 @@
 package com.gts.base.platform.service.bo;
 
-import java.util.Date;
-import com.gts.base.platform.dao.base.BaseEntity;
+import java.io.Serializable;
+import com.gts.base.platform.dao.entity.LoginInfo;
+import com.gts.framework.core.util.DateUtils;
 
 /**
- * @Description: 用户登录信息实体
+ * @Description: 用户登录信息业务实体
  * @ClassName: UserLoginInfo
  * @author gaoxiang
  * @date 2015年11月24日 下午11:00:24
  */
-public class LoginInfoBo extends BaseEntity {
-	
-	private String id;
+public class LoginInfoBo extends LoginInfo implements Serializable {
 	
 	/**
-	 * @Fields loginId : 登录名
+	 * @Fields serialVersionUID : 序列号
 	 */
-	private String loginId;
+	private static final long serialVersionUID = 1604915439290306062L;
 	
-	/**
-	 * @Fields userId : 用户ID
-	 */
-	private Integer userId;
+	protected String strLastLoginTime;
 	
-	/**
-	 * @Fields loginType : 登录类型
-	 */
-	private String loginType;
-	
-	/**
-	 * @Fields loginPassword : 登录密码
-	 */
-	private String loginPassword;
-	
-	/**
-	 * @Fields userType : 用户类型
-	 */
-	private String userType;
-	
-	/**
-	 * @Fields lastLoginType : 最后登录时间
-	 */
-	private Date lastLoginTime;
-	
-	public String getId() {
-		return id;
+	public String getStrLastLoginTime() {
+		return DateUtils.formatDate(this.getLastLoginTime());
 	}
 	
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	public String getLoginId() {
-		return loginId;
-	}
-	
-	public void setLoginId(String loginId) {
-		this.loginId = loginId;
-	}
-	
-	public Integer getUserId() {
-		return userId;
-	}
-	
-	public void setUserId(Integer userId) {
-		this.userId = userId;
-	}
-	
-	public String getLoginType() {
-		return loginType;
-	}
-	
-	public void setLoginType(String loginType) {
-		this.loginType = loginType;
-	}
-	
-	public String getLoginPassword() {
-		return loginPassword;
-	}
-	
-	public void setLoginPassword(String loginPassword) {
-		this.loginPassword = loginPassword;
-	}
-	
-	public String getUserType() {
-		return userType;
-	}
-	
-	public void setUserType(String userType) {
-		this.userType = userType;
-	}
-	
-	public Date getLastLoginTime() {
-		return lastLoginTime;
-	}
-	
-	public void setLastLoginTime(Date lastLoginTime) {
-		this.lastLoginTime = lastLoginTime;
+	public void setStrLastLoginTime(String strLastLoginTime) {
+		this.strLastLoginTime = strLastLoginTime;
 	}
 	
 }

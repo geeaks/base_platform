@@ -9,7 +9,7 @@
 <body style="margin-top:80px;">
 <!-- 顶部导航栏 -->
 <jsp:include page="common/common-topnav.jsp" />
-	<div class="container">
+<div class="container">
 	<!-- 导航栏 -->
 	<jsp:include page="index/index-nav.jsp" />
 	<div class="row clearfix">

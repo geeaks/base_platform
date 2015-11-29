@@ -1,52 +1,19 @@
 package com.gts.base.platform.service.bo;
 
-import com.gts.base.platform.dao.base.BaseEntity;
+import java.io.Serializable;
+import com.gts.base.platform.dao.entity.Role;
 
 /**
- * @Description: 角色信息实体
+ * @Description: 角色信息业务实体
  * @ClassName: Role
  * @author gaoxiang
  * @date 2015年11月24日 下午11:01:57
  */
-public class RoleBo extends BaseEntity {
-	
+public class RoleBo extends Role implements Serializable {
+
 	/**
-	 * @Fields roleId : 角色信息 主键
-	 */
-	private String roleId;
-	
-	/**
-	 * @Fields roleName : 角色名称
-	 */
-	private String roleName;
-	
-	/**
-	 * @Fields privilege : 角色权限
-	 */
-	private String privilege;
-	
-	public String getRoleId() {
-		return roleId;
-	}
-	
-	public void setRoleId(String roleId) {
-		this.roleId = roleId;
-	}
-	
-	public String getRoleName() {
-		return roleName;
-	}
-	
-	public void setRoleName(String roleName) {
-		this.roleName = roleName;
-	}
-	
-	public String getPrivilege() {
-		return privilege;
-	}
-	
-	public void setPrivilege(String privilege) {
-		this.privilege = privilege;
-	}
+	 * @Fields serialVersionUID : 序列号
+	 */ 
+	private static final long serialVersionUID = 53182971511543125L;
 	
 }

@@ -4,7 +4,7 @@ import java.util.List;
 import com.gts.base.platform.service.bo.CommentBo;
 
 /**
- * @Description: 评论信息操作 业务接口
+ * @Description: 评论信息操作 业务处理接口
  * @ClassName: CommentService
  * @author gaoxiang
  * @date 2015年11月26日 下午10:14:02

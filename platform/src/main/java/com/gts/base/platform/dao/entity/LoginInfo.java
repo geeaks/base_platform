@@ -5,7 +5,7 @@ import com.gts.base.platform.dao.base.BaseEntity;
 
 /**
  * @Description: 用户登录信息实体
- * @ClassName: UserLoginInfo
+ * @ClassName: LoginInfo
  * @author gaoxiang
  * @date 2015年11月24日 下午11:00:24
  */

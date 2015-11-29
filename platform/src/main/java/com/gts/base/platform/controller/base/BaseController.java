@@ -1,4 +1,4 @@
-package com.gts.base.platform.controller;
+package com.gts.base.platform.controller.base;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -23,6 +23,12 @@ import com.gts.framework.core.util.FtpHelper;
 import com.gts.framework.log.service.GtsLogger;
 import com.gts.framework.log.util.GtsLoggerFactory;
 
+/**
+ * @Description: 基础控制器类
+ * @ClassName: BaseController
+ * @author gaoxiang
+ * @date 2015年11月29日 下午2:46:10
+ */ 
 @Component
 public class BaseController {
 	

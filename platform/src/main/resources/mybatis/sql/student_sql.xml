@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.student">
+	
+	<resultMap id="studentMap" type="com.gts.base.platform.dao.entity.Student" >
+		<id property="studentId" column="STUDENT_ID" jdbcType="INTEGER" />
+		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
+		<result property="school" column="SCHOOL" jdbcType="VARCHAR" />
+		<result property="major" column="MAJOR" jdbcType="VARCHAR" />
+		<result property="grade" column="GRADE" jdbcType="VARCHAR" />
+		<result property="gradeStage" column="GRADESTAGE" jdbcType="VARCHAR" />
+		<result property="classes" column="CLASSES" jdbcType="VARCHAR" />
+		<result property="level" column="LEVEL" jdbcType="VARCHAR" />
+		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
+		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="student_column">
+		USER_ID,SCHOOL,MAJOR,GRADE,GRADESTAGE,CLASSES,LEVEL,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="userId != null">
+			AND USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="major != null">
+			AND MAJOR=#{major,jdbcType=INTEGER} 
+		</if>
+		<if test="grade != null">
+			AND GRADE=#{grade,jdbcType=INTEGER} 
+		</if>
+		<if test="classes != null">
+			AND CLASSES=#{classes,jdbcType=INTEGER} 
+		</if>
+		<if test="level != null">
+			AND LEVEL=#{level,jdbcType=INTEGER} 
+		</if>
+	</sql>
+	
+	<insert id="insertStudent" parameterType="com.gts.base.platform.dao.entity.Student" keyProperty="studentId" useGeneratedKeys="true">
+		INSERT INTO GTS_STUDENT <include refid="student_column" /> VALUES 
+		<![CDATA[
+		(#{userId,jdbcType=INTEGER},#{school,jdbcType=VARCHAR},#{major,jdbcType=VARCHAR},
+		#{grade,jdbcType=VARCHAR},#{gradeStage,jdbcType=VARCHAR},#{classes,jdbcType=VARCHAR},
+		#{level,jdbcType=VARCHAR},now(),now())
+		]]>
+	</insert>
+	
+	<update id="updateStudent" parameterType="com.gts.base.platform.dao.entity.Student">
+		UPDATE GTS_STUDENT SET GMT_MODIFY=now() 
+		<if test="userId != null">
+			,USER_ID=#{userId,jdbcType=INTEGER} 
+		</if>
+		<if test="major != null">
+			,MAJOR=#{major,jdbcType=INTEGER} 
+		</if>
+		<if test="grade != null">
+			,GRADE=#{grade,jdbcType=INTEGER} 
+		</if>
+		<if test="classes != null">
+			,CLASSES=#{classes,jdbcType=INTEGER} 
+		</if>
+		<if test="level != null">
+			,LEVEL=#{level,jdbcType=INTEGER} 
+		</if>
+		WHERE STUDENT_ID = #{studentId}
+	</update>
+	
+	<select id="queryStudent" resultMap="studentMap" parameterType="com.gts.base.platform.dao.entity.Student">
+		SELECT STUDENT_ID,<include refid="student_column" /> FROM GTS_STUDENT 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageStudent" resultMap="studentMap" parameterType="com.gts.base.platform.dao.entity.Student" flushCache="true" >
+		SELECT STUDENT_ID,<include refid="student_column" /> FROM GTS_STUDENT 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getStudent" resultMap="studentMap" parameterType="com.gts.base.platform.dao.entity.Student" >
+		SELECT STUDENT_ID,<include refid="student_column" /> FROM GTS_STUDENT WHERE STUDENT_ID = #{studentId}
+	</select>
+	
+</mapper>

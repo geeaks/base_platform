@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gts.base.platform.score">
+	
+	<resultMap id="scoreMap" type="com.gts.base.platform.dao.entity.Score" >
+		<id property="scoreId" column="SCORE_ID" jdbcType="INTEGER" />
+		<result property="studentId" column="STUDENT_ID" jdbcType="INTEGER" />
+		<result property="teacherId" column="TEACHER_ID" jdbcType="INTEGER" />
+		<result property="subject" column="SUBJECT" jdbcType="VARCHAR" />
+		<result property="score" column="SCORE" jdbcType="VARCHAR" />
+		<result property="gradeStage" column="GRADE_STAGE" jdbcType="VARCHAR" />
+		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
+		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
+	</resultMap>
+	
+	<sql id="score_column">
+		STUDENT_ID,TEACHER_ID,SUBJECT,SCORE,GRADE_STAGE,GMT_CREATE,GMT_MODIFY
+	</sql>
+	
+	<sql id="where_condition">
+		<if test="scoreId != null">
+			AND SCORE_ID=#{scoreId,jdbcType=INTEGER} 
+		</if>
+		<if test="studentId != null">
+			AND STUDENT_ID=#{studentId,jdbcType=INTEGER} 
+		</if>
+		<if test="teacherId != null">
+			AND TEACHER_ID=#{teacherId,jdbcType=INTEGER} 
+		</if>
+		<if test="subject != null">
+			AND SUBJECT=#{subject,jdbcType=VARCHAR} 
+		</if>
+		<if test="score != null">
+			AND SCORE=#{score,jdbcType=VARCHAR} 
+		</if>
+		<if test="gradeStage != null">
+			AND GRADE_STAGE=#{gradeStage,jdbcType=VARCHAR} 
+		</if>
+	</sql>
+	
+	<insert id="insertScore" parameterType="com.gts.base.platform.dao.entity.Score" keyProperty="scoreId" useGeneratedKeys="true">
+		INSERT INTO GTS_SCORE <include refid="score_column" /> VALUES 
+		<![CDATA[
+		(#{studentId,jdbcType=INTEGER},#{teacherId,jdbcType=INTEGER},#{subject,jdbcType=VARCHAR},
+		#{score,jdbcType=VARCHAR},#{gradeStage,jdbcType=VARCHAR},now(),now())
+		]]>
+	</insert>
+	
+	<update id="updateScore" parameterType="com.gts.base.platform.dao.entity.Score">
+		UPDATE GTS_SCORE SET GMT_MODIFY=now() 
+		<if test="studentId != null">
+			,STUDENT_ID=#{studentId,jdbcType=INTEGER} 
+		</if>
+		<if test="teacherId != null">
+			,TEACHER_ID=#{teacherId,jdbcType=INTEGER} 
+		</if>
+		<if test="subject != null">
+			,SUBJECT=#{subject,jdbcType=VARCHAR} 
+		</if>
+		<if test="score != null">
+			,SCORE=#{score,jdbcType=VARCHAR} 
+		</if>
+		<if test="gradeStage != null">
+			,GRADE_STAGE=#{gradeStage,jdbcType=VARCHAR} 
+		</if>
+		WHERE SCORE_ID = #{scoreId}
+	</update>
+	
+	<select id="queryScore" resultMap="scoreMap" parameterType="com.gts.base.platform.dao.entity.Score">
+		SELECT SCORE_ID,<include refid="score_column" /> FROM GTS_SCORE 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="listPageScore" resultMap="scoreMap" parameterType="com.gts.base.platform.dao.entity.Score" flushCache="true" >
+		SELECT SCORE_ID,<include refid="score_column" /> FROM GTS_SCORE 
+		<where>
+			<include refid="where_condition" />
+		</where>
+		ORDER BY GMT_CREATE DESC
+	</select>
+	
+	<select id="getScore" resultMap="scoreMap" parameterType="com.gts.base.platform.dao.entity.Score" >
+		SELECT SCORE_ID,<include refid="score_column" /> FROM GTS_SCORE WHERE SCORE_ID = #{scoreId}
+	</select>
+	
+</mapper>

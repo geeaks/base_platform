@@ -19,6 +19,4 @@ public interface GenearchStudentDao {
 	
 	public List<GenearchStudent> queryGenearchStudent(GenearchStudent genearchStudent) throws Exception;
 	
-	public GenearchStudent getGenearchStudent(String id) throws Exception;
-	
 }
