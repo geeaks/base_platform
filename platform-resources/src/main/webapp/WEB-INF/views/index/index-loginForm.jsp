@@ -45,18 +45,24 @@
 								<img id="imgCode" class="img-rounded" onclick="reloadImgCode()" src="${basePath}/getImgCode" />
 							</div>
 						</div>
+							<div class="form-group">
+							<div class="col-sm-12">
+								<div class="checkbox">
+									<label><input id="rememberMe" type="checkbox" />记住用户名</label>
+									<a href="password/forgetPwd" class="pull-right">忘记密码了？</a>
+								</div>
+							</div>
+						</div>
 						<div class="form-group">
 							<div class="col-sm-12">
 								<button type="submit" class="btn btn-default btn-block">登录</button>
 							</div>
 						</div>
-						<div class="form-group">
+						<!-- <div class="form-group">
 							<div class="col-sm-12">
-								<div class="checkbox">
-									<label><input id="rememberMe" type="checkbox" />记住用户名</label>
-								</div>
+								<a href="forgetPassword" class="pull-right">免费注册</a>
 							</div>
-						</div>
+						</div> -->
 					</form>
 				</c:otherwise>
 			</c:choose>

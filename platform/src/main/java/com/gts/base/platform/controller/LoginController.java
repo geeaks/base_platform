@@ -26,6 +26,12 @@ import com.gts.base.platform.utils.enums.EnumSessionKey;
 import com.gts.framework.core.util.AddressUtils;
 import com.gts.framework.web.util.HttpHeaderUtils;
 
+/**
+ * @Description: 登录控制器
+ * @ClassName: LoginController
+ * @author gaoxiang
+ * @date 2015年11月30日 下午10:32:07
+ */ 
 @Controller
 public class LoginController extends BaseController {
 	
@@ -46,9 +52,9 @@ public class LoginController extends BaseController {
 			model.addAttribute("user",user);
 		}
 		//判断用户是否是登录失效重定向 
-		String redirectUrl = request.getParameter("redirectUrl");
+		String redirectUrl = getSessionObject(session, EnumSessionKey.REDIRECT_URL.getKey());
 		if(StringUtils.isNotBlank(redirectUrl)){
-			model.addAttribute("msg","请先登陆");
+			model.addAttribute("msg","请您登陆");
 			session.setAttribute("redirectUrl", redirectUrl);
 		}
 		return "index";
@@ -64,10 +70,11 @@ public class LoginController extends BaseController {
 		session.setAttribute(EnumSessionKey.USER_KEY.getKey(), userService.getUser(userId));
 		String clientIP = HttpHeaderUtils.getClientIP(request);
 		loginLogService.recordLoginLog(userId,clientIP,AddressUtils.getIPAddresses(clientIP));
+		loginInfoService.recordLastLogin(getLoginInfo(session));
 		//重定向到要访问的页面
 		String redirectUrl = getSessionObject(session, EnumSessionKey.REDIRECT_URL.getKey());
 		if(StringUtils.isNotBlank(redirectUrl)){
-			return "redirect:/"+redirectUrl;
+			return "redirect:"+redirectUrl;
 		}
 		session.removeAttribute(EnumSessionKey.REDIRECT_URL.getKey());
 		//正常跳转首页

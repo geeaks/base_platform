@@ -20,8 +20,8 @@ public class LoginInterceptor extends HandlerInterceptorAdapter {
 		HttpSession session = request.getSession();
 		UserBo userBo = (UserBo) session.getAttribute(EnumSessionKey.USER_KEY.getKey());
 		if(userBo == null){
-			request.setAttribute("msg", "请重新登录");
-			response.sendRedirect(request.getContextPath()+"/index?"+EnumSessionKey.REDIRECT_URL.getKey()+"=" + request.getRequestURL());
+			session.setAttribute(EnumSessionKey.REDIRECT_URL.getKey(), String.valueOf(request.getRequestURL()));
+			response.sendRedirect(request.getContextPath()+"/index");
 			return false;
 		}
 		return true;

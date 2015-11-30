@@ -1,5 +1,6 @@
 package com.gts.base.platform.service.impl;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
@@ -103,7 +104,7 @@ public class LoginInfoServiceImpl extends BaseService implements LoginInfoServic
 		}
 		return null;
 	}
-
+	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public LoginInfoBo getLoginInfoByLoginId(String loginId) {
@@ -120,7 +121,7 @@ public class LoginInfoServiceImpl extends BaseService implements LoginInfoServic
 		}
 		return null;
 	}
-
+	
 	@Override
 	@DigestLogAnnotated(digestIdentificationCode = "gts", logFileName = "DEFAULT.DIG", loggerLevel = LoggerLevel.INFO)
 	public Map<String, Object> verifyLoginPassword(String loginPassword, String password) {
@@ -137,6 +138,13 @@ public class LoginInfoServiceImpl extends BaseService implements LoginInfoServic
 			map.put("msg", "密码错误");
 		}
 		return map;
+	}
+
+	
+	@Override
+	public void recordLastLogin(LoginInfoBo loginInfoBo) {
+		loginInfoBo.setLastLoginTime(new Date());
+		this.updateLoginInfo(loginInfoBo);
 	}
 	
 }
