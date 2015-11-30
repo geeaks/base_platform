@@ -2,17 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.loginLog">
 	
-	<resultMap id="loginLogMap" type="com.gts.base.platform.dao.entity.LoginLog" >
-		<id property="logId" column="LOG_ID" jdbcType="INTEGER" />
-		<result property="loginId" column="LOGIN_ID" jdbcType="INTEGER" />
-		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
-		<result property="loginTime" column="LOGIN_TIME" jdbcType="INTEGER" />
-		<result property="loginPlace" column="LOGIN_PLACE" jdbcType="INTEGER" />
-		<result property="loginIP" column="LOGIN_IP" jdbcType="VARCHAR" />
-	</resultMap>
-	
-	<sql id="loginLog_column">
-		LOGIN_ID,USER_ID,LOGIN_TIME,LOGIN_PLACE,LOGIN_IP
+	<sql id="select_column">
+		LOG_ID logId,LOGIN_ID loginId,USER_ID userId,LOGIN_TIME loginTime,LOGIN_PLACE loginPlace,LOGIN_IP loginIP 
 	</sql>
 	
 	<sql id="where_condition">
@@ -34,7 +25,7 @@
 	</sql>
 	
 	<insert id="insertLoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog" keyProperty="loginLogId" useGeneratedKeys="true">
-		INSERT INTO GTS_LOGIN_LOG (<include refid="loginLog_column" />) VALUES 
+		INSERT INTO GTS_LOGIN_LOG (LOGIN_ID,USER_ID,LOGIN_TIME,LOGIN_PLACE,LOGIN_IP) VALUES 
 		<![CDATA[
 		(#{loginId,jdbcType=VARCHAR},#{userId,jdbcType=INTEGER},now(),#{loginPlace,jdbcType=VARCHAR},#{loginIP,jdbcType=VARCHAR})
 		]]>
@@ -57,28 +48,28 @@
 		WHERE LOG_ID = #{logId}
 	</update>
 	
-	<select id="queryLoginLog" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog">
-		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG 
+	<select id="queryLoginLog" resultType="com.gts.base.platform.dao.entity.LoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog">
+		SELECT ID,<include refid="select_column" /> FROM GTS_LOGIN_LOG 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="listPageLoginLog" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog" flushCache="true" >
-		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG 
+	<select id="listPageLoginLog" resultType="com.gts.base.platform.dao.entity.LoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog" flushCache="true" >
+		SELECT ID,<include refid="select_column" /> FROM GTS_LOGIN_LOG 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="getLoginLog" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog" >
-		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG WHERE LOG_ID = #{logId}
+	<select id="getLoginLog" resultType="com.gts.base.platform.dao.entity.LoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog" >
+		SELECT ID,<include refid="select_column" /> FROM GTS_LOGIN_LOG WHERE LOG_ID = #{logId}
 	</select>
 	
-	<select id="getLoginLogByLoginId" resultMap="loginLogMap" parameterType="com.gts.base.platform.dao.entity.LoginLog" >
-		SELECT ID,<include refid="loginLog_column" /> FROM GTS_LOGIN_LOG WHERE LOGIN_ID = #{loginId}
+	<select id="getLoginLogByLoginId" resultType="com.gts.base.platform.dao.entity.LoginLog" parameterType="com.gts.base.platform.dao.entity.LoginLog" >
+		SELECT ID,<include refid="select_column" /> FROM GTS_LOGIN_LOG WHERE LOGIN_ID = #{loginId}
 	</select>
 	
 </mapper>

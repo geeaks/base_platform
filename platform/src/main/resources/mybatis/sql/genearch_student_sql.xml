@@ -2,12 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.genearchStudent">
 	
-	<resultMap id="genearchStudentMap" type="com.gts.base.platform.dao.entity.GenearchStudent" >
-		<id property="Id" column="ID" jdbcType="INTEGER" />
-		<id property="genearchId" column="GENEARCH_ID" jdbcType="INTEGER" />
-		<result property="studentId" column="STUDENT_ID" jdbcType="INTEGER" />
-		<result property="valid" column="VALID" jdbcType="VARCHAR" />
-	</resultMap>
+	<sql id="select_column">
+		ID id,GENEARCH_ID genearchId,STUDENT_ID genearchId,VALID valid 
+	</sql>
 	
 	<sql id="where_condition">
 		<if test="genearchId != null">
@@ -30,15 +27,15 @@
 		(#{genearchId,jdbcType=INTEGER},#{studentId,jdbcType=INTEGER},'Y')
 	</insert>
 	
-	<select id="queryGenearchStudent" resultMap="genearchStudentMap" parameterType="com.gts.base.platform.dao.entity.GenearchStudent">
-		SELECT ID,GENEARCH_ID,STUDENT_ID,VALID FROM GTS_GENEARCH_STUDENT 
+	<select id="queryGenearchStudent" resultType="com.gts.base.platform.dao.entity.GenearchStudent" parameterType="com.gts.base.platform.dao.entity.GenearchStudent">
+		SELECT <include refid="select_column" /> FROM GTS_GENEARCH_STUDENT 
 		<where>
 			<include refid="where_condition" />
 		</where>
 	</select>
 	
-	<select id="listPageGenearchStudent" resultMap="genearchStudentMap" parameterType="com.gts.base.platform.dao.entity.GenearchStudent" flushCache="true" >
-		SELECT ID,GENEARCH_ID,STUDENT_ID,VALID FROM GTS_GENEARCH_STUDENT 
+	<select id="listPageGenearchStudent" resultType="com.gts.base.platform.dao.entity.GenearchStudent" parameterType="com.gts.base.platform.dao.entity.GenearchStudent" flushCache="true" >
+		SELECT <include refid="select_column" /> FROM GTS_GENEARCH_STUDENT 
 		<where>
 			<include refid="where_condition" />
 		</where>

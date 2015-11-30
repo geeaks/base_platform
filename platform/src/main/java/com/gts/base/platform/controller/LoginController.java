@@ -23,6 +23,7 @@ import com.gts.base.platform.service.bo.LoginInfoBo;
 import com.gts.base.platform.service.bo.UserBo;
 import com.gts.base.platform.utils.IdentifyingCode;
 import com.gts.base.platform.utils.enums.EnumSessionKey;
+import com.gts.framework.core.util.AddressUtils;
 import com.gts.framework.web.util.HttpHeaderUtils;
 
 @Controller
@@ -61,7 +62,8 @@ public class LoginController extends BaseController {
 		//校验成功，记录登录日志
 		Integer userId = getLoginInfo(session).getUserId();
 		session.setAttribute(EnumSessionKey.USER_KEY.getKey(), userService.getUser(userId));
-		loginLogService.recordLoginLog(userId,HttpHeaderUtils.getClientIP(request),"");
+		String clientIP = HttpHeaderUtils.getClientIP(request);
+		loginLogService.recordLoginLog(userId,clientIP,AddressUtils.getIPAddresses(clientIP));
 		//重定向到要访问的页面
 		String redirectUrl = getSessionObject(session, EnumSessionKey.REDIRECT_URL.getKey());
 		if(StringUtils.isNotBlank(redirectUrl)){

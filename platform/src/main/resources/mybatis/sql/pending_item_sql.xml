@@ -42,7 +42,7 @@
 	</sql>
 	
 	<insert id="insertPendingItem" parameterType="com.gts.base.platform.dao.entity.PendingItem" keyProperty="itemId" useGeneratedKeys="true">
-		INSERT INTO GTS_PENDING_ITEM <include refid="pendingItem_column" /> VALUES 
+		INSERT INTO GTS_PENDING_ITEM (<include refid="pendingItem_column" />) VALUES 
 		<![CDATA[
 		(#{itemName,jdbcType=INTEGER},#{itemType,jdbcType=INTEGER},#{handlerStatus,jdbcType=VARCHAR},
 		#{applicantUserId,jdbcType=VARCHAR},#{applicantName,jdbcType=VARCHAR},#{handlerUserId,jdbcType=VARCHAR},#{handlerName,jdbcType=VARCHAR},now(),now())

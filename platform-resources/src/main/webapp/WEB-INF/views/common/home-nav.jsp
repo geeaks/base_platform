@@ -14,17 +14,53 @@
 				</div>
 				<div class="collapse navbar-collapse navbar-right" id="bs-example-navbar-collapse-2">
 					<ul class="nav navbar-nav navbar-left">
-						<li>
-							<a href="#">学生信息管理</a>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								用户信息<strong class="caret"></strong>
+							</a>
+							<ul class="dropdown-menu">
+								<li class="dropdown">
+									<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+										学生信息管理<strong class="caret"></strong>
+									</a>
+									<ul class="dropdown-menu">
+										<li><a href="#">学生成绩管理</a></li>
+										<li class="divider"></li>
+										<li><a href="#">学生评语管理</a></li>
+									</ul>
+								</li>
+								<li class="divider"></li>
+								<li><a href="#">教师信息管理</a></li>
+								<li class="divider"></li>
+								<li><a href="#">家长信息管理</a></li>
+								<li class="divider"></li>
+								<li><a href="#">管理员信息管理</a></li>
+							</ul>
 						</li>
-						<li>
-							<a href="#">学生成绩管理</a>
+						<li class="divider-vertical"><br></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								应用中心<strong class="caret"></strong>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="#">消息中心</a></li>
+								<li class="divider"></li>
+								<li><a href="#">待办事项</a></li>
+								<li class="divider"></li>
+								<li><a href="#">记事管理</a></li>
+							</ul>
 						</li>
-						<li>
-							<a href="#">系统管理</a>
-						</li>
-						<li>
-							<a href="#">权限管理</a>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+								系统管理<strong class="caret"></strong>
+							</a>
+							<ul class="dropdown-menu">
+								<li><a href="#">管理员信息</a></li>
+								<li class="divider"></li>
+								<li><a href="#">权限管理</a></li>
+								<li class="divider"></li>
+								<li><a href="#">登录日志查看</a></li>
+							</ul>
 						</li>
 					</ul>
 				</div>

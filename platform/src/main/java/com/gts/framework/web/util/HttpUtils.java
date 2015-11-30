@@ -17,9 +17,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,6 +35,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.gts.framework.core.constants.CodeType;
@@ -421,7 +424,7 @@ public final class HttpUtils {
 	 * @return 响应内容
 	 * @throws Exception
 	 */
-	@SuppressWarnings("deprecation")
+	@SuppressWarnings({ "deprecation", "resource" })
 	public static String sendSSLPostRequest(String reqURL, Map<String, String> params) throws Exception {
 		String responseContent = null; // 响应内容
 		HttpClient httpClient = new DefaultHttpClient(); // 创建默认的httpClient实例

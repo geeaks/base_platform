@@ -2,13 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.manager">
 	
-	<resultMap id="managerMap" type="com.gts.base.platform.dao.entity.Manager" >
-		<id property="managerId" column="MANAGER_ID" jdbcType="INTEGER" />
-		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
-	</resultMap>
-	
-	<sql id="manager_column">
-		USER_ID,GMT_CREATE,GMT_MODIFY
+	<sql id="select_column">
+		MANAGER_ID managerId,USER_ID userId,GMT_CREATE,GMT_MODIFY
 	</sql>
 	
 	<sql id="where_condition">
@@ -18,7 +13,7 @@
 	</sql>
 	
 	<insert id="insertManager" parameterType="com.gts.base.platform.dao.entity.Manager" keyProperty="managerId" useGeneratedKeys="true">
-		INSERT INTO GTS_MANAGER <include refid="manager_column" /> VALUES 
+		INSERT INTO GTS_MANAGER (USER_ID,GMT_CREATE,GMT_MODIFY) VALUES 
 		<![CDATA[
 		(#{userId,jdbcType=INTEGER},now(),now())
 		]]>
@@ -32,24 +27,24 @@
 		WHERE MANAGER_ID = #{managerId}
 	</update>
 	
-	<select id="queryManager" resultMap="managerMap" parameterType="com.gts.base.platform.dao.entity.Manager">
-		SELECT MANAGER_ID,<include refid="manager_column" /> FROM GTS_MANAGER 
+	<select id="queryManager" resultType="com.gts.base.platform.dao.entity.Manager" parameterType="com.gts.base.platform.dao.entity.Manager">
+		SELECT MANAGER_ID,<include refid="select_column" /> FROM GTS_MANAGER 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="listPageManager" resultMap="managerMap" parameterType="com.gts.base.platform.dao.entity.Manager" flushCache="true" >
-		SELECT MANAGER_ID,<include refid="manager_column" /> FROM GTS_MANAGER 
+	<select id="listPageManager" resultType="com.gts.base.platform.dao.entity.Manager" parameterType="com.gts.base.platform.dao.entity.Manager" flushCache="true" >
+		SELECT MANAGER_ID,<include refid="select_column" /> FROM GTS_MANAGER 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="getManager" resultMap="managerMap" parameterType="com.gts.base.platform.dao.entity.Manager" >
-		SELECT MANAGER_ID,<include refid="manager_column" /> FROM GTS_MANAGER WHERE MANAGER_ID = #{managerId}
+	<select id="getManager" resultType="com.gts.base.platform.dao.entity.Manager" parameterType="com.gts.base.platform.dao.entity.Manager" >
+		SELECT MANAGER_ID,<include refid="select_column" /> FROM GTS_MANAGER WHERE MANAGER_ID = #{managerId}
 	</select>
 	
 </mapper>

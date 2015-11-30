@@ -2,19 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.notice">
 	
-	<resultMap id="noticeMap" type="com.gts.base.platform.dao.entity.Notice" >
-		<id property="noticeId" column="NOTICE_ID" jdbcType="INTEGER" />
-		<result property="noticeType" column="NOTICE_TYPE" jdbcType="INTEGER" />
-		<result property="noticeTitle" column="NOTICE_TITLE" jdbcType="VARCHAR" />
-		<result property="noticeContent" column="NOTICE_CONTENT" jdbcType="VARCHAR" />
-		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
-		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
-		<result property="startCreateDate" column="startCreateDate" jdbcType="TIMESTAMP" />
-		<result property="endCreateDate" column="endCreateDate" jdbcType="TIMESTAMP" />
-	</resultMap>
-	
-	<sql id="notice_column">
-		USER_ID,NOTICE_TYPE,NOTICE_TITLE,NOTICE_CONTENT,GMT_CREATE,GMT_MODIFY
+	<sql id="select_column">
+		NOTICE_ID noticeId,NOTICE_TYPE noticeType,NOTICE_TITLE noticeTitle,NOTICE_CONTENT noticeContent,GMT_CREATE gmtCreate,GMT_MODIFY gmtModify 
 	</sql>
 	
 	<sql id="where_condition">
@@ -27,7 +16,7 @@
 	</sql>
 	
 	<insert id="insertNotice" parameterType="com.gts.base.platform.dao.entity.Notice" keyProperty="noticeId" useGeneratedKeys="true">
-		INSERT INTO GTS_NOTICE <include refid="notice_column" /> VALUES 
+		INSERT INTO GTS_NOTICE (NOTICE_TYPE,NOTICE_TITLE,NOTICE_CONTENT,GMT_CREATE,GMT_MODIFY) VALUES 
 		<![CDATA[
 		(#{noticeType,jdbcType=VARCHAR},#{NOTICE_TITLE,jdbcType=VARCHAR},#{noticeContent,jdbcType=VARCHAR},now(),now())
 		]]>
@@ -47,24 +36,24 @@
 		WHERE NOTICE_ID = #{noticeId}
 	</update>
 	
-	<select id="queryNotice" resultMap="noticeMap" parameterType="com.gts.base.platform.dao.entity.Notice">
-		SELECT NOTICE_ID,<include refid="notice_column" /> FROM GTS_NOTICE 
+	<select id="queryNotice" resultType="com.gts.base.platform.dao.entity.Notice" parameterType="com.gts.base.platform.dao.entity.Notice">
+		SELECT <include refid="select_column" /> FROM GTS_NOTICE 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="listPageNotice" resultMap="noticeMap" parameterType="com.gts.base.platform.dao.entity.Notice" flushCache="true" >
-		SELECT NOTICE_ID,<include refid="notice_column" /> FROM GTS_NOTICE 
+	<select id="listPageNotice" resultType="com.gts.base.platform.dao.entity.Notice" parameterType="com.gts.base.platform.dao.entity.Notice" flushCache="true" >
+		SELECT <include refid="select_column" /> FROM GTS_NOTICE 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="getNotice" resultMap="noticeMap" parameterType="com.gts.base.platform.dao.entity.Notice" >
-		SELECT NOTICE_ID,<include refid="notice_column" /> FROM GTS_NOTICE WHERE NOTICE_ID = #{noticeId}
+	<select id="getNotice" resultType="com.gts.base.platform.dao.entity.Notice" parameterType="com.gts.base.platform.dao.entity.Notice" >
+		SELECT <include refid="select_column" /> FROM GTS_NOTICE WHERE NOTICE_ID = #{noticeId}
 	</select>
 	
 </mapper>

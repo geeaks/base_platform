@@ -2,13 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.genearch">
 	
-	<resultMap id="genearchMap" type="com.gts.base.platform.dao.entity.Genearch" >
-		<id property="genearchId" column="GENEARCH_ID" jdbcType="INTEGER" />
-		<result property="userId" column="USER_ID" jdbcType="INTEGER" />
-	</resultMap>
-	
-	<sql id="genearch_column">
-		USER_ID,GMT_CREATE,GMT_MODIFY
+	<sql id="select_column">
+		GENEARCH_ID genearchId,USER_ID userId,GMT_CREATE gmtCreate,GMT_MODIFY gmtModify 
 	</sql>
 	
 	<sql id="where_condition">
@@ -18,7 +13,7 @@
 	</sql>
 	
 	<insert id="insertGenearch" parameterType="com.gts.base.platform.dao.entity.Genearch" keyProperty="genearchId" useGeneratedKeys="true">
-		INSERT INTO GTS_GENEARCH <include refid="genearch_column" /> VALUES 
+		INSERT INTO GTS_GENEARCH (USER_ID,GMT_CREATE,GMT_MODIFY) VALUES 
 		<![CDATA[
 		(#{userId,jdbcType=INTEGER},now(),now())
 		]]>
@@ -32,24 +27,24 @@
 		WHERE GENEARCH_ID = #{genearchId}
 	</update>
 	
-	<select id="queryGenearch" resultMap="genearchMap" parameterType="com.gts.base.platform.dao.entity.Genearch">
-		SELECT GENEARCH_ID,<include refid="genearch_column" /> FROM GTS_GENEARCH 
+	<select id="queryGenearch" resultType="com.gts.base.platform.dao.entity.Genearch" parameterType="com.gts.base.platform.dao.entity.Genearch">
+		SELECT <include refid="select_column" /> FROM GTS_GENEARCH 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="listPageGenearch" resultMap="genearchMap" parameterType="com.gts.base.platform.dao.entity.Genearch" flushCache="true" >
-		SELECT GENEARCH_ID,<include refid="genearch_column" /> FROM GTS_GENEARCH 
+	<select id="listPageGenearch" resultType="com.gts.base.platform.dao.entity.Genearch" parameterType="com.gts.base.platform.dao.entity.Genearch" flushCache="true" >
+		SELECT <include refid="select_column" /> FROM GTS_GENEARCH 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="getGenearch" resultMap="genearchMap" parameterType="com.gts.base.platform.dao.entity.Genearch" >
-		SELECT GENEARCH_ID,<include refid="genearch_column" /> FROM GTS_GENEARCH WHERE GENEARCH_ID = #{genearchId}
+	<select id="getGenearch" resultType="com.gts.base.platform.dao.entity.Genearch" parameterType="com.gts.base.platform.dao.entity.Genearch" >
+		SELECT <include refid="select_column" /> FROM GTS_GENEARCH WHERE GENEARCH_ID = #{genearchId}
 	</select>
 	
 </mapper>

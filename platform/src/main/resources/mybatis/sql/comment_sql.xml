@@ -2,20 +2,9 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.gts.base.platform.comment">
 	
-	<resultMap id="commentMap" type="com.gts.base.platform.dao.entity.Comment" >
-		<id property="commentId" column="COMMENT_ID" jdbcType="INTEGER" />
-		<result property="studentId" column="STUDENT_ID" jdbcType="INTEGER" />
-		<result property="comment" column="COMMENT" jdbcType="VARCHAR" />
-		<result property="commentPerson" column="COMMENT_PERSON" jdbcType="VARCHAR" />
-		<result property="gradeStage" column="GRADE_STAGE" jdbcType="VARCHAR" />
-		<result property="gmtCreate" column="GMT_CREATE " jdbcType="TIMESTAMP" />
-		<result property="gmtModify" column="GMT_MODIFY" jdbcType="TIMESTAMP" />
-		<result property="startCreateDate" column="startCreateDate" jdbcType="TIMESTAMP" />
-		<result property="endCreateDate" column="endCreateDate" jdbcType="TIMESTAMP" />
-	</resultMap>
-	
-	<sql id="comment_column">
-		STUDENT_ID,COMMENT,COMMENT_PERSON,GRADE_STAGE,GMT_CREATE,GMT_MODIFY
+	<sql id="select_column">
+		COMMENT_ID commentId,STUDENT_ID studentId,COMMENT comment,COMMENT_PERSON commentPerson,
+		GRADE_STAGE gradeStage,GMT_CREATE gmtCreate,GMT_MODIFY gmtModify 
 	</sql>
 	
 	<sql id="where_condition">
@@ -43,7 +32,7 @@
 	</sql>
 	
 	<insert id="insertComment" parameterType="com.gts.base.platform.dao.entity.Comment" keyProperty="commentId" useGeneratedKeys="true">
-		INSERT INTO GTS_COMMENT (<include refid="comment_column" />) VALUES 
+		INSERT INTO GTS_COMMENT (STUDENT_ID,COMMENT,COMMENT_PERSON,GRADE_STAGE,GMT_CREATE,GMT_MODIFY) VALUES 
 		<![CDATA[
 		(#{studentId,jdbcType=INTEGER},#{comment,jdbcType=VARCHAR},#{commentPerson,jdbcType=VARCHAR},#{gradeStage,jdbcType=VARCHAR},now(),now())
 		]]>
@@ -66,24 +55,24 @@
 		WHERE COMMENT_ID = #{commentId}
 	</update>
 	
-	<select id="queryComment" resultMap="commentMap" parameterType="com.gts.base.platform.dao.entity.Comment">
-		SELECT COMMENT_ID,<include refid="comment_column" /> FROM GTS_COMMENT 
+	<select id="queryComment" resultType="com.gts.base.platform.dao.entity.Comment" parameterType="com.gts.base.platform.dao.entity.Comment">
+		SELECT <include refid="select_column" /> FROM GTS_COMMENT 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="listPageComment" resultMap="commentMap" parameterType="com.gts.base.platform.dao.entity.Comment" flushCache="true" >
-		SELECT COMMENT_ID,<include refid="comment_column" /> FROM GTS_COMMENT 
+	<select id="listPageComment" resultType="com.gts.base.platform.dao.entity.Comment" parameterType="com.gts.base.platform.dao.entity.Comment" flushCache="true" >
+		SELECT <include refid="select_column" /> FROM GTS_COMMENT 
 		<where>
 			<include refid="where_condition" />
 		</where>
 		ORDER BY GMT_CREATE DESC
 	</select>
 	
-	<select id="getComment" resultMap="commentMap" parameterType="com.gts.base.platform.dao.entity.Comment" >
-		SELECT COMMENT_ID,<include refid="comment_column" /> FROM GTS_COMMENT WHERE COMMENT_ID = #{commentId}
+	<select id="getComment" resultType="com.gts.base.platform.dao.entity.Comment" parameterType="com.gts.base.platform.dao.entity.Comment" >
+		SELECT <include refid="select_column" /> FROM GTS_COMMENT WHERE COMMENT_ID = #{commentId}
 	</select>
 	
 </mapper>

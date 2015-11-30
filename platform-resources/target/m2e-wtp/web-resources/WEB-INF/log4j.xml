@@ -33,17 +33,17 @@
 	</appender> -->
 	<!-- [公共业务日志] -->
 	<logger name="com.gts" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</logger>
 	
 	<logger name="DEFAULT.DIG" additivity="false">
-		<level value="DEBUG" />
+		<level value="INFO" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</logger>
 	
 	<root>
-		<level value="DEBUG" />
+		<level value="ERROR" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</root>
 </log4j:configuration>
