@@ -29,5 +29,5 @@ public interface LoginLogService {
 	 * @author gaoxiang
 	 * @date 2015年11月28日 下午12:15:26
 	 */
-	public void recordLoginLog(Integer userId, String clientIP, String clinetPlace);
+	public void recordLoginLog(Integer userId,String loginId, String clientIP, String clinetPlace);
 }

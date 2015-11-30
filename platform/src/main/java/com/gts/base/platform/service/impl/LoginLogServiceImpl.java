@@ -82,9 +82,10 @@ public class LoginLogServiceImpl extends BaseService implements LoginLogService 
 	}
 
 	@Override
-	public void recordLoginLog(Integer userId, String clientIP, String clinetPlace) {
+	public void recordLoginLog(Integer userId,String loginId, String clientIP, String clinetPlace) {
 		LoginLog loginLog = new LoginLog();
 		loginLog.setUserId(userId);
+		loginLog.setLoginId(loginId);
 		loginLog.setLoginTime(new Date());
 		loginLog.setLoginIP(clientIP);
 		loginLog.setLoginPlace(clinetPlace);

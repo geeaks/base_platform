@@ -142,8 +142,10 @@ public class LoginInfoServiceImpl extends BaseService implements LoginInfoServic
 
 	
 	@Override
-	public void recordLastLogin(LoginInfoBo loginInfoBo) {
-		loginInfoBo.setLastLoginTime(new Date());
+	public void recordLastLogin(Integer id) {
+		LoginInfo loginInfoBo = new LoginInfo();
+		loginInfoBo.setId(id);
+		loginInfoBo .setLastLoginTime(new Date());
 		this.updateLoginInfo(loginInfoBo);
 	}
 	

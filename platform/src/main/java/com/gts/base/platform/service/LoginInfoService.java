@@ -79,11 +79,11 @@ public interface LoginInfoService {
 	
 	/**
 	 * @Description: 记录最后登录状态
-	 * @param loginInfoBo
+	 * @param id
 	 * @return void 返回类型
 	 * @author gaoxiang
 	 * @date 2015年11月30日 下午9:28:11
 	 */
-	public void recordLastLogin(LoginInfoBo loginInfoBo);
+	public void recordLastLogin(Integer id);
 	
 }

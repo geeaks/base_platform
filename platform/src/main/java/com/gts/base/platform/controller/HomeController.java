@@ -13,7 +13,7 @@ import com.gts.base.platform.service.NoticeService;
 import com.gts.base.platform.service.PendingItemService;
 
 /**
- * @Description:  
+ * @Description: 登录首页
  * @ClassName: HomeController
  * @author gaoxiang
  * @date 2015年11月29日 下午10:12:17

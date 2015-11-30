@@ -69,14 +69,14 @@ public class LoginController extends BaseController {
 		Integer userId = getLoginInfo(session).getUserId();
 		session.setAttribute(EnumSessionKey.USER_KEY.getKey(), userService.getUser(userId));
 		String clientIP = HttpHeaderUtils.getClientIP(request);
-		loginLogService.recordLoginLog(userId,clientIP,AddressUtils.getIPAddresses(clientIP));
-		loginInfoService.recordLastLogin(getLoginInfo(session));
+		loginLogService.recordLoginLog(userId,getLoginInfo(session).getLoginId(),clientIP,AddressUtils.getIPAddresses(clientIP));
+		loginInfoService.recordLastLogin(getLoginInfo(session).getId());
 		//重定向到要访问的页面
 		String redirectUrl = getSessionObject(session, EnumSessionKey.REDIRECT_URL.getKey());
+		session.removeAttribute(EnumSessionKey.REDIRECT_URL.getKey());
 		if(StringUtils.isNotBlank(redirectUrl)){
 			return "redirect:"+redirectUrl;
 		}
-		session.removeAttribute(EnumSessionKey.REDIRECT_URL.getKey());
 		//正常跳转首页
 		return "redirect:/home";
 	}
