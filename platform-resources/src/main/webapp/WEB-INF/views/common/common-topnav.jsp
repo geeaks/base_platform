@@ -12,7 +12,7 @@
 			<c:choose>
 				<c:when test="${session_user ne null}">
 					<li>
-						<a style="cursor: pointer;" >
+						<a href="#" style="float:right;cursor: pointer;" >
 							您好，<span class="glyphicon glyphicon-user"></span> ${session_user.name}
 						</a>
 					</li>

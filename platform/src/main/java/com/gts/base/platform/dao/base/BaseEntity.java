@@ -33,6 +33,16 @@ public class BaseEntity {
 	 */
 	private Date endCreateDate;
 	
+	/**
+	 * @Fields currentPage : 当前页码
+	 */
+	private int currentPage;
+	
+	/**
+	 * @Fields showCount : 每页多少条记录
+	 */
+	private int showCount;
+	
 	private Page page;
 	
 	public Date getGmtCreate() {
@@ -73,6 +83,22 @@ public class BaseEntity {
 	
 	public void setEndCreateDate(Date endCreateDate) {
 		this.endCreateDate = endCreateDate;
+	}
+	
+	public int getCurrentPage() {
+		return currentPage;
+	}
+	
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	
+	public int getShowCount() {
+		return showCount;
+	}
+	
+	public void setShowCount(int showCount) {
+		this.showCount = showCount;
 	}
 	
 	public String toString() {

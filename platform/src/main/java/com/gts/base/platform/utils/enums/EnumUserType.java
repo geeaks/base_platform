@@ -5,34 +5,56 @@ package com.gts.base.platform.utils.enums;
  * @ClassName: EnumUserType
  * @author gaoxiang
  * @date 2015年11月28日 下午1:35:52
- */ 
+ */
 public enum EnumUserType {
 	
-	STUDENT("student", "学生类型"), TEACHER("teacher", "教师类型"), GENEARCH("genearch", "家长类型");
-			
-	private EnumUserType(String code, String msg) {
-		this.code = code;
-		this.msg = msg;
+	Student("student", "学生类型", "同学"), 
+	Teacher("teacher", "教师类型", "老师"), 
+	Manager("teacher", "教师类型", "管理员"), 
+	Genearch("genearch", "家长类型", "家长");
+	
+	private EnumUserType(String type, String desc, String identity) {
+		this.type = type;
+		this.desc = desc;
+		this.identity = identity;
 	}
 	
-	private String code;
+	private String type;
 	
-	private String msg;
+	private String desc;
 	
-	public String getCode() {
-		return code;
+	private String identity;
+	
+	public String getType() {
+		return type;
 	}
 	
-	public void setCode(String code) {
-		this.code = code;
+	public void setType(String type) {
+		this.type = type;
 	}
 	
-	public String getMsg() {
-		return msg;
+	public String getDesc() {
+		return desc;
 	}
 	
-	public void setMsg(String msg) {
-		this.msg = msg;
+	public void setDesc(String desc) {
+		this.desc = desc;
 	}
 	
+	public String getIdentity() {
+		return identity;
+	}
+	
+	public void setIdentity(String identity) {
+		this.identity = identity;
+	}
+	
+	public static String getUserDignity(String userType) {
+		for (EnumUserType enumUserType : EnumUserType.values()) {
+			if (enumUserType.getType().equals(userType)) {
+				return enumUserType.getIdentity();
+			}
+		}
+		return null;
+	}
 }

@@ -4,7 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
-import com.gts.base.platform.interceptor.enums.EnumUserType;
+import com.gts.base.platform.utils.enums.EnumUserType;
 
 /**
  * @Description: 用户访问控制(针对后台方法)

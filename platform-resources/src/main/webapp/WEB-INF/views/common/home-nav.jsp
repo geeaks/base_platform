@@ -35,6 +35,8 @@
 								<li><a href="#">家长信息管理</a></li>
 								<li class="divider"></li>
 								<li><a href="#">管理员信息管理</a></li>
+								<li class="divider"></li>
+								<li><a href="#">密码管理</a></li>
 							</ul>
 						</li>
 						<li class="divider-vertical"><br></li>

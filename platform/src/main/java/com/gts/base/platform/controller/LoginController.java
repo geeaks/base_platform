@@ -43,6 +43,12 @@ public class LoginController extends BaseController {
 	@Autowired
 	private LoginLogService loginLogService;
 	
+	/**
+	 * @Description: 登录页
+	 * @return String 返回类型
+	 * @author gaoxiang
+	 * @date 2015年12月1日 下午10:13:54
+	 */
 	@RequestMapping({"","index"})
 	public String index(HttpServletRequest request,HttpSession session,Model model){
 		//判断用户时否已登录
@@ -60,6 +66,15 @@ public class LoginController extends BaseController {
 		return "index";
 	}
 	
+	/**
+	 * @Description: 用户登录
+	 * @param loginId 登录名
+	 * @param password 登录密码
+	 * @param checkCode 图片校验码
+	 * @return String 返回类型
+	 * @author gaoxiang
+	 * @date 2015年12月1日 下午10:13:25
+	 */
 	@RequestMapping("/login")
 	public String login(String loginId,String password,String checkCode,HttpSession session,HttpServletRequest request,Model model){
 		if(!verifyLogin(loginId,password,checkCode,session,model)){
