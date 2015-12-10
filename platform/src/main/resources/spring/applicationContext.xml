@@ -23,8 +23,6 @@
 	<!-- 初始化配置文件 -->
 	<util:properties id="settings" location="classpath:/app.properties" />
 	
-	<import resource="applicationContext-datasource.xml" />
-	
 	<!-- 占位符表达式替换 -->
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"> 
 		<property name="locations"> 
@@ -77,7 +75,8 @@
 		<property name="defaultStatusCode" value="500"></property>
 	</bean>
 	
-	<import resource="classpath:spring/applicationContext-datasource.xml" />
+	<import resource="classpath:spring/mysql-datasource.xml" />
+	<import resource="classpath:spring/oracle-datasource.xml" />
 	<import resource="classpath:spring/applicationContext-redis.xml" />
 	<import resource="classpath:spring/applicationContext-utils.xml" />
 	<import resource="classpath:spring/gts-framework-conf.xml" />

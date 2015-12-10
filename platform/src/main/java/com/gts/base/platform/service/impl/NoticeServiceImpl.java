@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.gts.base.platform.dao.NoticeDao;
 import com.gts.base.platform.dao.entity.Notice;
-import com.gts.base.platform.dao.plugin.Page;
+import com.gts.base.platform.dao.plugin.util.Page;
 import com.gts.base.platform.service.NoticeService;
 import com.gts.base.platform.service.base.BaseService;
 import com.gts.base.platform.service.bo.NoticeBo;

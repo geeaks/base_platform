@@ -26,4 +26,5 @@
 		<property name="toAddress" value="${mail.smtp.toAddress}" />
 	</bean>
 	
+	<bean id="springContextUtil" class="com.gts.framework.core.util.SpringContextUtil"/>
 </beans>

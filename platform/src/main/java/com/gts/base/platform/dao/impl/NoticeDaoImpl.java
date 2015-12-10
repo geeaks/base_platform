@@ -1,7 +1,9 @@
 package com.gts.base.platform.dao.impl;
 
 import java.util.List;
+
 import org.springframework.stereotype.Repository;
+
 import com.gts.base.platform.dao.NoticeDao;
 import com.gts.base.platform.dao.base.BaseDao;
 import com.gts.base.platform.dao.entity.Notice;

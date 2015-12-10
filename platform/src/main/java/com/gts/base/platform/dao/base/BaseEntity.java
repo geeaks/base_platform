@@ -3,7 +3,8 @@ package com.gts.base.platform.dao.base;
 import java.util.Date;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
-import com.gts.base.platform.dao.plugin.Page;
+
+import com.gts.base.platform.dao.plugin.util.Page;
 
 /**
  * @Description: 基本实体类

@@ -1,9 +1,11 @@
 package com.gts.base.platform.dao.base;
 
 import java.util.List;
+
+import javax.annotation.Resource;
+
 import org.mybatis.spring.SqlSessionTemplate;
 import org.mybatis.spring.support.SqlSessionDaoSupport;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @Description: 基础数据访问功能
@@ -12,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @date 2015年11月25日 上午12:04:24
  */ 
 public class BaseDao extends SqlSessionDaoSupport {
-
-	@Autowired
-	public void setSqlSessionTemplate(SqlSessionTemplate sqlSessionTemplate) {
-		super.setSqlSessionTemplate(sqlSessionTemplate);
+	
+	@Resource(name = "mysql_sqlSessionTemplate")
+	public void setSqlSessionTemplate(SqlSessionTemplate mysql_sharedTransactionTemplate) {
+		super.setSqlSessionTemplate(mysql_sharedTransactionTemplate);
 	}
 	
 	/**

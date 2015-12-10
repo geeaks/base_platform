@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.alibaba.fastjson.JSON;
 import com.gts.base.platform.dao.LoginInfoDao;
 import com.gts.base.platform.dao.entity.LoginInfo;
-import com.gts.base.platform.dao.plugin.Page;
+import com.gts.base.platform.dao.plugin.util.Page;
 import com.gts.base.platform.test.BaseTest;
 
 public class LoginInfoTest extends BaseTest {

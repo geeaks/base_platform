@@ -12,35 +12,59 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd"
 	default-lazy-init="true">
 	
-	<!-- 拦截service 和 dao -->
+	<!-- 拦截service -->
 	<bean id="serviceProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
 		<property name="interceptorNames">
 			<list>
-				<value>interceptorChain</value>
+				<value>serviceInterceptorChain</value>
 			</list>
 		</property>
 		<property name="beanNames">
 			<list>
 				<value>*ServiceImpl</value>
-				<value>*Dao</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 定义DAO性能拦截 -->
+	<bean id="daoProxyCreator" class="org.springframework.aop.framework.autoproxy.BeanNameAutoProxyCreator">
+		<property name="interceptorNames">
+			<list>
+				<value>daoInterceptorChain</value>
+			</list>
+		</property>
+		<property name="beanNames">
+			<list>
 				<value>*DaoImpl</value>
 			</list>
 		</property>
 	</bean>
 	
-	<!-- 配置拦截器 -->
-	<bean id="interceptorChain" class="com.gts.framework.core.aop.InterceptorChain">
+	<!-- service拦截链路 -->
+	<bean id="serviceInterceptorChain" class="com.gts.framework.core.aop.InterceptorChain">
 		<property name="chains">
 			<list>
-				<ref bean="performanceInstrument" />
 				<ref bean="performanceMonitor" />
 				<ref bean="logInitInterceptor" />
 			</list>
 		</property>
 	</bean>
 	
+	<!-- dao拦截链路 -->
+	<bean id="daoInterceptorChain" class="com.gts.framework.core.aop.InterceptorChain">
+		<property name="chains">
+			<list>
+				<ref bean="performanceInstrument" />
+				<ref bean="dynamicDataSourceInterceptor" />
+			</list>
+		</property>
+	</bean>
+	
 	<!-- dao层方法性能拦截 -->
 	<bean id="performanceInstrument" class="com.gts.framework.log.aop.PerformanceInstrumentInterceptor" />
+	
+	<!-- dao层动态数据源切换拦截 -->
+	<bean id="dynamicDataSourceInterceptor" class="com.gts.base.platform.dao.interceptor.DynamicDataSourceInterceptor" />
 	
 	<!-- 性能拦截 -->
 	<bean id="performanceMonitor" class="com.gts.framework.log.aop.PerformanceMonitorInterceptor">
@@ -49,6 +73,7 @@
 		</property>
 	</bean>
 	
-	<!-- 日志代理 -->
+	<!-- 摘要日志拦截 -->
 	<bean id="logInitInterceptor" class="com.gts.framework.log.aop.AnnotationLogInterceptor" />
+	
 </beans>

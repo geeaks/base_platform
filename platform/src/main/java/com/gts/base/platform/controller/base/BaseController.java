@@ -37,8 +37,11 @@ public class BaseController {
 	@Value("#{settings['devmode']}")
 	private String devmode;
 	
-	@Resource(name = "sharedTransactionTemplate")
-	public TransactionTemplate transactionTemplate;
+	@Resource(name = "mysql_sharedTransactionTemplate")
+	public TransactionTemplate mysql_sharedTransactionTemplate;
+	
+	@Resource(name = "oracle_sharedTransactionTemplate")
+	public TransactionTemplate oracle_sharedTransactionTemplate;
 	
 	@Autowired
 	public FtpHelper ftpHelper;

@@ -1,6 +1,7 @@
 package com.gts.base.platform.dao;
 
 import java.util.List;
+
 import com.gts.base.platform.dao.entity.Note;
 
 /**

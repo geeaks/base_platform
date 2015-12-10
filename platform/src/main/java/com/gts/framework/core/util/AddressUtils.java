@@ -29,7 +29,7 @@ public class AddressUtils {
 	public static String getIPAddresses(String ip){
 		try {
 			return getAddresses("ip="+ip, "utf-8");
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 		}
 		return null;
 	}
@@ -44,7 +44,7 @@ public class AddressUtils {
 	 * @date 2015年11月30日 下午5:43:45
 	 */
 	@SuppressWarnings("unchecked")
-	public static String getAddresses(String content, String encodingString) throws UnsupportedEncodingException {
+	public static String getAddresses(String content, String encodingString) throws Exception {
 		// 这里调用taobao的接口
 		String urlStr = "http://ip.taobao.com/service/getIpInfo.php";
 		String address = "";
@@ -55,8 +55,8 @@ public class AddressUtils {
 		}
 		JSONObject obj = JSONObject.parseObject(returnStr);
 		Integer code = (Integer) obj.get("code");
-		Map<String,String> data = (Map<String,String>) obj.get("data");
 		if(0 == code){
+			Map<String,String> data = (Map<String,String>) obj.get("data");
 			address += data.get("country");//国家
 			address += data.get("area");//区域
 			address += data.get("region");//省份

@@ -1,4 +1,4 @@
-package com.gts.base.platform.dao.plugin;
+package com.gts.base.platform.dao.plugin.util;
 
 /**
  * @Description: 分页实体类

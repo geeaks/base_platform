@@ -16,7 +16,7 @@
 	default-lazy-init="true">
 	
 	<!-- 配置druid数据源 -->
-	<bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
+	<bean id="mysql_dataSouce" class="com.alibaba.druid.pool.DruidDataSource" destroy-method="close">
 		<property name="url" value="${mysql.jdbc.url}" />
 		<property name="username" value="${mysql.jdbc.username}" />
 		<property name="password" value="${mysql.jdbc.password}" />
@@ -28,27 +28,26 @@
 	</bean>
 	
 	<!-- 配置数据库会话工厂 -->
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="mysql_sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="mysql_dataSouce" />
 		<property name="configLocation" value="classpath:/mybatis/mybatis_config.xml" />
 		<!-- 显式指定Mapper文件位置 -->
 		<property name="mapperLocations" value="classpath:/mybatis/sql/*.xml" />
 	</bean>
 
 	<!-- 配置sqlSessionTemplate -->
-	<bean id="sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
-		<constructor-arg index="0" ref="sqlSessionFactory" />
+	<bean id="mysql_sqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="mysql_sqlSessionFactory" />
 	</bean>
 
 	<!-- 配置事务管理 -->
-	<bean id="transactionManagerMyBatis" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
-		<property name="dataSource" ref="dataSource" />
+	<bean id="mysql_transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="mysql_dataSouce" />
 	</bean>
 	
 	<!-- 声明式事物模板 -->
-	<bean id="sharedTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
-		<property name="transactionManager" ref="transactionManagerMyBatis"></property>
+	<bean id="mysql_sharedTransactionTemplate" class="org.springframework.transaction.support.TransactionTemplate">
+		<property name="transactionManager" ref="mysql_transactionManager"></property>
 	</bean>
-
-
+	
 </beans>

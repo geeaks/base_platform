@@ -1,7 +1,7 @@
 package com.gts.base.platform.dao.entity;
 
 import com.gts.base.platform.dao.base.BaseDao;
-import com.gts.base.platform.dao.plugin.Page;
+import com.gts.base.platform.dao.plugin.util.Page;
 
 /**
  * @Description: 通告信息实体

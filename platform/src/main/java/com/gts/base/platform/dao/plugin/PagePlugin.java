@@ -35,6 +35,8 @@ import com.gts.base.platform.dao.plugin.util.Dialect;
 import com.gts.base.platform.dao.plugin.util.MySql5Dialect;
 import com.gts.base.platform.dao.plugin.util.MySql5PageHepler;
 import com.gts.base.platform.dao.plugin.util.OracleDialect;
+import com.gts.base.platform.dao.plugin.util.Page;
+import com.gts.base.platform.dao.plugin.util.ReflectHelper;
 
 
 @Intercepts({@Signature(type=StatementHandler.class,method="prepare",args={Connection.class})})

@@ -10,7 +10,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.gts.base.platform.dao.NoteDao;
 import com.gts.base.platform.dao.entity.Note;
-import com.gts.base.platform.dao.plugin.Page;
+import com.gts.base.platform.dao.plugin.util.Page;
 import com.gts.base.platform.service.NoteService;
 import com.gts.base.platform.service.base.BaseService;
 import com.gts.base.platform.service.bo.NoteBo;
