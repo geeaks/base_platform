@@ -112,7 +112,10 @@
 			<scope>provided</scope>
 		</dependency>
 		<!-- Other Web dependencies end -->
-
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+		</dependency>
 		<!-- log dependencies -->
 		<dependency>
 			<groupId>org.slf4j</groupId>
