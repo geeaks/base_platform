@@ -6,7 +6,7 @@
 	<!-- 用户信息卡片 -->
 	<div class="col-md-4 card-container">
 		<div class="card">
-			<div class="card-title" style="padding-bottom:15px;">用户信息<a href="user/userDetail">详情</a></div>
+			<div class="card-title" style="padding-bottom:15px;">用户信息<a href="userInfo">详情</a></div>
 			<div style="margin-top:8px;">
 				用户姓名：<span id="">${session_user.name}</span>
 			</div>

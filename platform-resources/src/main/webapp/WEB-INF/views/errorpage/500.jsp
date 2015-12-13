@@ -14,7 +14,7 @@
 </svg>
 </div>
 <div id="molo-image" style="position: absolute; top: 126px; z-index: 999; left: 790px;" align="center">
-	<img style="display: inline; margin-top: -40px;" id="molo" src="/images/molome_404.png">
+	<img style="display: inline; margin-top: -40px;" id="molo" src="${basePath}/images/molome_404.png">
 </div>
 <div id="error" style="text-align: center; padding-top: 450px; height: 86px;">
 	<span style="font-size:36px;color:#7C999B;font-weight:bold">500 Error</span>
