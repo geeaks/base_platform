@@ -43,7 +43,7 @@
 	</logger> -->
 	
 	<root>
-		<level value="warn" />
+		<level value="ERROR" />
 		<appender-ref ref="STDOUT-APPENDER" />
 	</root>
 </log4j:configuration>

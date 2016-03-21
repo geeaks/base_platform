@@ -76,7 +76,7 @@
 	</bean>
 	
 	<import resource="classpath:spring/mysql-datasource.xml" />
-	<!-- <import resource="classpath:spring/oracle-datasource.xml" /> -->
+	<import resource="classpath:spring/oracle-datasource.xml" />
 	<import resource="classpath:spring/applicationContext-redis.xml" />
 	<import resource="classpath:spring/applicationContext-utils.xml" />
 	<import resource="classpath:spring/applicationContext-schedule.xml" />

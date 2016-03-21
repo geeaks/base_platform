@@ -10,7 +10,8 @@ import com.gts.base.platform.dao.entity.Student;
  * @date 2015年11月24日 下午11:01:57
  */
 public class StudentBo extends Student implements Serializable {
-	
+
 	private static final long serialVersionUID = 757313076551045118L;
+	
 	
 }
