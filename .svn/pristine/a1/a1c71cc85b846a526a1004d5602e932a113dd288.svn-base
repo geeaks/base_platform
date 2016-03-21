@@ -1,3 +1,0 @@
-rocketmq.namesrv.addr=${mq.host.ip}:${mq.host.port}
-rocketmq.client.name=base_platform_PLATE_NO_01
-rocketmq.publisher.name=base_platform_P2P

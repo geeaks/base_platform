@@ -1,6 +1,0 @@
-package com.ucf.customer.service;
-
-public interface CashierService {
-
-	String getCashierUrl();
-}

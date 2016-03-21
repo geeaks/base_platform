@@ -1,7 +1,0 @@
-package com.ucf.customer.utils.exception;
-
-public interface ErrorCode {
-	String getCode();
-
-    String getDesc();
-}

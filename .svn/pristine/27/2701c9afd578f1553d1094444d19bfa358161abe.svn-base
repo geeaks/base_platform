@@ -1,8 +1,0 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<c:set var="basePath" value="${pageContext.request.contextPath }" />
-<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/themes/bootstrap/easyui.css">
-<link rel="stylesheet" type="text/css" href="${staticbase_platformPath}/themes/icon.css">
-<link rel="stylesheet" href="${staticbase_platformPath}/css/customer/com.ucf.customer.commons.css">
-<link href="${staticbase_platformPath}/new/css/base.css" rel="stylesheet"  type="text/css">
-<link href="${staticbase_platformPath}/new/css/common.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="${staticbase_platformPath}/css/commons/jquery.validator.css">

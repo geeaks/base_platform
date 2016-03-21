@@ -1,5 +1,0 @@
-package com.ucf.customer.utils;
-
-public class ValueOperations<T1, T2> {
-
-}

@@ -1,5 +1,0 @@
-package com.ucf.customer.ws.model;
-
-public interface QueryUserInfo {
-
-}

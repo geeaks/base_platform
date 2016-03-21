@@ -1,8 +1,0 @@
-package com.ucf.customer.service;
-
-import com.ucf.customer.bo.RealAuthBO;
-
-public interface RealAuthService {
-	public boolean realAuth(String userId, String mobile, RealAuthBO realAuthBO)throws Exception;
-
-}

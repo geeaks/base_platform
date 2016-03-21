@@ -1,9 +1,0 @@
-package com.ucf.customer.ws.business;
-
-import java.util.Map;
-
-public interface TradeCallService {
-
-	public Map<String,Object> queryOrdersByUserId(String userId,String tradeType,String tradeStatus,
-			String startDate,String endDate,Integer limit,Integer page);
-}

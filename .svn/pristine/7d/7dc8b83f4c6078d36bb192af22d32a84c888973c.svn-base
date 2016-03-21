@@ -1,7 +1,0 @@
-package com.ucf.customer.service;
-
-public interface CustomerService {
-
-	public String getCustomerRegUrl();
-	
-}
