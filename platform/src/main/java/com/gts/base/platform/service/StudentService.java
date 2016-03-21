@@ -12,14 +12,14 @@ import com.gts.base.platform.service.bo.StudentBo;
  */ 
 public interface StudentService {
 	
-	public int insertStudent(Student student) throws Exception;
+	public int insertStudent(Student student);
 	
-	public int updateStudent(Student student) throws Exception;
+	public int updateStudent(Student student);
 	
-	public List<StudentBo> listPageStudent(Student student) throws Exception;
+	public List<StudentBo> listPageStudent(Student student);
 	
-	public List<StudentBo> queryStudent(Student student) throws Exception;
+	public List<StudentBo> queryStudent(Student student);
 	
-	public StudentBo getStudent(String studentId) throws Exception;
+	public StudentBo getStudent(String studentId);
 	
 }

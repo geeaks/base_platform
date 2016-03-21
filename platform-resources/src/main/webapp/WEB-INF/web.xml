@@ -102,7 +102,7 @@
 	</error-page>
 	
 	<session-config>
-		<session-timeout>20</session-timeout>
+		<session-timeout>30</session-timeout>
 	</session-config>
 	<servlet-mapping>
 		<servlet-name>default</servlet-name>

@@ -40,9 +40,6 @@ public class BaseController {
 	@Resource(name = "mysql_sharedTransactionTemplate")
 	public TransactionTemplate mysql_sharedTransactionTemplate;
 	
-	@Resource(name = "oracle_sharedTransactionTemplate")
-	public TransactionTemplate oracle_sharedTransactionTemplate;
-	
 	@Autowired
 	public FtpHelper ftpHelper;
 	
